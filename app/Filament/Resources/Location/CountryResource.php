@@ -48,6 +48,7 @@ class CountryResource extends Resource
                     ->length(2),
 
                 Forms\Components\TextInput::make('alpha3')
+                    ->length(3)
                     ->label(__('Alpha 3')),
 
                 Forms\Components\TextInput::make('un_code')
