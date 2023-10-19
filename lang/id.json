@@ -1,0 +1,20 @@
+{
+    "Name": "Nama",
+    "Email": "Pos-el",
+    "Created at": "Dibuat",
+    "Updated at": "Diperbarui",
+    "Is active": "Aktif",
+    "Toggle status": "Ubah status",
+
+    "Location": "Lokasi",
+    "Country": "Negara",
+    "UN Code": "Kode UN",
+    "Region": "Provinsi",
+    "District": "Kota/Kabupaten",
+    "Are you sure want to do this action? This action will delete related data district too.": "Apakah Anda yakin ingin melakukan ini? Aksi ini akan menghapus data terhubung dengan kota/kabupaten.",
+    "Are you sure want to do this action? This action will delete related data region and district too.": "Apakah Anda yaking ingin melakukan ini? Aksi ini akan menghapus data terhubung dengan provinsi dan kota/kabupaten.",
+
+    "User management": "Manajemen pengguna",
+    "Role": "Peran",
+    "User": "Pengguna"
+}
