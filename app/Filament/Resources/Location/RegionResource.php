@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\Location;
 
+use App\Filament\Resources\Location;
 use App\Filament\Resources\RegionResource\Pages;
 use App\Filament\Resources\RegionResource\RelationManagers;
 use App\Models\Region;
@@ -10,8 +11,6 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
 
 class RegionResource extends Resource
@@ -95,6 +94,8 @@ class RegionResource extends Resource
                 Tables\Filters\SelectFilter::make('country_id')
                     ->label(__('Country'))
                     ->relationship('country', 'name')
+                    ->multiple()
+                    ->searchable()
                     ->preload()
                     ->searchable(),
             ])
@@ -125,7 +126,7 @@ class RegionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageRegions::route('/'),
+            'index' => Location\RegionResource\Pages\ManageRegions::route('/'),
         ];
     }
 }

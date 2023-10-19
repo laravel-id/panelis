@@ -1,18 +1,16 @@
 <?php
 
-namespace App\Filament\Resources;
+namespace App\Filament\Resources\Location;
 
 use App\Filament\Resources\DistrictResource\Pages;
 use App\Filament\Resources\DistrictResource\RelationManagers;
+use App\Filament\Resources\Location;
 use App\Models\District;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Collection;
 
 class DistrictResource extends Resource
@@ -118,12 +116,14 @@ class DistrictResource extends Resource
                     ->label(__('Country'))
                     ->relationship('region.country', 'name')
                     ->searchable()
+                    ->multiple()
                     ->preload(),
 
                 Tables\Filters\SelectFilter::make('region_id')
                     ->label(__('Region'))
                     ->relationship('region', 'name')
                     ->searchable()
+                    ->multiple()
                     ->preload(),
             ])
             ->actions([
@@ -151,7 +151,7 @@ class DistrictResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManageDistricts::route('/'),
+            'index' => Location\DistrictResource\Pages\ManageDistricts::route('/'),
         ];
     }
 }

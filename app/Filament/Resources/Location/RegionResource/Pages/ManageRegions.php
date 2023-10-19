@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\RegionResource\Pages;
+namespace App\Filament\Resources\Location\RegionResource\Pages;
 
-use App\Filament\Resources\RegionResource;
+use App\Filament\Resources\Location\RegionResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
 
