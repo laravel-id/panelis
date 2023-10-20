@@ -6,6 +6,7 @@ use App\Filament\Resources\RoleResource\Pages;
 use App\Filament\Resources\RoleResource\RelationManagers;
 use Filament\Forms;
 use Filament\Forms\Form;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -37,7 +38,7 @@ class RoleResource extends Resource
 
     public static function getActiveNavigationIcon(): ?string
     {
-        return 'heroicon-m-user-group';
+        return 'heroicon-s-user-group';
     }
 
     public static function getLabel(): ?string
@@ -53,9 +54,11 @@ class RoleResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
+            ->columns(3)
             ->schema([
                 Forms\Components\Section::make('Role')
                     ->description('Create a new role that to be assigned to user')
+                    ->columnSpan(fn(?Model $record): int => empty($record) ? 3 : 2)
                     ->schema([
                         Forms\Components\TextInput::make('name')
                             ->required()
@@ -67,16 +70,19 @@ class RoleResource extends Resource
                             ->required()
                             ->rows(3)
                             ->maxLength(250),
+                    ]),
 
+                Forms\Components\Section::make()
+                    ->hiddenOn(Pages\CreateRole::class)
+                    ->columnSpan(1)
+                    ->schema([
                         Forms\Components\Placeholder::make('created_at')
-                            ->visibleOn(Pages\ViewRole::class)
-                            ->content(fn(?Model $record): string => $record->created_at)
-                            ->translateLabel(),
+                            ->translateLabel()
+                            ->content(fn(?Model $record): string => $record->created_at),
 
                         Forms\Components\Placeholder::make('updated_at')
-                            ->visibleOn(Pages\ViewRole::class)
-                            ->content(fn(?Model $record): string => $record->created_at)
-                            ->translateLabel(),
+                            ->translateLabel()
+                            ->content(fn(?Model $record): string => $record->updated_at),
                     ]),
 
                 Forms\Components\Section::make('Permission')
@@ -120,7 +126,7 @@ class RoleResource extends Resource
 
                 Tables\Columns\TextColumn::make('updated_at')
                     ->translateLabel()
-                    ->tooltip(fn(?Model $record): string => $record?->updated_at ?? '')
+                    ->tooltip(fn(?Model $record): string => $record->updated_at)
                     ->sortable()
                     ->since(),
             ])
@@ -129,7 +135,11 @@ class RoleResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make()->visible($canUpdate),
-                Tables\Actions\DeleteAction::make()->visible($canDelete),
+                Tables\Actions\DeleteAction::make()
+                    ->disabled(function (?Model $record): bool {
+                        return $record->users_count >= 1;
+                    })
+                    ->visible($canDelete),
             ])
             ->bulkActions([
 

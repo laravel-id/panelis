@@ -35,7 +35,7 @@ class PermissionResource extends Resource
 
     public static function getActiveNavigationIcon(): ?string
     {
-        return 'heroicon-m-lock-open';
+        return 'heroicon-s-lock-open';
     }
 
     public static function shouldRegisterNavigation(): bool

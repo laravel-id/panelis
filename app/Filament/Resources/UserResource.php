@@ -36,7 +36,7 @@ class UserResource extends Resource
 
     public static function getActiveNavigationIcon(): ?string
     {
-        return 'heroicon-m-users';
+        return 'heroicon-s-users';
     }
 
     public static function getLabel(): ?string
@@ -52,31 +52,39 @@ class UserResource extends Resource
     public static function form(Form $form): Form
     {
         return $form
+            ->columns(3)
             ->schema([
                 Forms\Components\Section::make(__('Basic info'))
+                    ->columnSpan(fn(?Model $record): int => empty($record) ? 3 : 2)
                     ->translateLabel()
                     ->schema([
                         Forms\Components\TextInput::make('email')
                             ->required()
-                            ->HiddenOn(Pages\EditUser::class)
                             ->unique(ignorable: $form->getRecord())
                             ->email(),
-
-                        Forms\Components\Placeholder::make('email')
-                            ->content(fn(?Model $record): string => $record->email)
-                            ->visibleOn(Pages\EditUser::class),
 
                         Forms\Components\TextInput::make('name')
                             ->required()
                             ->minLength(3)
                             ->maxLength(150),
+                    ]),
 
+                Forms\Components\Section::make()
+                    ->hiddenOn(Pages\CreateUser::class)
+                    ->columnSpan(1)
+                    ->schema([
                         Forms\Components\Placeholder::make('created_at')
-                            ->visibleOn(Pages\ViewUser::class)
+                            ->visibleOn([
+                                Pages\ViewUser::class,
+                                Pages\EditUser::class,
+                            ])
                             ->content(fn(?Model $record): string => $record->created_at),
 
                         Forms\Components\Placeholder::make('updated_at')
-                            ->visibleOn(Pages\ViewUser::class)
+                            ->visibleOn([
+                                Pages\ViewUser::class,
+                                Pages\EditUser::class,
+                            ])
                             ->content(fn(?Model $record): string => $record->updated_at),
                     ]),
 
@@ -146,7 +154,6 @@ class UserResource extends Resource
                     ->multiple(),
             ])
             ->actions([
-                Tables\Actions\ViewAction::make()->visible(Auth::user()->can('View user')),
                 Tables\Actions\EditAction::make()->visible(Auth::user()->can('Update user')),
             ])
             ->bulkActions([
