@@ -11,6 +11,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
@@ -96,6 +97,7 @@ class RegionResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')
                     ->translateLabel()
                     ->sortable()
+                    ->tooltip(fn(?Model $record): string => $record->updated_at ?? '')
                     ->since(),
             ])
             ->filters([
