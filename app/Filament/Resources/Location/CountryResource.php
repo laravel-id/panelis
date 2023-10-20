@@ -11,6 +11,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 
 class CountryResource extends Resource
 {
@@ -36,6 +37,11 @@ class CountryResource extends Resource
     public static function getLabel(): ?string
     {
         return __('Country');
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()->can('View country');
     }
 
     public static function form(Form $form): Form
@@ -66,11 +72,15 @@ class CountryResource extends Resource
 
     public static function table(Table $table): Table
     {
+        $canUpdate = Auth::user()->can('Update country');
+        $canDelete = Auth::user()->can('Delete country');
+
         return $table
             ->paginated(false)
             ->columns([
                 Tables\Columns\ToggleColumn::make('is_active')
-                    ->translateLabel(),
+                    ->translateLabel()
+                    ->visible($canUpdate),
 
                 Tables\Columns\TextColumn::make('name')
                     ->translateLabel()
@@ -97,13 +107,17 @@ class CountryResource extends Resource
                     ->translateLabel(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                ->visible($canUpdate),
+
                 Tables\Actions\DeleteAction::make()
+                    ->visible($canDelete)
                     ->modalDescription(__('Are you sure want to do this action? This action will delete related data region and district too.')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkAction::make('toggle')
                     ->label(__('Toggle status'))
+                    ->visible($canUpdate)
                     ->color('primary')
                     ->icon('heroicon-m-check-circle')
                     ->action(function (Collection $records): void {
@@ -115,6 +129,7 @@ class CountryResource extends Resource
 
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
+                        ->visible($canDelete)
                         ->modalDescription(__('Are you sure want to do this action? This action will delete related data region and district too.')),
                 ]),
             ]);

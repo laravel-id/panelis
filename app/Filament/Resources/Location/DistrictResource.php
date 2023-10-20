@@ -12,6 +12,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 
 class DistrictResource extends Resource
 {
@@ -44,6 +45,11 @@ class DistrictResource extends Resource
         return __('District');
     }
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()->can('View district');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -54,10 +60,12 @@ class DistrictResource extends Resource
                     ->createOptionForm([
                         Forms\Components\Select::make('country_id')
                             ->translateLabel()
+                            ->disabled(!Auth::user()->can('Create region'))
                             ->relationship('country', 'name')
                             ->createOptionForm([
                                 Forms\Components\TextInput::make('name')
                                     ->translateLabel()
+                                    ->disabled(!Auth::user()->can('Create country'))
                                     ->required()
                                     ->minLength(5)
                                     ->maxLength(150),
@@ -68,6 +76,7 @@ class DistrictResource extends Resource
 
                         Forms\Components\TextInput::make('name')
                             ->translateLabel()
+                            ->disabled(!Auth::user()->can('Create region'))
                             ->required(),
                     ])
                     ->preload()
@@ -84,10 +93,14 @@ class DistrictResource extends Resource
 
     public static function table(Table $table): Table
     {
+        $canUpdate = Auth::user()->can('Update district');
+        $canDelete = Auth::user()->can('Delete district');
+
         return $table
             ->columns([
                 Tables\Columns\ToggleColumn::make('is_active')
-                    ->translateLabel(),
+                    ->translateLabel()
+                    ->visible($canUpdate),
 
                 Tables\Columns\TextColumn::make('name')
                     ->translateLabel()
@@ -127,14 +140,18 @@ class DistrictResource extends Resource
                     ->preload(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->visible($canUpdate),
+
+                Tables\Actions\DeleteAction::make()
+                    ->visible($canDelete),
             ])
             ->bulkActions([
                 Tables\Actions\BulkAction::make('toggle')
                     ->label(__('Toggle status'))
                     ->color('primary')
                     ->icon('heroicon-m-check-circle')
+                    ->visible($canUpdate)
                     ->action(function (Collection $records): void {
                         foreach ($records as $record) {
                             $record->is_active = !$record->is_active;
@@ -143,7 +160,8 @@ class DistrictResource extends Resource
                     }),
 
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()
+                        ->visible($canDelete),
                 ]),
             ]);
     }

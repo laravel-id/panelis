@@ -12,6 +12,7 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Auth;
 
 class RegionResource extends Resource
 {
@@ -39,6 +40,11 @@ class RegionResource extends Resource
         return __('Region');
     }
 
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()->can('View region');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -48,6 +54,7 @@ class RegionResource extends Resource
                     ->relationship('country', 'name')
                     ->createOptionForm([
                         Forms\Components\TextInput::make('name')
+                            ->disabled(!Auth::user()->can('Create country'))
                             ->translateLabel()
                             ->required()
                             ->maxLength(100)
@@ -67,10 +74,14 @@ class RegionResource extends Resource
 
     public static function table(Table $table): Table
     {
+        $canUpdate = Auth::user()->can('Update region');
+        $canDelete = Auth::user()->can('Delete region');
+
         return $table
             ->columns([
                 Tables\Columns\ToggleColumn::make('is_active')
-                    ->translateLabel(),
+                    ->translateLabel()
+                    ->visible($canUpdate),
 
                 Tables\Columns\TextColumn::make('name')
                     ->translateLabel()
@@ -100,8 +111,11 @@ class RegionResource extends Resource
                     ->searchable(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                Tables\Actions\EditAction::make()
+                    ->visible($canUpdate),
+
                 Tables\Actions\DeleteAction::make()
+                    ->visible($canDelete)
                     ->modalDescription(__('Are you sure want to do this action? This action will delete related data district too.')),
             ])
             ->bulkActions([
@@ -109,6 +123,7 @@ class RegionResource extends Resource
                     ->label(__('Toggle status'))
                     ->color('primary')
                     ->icon('heroicon-m-check-circle')
+                    ->visible($canUpdate)
                     ->action(function (Collection $records): void {
                         foreach ($records as $record) {
                             $record->is_active = !$record->is_active;
@@ -118,6 +133,7 @@ class RegionResource extends Resource
 
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
+                        ->visible($canDelete)
                         ->modalDescription(__('Are you sure want to do this action? This action will delete related data district too.')),
                 ]),
             ]);
