@@ -1,6 +1,7 @@
 {
     "Name": "Nama",
     "Email": "Pos-el",
+    "Category": "kategori",
     "Created at": "Dibuat",
     "Updated at": "Diperbarui",
     "Is active": "Aktif",
@@ -15,6 +16,11 @@
     "Are you sure want to do this action? This action will delete related data region and district too.": "Apakah Anda yaking ingin melakukan ini? Aksi ini akan menghapus data terhubung dengan provinsi dan kota/kabupaten.",
 
     "User management": "Manajemen pengguna",
+    "Basic info": "Info dasar",
+    "Additional info": "Info tambahan",
     "Role": "Peran",
-    "User": "Pengguna"
+    "Roles": "Peran",
+    "Permission": "Hak akses",
+    "User": "Pengguna",
+    "Users count": "Total pengguna"
 }
