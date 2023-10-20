@@ -22,5 +22,6 @@
     "Roles": "Peran",
     "Permission": "Hak akses",
     "User": "Pengguna",
-    "Users count": "Total pengguna"
+    "Users count": "Total pengguna",
+    "If no role selected, user will be assigned as super user": "Jika tidak ada peran yang dipilih, maka pengguna akan dijadikan sebagai super admin"
 }

@@ -6,17 +6,15 @@ use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Filament\Resources\UserResource\Widgets\UserStatsOverview;
 use App\Models\District;
-use App\Models\Role;
 use App\Models\User;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Models\Role;
 
 class UserResource extends Resource
 {
@@ -55,7 +53,7 @@ class UserResource extends Resource
     {
         return $form
             ->schema([
-                Forms\Components\Section::make('Basic info')
+                Forms\Components\Section::make(__('Basic info'))
                     ->translateLabel()
                     ->schema([
                         Forms\Components\TextInput::make('email')
@@ -64,14 +62,14 @@ class UserResource extends Resource
                             ->unique(ignorable: $form->getRecord())
                             ->email(),
 
+                        Forms\Components\Placeholder::make('email')
+                            ->content(fn(?Model $record): string => $record->email)
+                            ->visibleOn(Pages\EditUser::class),
+
                         Forms\Components\TextInput::make('name')
                             ->required()
                             ->minLength(3)
                             ->maxLength(150),
-
-                        Forms\Components\Placeholder::make('email')
-                            ->content(fn(?Model $record): string => $record->email)
-                            ->visibleOn(Pages\EditUser::class),
 
                         Forms\Components\Placeholder::make('created_at')
                             ->visibleOn(Pages\ViewUser::class)
@@ -82,23 +80,16 @@ class UserResource extends Resource
                             ->content(fn(?Model $record): string => $record->updated_at),
                     ]),
 
-                Forms\Components\Section::make('Role')
-                    ->translateLabel()
-                    ->hidden(function () use($form): bool{
-                        if (empty($form->getRecord())) {
-                            return false;
-                        }
-
-                        return $form->getRecord()->getRoleNames()->count() === 0;
-                    })
+                Forms\Components\Section::make(__('Role'))
+                    ->description(__('If no role selected, user will be assigned as super user'))
                     ->schema([
                         Forms\Components\CheckboxList::make('role_id')
                             ->label(__('Role'))
                             ->relationship('roles', 'name')
-                            ->required(),
+                            ->descriptions(Role::pluck('description', 'id')),
                     ]),
 
-                Forms\Components\Section::make('Additional info')
+                Forms\Components\Section::make(__('Additional info'))
                     ->collapsed()
                     ->translateLabel()
                     ->relationship('profile')
