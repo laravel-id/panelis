@@ -4,7 +4,7 @@ namespace App\Filament\Resources\Location;
 
 use App\Filament\Resources\CountryResource\Pages;
 use App\Filament\Resources\CountryResource\RelationManagers;
-use App\Models\Country;
+use App\Models\Location\Country;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;

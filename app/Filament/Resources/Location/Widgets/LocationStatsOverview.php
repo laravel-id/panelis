@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\Location\Widgets;
 
-use App\Models\Country;
-use App\Models\District;
-use App\Models\Region;
+use App\Models\Location\Country;
+use App\Models\Location\District;
+use App\Models\Location\Region;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 
 class LocationStatsOverview extends BaseWidget

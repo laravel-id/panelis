@@ -5,7 +5,7 @@ namespace App\Filament\Resources\Location;
 use App\Filament\Resources\Location;
 use App\Filament\Resources\RegionResource\Pages;
 use App\Filament\Resources\RegionResource\RelationManagers;
-use App\Models\Region;
+use App\Models\Location\Region;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;

@@ -2,9 +2,9 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Country;
-use App\Models\District;
-use App\Models\Region;
+use App\Models\Location\Country;
+use App\Models\Location\District;
+use App\Models\Location\Region;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 

@@ -1,23 +1,23 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\Location;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class District extends Model
+class Region extends Model
 {
     use HasFactory;
 
-    public function region(): BelongsTo
+    public function country(): BelongsTo
     {
-        return $this->belongsTo(Region::class);
+        return $this->belongsTo(Country::class);
     }
 
-    public function profiles(): HasMany
+    public function districts(): HasMany
     {
-        return $this->hasMany(Profile::class);
+        return $this->hasMany(District::class);
     }
 }
