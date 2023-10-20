@@ -109,6 +109,7 @@ class RoleResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->translateLabel()
                     ->searchable()
+                    ->sortable()
                     ->description(fn(?Model $record): string => $record->description),
 
                 Tables\Columns\TextColumn::make('users_count')
@@ -120,6 +121,7 @@ class RoleResource extends Resource
                 Tables\Columns\TextColumn::make('updated_at')
                     ->translateLabel()
                     ->tooltip(fn(?Model $record): string => $record?->updated_at ?? '')
+                    ->sortable()
                     ->since(),
             ])
             ->filters([

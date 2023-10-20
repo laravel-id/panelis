@@ -72,10 +72,12 @@ class PermissionResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->translateLabel()
                     ->searchable()
+                    ->sortable()
                     ->description(fn(?Model $record): string => $record?->description ?? ''),
 
                 Tables\Columns\TextColumn::make('updated_at')
                     ->translateLabel()
+                    ->sortable()
                     ->since(),
             ])
             ->filters([

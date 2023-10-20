@@ -134,6 +134,7 @@ class UserResource extends Resource
                 Tables\Columns\TextColumn::make('updated_at')
                     ->translateLabel()
                     ->tooltip(fn(?Model $record): string => $record->created_at)
+                    ->sortable()
                     ->since(),
             ])
             ->filters([
