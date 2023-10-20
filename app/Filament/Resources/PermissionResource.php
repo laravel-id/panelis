@@ -19,7 +19,7 @@ class PermissionResource extends Resource
 {
     protected static ?string $model = Permission::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-lock-open';
+    protected static ?string $navigationIcon = 'heroicon-o-key';
 
     protected static ?int $navigationSort = 1;
 
@@ -35,7 +35,7 @@ class PermissionResource extends Resource
 
     public static function getActiveNavigationIcon(): ?string
     {
-        return 'heroicon-s-lock-open';
+        return 'heroicon-s-key';
     }
 
     public static function shouldRegisterNavigation(): bool
