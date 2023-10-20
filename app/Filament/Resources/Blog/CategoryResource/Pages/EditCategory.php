@@ -14,14 +14,10 @@ class EditCategory extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
-            Actions\ForceDeleteAction::make(),
-            Actions\RestoreAction::make(),
+            Actions\ViewAction::make()->visible(Auth::user()->can('View blog category')),
+            Actions\DeleteAction::make()->visible(Auth::user()->can('Delete blog category')),
+            Actions\ForceDeleteAction::make()->visible(Auth::user()->can('Delete blog category')),
+            Actions\RestoreAction::make()->visible(Auth::user()->can('Update blog category')),
         ];
-    }
-
-    public function mount(int|string $record): void
-    {
-        abort_unless(Auth::user()->can('blog_category_edit'), 403);
     }
 }

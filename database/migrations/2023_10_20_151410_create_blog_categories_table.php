@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Blog\Category;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,12 +14,11 @@ return new class extends Migration
     {
         Schema::create('blog_categories', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('category_id')
-                ->nullable()
-                ->constrained('blog_categories')
-                ->nullOnDelete();
+            $table->foreignId(Category::class)->nullable();
+            $table->string('slug')->unique();
             $table->string('name');
             $table->string('description')->nullable();
+            $table->boolean('is_visible')->default(true);
             $table->timestamps();
             $table->softDeletes();
         });
