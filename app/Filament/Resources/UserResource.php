@@ -54,7 +54,7 @@ class UserResource extends Resource
         return $form
             ->columns(3)
             ->schema([
-                Forms\Components\Section::make(__('Basic info'))
+                Forms\Components\Section::make()
                     ->columnSpan(fn(?Model $record): int => empty($record) ? 3 : 2)
                     ->translateLabel()
                     ->schema([
