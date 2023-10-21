@@ -64,6 +64,7 @@ class CategoryResource extends Resource
 
                         Forms\Components\TextInput::make('slug')
                             ->required()
+                            ->unique(ignorable: $form->getRecord())
                             ->minLength(3)
                             ->maxLength(100),
 
