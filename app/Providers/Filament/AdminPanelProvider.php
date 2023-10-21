@@ -2,6 +2,10 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Auth\EditProfile;
+use App\Filament\Pages\Auth\EmailVerificationPrompt;
+use App\Filament\Pages\Auth\Login;
+use App\Filament\Pages\Auth\RequestPasswordReset;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -25,8 +29,16 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->default()
             ->id('admin')
+
+            // uncomment to set different path
             ->path('admin')
-            ->login()
+
+            // ->registration(Register::class)
+            ->login(Login::class)
+            ->passwordReset(RequestPasswordReset::class)
+            ->profile(EditProfile::class)
+            ->emailVerification(EmailVerificationPrompt::class)
+
             ->colors([
                 'primary' => Color::Amber,
             ])
