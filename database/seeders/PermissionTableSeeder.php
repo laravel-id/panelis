@@ -36,6 +36,13 @@ class PermissionTableSeeder extends Seeder
         'Update district' => 'Permission to update an existing district.',
         'Delete district' => 'Permission to delete a district.',
         'View district' => 'Permission to view an existing district.',
+
+        // todos
+        'View todo' => 'View details of a todo.',
+        'View all todos' => 'View list of all todos.',
+        'Create todo' => 'Create a new todo.',
+        'Update todo' => 'Update an existing todo.',
+        'Delete todo' => 'Delete an existing todo.'
     ];
 
 
