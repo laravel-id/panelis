@@ -13,6 +13,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 
 class TodoResource extends Resource
 {
@@ -56,12 +57,27 @@ class TodoResource extends Resource
         return 'heroicon-s-queue-list';
     }
 
+
+    public static function getNavigationBadge(): ?string
+    {
+        return Todo::whereIn('status', ['new', 'pending', 'in progress'])
+            ->whereHas('users', function (Builder $builder): Builder {
+                return $builder->whereUserId(Auth::id());
+            })
+            ->count();
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()->can('View todo') || Auth::user()->can('View all todos');
+    }
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('name')
-                    ->label(__('Task title'))
+                    ->label(__('Title'))
                     ->columnSpanFull()
                     ->required()
                     ->minLength(3)
@@ -73,7 +89,7 @@ class TodoResource extends Resource
                     ->maxLength(250),
 
                 Forms\Components\Select::make('user_id')
-                    ->label(__('Assigned to'))
+                    ->label(__('Assignee'))
                     ->columnSpanFull()
                     ->relationship('users', 'name')
                     ->multiple()
@@ -84,14 +100,24 @@ class TodoResource extends Resource
                 Forms\Components\Select::make('status')
                     ->translateLabel()
                     ->default('new')
-                    ->options(self::$statuses)
+                    ->options(
+                        collect(self::$statuses)
+                            ->mapWithKeys(function (string $val, string $key): array {
+                                return [$key => __($val)];
+                            })->toArray(),
+                    )
                     ->required()
                     ->in(array_keys(self::$statuses)),
 
                 Forms\Components\Select::make('priority')
                     ->translateLabel()
                     ->default('medium')
-                    ->options(self::$priorities)
+                    ->options(
+                        collect(self::$priorities)
+                            ->mapWithKeys(function (string $val, string $key): array {
+                                return [$key => __($val)];
+                            }),
+                    )
                     ->required()
                     ->in(array_keys(self::$priorities)),
 
@@ -109,10 +135,30 @@ class TodoResource extends Resource
 
     public static function table(Table $table): Table
     {
+        $canUpdate = Auth::user()->can('Update todo');
+        $canDelete = Auth::user()->can('Delete todo');
+
         return $table
-            ->modifyQueryUsing(function (Builder $builder): void {
-                $builder->orderByRaw('FIELD(priority, \'high\', \'medium\', \'low\')');
+            ->description(__('Get. Things. Done.'))
+            ->modifyQueryUsing(function (Builder $query): Builder {
+                return $query->when(!Auth::user()->can('View all todos'), function (Builder $query): Builder {
+                    return $query->whereHas('users', function (Builder $user): Builder {
+                        return $user->whereUserId(Auth::id());
+                    });
+                });
             })
+            ->defaultGroup('priority')
+            ->groups([
+                Tables\Grouping\Group::make('priority')
+                    ->label(__('Priority'))
+                    ->getTitleFromRecordUsing(fn(Todo $todo): string => __(ucfirst($todo->priority)))
+                    ->collapsible(),
+
+                Tables\Grouping\Group::make('status')
+                    ->label(__('Status'))
+                    ->getTitleFromRecordUsing(fn(Todo $todo): string => __(ucfirst($todo->status)))
+                    ->collapsible(),
+            ])
             ->columns([
                 Tables\Columns\TextColumn::make('status')
                     ->translateLabel()
@@ -186,16 +232,19 @@ class TodoResource extends Resource
                     ->icon('heroicon-o-check')
                     ->color('success')
                     ->requiresConfirmation()
-                    ->disabled(fn(?Model $record): bool => $record->status == self::Completed)
+                    ->disabled(function (?Model $todo): bool {
+                        return $todo->status === self::Completed
+                            || !in_array(Auth::id(), $todo->users->pluck('id')->toArray());
+                    })
                     ->action(function (?Model $record): void {
                         $record->status = self::Completed;
                         $record->save();
                     }),
                 Tables\Actions\ActionGroup::make([
-                    Tables\Actions\EditAction::make(),
-                    Tables\Actions\DeleteAction::make(),
-                    Tables\Actions\ForceDeleteAction::make(),
-                    Tables\Actions\RestoreAction::make(),
+                    Tables\Actions\EditAction::make()->visible($canUpdate),
+                    Tables\Actions\DeleteAction::make()->visible($canDelete),
+                    Tables\Actions\ForceDeleteAction::make()->visible($canDelete),
+                    Tables\Actions\RestoreAction::make()->visible($canUpdate),
                 ])
             ])
             ->bulkActions([

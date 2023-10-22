@@ -6,6 +6,8 @@
     "Updated at": "Diperbarui",
     "Is active": "Aktif",
     "Toggle status": "Ubah status",
+    "Title": "Judul",
+    "Description": "Deskripsi",
 
     "Location": "Lokasi",
     "Country": "Negara",
@@ -23,5 +25,21 @@
     "Permission": "Hak akses",
     "User": "Pengguna",
     "Users count": "Total pengguna",
-    "If no role selected, user will be assigned as super user": "Jika tidak ada peran yang dipilih, maka pengguna akan dijadikan sebagai super admin"
+    "If no role selected, user will be assigned as super user": "Jika tidak ada peran yang dipilih, maka pengguna akan dijadikan sebagai super admin",
+
+    "Todo": "Tugas",
+    "Priority": "Prioritas",
+    "Status": "Status",
+    "Assignee": "Penanggung jawab",
+    "Due at": "Tenggat",
+    "Completed": "Selesai",
+    "New": "Baru",
+    "Pending": "Tertunda",
+    "In progress": "Dalam pengerjaan",
+    "Archived": "Diarsipkan",
+    "Low": "Rendah",
+    "Medium": "Sedang",
+    "High": "Tinggi",
+    "Get. Things. Done.": "Selesaikan. Tugas."
+
 }
