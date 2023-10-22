@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\AuthServiceProvider as ServiceProvider;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Gate;
 
 class AuthServiceProvider extends ServiceProvider
@@ -23,8 +22,12 @@ class AuthServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // when user has no roles, it will be assigned as super admin
-        Gate::before(function ($user, $ability) {
-            return Auth::user()->getRoleNames()->count() == 0;
+        Gate::before(function ($user, $ability): ?bool {
+            if ($user->getRoleNames()->count() == 0) {
+                return true;
+            }
+
+            return null;
         });
     }
 }
