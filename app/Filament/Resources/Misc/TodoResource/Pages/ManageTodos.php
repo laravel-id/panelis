@@ -17,4 +17,11 @@ class ManageTodos extends ManageRecords
             Actions\CreateAction::make()->visible(Auth::user()->can('Create todo')),
         ];
     }
+
+    protected function getFooterWidgets(): array
+    {
+        return [
+//            TodoResource\Widgets\TodoStatsOverview::class,
+        ];
+    }
 }
