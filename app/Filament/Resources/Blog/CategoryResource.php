@@ -66,7 +66,7 @@ class CategoryResource extends Resource
                             ->required()
                             ->unique(ignorable: $form->getRecord())
                             ->minLength(3)
-                            ->maxLength(100),
+                            ->maxLength(150),
 
                         Forms\Components\Textarea::make('description')
                             ->columnSpanFull()
