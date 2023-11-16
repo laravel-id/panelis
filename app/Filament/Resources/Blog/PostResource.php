@@ -53,8 +53,11 @@ class PostResource extends Resource
                             ->required()
                             ->minLength(3)
                             ->maxLength(250)
-                            ->live(true)
-                            ->afterStateUpdated(fn(Forms\Set $set, ?string $state) => $set('slug', Str::slug($state))),
+                            ->lazy()
+                            ->afterStateUpdated(function (Forms\Set $set, ?string $state): void {
+                                $set('slug', Str::slug($state));
+                                $set('metadata', ['title' => $state]);
+                            }),
 
                         Forms\Components\TextInput::make('slug')
                             ->required()
@@ -100,6 +103,28 @@ class PostResource extends Resource
                         Forms\Components\DateTimePicker::make('published_at')
                             ->nullable(),
                     ]),
+
+                Forms\Components\Section::make(__('Additional data'))
+                    ->description(__('Set custom metadata for post'))
+                    ->collapsed()
+                    ->columnSpan(2)
+                    ->reactive()
+                    ->schema([
+                        Forms\Components\KeyValue::make('metadata')
+                            ->translateLabel()
+                            ->addActionLabel(__('Add property'))
+                            ->deletable(false)
+                            ->addable(false)
+                            ->default([
+                                'title' => '',
+                                'description' => '',
+                                'keywords' => '',
+                            ]),
+
+                        Forms\Components\KeyValue::make('options')
+                            ->translateLabel()
+
+                    ])
 
             ]);
     }

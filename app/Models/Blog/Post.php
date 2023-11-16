@@ -17,6 +17,8 @@ class Post extends Model
     protected $table = 'blog_posts';
 
     protected $casts = [
+        'metadata' => 'json',
+        'options' => 'json',
         'published_at' => 'datetime',
     ];
 

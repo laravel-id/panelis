@@ -21,6 +21,8 @@ return new class extends Migration
             $table->mediumText('content');
             $table->boolean('is_visible')->default(true);
             $table->dateTime('published_at');
+            $table->json('metadata');
+            $table->json('options');
             $table->timestamps();
             $table->softDeletes();
         });
@@ -36,7 +38,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('blog_posts');
+        // make sure delete relationship first
         Schema::dropIfExists('blog_category_post');
+        Schema::dropIfExists('blog_posts');
     }
 };
