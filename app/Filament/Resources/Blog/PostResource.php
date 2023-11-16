@@ -161,6 +161,14 @@ class PostResource extends Resource
                     ->since(),
             ])
             ->filters([
+                Tables\Filters\TernaryFilter::make('is_visible')
+                    ->translateLabel(),
+                Tables\Filters\SelectFilter::make('user_id')
+                    ->label(__('Authors'))
+                    ->relationship('user', 'name')
+                    ->searchable()
+                    ->multiple()
+                    ->preload(),
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
