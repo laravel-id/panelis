@@ -2,9 +2,12 @@
 
 namespace App\Filament\Resources\Blog\PostResource\Pages;
 
+use App\Events\Blog\PostDeleted;
 use App\Filament\Resources\Blog\PostResource;
+use App\Models\Blog\Post;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Database\Eloquent\Model;
 
 class EditPost extends EditRecord
 {
@@ -14,7 +17,8 @@ class EditPost extends EditRecord
     {
         return [
             Actions\DeleteAction::make(),
-            Actions\ForceDeleteAction::make(),
+            Actions\ForceDeleteAction::make()
+                ->after(fn(?Post $post) => event(new PostDeleted($post))),
             Actions\RestoreAction::make(),
         ];
     }

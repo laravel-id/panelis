@@ -13,6 +13,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class PostResource extends Resource
@@ -73,7 +74,18 @@ class PostResource extends Resource
                     ->columnSpan(1)
                     ->schema([
                         Forms\Components\FileUpload::make('image')
-                            ->label(__('Featured image')),
+                            ->label(__('Featured image'))
+                            ->moveFiles()
+                            ->maxSize(5000)
+                            ->image()
+                            ->imageEditor()
+                            ->imageEditorAspectRatios([
+                                null,
+                                '16:9',
+                                '4:3',
+                                '1:1',
+                            ])
+                            ->directory(sprintf('blog/%s', now()->format('Y/m'))),
 
                         Forms\Components\Select::make('category_id')
                             ->translateLabel()
