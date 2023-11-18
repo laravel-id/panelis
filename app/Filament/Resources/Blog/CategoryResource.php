@@ -109,6 +109,7 @@ class CategoryResource extends Resource
             })
             ->columns([
                 Tables\Columns\ToggleColumn::make('is_visible')
+                    ->visible($canEdit)
                     ->translateLabel(),
 
                 Tables\Columns\TextColumn::make('slug')
