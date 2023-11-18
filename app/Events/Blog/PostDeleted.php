@@ -20,7 +20,7 @@ class PostDeleted
      */
     public function __construct(public ?Post $post)
     {
-        //
+
     }
 
     /**
@@ -31,7 +31,7 @@ class PostDeleted
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('channel-name'),
+            new PrivateChannel('blog-post-deleted'),
         ];
     }
 }

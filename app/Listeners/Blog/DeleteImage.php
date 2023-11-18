@@ -21,8 +21,9 @@ class DeleteImage
      */
     public function handle(object $event): void
     {
-        if (!empty($event->post) && !empty($event->post->image)) {
-            Storage::delete($event->post->image);
+        if (!empty($event->post?->image)) {;
+            Storage::disk($event->post->image_location ?? 'public')
+                ->delete($event->post->image);
         }
     }
 }

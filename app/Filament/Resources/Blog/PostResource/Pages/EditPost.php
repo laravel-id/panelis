@@ -18,6 +18,7 @@ class EditPost extends EditRecord
         return [
             Actions\DeleteAction::make(),
             Actions\ForceDeleteAction::make()
+                ->requiresConfirmation()
                 ->after(fn(?Post $post) => event(new PostDeleted($post))),
             Actions\RestoreAction::make(),
         ];
