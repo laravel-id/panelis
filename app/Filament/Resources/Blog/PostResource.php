@@ -67,7 +67,7 @@ class PostResource extends Resource
 
                         Forms\Components\MarkdownEditor::make('content')
                             ->columnSpanFull()
-                            ->required(),
+                            ->default(''),
                     ]),
 
                 Forms\Components\Section::make()
