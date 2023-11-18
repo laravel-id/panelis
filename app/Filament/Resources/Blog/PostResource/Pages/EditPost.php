@@ -7,7 +7,7 @@ use App\Filament\Resources\Blog\PostResource;
 use App\Models\Blog\Post;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class EditPost extends EditRecord
 {
@@ -15,12 +15,22 @@ class EditPost extends EditRecord
 
     protected function getHeaderActions(): array
     {
+        $canDelete = Auth::user()->can('Delete blog post');
+
         return [
-            Actions\DeleteAction::make(),
+            Actions\DeleteAction::make()->visible($canDelete),
             Actions\ForceDeleteAction::make()
+                ->visible($canDelete)
                 ->requiresConfirmation()
                 ->after(fn(?Post $post) => event(new PostDeleted($post))),
-            Actions\RestoreAction::make(),
+            Actions\RestoreAction::make()->visible(Auth::user()->can('Update blog post')),
         ];
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $data['content'] = !empty($data['content']) ? $data['content'] : '';
+
+        return $data;
     }
 }

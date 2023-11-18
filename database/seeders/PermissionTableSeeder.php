@@ -8,7 +8,7 @@ use Spatie\Permission\Models\Permission;
 
 class PermissionTableSeeder extends Seeder
 {
-    private $permissions = [
+    private array $permissions = [
         // users
         'Create user' => 'Permission to create a new user.',
         'Update user' => 'Permission to update an existing user.',
@@ -42,7 +42,17 @@ class PermissionTableSeeder extends Seeder
         'View all todos' => 'View list of all todos.',
         'Create todo' => 'Create a new todo.',
         'Update todo' => 'Update an existing todo.',
-        'Delete todo' => 'Delete an existing todo.'
+        'Delete todo' => 'Delete an existing todo.',
+
+        // blogs
+        'View blog category' => 'Allows users to view a list of all blog categories.',
+        'Create blog category' => 'Enables users to add new blog categories.',
+        'Update blog category' => 'Permits users to modify existing blog categories.',
+        'Delete blog category' => 'Grants users the ability to remove blog categories.',
+        'View blog post' => 'Gives users the capability to browse and read published blog posts.',
+        'Create blog post' => 'Empowers users to craft and publish new blog posts.',
+        'Update blog post' => 'Empowers users to edit and update existing blog posts.',
+        'Delete blog post' => 'Empowers users to remove blog posts.',
     ];
 
 

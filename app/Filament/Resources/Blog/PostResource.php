@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Blog;
 
+use App\Events\Blog\PostDeleted;
 use App\Filament\Resources\Blog\PostResource\Pages;
 use App\Filament\Resources\Blog\PostResource\RelationManagers;
 use App\Models\Blog\Post;
@@ -13,6 +14,7 @@ use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
@@ -39,7 +41,7 @@ class PostResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return true;
+        return Auth::user()->can('View blog post');
     }
 
     public static function form(Form $form): Form
@@ -62,6 +64,7 @@ class PostResource extends Resource
 
                         Forms\Components\TextInput::make('slug')
                             ->required()
+                            ->unique(ignorable: $form->getRecord())
                             ->minLength(3)
                             ->maxLength(250),
 
@@ -143,9 +146,13 @@ class PostResource extends Resource
 
     public static function table(Table $table): Table
     {
+        $canUpdate = Auth::user()->can('Update blog post');
+        $canDelete = Auth::user()->can('Delete blog post');
+
         return $table
             ->columns([
                 Tables\Columns\ToggleColumn::make('is_visible')
+                    ->visible($canUpdate)
                     ->label(__('Is published')),
 
                 Tables\Columns\TextColumn::make('title')
@@ -172,15 +179,16 @@ class PostResource extends Resource
                 Tables\Filters\TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\EditAction::make()->visible($canUpdate),
+                Tables\Actions\DeleteAction::make()->visible($canDelete),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                    Tables\Actions\ForceDeleteBulkAction::make(),
-                    Tables\Actions\RestoreBulkAction::make(),
-                ]),
+                    Tables\Actions\DeleteBulkAction::make()->visible($canDelete),
+//                    Tables\Actions\ForceDeleteBulkAction::make()
+//                        ->visible($canDelete),
+                    Tables\Actions\RestoreBulkAction::make()->visible($canUpdate),
+                ])->visible($canUpdate || $canDelete),
             ]);
     }
 
