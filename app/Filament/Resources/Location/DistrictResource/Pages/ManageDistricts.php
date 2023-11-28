@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Location\DistrictResource\Pages;
 use App\Filament\Resources\Location\DistrictResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
 class ManageDistricts extends ManageRecords
@@ -21,6 +22,7 @@ class ManageDistricts extends ManageRecords
 
     public function mount(): void
     {
-       abort_unless(Auth::user()->can('View district'), 403);
+        abort_unless(config('modules.location'), Response::HTTP_NOT_FOUND);
+        abort_unless(Auth::user()->can('View district'), Response::HTTP_FORBIDDEN);
     }
 }

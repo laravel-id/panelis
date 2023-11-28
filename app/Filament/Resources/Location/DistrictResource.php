@@ -48,7 +48,7 @@ class DistrictResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()->can('View district');
+        return Auth::user()->can('View district') && config('modules.location');
     }
 
     public static function form(Form $form): Form

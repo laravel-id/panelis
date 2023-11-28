@@ -7,11 +7,18 @@ use App\Filament\Resources\Blog\PostResource;
 use App\Models\Blog\Post;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
 class EditPost extends EditRecord
 {
     protected static string $resource = PostResource::class;
+
+    protected function authorizeAccess(): void
+    {
+        abort_unless(config('modules.blog'), Response::HTTP_NOT_FOUND);
+        abort_unless(Auth::user()->can('Update blog post'), Response::HTTP_FORBIDDEN);
+    }
 
     protected function getHeaderActions(): array
     {

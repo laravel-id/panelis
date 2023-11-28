@@ -43,7 +43,7 @@ class RegionResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()->can('View region');
+        return Auth::user()->can('View region') && config('modules.location');
     }
 
     public static function form(Form $form): Form

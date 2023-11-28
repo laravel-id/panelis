@@ -69,7 +69,8 @@ class TodoResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()->can('View todo') || Auth::user()->can('View all todos');
+        return (Auth::user()->can('View todo') || Auth::user()->can('View all todos'))
+            && config('modules.todo');
     }
 
     public static function form(Form $form): Form

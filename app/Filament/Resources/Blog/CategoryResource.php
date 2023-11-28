@@ -38,7 +38,7 @@ class CategoryResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()->can('View blog category');
+        return Auth::user()->can('View blog category') && config('modules.blog');
     }
 
     public static function form(Form $form): Form

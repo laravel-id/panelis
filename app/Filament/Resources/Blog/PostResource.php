@@ -41,7 +41,7 @@ class PostResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()->can('View blog post');
+        return Auth::user()->can('View blog post') && config('modules.blog');
     }
 
     public static function form(Form $form): Form

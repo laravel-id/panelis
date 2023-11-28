@@ -9,6 +9,7 @@ use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Markdown;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
 class ViewCategory extends ViewRecord
@@ -24,7 +25,8 @@ class ViewCategory extends ViewRecord
 
     protected function authorizeAccess(): void
     {
-        abort_unless(Auth::user()->can('View blog category'), 403);
+        abort_unless(config('modules.blog'), Response::HTTP_NOT_FOUND);
+        abort_unless(Auth::user()->can('View blog category'), Response::HTTP_FORBIDDEN);
     }
 
     public function infolist(Infolist $infolist): Infolist

@@ -5,11 +5,18 @@ namespace App\Filament\Resources\Blog\PostResource\Pages;
 use App\Filament\Resources\Blog\PostResource;
 use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
 class CreatePost extends CreateRecord
 {
     protected static string $resource = PostResource::class;
+
+    protected function authorizeAccess(): void
+    {
+        abort_unless(config('modules.blog'), Response::HTTP_NOT_FOUND);
+        abort_unless(Auth::user()->can('Create blog post'), Response::HTTP_FORBIDDEN);
+    }
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
