@@ -26,12 +26,12 @@ class PostResource extends Resource
 
     public static function getLabel(): ?string
     {
-        return __('Post');
+        return __('blog.post');
     }
 
     public static function getNavigationGroup(): ?string
     {
-        return __('Blog');
+        return __('blog.navigation');
     }
 
     public static function getActiveNavigationIcon(): ?string
@@ -49,10 +49,11 @@ class PostResource extends Resource
         return $form
             ->columns(3)
             ->schema([
-                Forms\Components\Section::make(__('Post'))
+                Forms\Components\Section::make(__('blog.post'))
                     ->columnSpan(2)
                     ->schema([
                         Forms\Components\TextInput::make('title')
+                            ->label(__('blog.attributes.title'))
                             ->required()
                             ->minLength(3)
                             ->maxLength(250)
@@ -63,12 +64,14 @@ class PostResource extends Resource
                             }),
 
                         Forms\Components\TextInput::make('slug')
+                            ->label(__('blog.attributes.slug'))
                             ->required()
                             ->unique(ignorable: $form->getRecord())
                             ->minLength(3)
                             ->maxLength(250),
 
                         Forms\Components\MarkdownEditor::make('content')
+                            ->label(__('blog.attributes.content'))
                             ->columnSpanFull()
                             ->default(''),
                     ]),
@@ -77,7 +80,7 @@ class PostResource extends Resource
                     ->columnSpan(1)
                     ->schema([
                         Forms\Components\FileUpload::make('image')
-                            ->label(__('Featured image'))
+                            ->label(__('blog.attributes.featured_image'))
                             ->moveFiles()
                             ->maxSize(5000)
                             ->image()
@@ -91,13 +94,14 @@ class PostResource extends Resource
                             ->directory(sprintf('blog/%s', now()->format('Y/m'))),
 
                         Forms\Components\Select::make('category_id')
-                            ->translateLabel()
+                            ->label(__('blog.attributes.category'))
                             ->relationship('categories', 'name')
                             ->searchable()
                             ->preload()
                             ->multiple()
                             ->createOptionForm([
                                 Forms\Components\TextInput::make('name')
+                                    ->label(__('blog.attributes.title'))
                                     ->live(true)
                                     ->afterStateUpdated(fn(Forms\Set $set, ?string $state) => $set('slug', Str::slug($state)))
                                     ->required()
@@ -105,29 +109,31 @@ class PostResource extends Resource
                                     ->maxLength(250),
 
                                 Forms\Components\TextInput::make('slug')
+                                    ->label(__('blog.attributes.slug'))
                                     ->required()
                                     ->minLength(3)
                                     ->maxLength(150),
 
                                 Forms\Components\Textarea::make('description')
+                                    ->label(__('blog.attributes.description'))
                                     ->nullable()
                                     ->rows(5)
                                     ->maxLength(250),
                             ]),
 
                         Forms\Components\DateTimePicker::make('published_at')
+                            ->label(__('blog.attributes.published_at'))
                             ->nullable(),
                     ]),
 
-                Forms\Components\Section::make(__('Additional data'))
-                    ->description(__('Set custom metadata for post'))
+                Forms\Components\Section::make(__('blog.additional_data'))
+                    ->description(__('blog.set_custom_metadata'))
                     ->collapsed()
                     ->columnSpan(2)
                     ->reactive()
                     ->schema([
                         Forms\Components\KeyValue::make('metadata')
-                            ->translateLabel()
-                            ->addActionLabel(__('Add property'))
+                            ->addActionLabel(__('blog.label.add_property'))
                             ->deletable(false)
                             ->addable(false)
                             ->default([
@@ -137,7 +143,7 @@ class PostResource extends Resource
                             ]),
 
                         Forms\Components\KeyValue::make('options')
-                            ->translateLabel()
+                            ->label(__('blog.attributes.options'))
 
                     ])
 
@@ -153,25 +159,27 @@ class PostResource extends Resource
             ->columns([
                 Tables\Columns\ToggleColumn::make('is_visible')
                     ->visible($canUpdate)
-                    ->label(__('Is published')),
+                    ->label(__('blog.attributes.is_published')),
 
                 Tables\Columns\TextColumn::make('title')
-                    ->translateLabel(),
+                    ->label(__('blog.title')),
 
                 Tables\Columns\TextColumn::make('categories.name')
-                    ->label(__('Categories')),
+                    ->label(__('blog.categories')),
 
                 Tables\Columns\TextColumn::make('user.name')
-                    ->label(__('Author')),
+                    ->label(__('blog.author')),
 
                 Tables\Columns\TextColumn::make('published_at')
+                    ->label(__('blog.published_at'))
                     ->since(),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('is_visible')
-                    ->translateLabel(),
+                    ->label(__('blog.is_visible')),
+
                 Tables\Filters\SelectFilter::make('user_id')
-                    ->label(__('Authors'))
+                    ->label(__('blog.authors'))
                     ->relationship('user', 'name')
                     ->searchable()
                     ->multiple()
@@ -185,8 +193,6 @@ class PostResource extends Resource
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()->visible($canDelete),
-//                    Tables\Actions\ForceDeleteBulkAction::make()
-//                        ->visible($canDelete),
                     Tables\Actions\RestoreBulkAction::make()->visible($canUpdate),
                 ])->visible($canUpdate || $canDelete),
             ]);

@@ -23,12 +23,12 @@ class CategoryResource extends Resource
 
     public static function getLabel(): ?string
     {
-        return __('Category');
+        return __('blog.category');
     }
 
     public static function getNavigationGroup(): ?string
     {
-        return __('Blog');
+        return __('blog.navigation');
     }
 
     public static function getActiveNavigationIcon(): ?string
@@ -53,6 +53,7 @@ class CategoryResource extends Resource
                     ->columns(2)
                     ->schema([
                         Forms\Components\TextInput::make('name')
+                            ->label(__('blog.attributes.title'))
                             ->required()
                             ->autofocus()
                             ->live(true)
@@ -63,17 +64,20 @@ class CategoryResource extends Resource
                             ->maxLength(100),
 
                         Forms\Components\TextInput::make('slug')
+                            ->label(__('blog.attributes.slug'))
                             ->required()
                             ->unique(ignorable: $form->getRecord())
                             ->minLength(3)
                             ->maxLength(150),
 
                         Forms\Components\Textarea::make('description')
+                            ->label(__('blog.attributes.description'))
                             ->columnSpanFull()
                             ->rows(5)
                             ->maxLength(250),
 
                         Forms\Components\Toggle::make('is_visible')
+                            ->label(__('blog.attributes.is_visible'))
                             ->default(true)
                             ->translateLabel(),
                     ]),
@@ -109,25 +113,30 @@ class CategoryResource extends Resource
             })
             ->columns([
                 Tables\Columns\ToggleColumn::make('is_visible')
+                    ->label('blog.attributes.is_visible')
                     ->visible($canEdit)
                     ->translateLabel(),
 
                 Tables\Columns\TextColumn::make('slug')
+                    ->label('blog.attributes.slug')
                     ->searchable()
                     ->sortable()
                     ->translateLabel(),
 
                 Tables\Columns\TextColumn::make('name')
+                    ->label('blog.attributes.title')
                     ->translateLabel()
                     ->searchable()
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('description')
+                    ->label('blog.attributes.description')
                     ->words(8)
                     ->translateLabel()
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('updated_at')
+                    ->label('blog.attributes.updated_at')
                     ->translateLabel()
                     ->sortable()
                     ->tooltip(fn(?Model $record): string => $record->updated_at)
