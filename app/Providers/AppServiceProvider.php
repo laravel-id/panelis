@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Models\Module;
+use Filament\Facades\Filament;
+use Filament\Navigation\NavigationItem;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
@@ -26,6 +28,22 @@ class AppServiceProvider extends ServiceProvider
         Model::unguard();
 
         $this->registerModules();
+        $this->registerCustomNavigations();
+    }
+
+    private function registerCustomNavigations()
+    {
+        Filament::serving(function () {
+            Filament::registerNavigationItems([
+                NavigationItem::make(__('common.source_code'))
+                    ->sort(200)
+                    ->group(__('setting.navigation'))
+                    ->url('https://github.com/laravel-id/panelis')
+                    ->activeIcon('heroicon-s-code-bracket')
+                    ->icon('heroicon-o-code-bracket'),
+
+            ]);
+        });
     }
 
     private function registerModules()
