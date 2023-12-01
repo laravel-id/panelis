@@ -22,12 +22,12 @@ class CountryResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('Location');
+        return __('location.navigation');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('Country');
+        return __('location.country');
     }
 
     public static function getActiveNavigationIcon(): ?string
@@ -37,7 +37,7 @@ class CountryResource extends Resource
 
     public static function getLabel(): ?string
     {
-        return __('Country');
+        return __('location.country');
     }
 
     public static function shouldRegisterNavigation(): bool
@@ -51,20 +51,20 @@ class CountryResource extends Resource
             ->columns(3)
             ->schema([
                 Forms\Components\TextInput::make('alpha2')
-                    ->label(__('Alpha 2'))
+                    ->label(__('location.fields.alpha2'))
                     ->length(2),
 
                 Forms\Components\TextInput::make('alpha3')
                     ->length(3)
-                    ->label(__('Alpha 3')),
+                    ->label(__('location.fields.alpha3')),
 
                 Forms\Components\TextInput::make('un_code')
-                    ->label(__('UN Code'))
+                    ->label(__('location.fields.un_code'))
                     ->numeric()
                     ->length(3),
 
                 Forms\Components\TextInput::make('name')
-                    ->translateLabel()
+                    ->label(__('location.fields.name'))
                     ->required()
                     ->maxLength(100)
                     ->columnSpanFull()
@@ -80,33 +80,32 @@ class CountryResource extends Resource
             ->paginated(false)
             ->columns([
                 Tables\Columns\ToggleColumn::make('is_active')
-                    ->translateLabel()
+                    ->label(__('location.fields.is_active'))
                     ->visible($canUpdate),
 
                 Tables\Columns\TextColumn::make('name')
-                    ->translateLabel()
+                    ->label(__('location.fields.name'))
                     ->searchable()
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('alpha2')
-                    ->label(__('Alpha 2')),
+                    ->label(__('location.fields.alpha2')),
 
                 Tables\Columns\TextColumn::make('alpha3')
-                    ->label(__('Alpha 3')),
+                    ->label(__('location.fields.alpha2')),
 
                 Tables\Columns\TextColumn::make('un_code')
-                    ->translateLabel()
-                    ->label(__('UN Code')),
+                    ->label(__('location.fields.un_code')),
 
                 Tables\Columns\TextColumn::make('created_at')
-                    ->translateLabel()
+                    ->label(__('common.fields.created_at'))
                     ->sortable()
                     ->tooltip(fn(?Model $record): string => $record->updated_at ?? '')
                     ->since(),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('is_active')
-                    ->translateLabel(),
+                    ->label(__('location.fields.is_visible')),
             ])
             ->actions([
                 Tables\Actions\EditAction::make()
@@ -114,11 +113,11 @@ class CountryResource extends Resource
 
                 Tables\Actions\DeleteAction::make()
                     ->visible($canDelete)
-                    ->modalDescription(__('Are you sure want to do this action? This action will delete related data region and district too.')),
+                    ->modalDescription(__('location.delete_confirmation')),
             ])
             ->bulkActions([
                 Tables\Actions\BulkAction::make('toggle')
-                    ->label(__('Toggle status'))
+                    ->label(__('location.toggle_status'))
                     ->visible($canUpdate)
                     ->color('primary')
                     ->icon('heroicon-m-check-circle')
@@ -132,7 +131,7 @@ class CountryResource extends Resource
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()
                         ->visible($canDelete)
-                        ->modalDescription(__('Are you sure want to do this action? This action will delete related data region and district too.')),
+                        ->modalDescription(__('location.delete_confirmation')),
                 ]),
             ]);
     }

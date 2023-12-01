@@ -25,12 +25,12 @@ class DistrictResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('Location');
+        return __('location.navigation');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('District');
+        return __('location.district');
     }
 
     public static function getActiveNavigationIcon(): ?string
@@ -43,7 +43,7 @@ class DistrictResource extends Resource
      */
     public static function getLabel(): ?string
     {
-        return __('District');
+        return __('location.district');
     }
 
     public static function shouldRegisterNavigation(): bool
@@ -56,16 +56,17 @@ class DistrictResource extends Resource
         return $form
             ->schema([
                 Forms\Components\Select::make('region_id')
-                    ->translateLabel()
+                    ->label(__('location.region'))
                     ->relationship('region', 'name')
                     ->createOptionForm([
                         Forms\Components\Select::make('country_id')
-                            ->translateLabel()
+                            ->label(__('location.country'))
                             ->disabled(!Auth::user()->can('Create region'))
                             ->relationship('country', 'name')
                             ->createOptionForm([
                                 Forms\Components\TextInput::make('name')
-                                    ->translateLabel()
+                                    ->label(__('location.fields.name'
+                                    ))
                                     ->disabled(!Auth::user()->can('Create country'))
                                     ->required()
                                     ->minLength(5)
@@ -76,7 +77,7 @@ class DistrictResource extends Resource
                             ->required(),
 
                         Forms\Components\TextInput::make('name')
-                            ->translateLabel()
+                            ->label('location.fields.name')
                             ->disabled(!Auth::user()->can('Create region'))
                             ->required(),
                     ])
@@ -85,7 +86,7 @@ class DistrictResource extends Resource
                     ->required(),
 
                 Forms\Components\TextInput::make('name')
-                    ->translateLabel()
+                    ->label('location.fields.name')
                     ->required()
                     ->minLength(3)
                     ->maxLength(150),
@@ -100,42 +101,42 @@ class DistrictResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\ToggleColumn::make('is_active')
-                    ->translateLabel()
+                    ->label(__('location.fields.is_active'))
                     ->visible($canUpdate),
 
                 Tables\Columns\TextColumn::make('name')
-                    ->translateLabel()
+                    ->label(__('location.fields.name'))
                     ->sortable()
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('region.name')
-                    ->translateLabel()
+                    ->label(__('location.region'))
                     ->sortable()
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('region.country.name')
-                    ->translateLabel()
+                    ->label(__('location.country'))
                     ->sortable(),
 
                 Tables\Columns\TextColumn::make('created_at')
-                    ->translateLabel()
+                    ->label(__('common.fields.created_at'))
                     ->sortable()
                     ->tooltip(fn(?Model $record): string => $record->updated_at ?? '')
                     ->since(),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('is_active')
-                    ->translateLabel(),
+                    ->label(__('location.fields.is_active')),
 
                 Tables\Filters\SelectFilter::make('country_id')
-                    ->label(__('Country'))
+                    ->label(__('location.country'))
                     ->relationship('region.country', 'name')
                     ->searchable()
                     ->multiple()
                     ->preload(),
 
                 Tables\Filters\SelectFilter::make('region_id')
-                    ->label(__('Region'))
+                    ->label(__('location.region'))
                     ->relationship('region', 'name')
                     ->searchable()
                     ->multiple()
@@ -150,7 +151,7 @@ class DistrictResource extends Resource
             ])
             ->bulkActions([
                 Tables\Actions\BulkAction::make('toggle')
-                    ->label(__('Toggle status'))
+                    ->label(__('location.toggle_status'))
                     ->color('primary')
                     ->icon('heroicon-m-check-circle')
                     ->visible($canUpdate)

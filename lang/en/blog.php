@@ -9,7 +9,7 @@ return [
     'additional_data' => 'Additional data',
     'set_custom_metadata' => 'Set custom metadata for post',
 
-    'attributes' => [
+    'fields' => [
         'title' => 'Title',
         'slug' => 'Slug',
         'content' => 'Content',
@@ -21,8 +21,5 @@ return [
         'featured_image' => 'Featured image',
         'options' => 'Options',
         'published_at' => 'Published at',
-        'created_at' => 'Created at',
-        'updated_at' => 'Updated at',
-        'deleted_at' => 'Deleted at',
     ],
 ];
