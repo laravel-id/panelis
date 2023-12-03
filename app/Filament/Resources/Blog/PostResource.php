@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Filament\Resources\Blog;
+namespace App\Filament\Resources\_NotBlog;
 
-use App\Filament\Resources\Blog\PostResource\Pages;
+use App\Filament\Resources\_NotBlog\PostResource\Pages;
+use App\Filament\Resources\Blog\CategoryResource\Forms\CategoryForm;
 use App\Models\Blog\Post;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -18,7 +19,7 @@ class PostResource extends Resource
 {
     protected static ?string $model = Post::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static bool $isScopedToTenant = false;
 
     public static function getLabel(): ?string
     {
@@ -27,17 +28,18 @@ class PostResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('blog.navigation');
+        return __('navigation.blog');
     }
 
-    public static function getActiveNavigationIcon(): ?string
+    public static function canAccess(): bool
     {
-        return 'heroicon-o-document-text';
+        return true;
+        return Auth::user()->can('ViewBlogPost');
     }
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()->can('View blog post') && config('modules.blog');
+        return config('modules.blog');
     }
 
     public static function form(Form $form): Form
@@ -49,7 +51,7 @@ class PostResource extends Resource
                     ->columnSpan(2)
                     ->schema([
                         Forms\Components\TextInput::make('title')
-                            ->label(__('blog.fields.title'))
+                            ->label(__('blog.title'))
                             ->required()
                             ->minLength(3)
                             ->maxLength(250)
@@ -60,14 +62,14 @@ class PostResource extends Resource
                             }),
 
                         Forms\Components\TextInput::make('slug')
-                            ->label(__('blog.fields.slug'))
+                            ->label(__('blog.slug'))
                             ->required()
                             ->unique(ignorable: $form->getRecord())
                             ->minLength(3)
                             ->maxLength(250),
 
                         Forms\Components\MarkdownEditor::make('content')
-                            ->label(__('blog.fields.content'))
+                            ->label(__('blog.content'))
                             ->columnSpanFull()
                             ->default(''),
                     ]),
@@ -76,7 +78,7 @@ class PostResource extends Resource
                     ->columnSpan(1)
                     ->schema([
                         Forms\Components\FileUpload::make('image')
-                            ->label(__('blog.fields.featured_image'))
+                            ->label(__('blog.featured_image'))
                             ->moveFiles()
                             ->maxSize(5000)
                             ->image()
@@ -90,35 +92,15 @@ class PostResource extends Resource
                             ->directory(sprintf('blog/%s', now()->format('Y/m'))),
 
                         Forms\Components\Select::make('category_id')
-                            ->label(__('blog.fields.category'))
+                            ->label(__('blog.category'))
                             ->relationship('categories', 'name')
                             ->searchable()
                             ->preload()
                             ->multiple()
-                            ->createOptionForm([
-                                Forms\Components\TextInput::make('name')
-                                    ->label(__('blog.fields.title'))
-                                    ->live(true)
-                                    ->afterStateUpdated(fn (Forms\Set $set, ?string $state) => $set('slug', Str::slug($state)))
-                                    ->required()
-                                    ->minLength(3)
-                                    ->maxLength(250),
-
-                                Forms\Components\TextInput::make('slug')
-                                    ->label(__('blog.fields.slug'))
-                                    ->required()
-                                    ->minLength(3)
-                                    ->maxLength(150),
-
-                                Forms\Components\Textarea::make('description')
-                                    ->label(__('blog.fields.description'))
-                                    ->nullable()
-                                    ->rows(5)
-                                    ->maxLength(250),
-                            ]),
+                            ->createOptionForm(CategoryForm::make()),
 
                         Forms\Components\DateTimePicker::make('published_at')
-                            ->label(__('common.fields.published_at'))
+                            ->label(__('ui.published_at'))
                             ->nullable(),
                     ]),
 
@@ -139,7 +121,7 @@ class PostResource extends Resource
                             ]),
 
                         Forms\Components\KeyValue::make('options')
-                            ->label(__('blog.fields.options')),
+                            ->label(__('blog.options')),
 
                     ]),
 
@@ -155,7 +137,7 @@ class PostResource extends Resource
             ->columns([
                 Tables\Columns\ToggleColumn::make('is_visible')
                     ->visible($canUpdate)
-                    ->label(__('blog.fields.is_published')),
+                    ->label(__('blog.is_published')),
 
                 Tables\Columns\TextColumn::make('title')
                     ->label(__('blog.title')),
@@ -167,12 +149,12 @@ class PostResource extends Resource
                     ->label(__('blog.author')),
 
                 Tables\Columns\TextColumn::make('published_at')
-                    ->label(__('blog.fields.published_at'))
+                    ->label(__('blog.published_at'))
                     ->since(),
             ])
             ->filters([
                 Tables\Filters\TernaryFilter::make('is_visible')
-                    ->label(__('blog.fields.is_visible')),
+                    ->label(__('blog.is_visible')),
 
                 Tables\Filters\SelectFilter::make('user_id')
                     ->label(__('blog.authors'))

@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Filament\Resources\Blog\PostResource\Pages;
+namespace App\Filament\Resources\_NotBlog\PostResource\Pages;
 
-use App\Filament\Resources\Blog\PostResource;
+use App\Filament\Resources\_NotBlog\PostResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Http\Response;

@@ -1,9 +1,9 @@
 <?php
 
-namespace App\Filament\Resources\Blog\PostResource\Pages;
+namespace App\Filament\Resources\_NotBlog\PostResource\Pages;
 
 use App\Events\Blog\PostDeleted;
-use App\Filament\Resources\Blog\PostResource;
+use App\Filament\Resources\_NotBlog\PostResource;
 use App\Models\Blog\Post;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
