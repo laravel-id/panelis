@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\_NotBlog\CategoryResource\Forms;
+namespace App\Filament\Resources\Blog\CategoryResource\Forms;
 
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -14,7 +14,7 @@ class CategoryForm
     {
         return [
             TextInput::make('name')
-                ->label(__('blog.fields.title'))
+                ->label(__('blog.category_title'))
                 ->required()
                 ->autofocus()
                 ->live(true)
@@ -25,20 +25,20 @@ class CategoryForm
                 ->maxLength(100),
 
             TextInput::make('slug')
-                ->label(__('blog.fields.slug'))
+                ->label(__('blog.category_slug'))
                 ->required()
                 ->unique(ignoreRecord: true)
                 ->minLength(3)
                 ->maxLength(150),
 
             Textarea::make('description')
-                ->label(__('blog.fields.description'))
+                ->label(__('blog.category_description'))
                 ->columnSpanFull()
                 ->rows(5)
                 ->maxLength(250),
 
             Toggle::make('is_visible')
-                ->label(__('blog.fields.is_visible'))
+                ->label(__('blog.category_is_visible'))
                 ->default(true),
         ];
     }

@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Filament\Resources\_NotBlog\PostResource\Pages;
+namespace App\Filament\Resources\Blog\PostResource\Pages;
 
-use App\Filament\Resources\_NotBlog\PostResource;
+use App\Filament\Resources\Blog\PostResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class ListPosts extends ListRecords
 {
@@ -15,13 +15,14 @@ class ListPosts extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()->visible(Auth::user()->can('Create blog post')),
+            Actions\CreateAction::make()->visible(Auth::user()->can('CreateBlogPost')),
         ];
     }
 
     protected function authorizeAccess(): void
     {
-        abort_unless(config('modules.blog'), Response::HTTP_NOT_FOUND);
-        abort_unless(Auth::user()->can('View blog post'), Response::HTTP_FORBIDDEN);
+        abort_unless(config('module.blog'), Response::HTTP_NOT_FOUND);
+
+        abort_unless(Auth::user()->can('ViewBlogPost'), Response::HTTP_FORBIDDEN);
     }
 }

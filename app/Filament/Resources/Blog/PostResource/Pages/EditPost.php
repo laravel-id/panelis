@@ -1,14 +1,17 @@
 <?php
 
-namespace App\Filament\Resources\_NotBlog\PostResource\Pages;
+namespace App\Filament\Resources\Blog\PostResource\Pages;
 
 use App\Events\Blog\PostDeleted;
-use App\Filament\Resources\_NotBlog\PostResource;
+use App\Filament\Resources\Blog\PostResource;
 use App\Models\Blog\Post;
-use Filament\Actions;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\RestoreAction;
 use Filament\Resources\Pages\EditRecord;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class EditPost extends EditRecord
 {
@@ -16,21 +19,27 @@ class EditPost extends EditRecord
 
     protected function authorizeAccess(): void
     {
-        abort_unless(config('modules.blog'), Response::HTTP_NOT_FOUND);
-        abort_unless(Auth::user()->can('Update blog post'), Response::HTTP_FORBIDDEN);
+        abort_unless(config('module.blog'), Response::HTTP_NOT_FOUND);
+
+        abort_unless(Auth::user()->can('UpdateBlogPost'), Response::HTTP_FORBIDDEN);
     }
 
     protected function getHeaderActions(): array
     {
-        $canDelete = Auth::user()->can('Delete blog post');
+        $canDelete = Auth::user()->can('DeleteBlogPost');
 
         return [
-            Actions\DeleteAction::make()->visible($canDelete),
-            Actions\ForceDeleteAction::make()
-                ->visible($canDelete)
-                ->requiresConfirmation()
-                ->after(fn (?Post $post) => event(new PostDeleted($post))),
-            Actions\RestoreAction::make()->visible(Auth::user()->can('Update blog post')),
+            DeleteAction::make()
+                ->visible($canDelete),
+
+            ActionGroup::make([
+                ForceDeleteAction::make()
+                    ->visible($canDelete)
+                    ->requiresConfirmation()
+                    ->after(fn (Post $post) => event(new PostDeleted($post))),
+
+                RestoreAction::make()->visible(Auth::user()->can('UpdateBlogPost')),
+            ]),
         ];
     }
 
