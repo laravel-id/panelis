@@ -53,7 +53,7 @@ class ViewCategory extends ViewRecord
                     ->columns(2)
                     ->schema([
                         TextEntry::make('name')
-                            ->label(__('blog.category_name'))
+                            ->label(__('blog.category_title'))
                             ->size(TextEntrySize::Large),
 
                         TextEntry::make('slug')
