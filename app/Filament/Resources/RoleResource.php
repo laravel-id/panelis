@@ -74,6 +74,7 @@ class RoleResource extends Resource
 
                 Section::make(__('user.permission'))
                     ->description(__('user.permission_section_description'))
+                    ->visible(fn (Get $get): bool => (bool) $get('is_admin'))
                     ->schema([
                         CheckboxList::make('permission_id')
                             ->label(__('user.permission'))
@@ -88,7 +89,7 @@ class RoleResource extends Resource
                             ->descriptions(
                                 Permission::pluck('description', 'id'),
                             )
-                            ->required(fn (Get $get): bool => (bool) $get('is_admin')),
+                            ->required(),
                     ]),
             ]);
     }
