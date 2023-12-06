@@ -298,5 +298,53 @@
   "ViewCustomSetting": {
     "name": "ViewCustomSetting",
     "guard": "web"
+  },
+  "EditBlogCategory": {
+    "name": "EditBlogCategory",
+    "guard": "web"
+  },
+  "ViewCountryLocation": {
+    "name": "ViewCountryLocation",
+    "guard": "web"
+  },
+  "UpdateCountryLocation": {
+    "name": "UpdateCountryLocation",
+    "guard": "web"
+  },
+  "DeleteCountryLocation": {
+    "name": "DeleteCountryLocation",
+    "guard": "web"
+  },
+  "ViewRegionLocation": {
+    "name": "ViewRegionLocation",
+    "guard": "web"
+  },
+  "CreateCountryLocation": {
+    "name": "CreateCountryLocation",
+    "guard": "web"
+  },
+  "UpdateRegionLocation": {
+    "name": "UpdateRegionLocation",
+    "guard": "web"
+  },
+  "DeleteRegionLocation": {
+    "name": "DeleteRegionLocation",
+    "guard": "web"
+  },
+  "ViewDistrictLocation": {
+    "name": "ViewDistrictLocation",
+    "guard": "web"
+  },
+  "UpdateDistrictLocation": {
+    "name": "UpdateDistrictLocation",
+    "guard": "web"
+  },
+  "DeleteDistrictLocation": {
+    "name": "DeleteDistrictLocation",
+    "guard": "web"
+  },
+  "CreateRegionLocation": {
+    "name": "CreateRegionLocation",
+    "guard": "web"
   }
 }
