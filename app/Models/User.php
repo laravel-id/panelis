@@ -33,6 +33,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property Role $roles
  * @property string $email
  * @property bool $is_root
+ * @property int $id
  */
 class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenants
 {
