@@ -27,6 +27,7 @@ class SettingServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        return;
         $hasSetting = Cache::remember('has_setting', now()->addDay(), function (): bool {
             return Schema::hasTable('settings');
         });

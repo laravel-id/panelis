@@ -22,7 +22,7 @@ class ManageDistricts extends ManageRecords
 
     public function mount(): void
     {
-        abort_unless(config('module.location'), Response::HTTP_NOT_FOUND);
+        abort_unless(config('module.location', false), Response::HTTP_NOT_FOUND);
         abort_unless(Auth::user()->can('ViewDistrictLocation'), Response::HTTP_FORBIDDEN);
     }
 }

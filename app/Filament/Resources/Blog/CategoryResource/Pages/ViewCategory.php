@@ -38,7 +38,7 @@ class ViewCategory extends ViewRecord
 
     protected function authorizeAccess(): void
     {
-        abort_unless(config('module.blog'), Response::HTTP_NOT_FOUND);
+        abort_unless(config('module.blog', false), Response::HTTP_NOT_FOUND);
 
         abort_unless(Auth::user()->can('ViewBlogCategory'), Response::HTTP_FORBIDDEN);
     }
