@@ -3,6 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Models\Branch;
+use App\Providers\Filament\AdminPanelProvider;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Pages\Tenancy\EditTenantProfile;
