@@ -17,6 +17,9 @@ return new class extends Migration
             $table->foreignIdFor(User::class)->constrained();
             $table->string('slug', 100)->unique();
             $table->string('name', 50)->unique();
+            $table->string('address')->nullable();
+            $table->string('phone')->nullable();
+            $table->string('email')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

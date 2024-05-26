@@ -2,8 +2,10 @@
 
 namespace App\Filament\Pages;
 
+use App\Events\Branch\BranchUpdated;
 use App\Models\Branch;
-use App\Providers\Filament\AdminPanelProvider;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Pages\Tenancy\EditTenantProfile;
@@ -20,10 +22,30 @@ class EditBranch extends EditTenantProfile
     public function form(Form $form): Form
     {
         return $form->schema([
-            TextInput::make('name')
+            Section::make([
+                TextInput::make('name')
                 ->label(__('branch.name'))
                 ->maxLength(100),
-            // ->unique(),
+
+                TextInput::make('slug')
+                    ->unique(ignoreRecord: true),
+
+
+            TextInput::make('phone')
+            ->label(__('branch.phone'))
+            ->nullable()
+            ->tel(),
+
+        TextInput::make('email')
+            ->label(__('branch.email'))
+            ->nullable()
+            ->email(),
+
+        Textarea::make('address')
+            ->label(__('branch.address'))
+            ->rows(5)
+            ->nullable(),
+            ])
         ]);
     }
 
@@ -31,6 +53,8 @@ class EditBranch extends EditTenantProfile
     {
         $data['slug'] = Str::slug($data['name']);
         $model->update($data);
+
+        event(new BranchUpdated($model));
 
         return $model;
     }

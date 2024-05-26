@@ -2,11 +2,16 @@
 
 namespace App\Filament\Pages;
 
+use App\Events\Branch\BranchRegistered;
 use App\Models\Branch;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Forms\Set;
 use Filament\Pages\Tenancy\RegisterTenant;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class RegisterBranch extends RegisterTenant
@@ -22,19 +27,39 @@ class RegisterBranch extends RegisterTenant
             TextInput::make('name')
                 ->label(__('branch.name'))
                 ->maxLength(100)
-                ->unique(),
+                ->unique()
+                ->live(onBlur: true)
+                ->afterStateUpdated(function (Set $set, ?string $state): void {
+                    $set('slug', Str::slug($state));
+                }),
+
+            TextInput::make('slug')
+                ->label(__('branch.alias')),
+
+            TextInput::make('phone')
+                ->label(__('branch.phone'))
+                ->nullable()
+                ->tel(),
+
+            TextInput::make('email')
+                ->label(__('branch.email'))
+                ->nullable()
+                ->email(),
+
+            Textarea::make('address')
+                ->label(__('branch.address'))
+                ->rows(5)
+                ->nullable(),
         ]);
     }
-
-    public function handleRegistration(array $data): Branch
+    
+    protected function handleRegistration(array $data): Model
     {
-        $branch = Branch::create([
-            'user_id' => Auth::id(),
-            'slug' => Str::slug($data['name']),
-            'name' => $data['name'],
-        ]);
-        $branch->users()->attach(['user_id' => Auth::id()]);
+        $model = $this->getModel()::create($data);
+        $model->users()->attach(['user_id' => Auth::id()]);
 
-        return $branch;
+        event(new BranchRegistered($model));
+
+        return $model;
     }
 }
