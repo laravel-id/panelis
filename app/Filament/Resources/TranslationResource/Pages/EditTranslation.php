@@ -15,7 +15,7 @@ class EditTranslation extends EditRecord
     {
         return [
             Actions\DeleteAction::make()
-                ->visible(fn(?Translation $line): bool => !$line->is_system),
+                ->visible(fn (?Translation $line): bool => ! $line->is_system),
         ];
     }
 }
