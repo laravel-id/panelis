@@ -83,7 +83,7 @@ return [
     |
     */
 
-    'locale' => 'en',
+    'locale' => env('APP_LOCALE', 'en'),
 
     /*
     |--------------------------------------------------------------------------
@@ -159,6 +159,7 @@ return [
         /*
          * Package Service Providers...
          */
+        Spatie\TranslationLoader\TranslationServiceProvider::class,
 
         /*
          * Application Service Providers...
