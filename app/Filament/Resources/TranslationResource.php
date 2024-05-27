@@ -79,7 +79,8 @@ class TranslationResource extends Resource
                     ->sortable()
                     ->searchable(),
 
-                TextColumn::make(sprintf('text.%s', config('app.locale'))),
+                TextColumn::make(sprintf('text.%s', config('app.locale')))
+                    ->label(__('translation.text')),
 
                 TextColumn::make('updated_at')
                     ->label(__('ui.updated_at'))
