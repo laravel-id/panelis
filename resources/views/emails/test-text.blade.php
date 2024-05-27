@@ -1,0 +1,1 @@
+@lang('setting.mail_test_content')
