@@ -3,7 +3,6 @@
 namespace App\Filament\Pages;
 
 use App\Events\Branch\BranchRegistered;
-use App\Models\Branch;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
@@ -11,7 +10,6 @@ use Filament\Forms\Set;
 use Filament\Pages\Tenancy\RegisterTenant;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 
 class RegisterBranch extends RegisterTenant
@@ -52,7 +50,7 @@ class RegisterBranch extends RegisterTenant
                 ->nullable(),
         ]);
     }
-    
+
     protected function handleRegistration(array $data): Model
     {
         $model = $this->getModel()::create($data);

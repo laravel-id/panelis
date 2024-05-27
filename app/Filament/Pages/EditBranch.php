@@ -24,28 +24,27 @@ class EditBranch extends EditTenantProfile
         return $form->schema([
             Section::make([
                 TextInput::make('name')
-                ->label(__('branch.name'))
-                ->maxLength(100),
+                    ->label(__('branch.name'))
+                    ->maxLength(100),
 
                 TextInput::make('slug')
                     ->unique(ignoreRecord: true),
 
+                TextInput::make('phone')
+                    ->label(__('branch.phone'))
+                    ->nullable()
+                    ->tel(),
 
-            TextInput::make('phone')
-            ->label(__('branch.phone'))
-            ->nullable()
-            ->tel(),
+                TextInput::make('email')
+                    ->label(__('branch.email'))
+                    ->nullable()
+                    ->email(),
 
-        TextInput::make('email')
-            ->label(__('branch.email'))
-            ->nullable()
-            ->email(),
-
-        Textarea::make('address')
-            ->label(__('branch.address'))
-            ->rows(5)
-            ->nullable(),
-            ])
+                Textarea::make('address')
+                    ->label(__('branch.address'))
+                    ->rows(5)
+                    ->nullable(),
+            ]),
         ]);
     }
 
