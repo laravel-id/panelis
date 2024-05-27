@@ -4,6 +4,7 @@ namespace App\Filament\Resources\TranslationResource\Pages;
 
 use App\Filament\Resources\TranslationResource;
 use App\Models\Translation;
+use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
 use Exception;
 use Filament\Actions;
 use Filament\Actions\Action;
@@ -14,20 +15,49 @@ use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Actions\Action as NotificationAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
+use Filament\Support\Enums\MaxWidth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ListTranslations extends ListRecords
 {
     protected static string $resource = TranslationResource::class;
 
+    private static string $disk = 'local';
+
+    private function import(?array $lines, string $locale): void
+    {
+        foreach ($lines as $index => $line) {
+            [$group, $key] = explode('.', $index, 2);
+
+            $trans = Translation::firstOrNew([
+                'group' => $group,
+                'key' => $key,
+            ]);
+
+            $newLine = [$locale => $line['text']];
+
+            $trans->is_system = $line['is_system'];
+            if (!empty($trans->text)) {
+                $trans->text = array_merge($trans->text, $newLine);
+            } else {
+                $trans->text = $newLine;
+            }
+            $trans->save();
+        }
+    }
+
     protected function getHeaderActions(): array
     {
         return [
             Action::make('import')
                 ->label(__('translation.import'))
-                ->requiresConfirmation()
+                ->modalWidth(MaxWidth::Medium)
+                ->modalSubmitActionLabel(__('translation.import_submit'))
+                ->modalDescription(__('translation.import_description'))
                 ->modalIcon('heroicon-o-arrow-up-on-square')
+                ->color('warning')
                 ->form([
                     Radio::make('locale')
                         ->required()
@@ -42,7 +72,7 @@ class ListTranslations extends ListRecords
                         ->previewable(false)
                         ->storeFiles(false)
                         ->fetchFileInformation(false)
-                        ->disk('local')
+                        ->disk(self::$disk)
                         ->visibility('private')
                         ->acceptedFileTypes([
                             'application/json',
@@ -52,24 +82,7 @@ class ListTranslations extends ListRecords
                 ->action(function (array $data): void {
                     $lines = json_decode($data['trans']->getContent(), associative: true);
                     try {
-                        foreach ($lines as $index => $line) {
-                            [$group, $key] = explode('.', $index, 2);
-
-                            $trans = Translation::firstOrNew([
-                                'group' => $group,
-                                'key' => $key,
-                            ]);
-
-                            $newLine = [$data['locale'] => $line['text']];
-
-                            $trans->is_system = $line['is_system'];
-                            if (! empty($trans->text)) {
-                                $trans->text = array_merge($trans->text, $newLine);
-                            } else {
-                                $trans->text = $newLine;
-                            }
-                            $trans->save();
-                        }
+                        $this->import($lines, $data['locale']);
 
                         Notification::make()
                             ->success()
@@ -96,7 +109,6 @@ class ListTranslations extends ListRecords
                                             ];
 
                                             echo json_encode($format);
-
                                         }, 'localization-example.json');
                                     }),
                             ])
@@ -106,9 +118,10 @@ class ListTranslations extends ListRecords
 
             Action::make('export')
                 ->label(__('translation.export'))
-                ->requiresConfirmation()
+                ->modalWidth(MaxWidth::Medium)
+                ->modalDescription(__('translation.export_description'))
                 ->modalIcon('heroicon-o-arrow-down-on-square')
-                ->color('success')
+                ->modalSubmitActionLabel(__('translation.export_submit'))
                 ->form([
                     Radio::make('locale')
                         ->label(__('translation.locale'))
@@ -153,6 +166,64 @@ class ListTranslations extends ListRecords
 
             ActionGroup::make([
                 Actions\CreateAction::make(),
+
+                Action::make('backup')
+                    ->label(__('translation.backup'))
+                    ->icon('heroicon-o-arrow-down-on-square-stack')
+                    ->requiresConfirmation()
+                    ->modalDescription(__('translation.backup_confirmation'))
+                    ->action(function (): void {
+                        try {
+                            foreach (LanguageSwitch::make()->getLocales() as $locale) {
+                                $content = Translation::getFormattedTranslation($locale);
+
+                                Storage::disk(self::$disk)
+                                    ->put(sprintf('locales/%s.json', $locale), json_encode($content));
+                            }
+
+                            Notification::make('backup_success')
+                                ->title(__('translation.backup_success'))
+                                ->success()
+                                ->send();
+                        } catch (Exception $e) {
+                            Log::error($e);
+
+                            Notification::make('backup_failed')
+                                ->title(__('translation.backup_failed'))
+                                ->danger()
+                                ->send();
+                        }
+                    }),
+
+
+                Action::make('restore')
+                    ->label(__('translation.restore'))
+                    ->icon('heroicon-o-arrow-up-on-square-stack')
+                    ->requiresConfirmation()
+                    ->action(function (): void {
+                        try {
+                            $files = Storage::disk(self::$disk)->allFiles('locales');
+                            foreach ($files as $file) {
+                                [$locale, $ext] = explode('.', basename($file), 2);
+                                unset($ext);
+
+                                $content = Storage::disk(self::$disk)->get($file);
+                                $this->import(json_decode($content, associative: true), $locale);
+                            }
+
+                            Notification::make('restore_success')
+                                ->title(__('translation.restore_success'))
+                                ->success()
+                                ->send();
+                        } catch (Exception $e) {
+                            Log::error($e);
+
+                            Notification::make('restore_failed')
+                                ->title(__('translation.restore_failed'))
+                                ->danger()
+                                ->send();
+                        }
+                    }),
             ]),
         ];
     }
