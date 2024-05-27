@@ -31,12 +31,19 @@ class TranslationResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $groups = Translation::orderBy('group')
+            ->groupBy('group')
+            ->pluck('group')
+            ->toArray();
+
         return $form
             ->schema([
                 Section::make()
                     ->schema([
                         TextInput::make('group')
                             ->label(__('translation.group'))
+                            ->autocomplete(false)
+                            ->datalist($groups)
                             ->helperText(function (?string $operation, ?Translation $line): ?string {
                                 if ($operation === 'edit' && ! $line->is_system) {
                                     return __('translation.group_change_warning');
@@ -56,6 +63,7 @@ class TranslationResource extends Resource
 
                                 return null;
                             })
+                            ->autocomplete(false)
                             ->disabled(fn (?Translation $line): bool => $line?->is_system ?? false)
                             ->required(),
 
@@ -72,7 +80,7 @@ class TranslationResource extends Resource
     {
         return $table
             ->defaultGroup('group')
-            ->paginated(false)
+            ->defaultSort('key')
             ->columns([
                 TextColumn::make('key')
                     ->label(__('translation.key'))
