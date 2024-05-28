@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('settings', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(User::class)->nullable()->constrained();
-            $table->string('key')->unique();
+            $table->string('key')->index();
             $table->text('value');
             $table->timestamps();
         });
