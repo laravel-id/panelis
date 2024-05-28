@@ -50,6 +50,12 @@ class ListTranslations extends ListRecords
 
     protected function getHeaderActions(): array
     {
+        $locales = collect(config('app.locales'))
+            ->mapWithKeys(function ($locale): array {
+                return [$locale => LanguageSwitch::make()->getLabel($locale)];
+            })
+            ->toArray();
+
         return [
             Action::make('import')
                 ->label(__('translation.import'))
@@ -63,10 +69,7 @@ class ListTranslations extends ListRecords
                         ->required()
                         ->label(__('translation.locale'))
                         ->live()
-                        ->options([
-                            'en' => __('translation.locale_en'),
-                            'id' => __('translation.locale_id'),
-                        ]),
+                        ->options($locales),
 
                     FileUpload::make('trans')
                         ->previewable(false)
@@ -126,10 +129,7 @@ class ListTranslations extends ListRecords
                     Radio::make('locale')
                         ->label(__('translation.locale'))
                         ->required()
-                        ->options([
-                            'en' => __('translation.locale_en'),
-                            'id' => __('translation.locale_id'),
-                        ]),
+                        ->options($locales),
 
                     Toggle::make('is_system')
                         ->inline(false)

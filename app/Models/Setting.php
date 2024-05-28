@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 /**
  * @method static updateOrCreate(array $keys, array $data)
@@ -25,19 +27,29 @@ class Setting extends Model
     public function value(): Attribute
     {
         return Attribute::make(
-            get: function (?string $value): string {
+            get: function (?string $value): string|array {
                 try {
                     if (! empty($value) && config('setting.encrypt_value')) {
-                        return Crypt::decryptString($value);
+                        $value = Crypt::decryptString($value);
+                        if (Str::isJson($value)) {
+                            return json_decode($value, true);
+                        }
+
+                        return $value;
                     }
-                } catch (DecryptException) {
+                } catch (DecryptException $e) {
+                    Log::error($e);
                 }
 
                 return '';
             },
 
-            set: function (?string $value): string {
-                if (! empty($value) && config('setting.encrypt_value')) {
+            set: function (mixed $value): string {
+                if (is_array($value)) {
+                    $value = json_encode($value);
+                }
+
+                if ($value !== '' && config('setting.encrypt_value')) {
                     return Crypt::encryptString($value);
                 }
 

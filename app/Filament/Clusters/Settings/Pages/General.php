@@ -8,6 +8,7 @@ use App\Models\Setting;
 use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -17,7 +18,7 @@ use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Arr;
+use Illuminate\Support\HtmlString;
 
 class General extends Page
 {
@@ -45,8 +46,10 @@ class General extends Page
     {
         $this->form->fill([
             'app' => [
+                'debug' => config('app.debug'),
                 'name' => config('app.name'),
                 'description' => config('app.description'),
+                'locales' => config('app.locales'),
                 'locale' => Setting::getByKey('app.locale', config('app.locale')),
                 'email' => config('app.email'),
                 'email_as_sender' => config('app.email_as_sender'),
@@ -56,7 +59,11 @@ class General extends Page
 
     public function form(Form $form): Form
     {
-        $locales = LanguageSwitch::make()->getLocales();
+        $locales = collect(config('app.locales'))
+            ->mapWithKeys(function ($locale): array {
+                return [$locale => LanguageSwitch::make()->getLabel($locale)];
+            })
+            ->toArray();
 
         return $form->schema([
             Section::make(__('setting.general'))
@@ -72,6 +79,16 @@ class General extends Page
                         ->label(__('setting.description'))
                         ->rows(5)
                         ->nullable(),
+
+                    TagsInput::make('app.locales')
+                        ->label(__('setting.available_locales'))
+                        ->hintColor('primary')
+                        ->hint(function (): Htmlable {
+                            return new HtmlString(__('setting.locale_list_hint', [
+                                'link' => 'https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes',
+                            ]));
+                        })
+                        ->required(),
 
                     Radio::make('app.locale')
                         ->label(__('setting.default_locale'))
@@ -95,17 +112,31 @@ class General extends Page
                             return empty($email) || ! filter_var($email, FILTER_VALIDATE_EMAIL);
                         }),
                 ]),
-        ]);
+
+            Section::make(__('setting.development_mode'))
+                ->collapsed()
+                ->schema([
+                    Toggle::make('app.debug')
+                        ->label(__('setting.app_debug'))
+                        ->helperText(fn (): ?string => app()->isProduction() ? __('setting.debug_recommendation') : null),
+                ]),
+        ])->disabled(config('app.demo'));
     }
 
     public function update(): void
     {
         $this->validate();
 
-        foreach (Arr::dot($this->form->getState()) as $key => $value) {
-            if (empty($value)) {
-                $value = '';
+        if (config('app.demo')) {
+            return;
+        }
+
+        foreach ($this->form->getState()['app'] as $key => $value) {
+            $key = sprintf('app.%s', $key);
+            if ($value === false) {
+                $value = '0';
             }
+
             Setting::updateOrCreate(compact('key'), compact('value'));
         }
 

@@ -24,12 +24,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->overrideConfig();
+
         LanguageSwitch::configureUsing(function (LanguageSwitch $lang) {
-            $lang->locales(['en', 'id'])
+            $lang->locales(config('app.locales'))
                 ->circular();
         });
-
-        $this->overrideConfig();
     }
 
     private function overrideConfig(): void
