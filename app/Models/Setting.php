@@ -6,6 +6,7 @@ use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Crypt;
 
@@ -56,7 +57,10 @@ class Setting extends Model
                 ->first()
                 ?->value ?? $default;
         }
+    }
 
-        return null;
+    public function user(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class);
     }
 }
