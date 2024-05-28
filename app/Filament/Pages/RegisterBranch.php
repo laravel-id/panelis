@@ -32,7 +32,8 @@ class RegisterBranch extends RegisterTenant
                 }),
 
             TextInput::make('slug')
-                ->label(__('branch.alias')),
+                ->label(__('branch.alias'))
+                ->alphaDash(),
 
             TextInput::make('phone')
                 ->label(__('branch.phone'))

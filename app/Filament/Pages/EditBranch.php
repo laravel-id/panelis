@@ -28,6 +28,7 @@ class EditBranch extends EditTenantProfile
                     ->maxLength(100),
 
                 TextInput::make('slug')
+                    ->alphaDash()
                     ->unique(ignoreRecord: true),
 
                 TextInput::make('phone')
