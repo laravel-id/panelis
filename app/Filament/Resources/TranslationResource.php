@@ -52,7 +52,8 @@ class TranslationResource extends Resource
                                 return null;
                             })
                             ->disabled(fn (?Translation $line): bool => $line?->is_system ?? false)
-                            ->required(),
+                            ->required()
+                            ->alphaDash(),
 
                         TextInput::make('key')
                             ->label(__('translation.key'))
@@ -65,13 +66,15 @@ class TranslationResource extends Resource
                             })
                             ->autocomplete(false)
                             ->disabled(fn (?Translation $line): bool => $line?->is_system ?? false)
+                            ->alphaDash()
                             ->required(),
 
                         KeyValue::make('text')
                             ->label(__('translation.text'))
                             ->addActionLabel(__('translation.add_line'))
                             ->keyLabel(__('translation.lang'))
-                            ->valueLabel(__('translation.line')),
+                            ->valueLabel(__('translation.line'))
+                            ->required(),
                     ]),
             ]);
     }
