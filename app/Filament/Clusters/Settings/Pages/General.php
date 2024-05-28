@@ -36,6 +36,11 @@ class General extends Page
         return __('setting.general');
     }
 
+    public static function getNavigationLabel(): string
+    {
+        return __('setting.general');
+    }
+
     public function mount(): void
     {
         $this->form->fill([
