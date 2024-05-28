@@ -37,13 +37,18 @@ class Mail extends Page
         return __('setting.mail');
     }
 
+    public static function getNavigationLabel(): string
+    {
+        return __('setting.mail');
+    }
+
     public function getHeaderActions(): array
     {
         return [
             Action::make('test_mail')
-                ->label(__('setting.mail_button_test_mail'))
+                ->label(__('setting.mail_test_button'))
                 ->requiresConfirmation()
-                ->modalSubmitActionLabel(__('setting.mail_button_send_test'))
+                ->modalSubmitActionLabel(__('setting.mail_test_button_send'))
                 ->form([
                     TextInput::make('email')
                         ->label(__('setting.email'))
