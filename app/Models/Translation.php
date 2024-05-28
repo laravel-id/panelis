@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Contracts\Database\Query\Builder;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Spatie\TranslationLoader\LanguageLine;
 
 class Translation extends LanguageLine
@@ -13,6 +14,20 @@ class Translation extends LanguageLine
         'text' => 'array',
         'is_system' => 'boolean',
     ];
+
+    public function group(): Attribute
+    {
+        return Attribute::make(
+            set: fn (string $value): string => strtolower($value),
+        );
+    }
+
+    public function key(): Attribute
+    {
+        return Attribute::make(
+            set: fn (string $value): string => strtolower($value),
+        );
+    }
 
     public static function getFormattedTranslation(string $locale, bool $isSystem = false): ?array
     {
