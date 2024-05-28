@@ -83,7 +83,8 @@ class Datetime extends Page
                     Placeholder::make('datetime_sample')
                         ->label(__('setting.datetime_sample'))
                         ->content(function (Get $get): string {
-                            return now($get('app.datetime_timezone'))->format($get('app.datetime_format'));
+                            return now($get('app.datetime_timezone'))
+                                ->translatedFormat($get('app.datetime_format'));
                         }),
                 ]),
         ]);

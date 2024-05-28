@@ -96,7 +96,7 @@ class TranslationResource extends Resource
                 TextColumn::make('updated_at')
                     ->label(__('ui.updated_at'))
                     ->sortable()
-                    ->dateTime(),
+                    ->dateTime(config('app.datetime_format'), config('app.datetime_timezone')),
             ])
             ->filters([
                 SelectFilter::make('group')
