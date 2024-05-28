@@ -89,12 +89,23 @@ class Mail extends Page
 
     public function form(Form $form): Form
     {
+        $isDemo = config('app.demo');
+        $demoText = function (): ?string {
+            if (config('app.demo')) {
+                return __('setting.hidden_when_in_demo');
+            }
+
+            return null;
+        };
+
         return $form->schema([
             Section::make(__('setting.mail'))
                 ->description(__('setting.mail_info'))
                 ->schema([
                     TextInput::make('mail.mailers.smtp.host')
                         ->label(__('setting.mail_host'))
+                        ->password($isDemo)
+                        ->helperText($demoText)
                         ->required(),
 
                     TextInput::make('mail.mailers.smtp.port')
@@ -104,6 +115,8 @@ class Mail extends Page
 
                     TextInput::make('mail.mailers.smtp.username')
                         ->label(__('setting.mail_username'))
+                        ->password($isDemo)
+                        ->helperText($demoText)
                         ->autocomplete(false)
                         ->nullable(),
 
@@ -124,12 +137,16 @@ class Mail extends Page
                             'starttls' => 'STARTTLS',
                         ]),
                 ]),
-        ]);
+        ])->disabled(config('app.demo'));
     }
 
     public function update(): void
     {
         $this->validate();
+
+        if (config('app.demo')) {
+            return;
+        }
 
         foreach (Arr::dot($this->form->getState()) as $key => $value) {
             if (empty($value)) {
