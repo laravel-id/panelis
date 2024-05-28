@@ -10,6 +10,9 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Crypt;
 
+/**
+ * @method static updateOrCreate(array $keys, array $data)
+ */
 class Setting extends Model
 {
     use HasFactory;
