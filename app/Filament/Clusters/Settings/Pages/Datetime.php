@@ -45,7 +45,7 @@ class Datetime extends Page
     public function mount()
     {
         $this->form->fill([
-            'app.datetime_timezone' => config('app.timezone', 'UTC'),
+            'app.datetime_timezone' => config('app.datetime_timezone', 'UTC'),
             'app.datetime_format' => config('app.datetime_format', 'Y m d H:i'),
         ]);
     }
