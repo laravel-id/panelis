@@ -94,21 +94,21 @@ class Mail extends Page
                 ->description(__('setting.mail_info'))
                 ->schema([
                     TextInput::make('mail.mailers.smtp.host')
-                        ->label('setting.mail_host')
+                        ->label(__('setting.mail_host'))
                         ->required(),
 
                     TextInput::make('mail.mailers.smtp.port')
-                        ->label('setting.mail_port')
+                        ->label(__('setting.mail_port'))
                         ->integer()
                         ->required(),
 
                     TextInput::make('mail.mailers.smtp.username')
-                        ->label('setting.mail_username')
+                        ->label(__('setting.mail_username'))
                         ->autocomplete(false)
                         ->nullable(),
 
                     TextInput::make('mail.mailers.smtp.password')
-                        ->label('setting.mail_password')
+                        ->label(__('setting.mail_password'))
                         ->autocomplete(false)
                         ->password()
                         ->revealable()
