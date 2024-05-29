@@ -29,7 +29,7 @@ class Setting extends Model
     public function value(): Attribute
     {
         return Attribute::make(
-            get: function (?string $value): string|array {
+            get: function (?string $value): null|string|array {
                 try {
                     if (! empty($value) && config('setting.encrypt_value')) {
                         $value = Crypt::decryptString($value);
@@ -37,13 +37,13 @@ class Setting extends Model
                             return json_decode($value, true);
                         }
 
-                        return $value;
+                        return unserialize($value);
                     }
                 } catch (DecryptException $e) {
                     Log::error($e);
                 }
 
-                return '';
+                return unserialize($value);
             },
 
             set: function (mixed $value): string {
@@ -52,10 +52,10 @@ class Setting extends Model
                 }
 
                 if ($value !== '' && config('setting.encrypt_value')) {
-                    return Crypt::encryptString($value);
+                    return Crypt::encryptString(serialize($value));
                 }
 
-                return '';
+                return serialize($value);
             },
         );
     }
