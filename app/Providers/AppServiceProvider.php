@@ -26,7 +26,7 @@ class AppServiceProvider extends ServiceProvider
         $this->overrideConfig();
 
         LanguageSwitch::configureUsing(function (LanguageSwitch $lang) {
-            $lang->locales(config('app.locales'))
+            $lang->locales(config('app.locales') ?? [config('app.locale')])
                 ->circular();
         });
 

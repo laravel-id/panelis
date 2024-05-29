@@ -49,7 +49,7 @@ class General extends Page
                 'debug' => config('app.debug'),
                 'name' => config('app.name'),
                 'description' => config('app.description'),
-                'locales' => config('app.locales'),
+                'locales' => config('app.locales', [config('app.locale')]),
                 'locale' => Setting::getByKey('app.locale', config('app.locale')),
                 'email' => config('app.email'),
                 'email_as_sender' => config('app.email_as_sender'),
@@ -64,6 +64,12 @@ class General extends Page
                 return [$locale => LanguageSwitch::make()->getLabel($locale)];
             })
             ->toArray();
+
+        // no locales in database setting
+        // use default locale from Laravel
+        if (empty($locales)) {
+            $locales[config('app.locale')] = LanguageSwitch::make()->getLabel(config('app.locale'));
+        }
 
         return $form->schema([
             Section::make(__('setting.general'))
@@ -88,13 +94,23 @@ class General extends Page
                                 'link' => 'https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes',
                             ]));
                         })
+                        ->live()
                         ->required(),
 
                     Radio::make('app.locale')
                         ->label(__('setting.default_locale'))
                         ->default(Setting::getByKey('app.locale'))
                         ->required()
-                        ->options(array_combine($locales, $locales)),
+                        ->options(function (Get $get): array {
+                            $locales = $get('app.locales');
+                            if (! empty($locales)) {
+                                return array_combine($locales, array_map(function ($locale): string {
+                                    return LanguageSwitch::make()->getLabel($locale);
+                                }, $locales));
+                            }
+
+                            return [];
+                        }),
 
                     TextInput::make('app.email')
                         ->label(__('setting.email'))
