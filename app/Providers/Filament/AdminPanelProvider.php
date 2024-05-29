@@ -4,6 +4,7 @@ namespace App\Providers\Filament;
 
 use App\Filament\Pages\EditBranch;
 use App\Filament\Pages\RegisterBranch;
+use App\Http\Middleware\OverrideUserConfig;
 use App\Models\Branch;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -59,6 +60,9 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+
+                // custom middlewares
+                OverrideUserConfig::class,
             ])
             ->authMiddleware([
                 Authenticate::class,

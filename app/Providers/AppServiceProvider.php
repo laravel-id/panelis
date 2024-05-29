@@ -10,6 +10,19 @@ use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
+    private function overrideDefaultConfig(): void
+    {
+        foreach (Setting::getAll() as $setting) {
+            $value = $setting->value;
+            if ($value === '1' || $value === '0') {
+                $value = boolval($value);
+            }
+
+            Config::set($setting->key, $value);
+        }
+
+    }
+
     /**
      * Register any application services.
      */
@@ -23,10 +36,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $this->overrideConfig();
+        $this->overrideDefaultConfig();
 
         LanguageSwitch::configureUsing(function (LanguageSwitch $lang) {
-            $lang->locales(config('app.locales') ?? [config('app.locale')])
+            $lang->locales(['id', 'en'])
                 ->circular();
         });
 
@@ -68,16 +81,5 @@ class AppServiceProvider extends ServiceProvider
 
             return vsprintf($placeholder ?? '%s%s', $currency);
         });
-    }
-
-    private function overrideConfig(): void
-    {
-        foreach (Setting::getAll() as $setting) {
-            $value = $setting->value;
-            if ($value === '1' || $value === '0') {
-                $value = boolval($value);
-            }
-            Config::set($setting->key, $value);
-        }
     }
 }
