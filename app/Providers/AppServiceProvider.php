@@ -7,6 +7,7 @@ use App\Services\Database\Database;
 use App\Services\Database\DatabaseFactory;
 use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Number;
 use Illuminate\Support\ServiceProvider;
 
@@ -14,6 +15,10 @@ class AppServiceProvider extends ServiceProvider
 {
     private function overrideDefaultConfig(): void
     {
+        if (! Schema::hasTable((new Setting())->getTable())) {
+            return;
+        }
+
         foreach (Setting::getAll() as $setting) {
             $value = $setting->value;
             if ($value === '1' || $value === '0') {
@@ -30,7 +35,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(Database::class, function ($app): object {
+        $this->app->bind(Database::class, function ($app): ?object {
             return DatabaseFactory::make();
         });
     }
