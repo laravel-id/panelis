@@ -54,6 +54,7 @@ class RegisterBranch extends RegisterTenant
 
     protected function handleRegistration(array $data): Model
     {
+        $data['user_id'] = Auth::id();
         $model = $this->getModel()::create($data);
         $model->users()->attach(['user_id' => Auth::id()]);
 
