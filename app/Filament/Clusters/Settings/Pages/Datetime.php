@@ -22,7 +22,7 @@ class Datetime extends Page
 {
     use InteractsWithForms;
 
-    protected static ?string $navigationIcon = 'heroicon-o-clock';
+    protected static ?string $navigationIcon = 'heroicon-o-calendar';
 
     protected static string $view = 'filament.clusters.settings.pages.setting';
 

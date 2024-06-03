@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Models\Setting;
+use App\Services\Database\Database;
+use App\Services\Database\DatabaseFactory;
 use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Number;
@@ -28,7 +30,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->bind(Database::class, function ($app): object {
+            return DatabaseFactory::make();
+        });
     }
 
     /**

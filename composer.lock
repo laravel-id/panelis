@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2ad8cfd5fcaccb8b055f26fd191ec3a4",
+    "content-hash": "29c40f28ab061e3e4c8ff2eeffe59aee",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -356,6 +356,60 @@
                 }
             ],
             "time": "2023-11-29T23:19:16+00:00"
+        },
+        {
+            "name": "calebporzio/sushi",
+            "version": "v2.5.2",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/calebporzio/sushi.git",
+                "reference": "01dd34fe3374f5fb7ce63756c0419385e31cd532"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/calebporzio/sushi/zipball/01dd34fe3374f5fb7ce63756c0419385e31cd532",
+                "reference": "01dd34fe3374f5fb7ce63756c0419385e31cd532",
+                "shasum": ""
+            },
+            "require": {
+                "ext-pdo_sqlite": "*",
+                "ext-sqlite3": "*",
+                "illuminate/database": "^5.8 || ^6.0 || ^7.0 || ^8.0 || ^9.0 || ^10.0 || ^11.0",
+                "illuminate/support": "^5.8 || ^6.0 || ^7.0 || ^8.0 || ^9.0 || ^10.0 || ^11.0",
+                "php": "^7.1.3|^8.0"
+            },
+            "require-dev": {
+                "doctrine/dbal": "^2.9 || ^3.1.4",
+                "orchestra/testbench": "3.8.* || 3.9.* || ^4.0 || ^6.0 || ^7.0 || ^8.0 || ^9.0",
+                "phpunit/phpunit": "^7.5 || ^8.4 || ^9.0 || ^10.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Sushi\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Caleb Porzio",
+                    "email": "calebporzio@gmail.com"
+                }
+            ],
+            "description": "Eloquent's missing \"array\" driver.",
+            "support": {
+                "source": "https://github.com/calebporzio/sushi/tree/v2.5.2"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/calebporzio",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-04-24T15:23:03+00:00"
         },
         {
             "name": "carbonphp/carbon-doctrine-types",
@@ -2283,6 +2337,64 @@
                 "source": "https://github.com/kirschbaum-development/eloquent-power-joins/tree/3.5.6"
             },
             "time": "2024-04-09T00:35:30+00:00"
+        },
+        {
+            "name": "koalafacade/filament-alertbox",
+            "version": "v1.0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/KoalaFacade/Filament-Alertbox.git",
+                "reference": "4a9baf03b25e245ba2eadd836db233a50d032fdd"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/KoalaFacade/Filament-Alertbox/zipball/4a9baf03b25e245ba2eadd836db233a50d032fdd",
+                "reference": "4a9baf03b25e245ba2eadd836db233a50d032fdd",
+                "shasum": ""
+            },
+            "require": {
+                "filament/filament": "^3.0",
+                "php": "^8.1",
+                "spatie/laravel-package-tools": "^1.13"
+            },
+            "require-dev": {
+                "laravel/pint": "^1.3",
+                "nunomaduro/collision": "^6.4",
+                "nunomaduro/larastan": "^2.3",
+                "orchestra/testbench": "^7.18",
+                "pestphp/pest": "^1.22",
+                "pestphp/pest-plugin-laravel": "^1.3",
+                "pestphp/pest-plugin-livewire": "^1.0"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "KoalaFacade\\FilamentAlertBox\\FilamentAlertBoxServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "KoalaFacade\\FilamentAlertBox\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Stiven Trizky Katuuk",
+                    "email": "pemudakoding@gmail.com"
+                }
+            ],
+            "description": "Alert box field for Filament forms",
+            "support": {
+                "issues": "https://github.com/KoalaFacade/Filament-Alertbox/issues",
+                "source": "https://github.com/KoalaFacade/Filament-Alertbox/tree/v1.0.1"
+            },
+            "time": "2023-08-07T11:56:37+00:00"
         },
         {
             "name": "laravel/framework",

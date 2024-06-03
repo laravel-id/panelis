@@ -4,11 +4,11 @@ namespace App\Filament\Clusters;
 
 use Filament\Clusters\Cluster;
 
-class Settings extends Cluster
+class Databases extends Cluster
 {
-    protected static ?string $navigationIcon = 'heroicon-o-wrench';
+    protected static ?string $navigationIcon = 'heroicon-o-circle-stack';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 2;
 
     public static function getNavigationGroup(): ?string
     {
@@ -17,6 +17,6 @@ class Settings extends Cluster
 
     public static function getNavigationLabel(): string
     {
-        return __('setting.title');
+        return __('navigation.database');
     }
 }
