@@ -26,7 +26,7 @@ class Datetime extends Page
 
     protected static string $view = 'filament.clusters.settings.pages.setting';
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 4;
 
     protected static ?string $cluster = Settings::class;
 

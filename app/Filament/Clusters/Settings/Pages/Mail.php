@@ -30,6 +30,8 @@ class Mail extends Page
 
     protected static ?string $cluster = Settings::class;
 
+    protected static ?int $navigationSort = 3;
+
     public array $mail;
 
     public function getTitle(): string|Htmlable

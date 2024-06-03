@@ -24,9 +24,16 @@ class TranslationResource extends Resource
 
     protected static bool $isScopedToTenant = false;
 
+    protected static ?int $navigationSort = 2;
+
     public static function getModelLabel(): string
     {
         return __('translation.title');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('navigation.system');
     }
 
     public static function form(Form $form): Form
