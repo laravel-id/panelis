@@ -14,6 +14,7 @@ use Sushi\Sushi;
  * @property string $name
  * @property string $extension
  * @property Carbon $created_at
+ * @property int $size
  *
  * @method static count()
  */
@@ -45,6 +46,7 @@ class Database extends Model
                     'path' => $file,
                     'name' => sprintf('%s.%s', $createdAt->toDateTimeString(), $ext),
                     'extension' => $ext,
+                    'size' => Storage::size($file),
                     'created_at' => $createdAt,
                 ];
             })

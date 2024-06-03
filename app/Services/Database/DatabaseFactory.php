@@ -2,14 +2,18 @@
 
 namespace App\Services\Database;
 
+use App\Models\Enums\DatabaseType;
+use App\Services\Database\Vendors\MySQL;
 use App\Services\Database\Vendors\SQLite;
 
 class DatabaseFactory
 {
-    public static function make()
+    public static function make(): ?object
     {
-        if (config('database.default') === 'sqlite') {
-            return new SQLite;
-        }
+        return match (config('database.default')) {
+            DatabaseType::SQLite->value => new SQLite,
+            DatabaseType::MySQL->value => new MySQL,
+            default => null,
+        };
     }
 }

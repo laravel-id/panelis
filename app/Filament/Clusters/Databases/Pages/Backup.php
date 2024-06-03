@@ -14,6 +14,7 @@ use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Number;
 
 class Backup extends Page implements HasTable
 {
@@ -48,6 +49,10 @@ class Backup extends Page implements HasTable
             ->columns([
                 TextColumn::make('name')
                     ->label(__('database.file_name')),
+
+                TextColumn::make('size')
+                    ->label(__('database.size'))
+                    ->formatStateUsing(fn (Database $db): ?string => Number::fileSize($db->size)),
 
                 TextColumn::make('created_at')
                     ->label(__('database.created_at'))

@@ -54,9 +54,9 @@ class AutoBackup extends Page implements HasForms
 
     public bool $isButtonDisabled = true;
 
-    private Database $databaseService;
+    private ?Database $databaseService;
 
-    public function boot(Database $database): void
+    public function boot(?Database $database): void
     {
         $this->databaseService = $database;
     }
@@ -79,25 +79,26 @@ class AutoBackup extends Page implements HasForms
                         return;
                     } catch (Exception $e) {
                         Log::error($e);
-                    }
 
-                    Notification::make('backup_failed')
-                        ->title(__('database.file_not_created'))
-                        ->warning()
-                        ->send();
+                        Notification::make('backup_failed')
+                            ->title(__('database.file_not_created'))
+                            ->body($e->getMessage())
+                            ->warning()
+                            ->send();
+                    }
                 }),
         ];
     }
 
     public function mount(): void
     {
-        if (! $this->databaseService->isAvailable()) {
+        if (! $this->databaseService?->isAvailable()) {
             Setting::where('key', 'database.auto_backup_enabled')->delete();
             config()->set('database.auto_backup_enabled', false);
         }
 
         $this->form->fill([
-            'isButtonDisabled' => ! $this->databaseService->isAvailable(),
+            'isButtonDisabled' => ! $this->databaseService?->isAvailable(),
             'database' => [
                 'auto_backup_enabled' => config('database.auto_backup_enabled', false),
                 'backup_period' => config('database.backup_period'),
@@ -114,9 +115,9 @@ class AutoBackup extends Page implements HasForms
         return $form->schema([
             AlertBox::make('package_installed')
                 ->warning()
-                ->label('Auto backup is disabled')
-                ->helperText('It looks like you don not have SQLite package on your system.')
-                ->hidden(fn (): bool => $this->databaseService->isAvailable()),
+                ->label(__('database.auto_backup_is_disabled'))
+                ->helperText(__('database.auto_backup_disabled_reason'))
+                ->hidden(fn (): bool => $this->databaseService?->isAvailable() ?? false),
 
             Section::make(__('database.auto_backup'))
                 ->description(__('database.auto_backup_info'))
@@ -127,7 +128,7 @@ class AutoBackup extends Page implements HasForms
 
                     Placeholder::make('database.version')
                         ->label(__('database.version'))
-                        ->content($this->databaseService->getVersion()),
+                        ->content($this->databaseService?->getVersion()),
 
                     Placeholder::make('database.url')
                         ->label(__('database.path'))
@@ -137,11 +138,18 @@ class AutoBackup extends Page implements HasForms
                     Toggle::make('database.auto_backup_enabled')
                         ->label(__('database.backup_enabled'))
                         ->live()
-                        ->disabled(fn (): bool => ! $this->databaseService->isAvailable()),
+                        ->disabled(fn (): bool => ! $this->databaseService?->isAvailable()),
 
                     Placeholder::make('database.size')
                         ->label(__('database.size'))
-                        ->content(Number::fileSize(File::size($database['database'])))
+                        ->visible(fn (): bool => config('database.default') === DatabaseType::SQLite->value)
+                        ->content(function () use ($database): ?string {
+                            if (config('database.default') === DatabaseType::SQLite->value) {
+                                return Number::fileSize(File::size($database['database']));
+                            }
+
+                            return null;
+                        })
                         ->disabled(fn (Get $get): bool => ! $get('database.auto_backup_enabled')),
 
                     Radio::make('database.backup_period')
