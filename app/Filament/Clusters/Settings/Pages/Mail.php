@@ -121,7 +121,7 @@ class Mail extends Page
                         ->required(),
                 ]),
 
-            Section::make('setting.mail_sendmail')
+            Section::make(__('setting.mail_sendmail'))
                 ->description(__('setting.mail_sendmail_info'))
                 ->visible(fn (Get $get): bool => $get('mail.default') === MailType::Sendmail->value)
                 ->schema([
