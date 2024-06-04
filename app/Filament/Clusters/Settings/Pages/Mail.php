@@ -5,6 +5,7 @@ namespace App\Filament\Clusters\Settings\Pages;
 use App\Events\SettingUpdated;
 use App\Filament\Clusters\Settings;
 use App\Mail\TestMail;
+use App\Models\Enums\MailType;
 use App\Models\Setting;
 use Exception;
 use Filament\Actions\Action;
@@ -13,6 +14,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
@@ -33,6 +35,8 @@ class Mail extends Page
     protected static ?int $navigationSort = 3;
 
     public array $mail;
+
+    public array $services;
 
     public function getTitle(): string|Htmlable
     {
@@ -85,7 +89,12 @@ class Mail extends Page
     public function mount(): void
     {
         $this->form->fill([
-            'mail.mailers.smtp' => config('mail.mailers.smtp'),
+            'mail' => [
+                'default' => config('mail.default'),
+                'mailers' => config('mail.mailers'),
+            ],
+
+            'services' => config('services'),
         ]);
     }
 
@@ -104,40 +113,112 @@ class Mail extends Page
             Section::make(__('setting.mail'))
                 ->description(__('setting.mail_info'))
                 ->schema([
+                    Radio::make('mail.default')
+                        ->label(__('setting.mail_driver'))
+                        ->options(MailType::options())
+                        ->descriptions(MailType::descriptions())
+                        ->live()
+                        ->required(),
+                ]),
+
+            Section::make('setting.mail_sendmail')
+                ->description(__('setting.mail_sendmail_info'))
+                ->visible(fn (Get $get): bool => $get('mail.default') === MailType::Sendmail->value)
+                ->schema([
+                    TextInput::make('mail.mailers.sendmail.path')
+                        ->label(__('setting.mail_sendmail_path'))
+                        ->required(),
+                ]),
+
+            Section::make(__('setting.mail_smtp'))
+                ->description(__('setting.mail_smtp_info'))
+                ->visible(fn (Get $get): bool => $get('mail.default') === MailType::SMTP->value)
+                ->schema([
                     TextInput::make('mail.mailers.smtp.host')
-                        ->label(__('setting.mail_host'))
+                        ->label(__('setting.mail_smtp_  host'))
                         ->password($isDemo)
                         ->helperText($demoText)
                         ->required(),
 
                     TextInput::make('mail.mailers.smtp.port')
-                        ->label(__('setting.mail_port'))
+                        ->label(__('setting.mail_smtp_  port'))
                         ->integer()
                         ->required(),
 
                     TextInput::make('mail.mailers.smtp.username')
-                        ->label(__('setting.mail_username'))
+                        ->label(__('setting.mail_smtp_  username'))
                         ->password($isDemo)
                         ->helperText($demoText)
                         ->autocomplete(false)
                         ->nullable(),
 
                     TextInput::make('mail.mailers.smtp.password')
-                        ->label(__('setting.mail_password'))
+                        ->label(__('setting.mail_smtp_  password'))
                         ->autocomplete(false)
                         ->password()
                         ->revealable()
                         ->nullable(),
 
                     Radio::make('mail.mailers.smtp.encryption')
-                        ->label(__('setting.mail_encryption'))
-                        // ->required()
+                        ->label(__('setting.mail_smtp_encryption'))
+//                         ->required()
                         ->options([
                             '' => __('setting.mail_encryption_none'),
                             'ssl' => 'SSL',
                             'tls' => 'TLS',
                             'starttls' => 'STARTTLS',
                         ]),
+                ]),
+
+            Section::make('setting.mail_mailgun')
+                ->description(__('setting.mailgun_info'))
+                ->visible(fn (Get $get): bool => $get('mail.default') === MailType::Mailgun->value)
+                ->schema([
+                    TextInput::make('services.mailgun.domain')
+                        ->label(__('setting.mail_mailgun_domain'))
+                        ->string()
+                        ->required(),
+
+                    TextInput::make('services.mailgun.secret')
+                        ->label(__('setting.mail_mailgun_secret'))
+                        ->password()
+                        ->revealable()
+                        ->required(),
+
+                    TextInput::make('services.mailgun.endpoint')
+                        ->label(__('setting.mail_mailgun_endpoint'))
+                        ->string()
+                        ->required(),
+                ]),
+
+            Section::make(__('setting.mail_postmark'))
+                ->description(__('setting.mail_postmark_info'))
+                ->visible(fn (Get $get): bool => $get('mail.default') === MailType::Postmark->value)
+                ->schema([
+                    TextInput::make('services.postmark.token')
+                        ->label(__('setting.mail_postmark_token'))
+                        ->password()
+                        ->revealable()
+                        ->required(),
+                ]),
+
+            Section::make(__('setting.mail_ses'))
+                ->description(__('setting.mail_ses_info'))
+                ->visible(fn (Get $get): bool => $get('mail.default') === MailType::SES->value)
+                ->schema([
+                    TextInput::make('services.ses.key')
+                        ->label(__('setting.mail_ses_key'))
+                        ->required(),
+
+                    TextInput::make('services.ses.secret')
+                        ->label(__('setting.mail_ses_secret'))
+                        ->password()
+                        ->revealable()
+                        ->required(),
+
+                    TextInput::make('services.ses.region')
+                        ->label(__('setting.mail_ses_region'))
+                        ->required(),
                 ]),
         ])->disabled(config('app.demo'));
     }
