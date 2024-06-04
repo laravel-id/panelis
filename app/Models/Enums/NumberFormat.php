@@ -22,8 +22,13 @@ enum NumberFormat: string
     {
         return collect(NumberFormat::cases())
             ->mapWithKeys(function ($format) {
-                return [$format->value => Number::money(10_000.12, format: $format->value, symbol: '')];
+                return [$format->value => $format->getFormattedNumber()];
             })
             ->toArray();
+    }
+
+    public function getFormattedNumber(): string
+    {
+        return Number::money(10_000.12, format: $this->value, symbol: '');
     }
 }
