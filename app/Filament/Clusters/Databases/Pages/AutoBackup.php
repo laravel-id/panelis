@@ -66,6 +66,7 @@ class AutoBackup extends Page implements HasForms
         return [
             Action::make('backup')
                 ->label(__('database.button_backup_manually'))
+                ->disabled(config('app.demo'))
                 ->requiresConfirmation()
                 ->action(function (): void {
                     try {
@@ -98,7 +99,7 @@ class AutoBackup extends Page implements HasForms
         }
 
         $this->form->fill([
-            'isButtonDisabled' => ! $this->databaseService?->isAvailable(),
+            'isButtonDisabled' => ! $this->databaseService?->isAvailable() || config('app.demo'),
             'database' => [
                 'auto_backup_enabled' => config('database.auto_backup_enabled', false),
                 'backup_period' => config('database.backup_period'),
@@ -173,7 +174,8 @@ class AutoBackup extends Page implements HasForms
                         ->required()
                         ->disabled(fn (Get $get): bool => ! $get('database.auto_backup_enabled')),
                 ]),
-        ]);
+        ])
+            ->disabled(config('app.demo'));
     }
 
     public function update(): void

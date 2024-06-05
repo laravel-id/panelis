@@ -63,6 +63,7 @@ class Backup extends Page implements HasTable
                     ->label(__('database.button_download'))
                     ->button()
                     ->color('primary')
+                    ->disabled(config('app.demo'))
                     ->action(function (Database $db) {
                         $storage = Storage::disk('local');
 
@@ -88,6 +89,7 @@ class Backup extends Page implements HasTable
                     ->button()
                     ->color('warning')
                     ->requiresConfirmation()
+                    ->disabled(config('app.demo'))
                     ->action(function (Database $db): void {
                         try {
                             $storage = Storage::disk('local');
