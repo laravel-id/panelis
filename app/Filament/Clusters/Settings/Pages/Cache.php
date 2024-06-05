@@ -35,6 +35,8 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
 
     public array $database;
 
+    public bool $isButtonDisabled = false;
+
     public function getTitle(): string|Htmlable
     {
         return __('setting.cache');
@@ -52,6 +54,8 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
             'database' => [
                 'redis' => config('database.redis'),
             ],
+
+            'isButtonDisabled' => config('app.demo'),
         ]);
     }
 
@@ -60,6 +64,7 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
         return [
             Action::make('test_cache')
                 ->label(__('setting.cache_button_test'))
+                ->visible(false)
                 ->action(function (): void {
                     try {
                         \Illuminate\Support\Facades\Cache::put('test', 'test', now()->addMinute(5));
@@ -83,6 +88,7 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
                 ->label(__('setting.cache_button_flush'))
                 ->requiresConfirmation()
                 ->color('warning')
+                ->disabled(config('app.demo'))
                 ->action(function (): void {
                     try {
                         \Illuminate\Support\Facades\Cache::flush();
@@ -107,6 +113,7 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
                     Radio::make('cache.default')
                         ->label(__('setting.cache_driver'))
                         ->options(CacheDriver::options())
+                        ->descriptions(CacheDriver::getDescriptions())
                         ->live()
                         ->required(),
                 ]),
@@ -179,7 +186,8 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
                         ->label(__('setting.cache_dynamodb_endpoint'))
                         ->required(),
                 ]),
-        ]);
+        ])
+            ->disabled(config('app.demo'));
     }
 
     public function update(): void

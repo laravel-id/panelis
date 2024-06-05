@@ -33,6 +33,8 @@ class General extends Page implements HasForms, Settings\HasUpdateableForm
 
     public array $app;
 
+    public bool $isButtonDisabled = false;
+
     public function getTitle(): string|Htmlable
     {
         return __('setting.general');
@@ -55,6 +57,8 @@ class General extends Page implements HasForms, Settings\HasUpdateableForm
                 'email' => config('app.email'),
                 'email_as_sender' => config('app.email_as_sender'),
             ],
+
+            'isButtonDisabled' => config('app.demo'),
         ]);
     }
 

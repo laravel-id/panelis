@@ -35,6 +35,8 @@ class Log extends Page implements HasForms
 
     public array $logging;
 
+    public bool $isButtonDisabled = false;
+
     public function mount(): void
     {
         $logging = config('logging.channels.stack');
@@ -57,6 +59,8 @@ class Log extends Page implements HasForms
                     ],
                 ],
             ],
+
+            'isButtonDisabled' => config('app.demo'),
         ]);
     }
 
@@ -87,67 +91,69 @@ class Log extends Page implements HasForms
 
     public function form(Form $form): Form
     {
-        return $form->schema([
-            Section::make(__('setting.log'))
-                ->description(__('setting.log_description'))
-                ->schema([
-                    CheckboxList::make('logging.channels.stack.channels')
-                        ->descriptions(LogChannel::descriptions())
-                        ->live()
-                        ->required()
-                        ->options(LogChannel::options()),
-                ]),
+        return $form
+            ->disabled(config('app.demo'))
+            ->schema([
+                Section::make(__('setting.log'))
+                    ->description(__('setting.log_description'))
+                    ->schema([
+                        CheckboxList::make('logging.channels.stack.channels')
+                            ->descriptions(LogChannel::descriptions())
+                            ->live()
+                            ->required()
+                            ->options(LogChannel::options()),
+                    ]),
 
-            Section::make(__('setting.log_slack'))
-                ->visible(function (Get $get): bool {
-                    return in_array('slack', $get('logging.channels.stack.channels'));
-                })
-                ->schema([
-                    Select::make('logging.channels.slack.level')
-                        ->label(__('setting.log_level'))
-                        ->options(LogLevel::options())
-                        ->searchable()
-                        ->required(),
+                Section::make(__('setting.log_slack'))
+                    ->visible(function (Get $get): bool {
+                        return in_array('slack', $get('logging.channels.stack.channels'));
+                    })
+                    ->schema([
+                        Select::make('logging.channels.slack.level')
+                            ->label(__('setting.log_level'))
+                            ->options(LogLevel::options())
+                            ->searchable()
+                            ->required(),
 
-                    TextInput::make('logging.channels.slack.url')
-                        ->label(__('setting.slack_webhook_url'))
-                        ->hint(
-                            str(__('setting.slack_webhook_hint'))
-                                ->inlineMarkdown()
-                                ->toHtmlString()
-                        )
-                        ->url()
-                        ->required(),
+                        TextInput::make('logging.channels.slack.url')
+                            ->label(__('setting.slack_webhook_url'))
+                            ->hint(
+                                str(__('setting.slack_webhook_hint'))
+                                    ->inlineMarkdown()
+                                    ->toHtmlString()
+                            )
+                            ->url()
+                            ->required(),
 
-                    TextInput::make('logging.channels.slack.username')
-                        ->label(__('setting.slack_username'))
-                        ->string()
-                        ->required(),
-                ]),
+                        TextInput::make('logging.channels.slack.username')
+                            ->label(__('setting.slack_username'))
+                            ->string()
+                            ->required(),
+                    ]),
 
-            Section::make(__('setting.log_papertrail'))
-                ->visible(function (Get $get): bool {
-                    return in_array('papertrail', $get('logging.channels.stack.channels'));
-                })
-                ->description(__('setting.log_papertrail_description'))
-                ->schema([
-                    Select::make('logging.channels.papertrail.level')
-                        ->label(__('setting.log_level'))
-                        ->options(LogLevel::options())
-                        ->searchable()
-                        ->required(),
+                Section::make(__('setting.log_papertrail'))
+                    ->visible(function (Get $get): bool {
+                        return in_array('papertrail', $get('logging.channels.stack.channels'));
+                    })
+                    ->description(__('setting.log_papertrail_description'))
+                    ->schema([
+                        Select::make('logging.channels.papertrail.level')
+                            ->label(__('setting.log_level'))
+                            ->options(LogLevel::options())
+                            ->searchable()
+                            ->required(),
 
-                    TextInput::make('logging.channels.papertrail.url')
-                        ->label(__('setting.log_papertrail_url'))
-                        ->url()
-                        ->required(),
+                        TextInput::make('logging.channels.papertrail.url')
+                            ->label(__('setting.log_papertrail_url'))
+                            ->url()
+                            ->required(),
 
-                    TextInput::make('logging.channels.papertrail.port')
-                        ->label(__('setting.log_papertrail_port'))
-                        ->numeric()
-                        ->required(),
-                ]),
-        ]);
+                        TextInput::make('logging.channels.papertrail.port')
+                            ->label(__('setting.log_papertrail_port'))
+                            ->numeric()
+                            ->required(),
+                    ]),
+            ]);
     }
 
     public function update(): void

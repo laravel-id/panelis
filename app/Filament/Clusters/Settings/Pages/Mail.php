@@ -15,6 +15,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
@@ -25,7 +26,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail as Mailer;
 
-class Mail extends Page
+class Mail extends Page implements HasForms, Settings\HasUpdateableForm
 {
     use InteractsWithForms;
 
@@ -40,6 +41,8 @@ class Mail extends Page
     public array $mail;
 
     public array $services;
+
+    public bool $isButtonDisabled;
 
     public function getTitle(): string|Htmlable
     {
@@ -150,6 +153,8 @@ class Mail extends Page
             ],
 
             'services' => config('services'),
+
+            'isButtonDisabled' => config('app.demo'),
         ]);
     }
 
