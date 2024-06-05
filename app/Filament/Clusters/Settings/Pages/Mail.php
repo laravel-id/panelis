@@ -5,18 +5,21 @@ namespace App\Filament\Clusters\Settings\Pages;
 use App\Events\SettingUpdated;
 use App\Filament\Clusters\Settings;
 use App\Mail\TestMail;
+use App\Models\Branch;
 use App\Models\Enums\MailType;
 use App\Models\Setting;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Support\Enums\MaxWidth;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
@@ -53,18 +56,66 @@ class Mail extends Page
         return [
             Action::make('test_mail')
                 ->label(__('setting.mail_test_button'))
-                ->requiresConfirmation()
+                ->modalWidth(MaxWidth::Medium)
                 ->modalSubmitActionLabel(__('setting.mail_test_button_send'))
                 ->form([
-                    TextInput::make('email')
-                        ->label(__('setting.email'))
+                    Radio::make('send_from')
+                        ->label(__('setting.mail_send_from'))
+                        ->default('mail')
+                        ->live()
+                        ->required()
+                        ->options([
+                            'mail' => __('setting.mail_app_email'),
+                            'branch' => __('setting.mail_branch_email'),
+                        ]),
+
+                    TextInput::make('from')
+                        ->label(__('setting.mail_from_address'))
+                        ->default(config('app.email'))
+                        ->readOnly()
+                        ->visible(fn (Get $get): bool => $get('send_from') === 'mail')
+                        ->required(),
+
+                    Select::make('branch')
+                        ->label(__('setting.mail_from_address'))
+                        ->searchable()
+                        ->visible(fn (Get $get): bool => $get('send_from') === 'branch')
+                        ->helperText(__('setting.mail_branch_empty_help'))
+                        ->required()
+                        ->options(
+                            Branch::whereNotNull('email')
+                                ->orderBy('name')
+                                ->get()
+                                ->mapWithKeys(fn (Branch $branch): array => [
+                                    $branch->id => sprintf('%s (%s)', $branch->name, $branch->email),
+                                ])
+                        ),
+
+                    TextInput::make('to')
+                        ->label(__('setting.mail_to_address'))
                         ->helperText(__('setting.mail_email_helper'))
                         ->email()
                         ->required(),
                 ])
                 ->action(function (array $data): void {
                     try {
-                        Mailer::to($data['email'])->send(new TestMail);
+                        $from = [
+                            'address' => config('mail.from.address'),
+                            'name' => config('mail.from.name'),
+                        ];
+
+                        if (! empty($data['branch'])) {
+                            $branch = Branch::find($data['branch']);
+                            if (! empty($branch)) {
+                                $from = [
+                                    'address' => $branch->email,
+                                    'name' => $branch->name,
+                                ];
+                            }
+                        }
+
+                        Mailer::to($data['to'])
+                            ->send(new TestMail(...$from));
 
                         Notification::make('test_mail_success')
                             ->success()
@@ -92,6 +143,10 @@ class Mail extends Page
             'mail' => [
                 'default' => config('mail.default'),
                 'mailers' => config('mail.mailers'),
+                'from' => [
+                    'address' => config('mail.from.address', config('app.email')),
+                    'name' => config('mail.from.name', config('app.name')),
+                ],
             ],
 
             'services' => config('services'),
@@ -110,6 +165,20 @@ class Mail extends Page
         };
 
         return $form->schema([
+            Section::make('setting.mail_sender')
+                ->description(__('setting.mail_sender_description'))
+                ->schema([
+                    TextInput::make('mail.from.address')
+                        ->label(__('setting.mail_from_address'))
+                        ->email()
+                        ->required(),
+
+                    TextInput::make('mail.from.name')
+                        ->label(__('setting.mail_from_name'))
+                        ->string()
+                        ->required(),
+                ]),
+
             Section::make(__('setting.mail'))
                 ->description(__('setting.mail_info'))
                 ->schema([

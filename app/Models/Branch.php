@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @method static whereNotNull(string $string)
+ * @method static find(mixed $branch)
+ */
 class Branch extends Model
 {
     use HasFactory;

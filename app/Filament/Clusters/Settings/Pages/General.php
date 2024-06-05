@@ -147,10 +147,17 @@ class General extends Page
             return;
         }
 
-        foreach ($this->form->getState()['app'] as $key => $value) {
+        $state = $this->form->getState();
+        foreach ($state['app'] as $key => $value) {
             $key = sprintf('app.%s', $key);
             if ($value === false) {
                 $value = '0';
+            }
+
+            if ($key === 'app.email_as_sender' && data_get($state, 'app.email_as_sender') === true) {
+                Setting::updateOrCreate(['key' => 'mail.from.address'], [
+                    'value' => data_get($state, 'app.email'),
+                ]);
             }
 
             Setting::updateOrCreate(compact('key'), compact('value'));

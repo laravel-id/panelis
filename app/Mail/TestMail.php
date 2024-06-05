@@ -16,9 +16,11 @@ class TestMail extends Mailable
     /**
      * Create a new message instance.
      */
-    public function __construct()
-    {
-        //
+    public function __construct(
+        private readonly string $address,
+        private readonly string $name,
+    ) {
+
     }
 
     /**
@@ -27,8 +29,8 @@ class TestMail extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
+            from: new Address($this->address, $this->name),
             subject: __('setting.mail_test_subject'),
-            from: new Address(config('app.email'), config('app.name')),
         );
     }
 
