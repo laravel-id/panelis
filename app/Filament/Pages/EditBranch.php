@@ -25,10 +25,12 @@ class EditBranch extends EditTenantProfile
             Section::make([
                 TextInput::make('name')
                     ->label(__('branch.name'))
+                    ->required()
                     ->maxLength(100),
 
                 TextInput::make('slug')
                     ->alphaDash()
+                    ->required()
                     ->unique(ignoreRecord: true),
 
                 TextInput::make('phone')
@@ -61,6 +63,6 @@ class EditBranch extends EditTenantProfile
 
     public function getRedirectUrl(): ?string
     {
-        return '/admin';
+        return EditBranch::getUrl();
     }
 }

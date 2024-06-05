@@ -25,6 +25,7 @@ class RegisterBranch extends RegisterTenant
             TextInput::make('name')
                 ->label(__('branch.name'))
                 ->maxLength(100)
+                ->required()
                 ->unique()
                 ->live(onBlur: true)
                 ->afterStateUpdated(function (Set $set, ?string $state): void {
@@ -33,6 +34,7 @@ class RegisterBranch extends RegisterTenant
 
             TextInput::make('slug')
                 ->label(__('branch.alias'))
+                ->required()
                 ->alphaDash(),
 
             TextInput::make('phone')
@@ -42,6 +44,7 @@ class RegisterBranch extends RegisterTenant
 
             TextInput::make('email')
                 ->label(__('branch.email'))
+                ->placeholder('mail@business.com')
                 ->nullable()
                 ->email(),
 
