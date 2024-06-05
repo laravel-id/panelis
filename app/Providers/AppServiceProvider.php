@@ -6,6 +6,7 @@ use App\Models\Setting;
 use App\Services\Database\Database;
 use App\Services\Database\DatabaseFactory;
 use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Number;
@@ -15,7 +16,11 @@ class AppServiceProvider extends ServiceProvider
 {
     private function overrideDefaultConfig(): void
     {
-        if (! Schema::hasTable((new Setting())->getTable())) {
+        $hasSetting = Cache::rememberForever('has_setting', function (): bool {
+            return Schema::hasTable((new Setting)->getTable());
+        });
+
+        if (! $hasSetting) {
             return;
         }
 

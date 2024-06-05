@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use App\Models\Setting;
 use Closure;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Schema;
 use Symfony\Component\HttpFoundation\Response;
@@ -18,7 +19,11 @@ class OverrideUserConfig
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if (! Schema::hasTable((new Setting())->getTable())) {
+        $hasSetting = Cache::rememberForever('has_setting', function (): bool {
+            return Schema::hasTable((new Setting)->getTable());
+        });
+
+        if (! $hasSetting) {
             return $next($request);
         }
 
