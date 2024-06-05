@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Blog\CategoryResource\Pages;
 
 use App\Filament\Resources\Blog\CategoryResource;
-use Filament\Actions;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;

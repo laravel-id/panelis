@@ -2,8 +2,10 @@
 
 namespace App\Providers;
 
-use App\Events\Blog\PostDeleted;
-use App\Listeners\Blog\DeleteImage;
+use App\Events\Branch\BranchRegistered;
+use App\Events\Branch\BranchUpdated;
+use App\Events\SettingUpdated;
+use App\Listeners\Setting\FlushCache as FlushCacheSetting;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -21,9 +23,15 @@ class EventServiceProvider extends ServiceProvider
             SendEmailVerificationNotification::class,
         ],
 
-        // blog's events
-        PostDeleted::class => [
-            DeleteImage::class,
+        BranchRegistered::class => [
+
+        ],
+        BranchUpdated::class => [
+
+        ],
+
+        SettingUpdated::class => [
+            FlushCacheSetting::class,
         ],
     ];
 

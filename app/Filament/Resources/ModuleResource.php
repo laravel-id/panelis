@@ -3,18 +3,13 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ModuleResource\Pages;
-use App\Filament\Resources\ModuleResource\RelationManagers;
 use App\Models\Module;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
-use Illuminate\Support\Facades\Log;
 
 class ModuleResource extends Resource
 {
@@ -22,7 +17,9 @@ class ModuleResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
-    protected static ?int $navigationSort = 100;
+    protected static ?int $navigationSort = 3;
+
+    protected static bool $isScopedToTenant = false;
 
     public static function getNavigationLabel(): string
     {
@@ -31,7 +28,7 @@ class ModuleResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('setting.navigation');
+        return __('navigation.system');
     }
 
     public static function getNavigationIcon(): ?string
@@ -39,9 +36,6 @@ class ModuleResource extends Resource
         return 'heroicon-s-rectangle-stack';
     }
 
-    /**
-     * @return bool
-     */
     public static function shouldRegisterNavigation(): bool
     {
         return Auth::user()->can('Manage module');

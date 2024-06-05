@@ -7,7 +7,6 @@ use Filament\Actions;
 use Filament\Infolists\Components;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
-use Filament\Support\Markdown;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
@@ -59,9 +58,9 @@ class ViewCategory extends ViewRecord
                             ->translateLabel(),
 
                         Components\TextEntry::make('deleted_at')
-                            ->hidden(fn(?Model $record): bool => empty($record->deleted_at))
+                            ->hidden(fn (?Model $record): bool => empty($record->deleted_at))
                             ->translateLabel(),
-                    ])
+                    ]),
             ]);
     }
 }

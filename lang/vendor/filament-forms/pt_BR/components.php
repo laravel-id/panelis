@@ -185,6 +185,15 @@ return [
 
             ],
 
+            'svg' => [
+
+                'messages' => [
+                    'confirmation' => 'Não é recomendado editar arquivos SVG, pois pode resultar em perda de qualidade ao dimensionar.\n Você tem certeza de que deseja continuar?',
+                    'disabled' => 'A edição de arquivos SVG está desativada, pois pode resultar em perda de qualidade ao dimensionar.',
+                ],
+
+            ],
+
         ],
 
     ],
@@ -241,12 +250,25 @@ return [
 
     ],
 
+    'radio' => [
+
+        'boolean' => [
+            'true' => 'Sim',
+            'false' => 'Não',
+        ],
+
+    ],
+
     'repeater' => [
 
         'actions' => [
 
             'add' => [
                 'label' => 'Adicionar em :label',
+            ],
+
+            'add_between' => [
+                'label' => 'Inserir',
             ],
 
             'delete' => [
@@ -395,6 +417,31 @@ return [
 
     'tags_input' => [
         'placeholder' => 'Nova tag',
+    ],
+
+    'text_input' => [
+
+        'actions' => [
+
+            'hide_password' => [
+                'label' => 'Esconder senha',
+            ],
+
+            'show_password' => [
+                'label' => 'Mostrar senha',
+            ],
+
+        ],
+
+    ],
+
+    'toggle_buttons' => [
+
+        'boolean' => [
+            'true' => 'Sim',
+            'false' => 'Não',
+        ],
+
     ],
 
     'wizard' => [

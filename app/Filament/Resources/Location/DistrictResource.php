@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\Location;
 
-use App\Filament\Resources\DistrictResource\Pages;
-use App\Filament\Resources\DistrictResource\RelationManagers;
 use App\Filament\Resources\Location;
 use App\Models\Location\District;
 use Filament\Forms;
@@ -38,9 +36,6 @@ class DistrictResource extends Resource
         return 'heroicon-m-map-pin';
     }
 
-    /**
-     * @return string|null
-     */
     public static function getLabel(): ?string
     {
         return __('location.district');
@@ -61,13 +56,13 @@ class DistrictResource extends Resource
                     ->createOptionForm([
                         Forms\Components\Select::make('country_id')
                             ->label(__('location.country'))
-                            ->disabled(!Auth::user()->can('Create region'))
+                            ->disabled(! Auth::user()->can('Create region'))
                             ->relationship('country', 'name')
                             ->createOptionForm([
                                 Forms\Components\TextInput::make('name')
                                     ->label(__('location.fields.name'
                                     ))
-                                    ->disabled(!Auth::user()->can('Create country'))
+                                    ->disabled(! Auth::user()->can('Create country'))
                                     ->required()
                                     ->minLength(5)
                                     ->maxLength(150),
@@ -78,7 +73,7 @@ class DistrictResource extends Resource
 
                         Forms\Components\TextInput::make('name')
                             ->label('location.fields.name')
-                            ->disabled(!Auth::user()->can('Create region'))
+                            ->disabled(! Auth::user()->can('Create region'))
                             ->required(),
                     ])
                     ->preload()
@@ -121,7 +116,7 @@ class DistrictResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('common.fields.created_at'))
                     ->sortable()
-                    ->tooltip(fn(?Model $record): string => $record->updated_at ?? '')
+                    ->tooltip(fn (?Model $record): string => $record->updated_at ?? '')
                     ->since(),
             ])
             ->filters([
@@ -157,7 +152,7 @@ class DistrictResource extends Resource
                     ->visible($canUpdate)
                     ->action(function (Collection $records): void {
                         foreach ($records as $record) {
-                            $record->is_active = !$record->is_active;
+                            $record->is_active = ! $record->is_active;
                             $record->save();
                         }
                     }),

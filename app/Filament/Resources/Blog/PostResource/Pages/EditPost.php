@@ -29,14 +29,14 @@ class EditPost extends EditRecord
             Actions\ForceDeleteAction::make()
                 ->visible($canDelete)
                 ->requiresConfirmation()
-                ->after(fn(?Post $post) => event(new PostDeleted($post))),
+                ->after(fn (?Post $post) => event(new PostDeleted($post))),
             Actions\RestoreAction::make()->visible(Auth::user()->can('Update blog post')),
         ];
     }
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
-        $data['content'] = !empty($data['content']) ? $data['content'] : '';
+        $data['content'] = ! empty($data['content']) ? $data['content'] : '';
 
         return $data;
     }

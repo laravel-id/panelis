@@ -26,7 +26,7 @@ class LocationStatsOverview extends BaseWidget
 
             BaseWidget\Stat::make(__('location.district'), District::count())
                 ->description(__('location.inactive', [
-                    'count' => District::whereIsActive(false)->count()
+                    'count' => District::whereIsActive(false)->count(),
                 ])),
         ];
     }

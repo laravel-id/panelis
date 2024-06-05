@@ -185,6 +185,15 @@ return [
 
             ],
 
+            'svg' => [
+
+                'messages' => [
+                    'confirmation' => 'Editing SVG files is not recommended as it can result in quality loss when scaling.\n Are you sure you want to continue?',
+                    'disabled' => 'Editing SVG files is disabled as it can result in quality loss when scaling.',
+                ],
+
+            ],
+
         ],
 
     ],
@@ -237,6 +246,15 @@ return [
             'strike' => 'Strikethrough',
             'table' => 'Table',
             'undo' => 'Undo',
+        ],
+
+    ],
+
+    'radio' => [
+
+        'boolean' => [
+            'true' => 'Yes',
+            'false' => 'No',
         ],
 
     ],
@@ -399,6 +417,31 @@ return [
 
     'tags_input' => [
         'placeholder' => 'New tag',
+    ],
+
+    'text_input' => [
+
+        'actions' => [
+
+            'hide_password' => [
+                'label' => 'Hide password',
+            ],
+
+            'show_password' => [
+                'label' => 'Show password',
+            ],
+
+        ],
+
+    ],
+
+    'toggle_buttons' => [
+
+        'boolean' => [
+            'true' => 'Yes',
+            'false' => 'No',
+        ],
+
     ],
 
     'wizard' => [

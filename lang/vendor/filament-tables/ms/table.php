@@ -11,6 +11,12 @@ return [
     'columns' => [
 
         'text' => [
+
+            'actions' => [
+                'collapse_list' => 'Tunjukkan kurang :count',
+                'expand_list' => 'Tunjukkan :count lagi',
+            ],
+
             'more_list_items' => 'dan :count lagi',
         ],
 
@@ -105,6 +111,10 @@ return [
     'filters' => [
 
         'actions' => [
+
+            'apply' => [
+                'label' => 'Gunakan penapis',
+            ],
 
             'remove' => [
                 'label' => 'Buang penapis',

@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Blog;
 
 use App\Filament\Resources\Blog\PostResource\Pages;
-use App\Filament\Resources\Blog\PostResource\RelationManagers;
 use App\Models\Blog\Post;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -100,7 +99,7 @@ class PostResource extends Resource
                                 Forms\Components\TextInput::make('name')
                                     ->label(__('blog.fields.title'))
                                     ->live(true)
-                                    ->afterStateUpdated(fn(Forms\Set $set, ?string $state) => $set('slug', Str::slug($state)))
+                                    ->afterStateUpdated(fn (Forms\Set $set, ?string $state) => $set('slug', Str::slug($state)))
                                     ->required()
                                     ->minLength(3)
                                     ->maxLength(250),
@@ -140,9 +139,9 @@ class PostResource extends Resource
                             ]),
 
                         Forms\Components\KeyValue::make('options')
-                            ->label(__('blog.fields.options'))
+                            ->label(__('blog.fields.options')),
 
-                    ])
+                    ]),
 
             ]);
     }

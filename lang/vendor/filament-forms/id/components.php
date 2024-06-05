@@ -93,7 +93,7 @@ return [
                 ],
 
                 'flip_vertical' => [
-                    'label' => 'Balik gambar vertical',
+                    'label' => 'Balik gambar secara vertikal',
                 ],
 
                 'move_down' => [
@@ -185,6 +185,15 @@ return [
 
             ],
 
+            'svg' => [
+
+                'messages' => [
+                    'confirmation' => 'Mengedit file SVG tidak disarankan karena dapat mengakibatkan penurunan kualitas saat melakukan penskalaan.\n Apakah Anda yakin ingin melanjutkan?',
+                    'disabled' => 'Pengeditan file SVG dinonaktifkan karena dapat mengakibatkan penurunan kualitas saat melakukan penskalaan.',
+                ],
+
+            ],
+
         ],
 
     ],
@@ -241,12 +250,25 @@ return [
 
     ],
 
+    'radio' => [
+
+        'boolean' => [
+            'true' => 'Ya',
+            'false' => 'Tidak',
+        ],
+
+    ],
+
     'repeater' => [
 
         'actions' => [
 
             'add' => [
                 'label' => 'Tambahkan :label',
+            ],
+
+            'add_between' => [
+                'label' => 'Sisipkan',
             ],
 
             'delete' => [
@@ -395,6 +417,31 @@ return [
 
     'tags_input' => [
         'placeholder' => 'Tag baru',
+    ],
+
+    'text_input' => [
+
+        'actions' => [
+
+            'hide_password' => [
+                'label' => 'Sembunyikan kata sandi',
+            ],
+
+            'show_password' => [
+                'label' => 'Tampilkan kata sandi',
+            ],
+
+        ],
+
+    ],
+
+    'toggle_buttons' => [
+
+        'boolean' => [
+            'true' => 'Ya',
+            'false' => 'Tidak',
+        ],
+
     ],
 
     'wizard' => [

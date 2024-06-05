@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 
@@ -56,7 +55,6 @@ class PermissionTableSeeder extends Seeder
 
         'Manage module' => 'Manage built-in or third party modules.',
     ];
-
 
     /**
      * Run the database seeds.

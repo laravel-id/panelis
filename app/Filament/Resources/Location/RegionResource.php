@@ -3,8 +3,6 @@
 namespace App\Filament\Resources\Location;
 
 use App\Filament\Resources\Location;
-use App\Filament\Resources\RegionResource\Pages;
-use App\Filament\Resources\RegionResource\RelationManagers;
 use App\Models\Location\Region;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -55,11 +53,11 @@ class RegionResource extends Resource
                     ->relationship('country', 'name')
                     ->createOptionForm([
                         Forms\Components\TextInput::make('name')
-                            ->disabled(!Auth::user()->can('Create country'))
+                            ->disabled(! Auth::user()->can('Create country'))
                             ->label(__('location.fields.name'))
                             ->required()
                             ->maxLength(100)
-                            ->columnSpanFull()
+                            ->columnSpanFull(),
                     ])
                     ->searchable()
                     ->preload()
@@ -97,7 +95,7 @@ class RegionResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('common.fields.created_at'))
                     ->sortable()
-                    ->tooltip(fn(?Model $record): string => $record->updated_at ?? '')
+                    ->tooltip(fn (?Model $record): string => $record->updated_at ?? '')
                     ->since(),
             ])
             ->filters([
@@ -128,7 +126,7 @@ class RegionResource extends Resource
                     ->visible($canUpdate)
                     ->action(function (Collection $records): void {
                         foreach ($records as $record) {
-                            $record->is_active = !$record->is_active;
+                            $record->is_active = ! $record->is_active;
                             $record->save();
                         }
                     }),

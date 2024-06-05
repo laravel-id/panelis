@@ -185,6 +185,15 @@ return [
 
             ],
 
+            'svg' => [
+
+                'messages' => [
+                    'confirmation' => 'Mengedit fail SVG tidak disyorkan kerana ia boleh mengakibatkan kehilangan kualiti semasa penskalaan.\n Adakah anda pasti mahu meneruskan?',
+                    'disabled' => 'Mengedit fail SVG dilumpuhkan kerana ia boleh menyebabkan kehilangan kualiti apabila penskalaan.',
+                ],
+
+            ],
+
         ],
 
     ],
@@ -241,6 +250,15 @@ return [
 
     ],
 
+    'radio' => [
+
+        'boolean' => [
+            'true' => 'Ya',
+            'false' => 'Tidak',
+        ],
+
+    ],
+
     'repeater' => [
 
         'actions' => [
@@ -249,16 +267,20 @@ return [
                 'label' => 'Tambah ke :label',
             ],
 
+            'add_between' => [
+                'label' => 'Masukkan antara',
+            ],
+
             'delete' => [
                 'label' => 'Padam',
             ],
 
-            'reorder' => [
-                'label' => 'Pindah',
-            ],
-
             'clone' => [
                 'label' => 'Klon',
+            ],
+
+            'reorder' => [
+                'label' => 'Pindah',
             ],
 
             'move_down' => [
@@ -395,6 +417,31 @@ return [
 
     'tags_input' => [
         'placeholder' => 'Tag baru',
+    ],
+
+    'text_input' => [
+
+        'actions' => [
+
+            'hide_password' => [
+                'label' => 'Sembunyikan kata laluan',
+            ],
+
+            'show_password' => [
+                'label' => 'Tunjukkan kata laluan',
+            ],
+
+        ],
+
+    ],
+
+    'toggle_buttons' => [
+
+        'boolean' => [
+            'true' => 'Ya',
+            'false' => 'Tidak',
+        ],
+
     ],
 
     'wizard' => [

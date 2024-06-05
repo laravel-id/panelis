@@ -63,7 +63,7 @@ class CategoryResource extends Resource
                             ->autofocus()
                             ->live(true)
                             ->afterStateUpdated(
-                                fn(Forms\Set $set, ?string $state) => $set('slug', Str::slug($state))
+                                fn (Forms\Set $set, ?string $state) => $set('slug', Str::slug($state))
                             )
                             ->minLength(3)
                             ->maxLength(100),
@@ -92,16 +92,16 @@ class CategoryResource extends Resource
                     ->schema([
                         Forms\Components\Placeholder::make('created_at')
                             ->label('common.fields.created_at')
-                            ->content(fn(?Model $record): string => $record->created_at),
+                            ->content(fn (?Model $record): string => $record->created_at),
 
                         Forms\Components\Placeholder::make('updated_at')
                             ->label('common.fields.updated_at')
-                            ->content(fn(?Model $record): string => $record->updated_at),
+                            ->content(fn (?Model $record): string => $record->updated_at),
 
                         Forms\Components\Placeholder::make('deleted_at')
                             ->label(__('common.fields.deleted_at'))
-                            ->hidden(fn(?Model $record): bool => empty($record->deleted_at))
-                            ->content(fn(?Model $record): string => $record->deleted_at ?? ''),
+                            ->hidden(fn (?Model $record): bool => empty($record->deleted_at))
+                            ->content(fn (?Model $record): string => $record->deleted_at ?? ''),
                     ]),
             ]);
     }
@@ -138,7 +138,7 @@ class CategoryResource extends Resource
                 Tables\Columns\TextColumn::make('updated_at')
                     ->label(__('common.fields.updated_at'))
                     ->sortable()
-                    ->tooltip(fn(?Model $record): string => $record->updated_at)
+                    ->tooltip(fn (?Model $record): string => $record->updated_at)
                     ->since(),
             ])
             ->filters([

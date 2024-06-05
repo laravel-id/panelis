@@ -2,8 +2,6 @@
 
 namespace App\Filament\Resources\Location;
 
-use App\Filament\Resources\CountryResource\Pages;
-use App\Filament\Resources\CountryResource\RelationManagers;
 use App\Models\Location\Country;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -67,7 +65,7 @@ class CountryResource extends Resource
                     ->label(__('location.fields.name'))
                     ->required()
                     ->maxLength(100)
-                    ->columnSpanFull()
+                    ->columnSpanFull(),
             ]);
     }
 
@@ -100,7 +98,7 @@ class CountryResource extends Resource
                 Tables\Columns\TextColumn::make('created_at')
                     ->label(__('common.fields.created_at'))
                     ->sortable()
-                    ->tooltip(fn(?Model $record): string => $record->updated_at ?? '')
+                    ->tooltip(fn (?Model $record): string => $record->updated_at ?? '')
                     ->since(),
             ])
             ->filters([
@@ -123,7 +121,7 @@ class CountryResource extends Resource
                     ->icon('heroicon-m-check-circle')
                     ->action(function (Collection $records): void {
                         foreach ($records as $record) {
-                            $record->is_active = !$record->is_active;
+                            $record->is_active = ! $record->is_active;
                             $record->save();
                         }
                     }),
