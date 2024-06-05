@@ -71,7 +71,7 @@ class Mail extends Page
 
                     TextInput::make('from')
                         ->label(__('setting.mail_from_address'))
-                        ->default(config('app.email'))
+                        ->default(config('mail.from.address'))
                         ->readOnly()
                         ->visible(fn (Get $get): bool => $get('send_from') === 'mail')
                         ->required(),
