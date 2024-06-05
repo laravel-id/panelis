@@ -172,6 +172,7 @@ return [
         /*
          * Package Service Providers...
          */
+        Spatie\Permission\PermissionServiceProvider::class,
         Spatie\TranslationLoader\TranslationServiceProvider::class,
 
         /*

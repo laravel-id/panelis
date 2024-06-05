@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Module;
 use App\Models\Setting;
 use App\Services\Database\Database;
 use App\Services\Database\DatabaseFactory;
@@ -35,6 +36,35 @@ class AppServiceProvider extends ServiceProvider
 
     }
 
+    private function registerCustomNavigations()
+    {
+        Filament::serving(function () {
+            Filament::registerNavigationItems([
+                NavigationItem::make(__('common.source_code'))
+                    ->sort(200)
+                    ->group(__('setting.navigation'))
+                    ->url('https://github.com/laravel-id/panelis')
+                    ->activeIcon('heroicon-s-code-bracket')
+                    ->icon('heroicon-o-code-bracket'),
+
+            ]);
+        });
+    }
+
+    private function registerModules()
+    {
+        if (Schema::hasTable((new Module)->getTable())) {
+            $modules = Cache::remember('modules', now()->addHour(), function () {
+                return Module::select('name', 'is_enabled')
+                    ->get();
+            });
+
+            foreach ($modules as $module) {
+                config()->set(sprintf('modules.%s', strtolower($module->name)), $module->is_enabled);
+            }
+        }
+    }
+
     /**
      * Register any application services.
      */
@@ -51,6 +81,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->overrideDefaultConfig();
+
+        $this->registerModules();
+        $this->registerModules();
 
         LanguageSwitch::configureUsing(function (LanguageSwitch $lang) {
             $lang->locales(['id', 'en'])

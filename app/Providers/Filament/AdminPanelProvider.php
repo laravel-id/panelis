@@ -2,6 +2,10 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Auth\EditProfile;
+use App\Filament\Pages\Auth\EmailVerificationPrompt;
+use App\Filament\Pages\Auth\Login;
+use App\Filament\Pages\Auth\RequestPasswordReset;
 use App\Filament\Pages\EditBranch;
 use App\Filament\Pages\RegisterBranch;
 use App\Http\Middleware\OverrideUserConfig;
@@ -34,8 +38,15 @@ class AdminPanelProvider extends PanelProvider
 
             ->default()
             ->id('admin')
+
+            // uncomment to set different path
             ->path('admin')
-            ->login()
+
+            // ->registration(Register::class)
+            ->login(Login::class)
+            ->passwordReset(RequestPasswordReset::class)
+            ->profile(EditProfile::class)
+            ->emailVerification(EmailVerificationPrompt::class)
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->discoverClusters(in: app_path('Filament/Clusters'), for: 'App\\Filament\\Clusters')
