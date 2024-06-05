@@ -31,6 +31,6 @@ enum LogLevel: string
 
     public function getLabel(): string
     {
-        return __(sprintf('setting.log_%s', $this->value));
+        return __(sprintf('setting.log_level_%s', $this->value));
     }
 }

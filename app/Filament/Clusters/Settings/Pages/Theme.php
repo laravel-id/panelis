@@ -63,7 +63,8 @@ class Theme extends Page implements HasForms
         }
 
         return $form->schema([
-            Section::make('theme')
+            Section::make(__('setting.theme'))
+                ->description(__('setting.theme_description'))
                 ->schema($colorsInput),
         ]);
     }

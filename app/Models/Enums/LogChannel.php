@@ -39,6 +39,6 @@ enum LogChannel: string
 
     public function getLabel(): string
     {
-        return __(sprintf('setting.log_%s', $this->value));
+        return __(sprintf('setting.log_type_%s', $this->value));
     }
 }

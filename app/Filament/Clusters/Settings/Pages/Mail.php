@@ -165,8 +165,9 @@ class Mail extends Page
         };
 
         return $form->schema([
-            Section::make('setting.mail_sender')
+            Section::make(__('setting.mail_sender'))
                 ->description(__('setting.mail_sender_description'))
+                ->collapsed()
                 ->schema([
                     TextInput::make('mail.from.address')
                         ->label(__('setting.mail_from_address'))
@@ -180,7 +181,7 @@ class Mail extends Page
                 ]),
 
             Section::make(__('setting.mail'))
-                ->description(__('setting.mail_info'))
+                ->description(__('setting.mail_description'))
                 ->schema([
                     Radio::make('mail.default')
                         ->label(__('setting.mail_driver'))
@@ -191,7 +192,7 @@ class Mail extends Page
                 ]),
 
             Section::make(__('setting.mail_sendmail'))
-                ->description(__('setting.mail_sendmail_info'))
+                ->description(__('setting.mail_sendmail_description'))
                 ->visible(fn (Get $get): bool => $get('mail.default') === MailType::Sendmail->value)
                 ->schema([
                     TextInput::make('mail.mailers.sendmail.path')
@@ -200,29 +201,29 @@ class Mail extends Page
                 ]),
 
             Section::make(__('setting.mail_smtp'))
-                ->description(__('setting.mail_smtp_info'))
+                ->description(__('setting.mail_smtp_description'))
                 ->visible(fn (Get $get): bool => $get('mail.default') === MailType::SMTP->value)
                 ->schema([
                     TextInput::make('mail.mailers.smtp.host')
-                        ->label(__('setting.mail_smtp_  host'))
+                        ->label(__('setting.mail_smtp_host'))
                         ->password($isDemo)
                         ->helperText($demoText)
                         ->required(),
 
                     TextInput::make('mail.mailers.smtp.port')
-                        ->label(__('setting.mail_smtp_  port'))
+                        ->label(__('setting.mail_smtp_port'))
                         ->integer()
                         ->required(),
 
                     TextInput::make('mail.mailers.smtp.username')
-                        ->label(__('setting.mail_smtp_  username'))
+                        ->label(__('setting.mail_smtp_username'))
                         ->password($isDemo)
                         ->helperText($demoText)
                         ->autocomplete(false)
                         ->nullable(),
 
                     TextInput::make('mail.mailers.smtp.password')
-                        ->label(__('setting.mail_smtp_  password'))
+                        ->label(__('setting.mail_smtp_password'))
                         ->autocomplete(false)
                         ->password()
                         ->revealable()
@@ -239,8 +240,8 @@ class Mail extends Page
                         ]),
                 ]),
 
-            Section::make('setting.mail_mailgun')
-                ->description(__('setting.mailgun_info'))
+            Section::make(__('setting.mail_mailgun'))
+                ->description(__('setting.mail_mailgun_description'))
                 ->visible(fn (Get $get): bool => $get('mail.default') === MailType::Mailgun->value)
                 ->schema([
                     TextInput::make('services.mailgun.domain')
@@ -261,7 +262,7 @@ class Mail extends Page
                 ]),
 
             Section::make(__('setting.mail_postmark'))
-                ->description(__('setting.mail_postmark_info'))
+                ->description(__('setting.mail_postmark_description'))
                 ->visible(fn (Get $get): bool => $get('mail.default') === MailType::Postmark->value)
                 ->schema([
                     TextInput::make('services.postmark.token')
@@ -272,7 +273,7 @@ class Mail extends Page
                 ]),
 
             Section::make(__('setting.mail_ses'))
-                ->description(__('setting.mail_ses_info'))
+                ->description(__('setting.mail_ses_description'))
                 ->visible(fn (Get $get): bool => $get('mail.default') === MailType::SES->value)
                 ->schema([
                     TextInput::make('services.ses.key')

@@ -89,7 +89,7 @@ class Log extends Page implements HasForms
     {
         return $form->schema([
             Section::make(__('setting.log'))
-                ->description(__('setting.log_info'))
+                ->description(__('setting.log_description'))
                 ->schema([
                     CheckboxList::make('logging.channels.stack.channels')
                         ->descriptions(LogChannel::descriptions())
@@ -129,9 +129,10 @@ class Log extends Page implements HasForms
                 ->visible(function (Get $get): bool {
                     return in_array('papertrail', $get('logging.channels.stack.channels'));
                 })
-                ->description(__('setting.log_papertrail_info'))
+                ->description(__('setting.log_papertrail_description'))
                 ->schema([
                     Select::make('logging.channels.papertrail.level')
+                        ->label(__('setting.log_level'))
                         ->options(LogLevel::options())
                         ->searchable()
                         ->required(),
