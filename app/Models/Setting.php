@@ -88,7 +88,7 @@ class Setting extends Model
             ->get();
     }
 
-    public static function getByKey(string $key, mixed $default = null): mixed
+    public static function get(string $key, mixed $default = null): mixed
     {
         $cachedValue = Cache::get(config('setting.cache_key'));
 
@@ -102,6 +102,11 @@ class Setting extends Model
                 ->first()
                 ?->value ?? $default;
         }
+    }
+
+    public static function set(string $key, mixed $value): void
+    {
+        self::updateOrCreate(compact('key'), compact('value'));
     }
 
     public function user(): BelongsToMany

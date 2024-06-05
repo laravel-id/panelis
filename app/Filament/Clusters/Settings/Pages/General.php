@@ -13,6 +13,7 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
+use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
@@ -20,7 +21,7 @@ use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\HtmlString;
 
-class General extends Page
+class General extends Page implements HasForms, Settings\HasUpdateableForm
 {
     use InteractsWithForms;
 
@@ -50,7 +51,7 @@ class General extends Page
                 'name' => config('app.name'),
                 'description' => config('app.description'),
                 'locales' => config('app.locales', [config('app.locale')]),
-                'locale' => Setting::getByKey('app.locale', config('app.locale')),
+                'locale' => Setting::get('app.locale', config('app.locale')),
                 'email' => config('app.email'),
                 'email_as_sender' => config('app.email_as_sender'),
             ],
@@ -99,7 +100,7 @@ class General extends Page
 
                     Radio::make('app.locale')
                         ->label(__('setting.default_locale'))
-                        ->default(Setting::getByKey('app.locale'))
+                        ->default(Setting::get('app.locale'))
                         ->required()
                         ->options(function (Get $get): array {
                             $locales = $get('app.locales');
@@ -155,12 +156,10 @@ class General extends Page
             }
 
             if ($key === 'app.email_as_sender' && data_get($state, 'app.email_as_sender') === true) {
-                Setting::updateOrCreate(['key' => 'mail.from.address'], [
-                    'value' => data_get($state, 'app.email'),
-                ]);
+                Setting::set('mail.from.address', data_get($state, 'app.email'));
             }
 
-            Setting::updateOrCreate(compact('key'), compact('value'));
+            Setting::set($key, $value);
         }
 
         event(new SettingUpdated);
