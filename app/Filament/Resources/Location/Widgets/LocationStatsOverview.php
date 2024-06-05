@@ -14,19 +14,19 @@ class LocationStatsOverview extends BaseWidget
     protected function getStats(): array
     {
         return [
-            BaseWidget\Stat::make(__('Country'), Country::count())
-                ->description(__(':count inactive', [
+            BaseWidget\Stat::make(__('location.country'), Country::count())
+                ->description(__('location.inactive', [
                     'count' => Country::whereIsActive(false)->count(),
                 ])),
 
-            BaseWidget\Stat::make(__('Region'), Region::count())
-                ->description(__(':count Inactive', [
+            BaseWidget\Stat::make(__('location.region'), Region::count())
+                ->description(__('location.inactive', [
                     'count' => Region::whereIsActive(false)->count(),
                 ])),
 
-            BaseWidget\Stat::make(__('District'), District::count())
-                ->description(__(':count Inactive', [
-                    'count' => District::whereIsActive(false)->count()
+            BaseWidget\Stat::make(__('location.district'), District::count())
+                ->description(__('location.inactive', [
+                    'count' => District::whereIsActive(false)->count(),
                 ])),
         ];
     }

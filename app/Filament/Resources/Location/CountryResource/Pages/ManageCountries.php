@@ -6,6 +6,7 @@ use App\Filament\Resources\Location\CountryResource;
 use App\Filament\Resources\Location\Widgets\LocationStatsOverview;
 use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
 class ManageCountries extends ManageRecords
@@ -22,7 +23,8 @@ class ManageCountries extends ManageRecords
 
     public function mount(): void
     {
-        abort_unless(Auth::user()->can('View country'), 403);
+        abort_unless(config('modules.location'), Response::HTTP_NOT_FOUND);
+        abort_unless(Auth::user()->can('View country'), Response::HTTP_FORBIDDEN);
     }
 
     protected function getHeaderWidgets(): array

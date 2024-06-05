@@ -3,8 +3,6 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
-use App\Filament\Resources\UserResource\RelationManagers;
-use App\Filament\Resources\UserResource\Widgets\UserStatsOverview;
 use App\Models\Location\District;
 use App\Models\User;
 use Filament\Forms;
@@ -23,6 +21,8 @@ class UserResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-user';
 
     protected static ?int $navigationSort = 3;
+
+    protected static ?string $tenantOwnershipRelationshipName = 'branches';
 
     public static function getNavigationGroup(): ?string
     {
@@ -55,7 +55,7 @@ class UserResource extends Resource
             ->columns(3)
             ->schema([
                 Forms\Components\Section::make()
-                    ->columnSpan(fn(?Model $record): int => empty($record) ? 3 : 2)
+                    ->columnSpan(fn (?Model $record): int => empty($record) ? 3 : 2)
                     ->translateLabel()
                     ->schema([
                         Forms\Components\TextInput::make('email')
@@ -78,14 +78,14 @@ class UserResource extends Resource
                                 Pages\ViewUser::class,
                                 Pages\EditUser::class,
                             ])
-                            ->content(fn(?Model $record): string => $record->created_at),
+                            ->content(fn (?Model $record): string => $record->created_at),
 
                         Forms\Components\Placeholder::make('updated_at')
                             ->visibleOn([
                                 Pages\ViewUser::class,
                                 Pages\EditUser::class,
                             ])
-                            ->content(fn(?Model $record): string => $record->updated_at),
+                            ->content(fn (?Model $record): string => $record->updated_at),
                     ]),
 
                 Forms\Components\Section::make(__('Role'))
@@ -115,8 +115,8 @@ class UserResource extends Resource
                             ->placeholder(__('Select location'))
                             ->label(__('District'))
                             ->options(District::pluck('name', 'id'))
-                            ->searchable()
-                    ])
+                            ->searchable(),
+                    ]),
             ]);
     }
 
@@ -141,7 +141,7 @@ class UserResource extends Resource
 
                 Tables\Columns\TextColumn::make('updated_at')
                     ->translateLabel()
-                    ->tooltip(fn(?Model $record): string => $record->created_at)
+                    ->tooltip(fn (?Model $record): string => $record->created_at)
                     ->sortable()
                     ->since(),
             ])

@@ -11,11 +11,11 @@ return [
             ],
 
             'add' => [
-                'label' => 'Hinzufügen',
+                'label' => 'Zu :label hinzufügen',
             ],
 
             'add_between' => [
-                'label' => 'Einfügen',
+                'label' => 'Dazwischen einfügen',
             ],
 
             'delete' => [
@@ -59,11 +59,139 @@ return [
         'actions' => [
 
             'deselect_all' => [
-                'label' => 'Alle deselektieren',
+                'label' => 'Alle abwählen',
             ],
 
             'select_all' => [
-                'label' => 'Alle selektieren',
+                'label' => 'Alle auswählen',
+            ],
+
+        ],
+
+    ],
+
+    'file_upload' => [
+
+        'editor' => [
+
+            'actions' => [
+
+                'cancel' => [
+                    'label' => 'Abbrechen',
+                ],
+
+                'drag_crop' => [
+                    'label' => 'Drag Modus "zuschneiden"',
+                ],
+
+                'drag_move' => [
+                    'label' => 'Drag Modus "verschieben"',
+                ],
+
+                'flip_horizontal' => [
+                    'label' => 'Bild horizontal spiegeln',
+                ],
+
+                'flip_vertical' => [
+                    'label' => 'Bild vertikal spiegeln',
+                ],
+
+                'move_down' => [
+                    'label' => 'Bild nach unten',
+                ],
+
+                'move_left' => [
+                    'label' => 'Bild nach links',
+                ],
+
+                'move_right' => [
+                    'label' => 'Bild nach rechts',
+                ],
+
+                'move_up' => [
+                    'label' => 'Bild nach oben',
+                ],
+
+                'reset' => [
+                    'label' => 'Zurücksetzen',
+                ],
+
+                'rotate_left' => [
+                    'label' => 'Bild nach links drehen',
+                ],
+
+                'rotate_right' => [
+                    'label' => 'Bild nach rechts drehen',
+                ],
+
+                'set_aspect_ratio' => [
+                    'label' => 'Seitenverhältnis auf :ratio setzen',
+                ],
+
+                'save' => [
+                    'label' => 'Speichern',
+                ],
+
+                'zoom_100' => [
+                    'label' => 'Bild Zoom 100%',
+                ],
+
+                'zoom_in' => [
+                    'label' => 'Hereinzoomen',
+                ],
+
+                'zoom_out' => [
+                    'label' => 'Herauszoomen',
+                ],
+
+            ],
+
+            'fields' => [
+
+                'height' => [
+                    'label' => 'Höhe',
+                    'unit' => 'px',
+                ],
+
+                'rotation' => [
+                    'label' => 'Drehung',
+                    'unit' => 'deg',
+                ],
+
+                'width' => [
+                    'label' => 'Breite',
+                    'unit' => 'px',
+                ],
+
+                'x_position' => [
+                    'label' => 'X',
+                    'unit' => 'px',
+                ],
+
+                'y_position' => [
+                    'label' => 'Y',
+                    'unit' => 'px',
+                ],
+
+            ],
+
+            'aspect_ratios' => [
+
+                'label' => 'Seitenverhältnisse',
+
+                'no_fixed' => [
+                    'label' => 'Frei',
+                ],
+
+            ],
+
+            'svg' => [
+
+                'messages' => [
+                    'confirmation' => 'Das Bearbeiten von SVG Dateien ist nicht empfohlen, da es Qualitätsverluste beim Verändern der Größe geben kann.\n Wirklich fortfahren?',
+                    'disabled' => 'Das Bearbeiten von SVG Dateien ist deaktiviert, da es Qualitätsverluste beim Verändern der Größe geben kann.',
+                ],
+
             ],
 
         ],
@@ -83,7 +211,7 @@ return [
             ],
 
             'reorder' => [
-                'label' => 'Zeile neu sortieren',
+                'label' => 'Zeile neu ordnen',
             ],
 
         ],
@@ -105,16 +233,28 @@ return [
     'markdown_editor' => [
 
         'toolbar_buttons' => [
-            'attach_files' => 'Dateien hinzufügen',
+            'attach_files' => 'Dateien beifügen',
+            'blockquote' => 'Zitat',
             'bold' => 'Fett',
-            'bullet_list' => 'Liste',
+            'bullet_list' => 'Aufzählungsliste',
             'code_block' => 'Code Block',
-            'edit' => 'Bearbeiten',
+            'heading' => 'Überschrift',
             'italic' => 'Kursiv',
             'link' => 'Link',
             'ordered_list' => 'Nummerierte Liste',
-            'preview' => 'Vorschau',
+            'redo' => 'Wiederherstellen',
             'strike' => 'Durchgestrichen',
+            'table' => 'Tabelle',
+            'undo' => 'Rückgängig',
+        ],
+
+    ],
+
+    'radio' => [
+
+        'boolean' => [
+            'true' => 'Ja',
+            'false' => 'Nein',
         ],
 
     ],
@@ -124,7 +264,11 @@ return [
         'actions' => [
 
             'add' => [
-                'label' => 'Hinzufügen',
+                'label' => 'Zu :label hinzufügen',
+            ],
+
+            'add_between' => [
+                'label' => 'Dazwischen einfügen',
             ],
 
             'delete' => [
@@ -132,7 +276,7 @@ return [
             ],
 
             'clone' => [
-                'label' => 'Kopieren',
+                'label' => 'Duplizieren',
             ],
 
             'reorder' => [
@@ -190,7 +334,7 @@ return [
             'attach_files' => 'Dateien anhängen',
             'blockquote' => 'Zitat',
             'bold' => 'Fett',
-            'bullet_list' => 'Aufzählung',
+            'bullet_list' => 'Aufzählungsliste',
             'code_block' => 'Code Block',
             'h1' => 'Titel',
             'h2' => 'Überschrift',
@@ -198,8 +342,9 @@ return [
             'italic' => 'Kursiv',
             'link' => 'Link',
             'ordered_list' => 'Nummerierte Aufzählung',
-            'redo' => 'Wiederholen',
+            'redo' => 'Wiederherstellen',
             'strike' => 'Durchgestrichen',
+            'underline' => 'Unterstreichen',
             'undo' => 'Rückgängig',
         ],
 
@@ -221,8 +366,31 @@ return [
                             'label' => 'Erstellen',
                         ],
 
+                        'create_another' => [
+                            'label' => 'Erstellen & weiteres erstellen',
+                        ],
+
                     ],
 
+                ],
+
+            ],
+
+            'edit_option' => [
+
+                'modal' => [
+
+                    'heading' => 'Bearbeiten',
+
+                    'actions' => [
+
+                        'save' => [
+
+                            'label' => 'Speichern',
+
+                        ],
+
+                    ],
                 ],
 
             ],
@@ -249,7 +417,32 @@ return [
     ],
 
     'tags_input' => [
-        'placeholder' => 'Neues Etikett',
+        'placeholder' => 'Neue Kennzeichnung',
+    ],
+
+    'text_input' => [
+
+        'actions' => [
+
+            'hide_password' => [
+                'label' => 'Passwort verbergen',
+            ],
+
+            'show_password' => [
+                'label' => 'Passwort anzeigen',
+            ],
+
+        ],
+
+    ],
+
+    'toggle_buttons' => [
+
+        'boolean' => [
+            'true' => 'Ja',
+            'false' => 'Nein',
+        ],
+
     ],
 
     'wizard' => [

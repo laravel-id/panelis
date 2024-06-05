@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Misc;
 
 use App\Filament\Resources\Misc\TodoResource\Pages;
-use App\Filament\Resources\Misc\TodoResource\RelationManagers;
 use App\Models\Misc\Todo;
 use Filament\Forms;
 use Filament\Forms\Form;
@@ -22,6 +21,7 @@ class TodoResource extends Resource
     protected static ?string $model = Todo::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-queue-list';
+
     private static array $statuses = [
         'new' => 'New',
         'in progress' => 'In progress',
@@ -36,9 +36,6 @@ class TodoResource extends Resource
         'high' => 'High',
     ];
 
-    /**
-     * @return string|null
-     */
     public static function getNavigationGroup(): ?string
     {
         return __('Misc');
@@ -49,14 +46,10 @@ class TodoResource extends Resource
         return __('Todo');
     }
 
-    /**
-     * @return string|null
-     */
     public static function getActiveNavigationIcon(): ?string
     {
         return 'heroicon-s-queue-list';
     }
-
 
     public static function getNavigationBadge(): ?string
     {
@@ -69,7 +62,8 @@ class TodoResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()->can('View todo') || Auth::user()->can('View all todos');
+        return (Auth::user()->can('View todo') || Auth::user()->can('View all todos'))
+            && config('modules.todo');
     }
 
     public static function form(Form $form): Form
@@ -141,7 +135,7 @@ class TodoResource extends Resource
         return $table
             ->description(__('Get. Things. Done.'))
             ->modifyQueryUsing(function (Builder $query): Builder {
-                return $query->when(!Auth::user()->can('View all todos'), function (Builder $query): Builder {
+                return $query->when(! Auth::user()->can('View all todos'), function (Builder $query): Builder {
                     return $query->whereHas('users', function (Builder $user): Builder {
                         return $user->whereUserId(Auth::id());
                     });
@@ -151,21 +145,21 @@ class TodoResource extends Resource
             ->groups([
                 Tables\Grouping\Group::make('priority')
                     ->label(__('Priority'))
-                    ->getTitleFromRecordUsing(fn(Todo $todo): string => __(ucfirst($todo->priority)))
+                    ->getTitleFromRecordUsing(fn (Todo $todo): string => __(ucfirst($todo->priority)))
                     ->collapsible(),
 
                 Tables\Grouping\Group::make('status')
                     ->label(__('Status'))
-                    ->getTitleFromRecordUsing(fn(Todo $todo): string => __(ucfirst($todo->status)))
+                    ->getTitleFromRecordUsing(fn (Todo $todo): string => __(ucfirst($todo->status)))
                     ->collapsible(),
             ])
             ->columns([
                 Tables\Columns\TextColumn::make('status')
                     ->translateLabel()
                     ->sortable()
-                    ->formatStateUsing(fn(string $state): string => __(ucfirst($state)))
+                    ->formatStateUsing(fn (string $state): string => __(ucfirst($state)))
                     ->badge()
-                    ->color(fn(string $state): string => match ($state) {
+                    ->color(fn (string $state): string => match ($state) {
                         'new' => 'primary',
                         'pending' => 'warning',
                         'in progress' => 'info',
@@ -176,7 +170,7 @@ class TodoResource extends Resource
                 Tables\Columns\TextColumn::make('name')
                     ->translateLabel()
                     ->searchable()
-                    ->description(fn(?Model $model): string => $model->description ?? '')
+                    ->description(fn (?Model $model): string => $model->description ?? '')
                     ->formatStateUsing(function (?Model $record, string $state): string {
                         if ($record->status == self::Completed) {
                             return sprintf('~~%s~~', $state);
@@ -193,19 +187,19 @@ class TodoResource extends Resource
                 Tables\Columns\TextColumn::make('due_at')
                     ->translateLabel()
                     ->sortable()
-                    ->tooltip(fn(?Model $record): string => $record->due_at->format('H:i'))
+                    ->tooltip(fn (?Model $record): string => $record->due_at->format('H:i'))
                     ->date(),
 
                 Tables\Columns\TextColumn::make('priority')
                     ->translateLabel()
                     ->sortable()
                     ->badge()
-                    ->formatStateUsing(fn(string $state): string => __(ucfirst($state)))
-                    ->color(fn(string $state): string => match ($state) {
+                    ->formatStateUsing(fn (string $state): string => __(ucfirst($state)))
+                    ->color(fn (string $state): string => match ($state) {
                         'low' => 'success',
                         'medium' => 'warning',
                         'high' => 'danger',
-                    })
+                    }),
             ])
             ->filters([
                 Tables\Filters\SelectFilter::make('status')
@@ -234,7 +228,7 @@ class TodoResource extends Resource
                     ->requiresConfirmation()
                     ->disabled(function (?Model $todo): bool {
                         return $todo->status === self::Completed
-                            || !in_array(Auth::id(), $todo->users->pluck('id')->toArray());
+                            || ! in_array(Auth::id(), $todo->users->pluck('id')->toArray());
                     })
                     ->action(function (?Model $record): void {
                         $record->status = self::Completed;
@@ -245,7 +239,7 @@ class TodoResource extends Resource
                     Tables\Actions\DeleteAction::make()->visible($canDelete),
                     Tables\Actions\ForceDeleteAction::make()->visible($canDelete),
                     Tables\Actions\RestoreAction::make()->visible($canUpdate),
-                ])
+                ]),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([]),

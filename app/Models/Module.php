@@ -1,0 +1,16 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
+
+class Module extends Model
+{
+    use HasFactory;
+
+    protected $casts = [
+        'is_enabled' => 'bool',
+        'is_builtin' => 'bool',
+    ];
+}

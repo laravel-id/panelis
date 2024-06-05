@@ -3,15 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PermissionResource\Pages;
-use App\Filament\Resources\PermissionResource\RelationManagers;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Permission;
 
@@ -22,6 +19,8 @@ class PermissionResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-key';
 
     protected static ?int $navigationSort = 1;
+
+    protected static bool $isScopedToTenant = false;
 
     public static function getLabel(): ?string
     {
@@ -73,7 +72,7 @@ class PermissionResource extends Resource
                     ->translateLabel()
                     ->searchable()
                     ->sortable()
-                    ->description(fn(?Model $record): string => $record?->description ?? ''),
+                    ->description(fn (?Model $record): string => $record?->description ?? ''),
 
                 Tables\Columns\TextColumn::make('updated_at')
                     ->translateLabel()
@@ -89,7 +88,7 @@ class PermissionResource extends Resource
 
                 Tables\Actions\DeleteAction::make()
                     ->visible($canDelete)
-                    ->disabled(fn(?Model $record): bool => $record->is_default),
+                    ->disabled(fn (?Model $record): bool => $record->is_default),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([

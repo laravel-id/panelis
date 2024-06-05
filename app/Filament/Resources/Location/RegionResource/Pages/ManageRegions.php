@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Location\RegionResource\Pages;
 use App\Filament\Resources\Location\RegionResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
 class ManageRegions extends ManageRecords
@@ -21,6 +22,7 @@ class ManageRegions extends ManageRecords
 
     public function mount(): void
     {
-        abort_unless(Auth::user()->can('View region'), 403);
+        abort_unless(config('modules.location'), Response::HTTP_NOT_FOUND);
+        abort_unless(Auth::user()->can('View region'), Response::HTTP_FORBIDDEN);
     }
 }

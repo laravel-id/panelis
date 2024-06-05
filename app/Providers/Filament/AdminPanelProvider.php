@@ -6,13 +6,17 @@ use App\Filament\Pages\Auth\EditProfile;
 use App\Filament\Pages\Auth\EmailVerificationPrompt;
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Auth\RequestPasswordReset;
+use App\Filament\Pages\EditBranch;
+use App\Filament\Pages\RegisterBranch;
+use App\Http\Middleware\OverrideUserConfig;
+use App\Http\Middleware\SetTheme;
+use App\Models\Branch;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
-use Filament\Support\Colors\Color;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -27,6 +31,11 @@ class AdminPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
+
+            ->tenant(Branch::class, slugAttribute: 'slug')
+            ->tenantRegistration(RegisterBranch::class)
+            ->tenantProfile(EditBranch::class)
+
             ->default()
             ->id('admin')
 
@@ -38,12 +47,9 @@ class AdminPanelProvider extends PanelProvider
             ->passwordReset(RequestPasswordReset::class)
             ->profile(EditProfile::class)
             ->emailVerification(EmailVerificationPrompt::class)
-
-            ->colors([
-                'primary' => Color::Amber,
-            ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
+            ->discoverClusters(in: app_path('Filament/Clusters'), for: 'App\\Filament\\Clusters')
             ->pages([
                 Pages\Dashboard::class,
             ])
@@ -62,9 +68,15 @@ class AdminPanelProvider extends PanelProvider
                 SubstituteBindings::class,
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
+
+                // custom middlewares
+                SetTheme::class,
             ])
             ->authMiddleware([
                 Authenticate::class,
+
+                // custom middlewares
+                OverrideUserConfig::class,
             ]);
     }
 }

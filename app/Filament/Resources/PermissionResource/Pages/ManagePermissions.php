@@ -18,7 +18,6 @@ class ManagePermissions extends ManageRecords
         ];
     }
 
-
     protected function authorizeAccess(): void
     {
         abort_unless(Auth::user()->can('View user'), 403);

@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 
@@ -53,8 +52,9 @@ class PermissionTableSeeder extends Seeder
         'Create blog post' => 'Empowers users to craft and publish new blog posts.',
         'Update blog post' => 'Empowers users to edit and update existing blog posts.',
         'Delete blog post' => 'Empowers users to remove blog posts.',
-    ];
 
+        'Manage module' => 'Manage built-in or third party modules.',
+    ];
 
     /**
      * Run the database seeds.

@@ -54,7 +54,7 @@ class ImportLocationCommand extends Command
             $bar->start();
             foreach ($regions->json() as $region) {
                 if (in_array($region['name'], $specialRegions)) {
-                    list($special, $regionName) = explode(" ", $region['name']);
+                    [$special, $regionName] = explode(' ', $region['name']);
                     $regionName = sprintf('%s %s', $special, str($regionName)->title()->toString());
                 } else {
                     $regionName = str($region['name'])->title()->toString();
