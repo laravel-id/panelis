@@ -3,16 +3,22 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
-use App\Models\Location\District;
+use App\Models\Branch;
+use App\Models\Role;
 use App\Models\User;
-use Filament\Forms;
+use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
-use Spatie\Permission\Models\Role;
 
 class UserResource extends Resource
 {
@@ -26,12 +32,12 @@ class UserResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('User management');
+        return __('navigation.user_management');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('User');
+        return __('navigation.user');
     }
 
     public static function getActiveNavigationIcon(): ?string
@@ -41,7 +47,7 @@ class UserResource extends Resource
 
     public static function getLabel(): ?string
     {
-        return __('User');
+        return __('user.user');
     }
 
     public static function shouldRegisterNavigation(): bool
@@ -54,68 +60,83 @@ class UserResource extends Resource
         return $form
             ->columns(3)
             ->schema([
-                Forms\Components\Section::make()
+                Section::make()
                     ->columnSpan(fn (?Model $record): int => empty($record) ? 3 : 2)
                     ->translateLabel()
                     ->schema([
-                        Forms\Components\TextInput::make('email')
+                        TextInput::make('email')
+                            ->label(__('user.email'))
                             ->required()
                             ->unique(ignorable: $form->getRecord())
                             ->email(),
 
-                        Forms\Components\TextInput::make('name')
+                        TextInput::make('name')
+                            ->label('user.name')
                             ->required()
                             ->minLength(3)
                             ->maxLength(150),
                     ]),
 
-                Forms\Components\Section::make()
+                Section::make()
                     ->hiddenOn(Pages\CreateUser::class)
                     ->columnSpan(1)
                     ->schema([
-                        Forms\Components\Placeholder::make('created_at')
+                        Placeholder::make('created_at')
+                            ->label(__('ui.created_at'))
                             ->visibleOn([
                                 Pages\ViewUser::class,
                                 Pages\EditUser::class,
                             ])
-                            ->content(fn (?Model $record): string => $record->created_at),
+                            ->content(fn (User $user): string => $user->local_created_at),
 
-                        Forms\Components\Placeholder::make('updated_at')
+                        Placeholder::make('updated_at')
+                            ->label(__('ui.updated_at'))
                             ->visibleOn([
                                 Pages\ViewUser::class,
                                 Pages\EditUser::class,
                             ])
-                            ->content(fn (?Model $record): string => $record->updated_at),
+                            ->content(fn (User $user): string => $user->local_updated_at),
                     ]),
 
-                Forms\Components\Section::make(__('Role'))
-                    ->description(__('If no role selected, user will be assigned as super user'))
+                Section::make(__('user.branch'))
+                    ->description(__('user.branch_section_description'))
                     ->schema([
-                        Forms\Components\CheckboxList::make('role_id')
-                            ->label(__('Role'))
-                            ->relationship('roles', 'name')
-                            ->descriptions(Role::pluck('description', 'id')),
+                        CheckboxList::make('branches')
+                            ->label(__('user.branch'))
+                            ->relationship('branches')
+                            ->bulkToggleable()
+                            ->options(
+                                Branch::orderBy('name')
+                                    ->pluck('name', 'id'),
+                            )
+                            ->required(),
                     ]),
 
-                Forms\Components\Section::make(__('Additional info'))
+                Section::make(__('user.role'))
+                    ->description(__('user.role_section_description'))
+                    ->schema([
+                        CheckboxList::make('role_id')
+                            ->label(__('user.role_name'))
+                            ->relationship('roles', 'name')
+                            ->descriptions(Role::pluck('description', 'id'))
+                            ->required(fn(User $user): bool => !$user->isRoot()),
+                    ]),
+
+                Section::make(__('user.profile'))
+                    ->description(__('user.profile_section_description'))
                     ->collapsed()
-                    ->translateLabel()
                     ->relationship('profile')
                     ->schema([
-                        Forms\Components\TextInput::make('phone')
+                        TextInput::make('phone')
+                            ->label(__('user.phone'))
                             ->tel()
                             ->maxLength(20),
 
-                        Forms\Components\Textarea::make('address')
+                        Textarea::make('address')
+                            ->label(__('user.address'))
                             ->rows(4)
                             ->minLength(3)
                             ->maxLength(150),
-
-                        Forms\Components\Select::make('district_id')
-                            ->placeholder(__('Select location'))
-                            ->label(__('District'))
-                            ->options(District::pluck('name', 'id'))
-                            ->searchable(),
                     ]),
             ]);
     }
@@ -124,37 +145,44 @@ class UserResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('roles.name')
-                    ->translateLabel()
+                TextColumn::make('branches.name')
+                    ->label(__('user.branch')),
+
+                TextColumn::make('roles.name')
+                    ->label(__('user.role'))
                     ->default('*'),
 
-                Tables\Columns\TextColumn::make('name')
-                    ->translateLabel()
+                TextColumn::make('name')
+                    ->label(__('user.name'))
                     ->searchable()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('email')
-                    ->translateLabel()
+                TextColumn::make('email')
+                    ->label(__('user.name'))
                     ->copyable()
                     ->searchable()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->translateLabel()
-                    ->tooltip(fn (?Model $record): string => $record->created_at)
-                    ->sortable()
-                    ->since(),
+                TextColumn::make('local_created_at')
+                    ->label(__('ui.created_at'))
+                    ->sortable(),
             ])
             ->filters([
-                Tables\Filters\SelectFilter::make('Role')
-                    ->translateLabel()
+                SelectFilter::make('branch')
+                    ->label(__('user.branch'))
+                    ->preload()
+                    ->multiple()
+                    ->relationship('branches', 'name'),
+
+                SelectFilter::make('role')
+                    ->label(__('user.role'))
                     ->relationship('roles', 'name')
                     ->searchable()
                     ->preload()
                     ->multiple(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make()->visible(Auth::user()->can('Update user')),
+                EditAction::make()->visible(Auth::user()->can('Update user')),
             ])
             ->bulkActions([
 

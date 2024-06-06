@@ -6,6 +6,7 @@ use App\Filament\Resources\UserResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class ViewUser extends ViewRecord
 {
@@ -20,6 +21,6 @@ class ViewUser extends ViewRecord
 
     protected function authorizeAccess(): void
     {
-        abort_unless(Auth::user()->can('View user'), 403);
+        abort_unless(Auth::user()->can('View user'), Response::HTTP_FORBIDDEN);
     }
 }

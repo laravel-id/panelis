@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @method static whereNotNull(string $string)
  * @method static find(mixed $branch)
+ * @method static orderBy(string $string)
  */
 class Branch extends Model
 {
