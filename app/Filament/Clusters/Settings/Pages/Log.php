@@ -19,6 +19,7 @@ use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 
 class Log extends Page implements HasForms
@@ -36,6 +37,16 @@ class Log extends Page implements HasForms
     public array $logging;
 
     public bool $isButtonDisabled = false;
+
+    public function getTitle(): string|Htmlable
+    {
+        return __('setting.log');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('navigation.setting_log');
+    }
 
     public function mount(): void
     {
@@ -95,7 +106,8 @@ class Log extends Page implements HasForms
             ->disabled(config('app.demo'))
             ->schema([
                 Section::make(__('setting.log'))
-                    ->description(__('setting.log_description'))
+                    ->label(__('setting.log_channel'))
+                    ->description(__('setting.log_section_description'))
                     ->schema([
                         CheckboxList::make('logging.channels.stack.channels')
                             ->descriptions(LogChannel::descriptions())

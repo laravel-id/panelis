@@ -13,7 +13,6 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
 use Filament\Forms\Get;
 use Filament\Notifications\Notification;
@@ -21,7 +20,7 @@ use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\HtmlString;
 
-class General extends Page implements HasForms, Settings\HasUpdateableForm
+class General extends Page
 {
     use InteractsWithForms;
 
@@ -42,7 +41,7 @@ class General extends Page implements HasForms, Settings\HasUpdateableForm
 
     public static function getNavigationLabel(): string
     {
-        return __('setting.general');
+        return __('navigation.setting_general');
     }
 
     public function mount(): void
@@ -78,7 +77,7 @@ class General extends Page implements HasForms, Settings\HasUpdateableForm
 
         return $form->schema([
             Section::make(__('setting.general'))
-                ->description(__('setting.general_info'))
+                ->description(__('setting.general_section_description'))
                 ->schema([
                     TextInput::make('app.name')
                         ->label(__('setting.brand'))
@@ -139,7 +138,7 @@ class General extends Page implements HasForms, Settings\HasUpdateableForm
                 ->schema([
                     Toggle::make('app.debug')
                         ->label(__('setting.app_debug'))
-                        ->helperText(fn (): ?string => app()->isProduction() ? __('setting.debug_recommendation') : null),
+                        ->helperText(fn (): ?string => app()->isProduction() ? __('setting.helper_app_debug') : null),
                 ]),
         ])->disabled(config('app.demo'));
     }

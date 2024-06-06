@@ -21,9 +21,14 @@ class ModuleResource extends Resource
 
     protected static bool $isScopedToTenant = false;
 
+    public static function getLabel(): ?string
+    {
+        return __('module.module');
+    }
+
     public static function getNavigationLabel(): string
     {
-        return __('module.navigation');
+        return __('navigation.module');
     }
 
     public static function getNavigationGroup(): ?string

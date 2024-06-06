@@ -51,14 +51,14 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
 
     public static function getNavigationLabel(): string
     {
-        return __('setting.mail');
+        return __('navigation.setting_mail');
     }
 
     public function getHeaderActions(): array
     {
         return [
             Action::make('test_mail')
-                ->label(__('setting.mail_test_button'))
+                ->label(__('setting.mail_button_test'))
                 ->modalWidth(MaxWidth::Medium)
                 ->modalSubmitActionLabel(__('setting.mail_test_button_send'))
                 ->form([
@@ -171,7 +171,7 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
 
         return $form->schema([
             Section::make(__('setting.mail_sender'))
-                ->description(__('setting.mail_sender_description'))
+                ->description(__('setting.mail_sender_section_description'))
                 ->collapsed()
                 ->schema([
                     TextInput::make('mail.from.address')
@@ -186,7 +186,7 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
                 ]),
 
             Section::make(__('setting.mail'))
-                ->description(__('setting.mail_description'))
+                ->description(__('setting.mail_section_description'))
                 ->schema([
                     Radio::make('mail.default')
                         ->label(__('setting.mail_driver'))
@@ -197,7 +197,7 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
                 ]),
 
             Section::make(__('setting.mail_sendmail'))
-                ->description(__('setting.mail_sendmail_description'))
+                ->description(__('setting.mail_sendmail_section_description'))
                 ->visible(fn (Get $get): bool => $get('mail.default') === MailType::Sendmail->value)
                 ->schema([
                     TextInput::make('mail.mailers.sendmail.path')
@@ -206,7 +206,7 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
                 ]),
 
             Section::make(__('setting.mail_smtp'))
-                ->description(__('setting.mail_smtp_description'))
+                ->description(__('setting.mail_smtp_section_description'))
                 ->visible(fn (Get $get): bool => $get('mail.default') === MailType::SMTP->value)
                 ->schema([
                     TextInput::make('mail.mailers.smtp.host')
@@ -246,7 +246,7 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
                 ]),
 
             Section::make(__('setting.mail_mailgun'))
-                ->description(__('setting.mail_mailgun_description'))
+                ->description(__('setting.mail_mailgun_section_description'))
                 ->visible(fn (Get $get): bool => $get('mail.default') === MailType::Mailgun->value)
                 ->schema([
                     TextInput::make('services.mailgun.domain')
@@ -267,7 +267,7 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
                 ]),
 
             Section::make(__('setting.mail_postmark'))
-                ->description(__('setting.mail_postmark_description'))
+                ->description(__('setting.mail_postmark_section_description'))
                 ->visible(fn (Get $get): bool => $get('mail.default') === MailType::Postmark->value)
                 ->schema([
                     TextInput::make('services.postmark.token')
@@ -278,7 +278,7 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
                 ]),
 
             Section::make(__('setting.mail_ses'))
-                ->description(__('setting.mail_ses_description'))
+                ->description(__('setting.mail_ses_section_description'))
                 ->visible(fn (Get $get): bool => $get('mail.default') === MailType::SES->value)
                 ->schema([
                     TextInput::make('services.ses.key')

@@ -44,7 +44,7 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
 
     public static function getNavigationLabel(): string
     {
-        return __('navigation.cache');
+        return __('navigation.setting_cache');
     }
 
     public function mount(): void
@@ -107,8 +107,8 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
     public function form(Form $form): Form
     {
         return $form->schema([
-            Section::make(__('setting.cache_driver'))
-                ->description(__('setting.cache_driver_description'))
+            Section::make(__('setting.cache'))
+                ->description(__('setting.cache_section_description'))
                 ->schema([
                     Radio::make('cache.default')
                         ->label(__('setting.cache_driver'))

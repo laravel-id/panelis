@@ -26,9 +26,14 @@ class TranslationResource extends Resource
 
     protected static ?int $navigationSort = 2;
 
-    public static function getModelLabel(): string
+    public static function getLabel(): string
     {
-        return __('translation.title');
+        return __('translation.translation');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('navigation.translation');
     }
 
     public static function getNavigationGroup(): ?string
@@ -100,10 +105,9 @@ class TranslationResource extends Resource
                 TextColumn::make(sprintf('text.%s', config('app.locale')))
                     ->label(__('translation.text')),
 
-                TextColumn::make('updated_at')
+                TextColumn::make('local_updated_at')
                     ->label(__('ui.updated_at'))
-                    ->sortable()
-                    ->dateTime(config('app.datetime_format'), config('app.datetime_timezone')),
+                    ->sortable(),
             ])
             ->filters([
                 SelectFilter::make('group')
@@ -112,12 +116,7 @@ class TranslationResource extends Resource
                         return LanguageLine::select('group')
                             ->groupBy('group')
                             ->orderBy('group')
-                            ->get()
-                            ->mapWithKeys(function ($line): array {
-                                $text = __(sprintf('%s.title', $line->group));
-
-                                return [$line->group => sprintf('%s (%s)', $line->group, $text)];
-                            })
+                            ->pluck('group', 'group')
                             ->toArray();
                     }),
 
