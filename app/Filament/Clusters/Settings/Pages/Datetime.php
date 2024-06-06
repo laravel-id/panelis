@@ -37,7 +37,7 @@ class Datetime extends Page
 
     public static function getNavigationLabel(): string
     {
-        return __('setting.datetime');
+        return __('navigation.setting_datetime');
     }
 
     public array $app;
@@ -45,7 +45,7 @@ class Datetime extends Page
     public function mount()
     {
         $this->form->fill([
-            'app.datetime_timezone' => config('app.datetime_timezone', 'UTC'),
+            'app.datetime_timezone' => config('app.datetime_timezone', config('app.timezone')),
             'app.datetime_format' => config('app.datetime_format', 'Y m d H:i'),
         ]);
     }
@@ -56,7 +56,7 @@ class Datetime extends Page
 
         return $form->schema([
             Section::make(__('setting.datetime'))
-                ->description(__('setting.datetime_info'))
+                ->description(__('setting.datetime_section_description'))
                 ->schema([
                     // do not override existing config from Laravel: "app.timezone"
                     // default timezone should be in UTC, but display timezone is interchangeable

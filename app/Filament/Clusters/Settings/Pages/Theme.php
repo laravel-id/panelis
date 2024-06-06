@@ -30,7 +30,7 @@ class Theme extends Page implements HasForms
 
     public static function getNavigationLabel(): string
     {
-        return __('navigation.theme');
+        return __('navigation.setting_theme');
     }
 
     public function getTitle(): string|Htmlable
@@ -64,7 +64,7 @@ class Theme extends Page implements HasForms
 
         return $form->schema([
             Section::make(__('setting.theme'))
-                ->description(__('setting.theme_description'))
+                ->description(__('setting.theme_section_description'))
                 ->schema($colorsInput),
         ]);
     }

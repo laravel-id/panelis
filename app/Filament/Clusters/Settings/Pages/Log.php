@@ -19,6 +19,7 @@ use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 
 class Log extends Page implements HasForms
@@ -36,6 +37,41 @@ class Log extends Page implements HasForms
     public array $logging;
 
     public bool $isButtonDisabled = false;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('send_log')
+                ->label(__('setting.log_button_test'))
+                ->modalWidth(MaxWidth::Medium)
+                ->form([
+                    Textarea::make('message')
+                        ->label(__('setting.log_message')),
+                ])
+                ->action(function (array $data): void {
+                    try {
+                        \Illuminate\Support\Facades\Log::debug($data['message'] ?? 'Testing log');
+
+                        Notification::make('log_test_sent')
+                            ->title(__('setting.log_test_sent'))
+                            ->success()
+                            ->send();
+
+                    } catch (\Exception) {
+                    }
+                }),
+        ];
+    }
+
+    public function getTitle(): string|Htmlable
+    {
+        return __('setting.log');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('navigation.setting_log');
+    }
 
     public function mount(): void
     {
@@ -64,38 +100,14 @@ class Log extends Page implements HasForms
         ]);
     }
 
-    protected function getHeaderActions(): array
-    {
-        return [
-            Action::make('send_log')
-                ->label(__('setting.log_button_test'))
-                ->modalWidth(MaxWidth::Medium)
-                ->form([
-                    Textarea::make('message')
-                        ->label(__('setting.log_message')),
-                ])
-                ->action(function (array $data): void {
-                    try {
-                        \Illuminate\Support\Facades\Log::debug($data['message'] ?? 'Testing log');
-
-                        Notification::make('log_test_sent')
-                            ->title(__('setting.log_test_sent'))
-                            ->success()
-                            ->send();
-
-                    } catch (\Exception) {
-                    }
-                }),
-        ];
-    }
-
     public function form(Form $form): Form
     {
         return $form
             ->disabled(config('app.demo'))
             ->schema([
                 Section::make(__('setting.log'))
-                    ->description(__('setting.log_description'))
+                    ->label(__('setting.log_channel'))
+                    ->description(__('setting.log_section_description'))
                     ->schema([
                         CheckboxList::make('logging.channels.stack.channels')
                             ->descriptions(LogChannel::descriptions())
