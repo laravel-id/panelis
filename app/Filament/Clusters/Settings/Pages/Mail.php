@@ -44,6 +44,172 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
 
     public bool $isButtonDisabled;
 
+    private function senderSection(): Section
+    {
+        return Section::make(__('setting.mail_sender'))
+            ->description(__('setting.mail_sender_section_description'))
+            ->collapsed()
+            ->schema([
+                TextInput::make('mail.from.address')
+                    ->label(__('setting.mail_from_address'))
+                    ->email()
+                    ->required(),
+
+                TextInput::make('mail.from.name')
+                    ->label(__('setting.mail_from_name'))
+                    ->string()
+                    ->required(),
+            ]);
+    }
+
+    private function driverSection(): Section
+    {
+        return
+
+            Section::make(__('setting.mail'))
+                ->description(__('setting.mail_section_description'))
+                ->schema([
+                    Radio::make('mail.default')
+                        ->label(__('setting.mail_driver'))
+                        ->options(MailType::options())
+                        ->descriptions(MailType::descriptions())
+                        ->live()
+                        ->required(),
+                ]);
+    }
+
+    private function sendmailSection(): Section
+    {
+        return
+
+            Section::make(__('setting.mail_sendmail'))
+                ->description(__('setting.mail_sendmail_section_description'))
+                ->visible(fn (Get $get): bool => $get('mail.default') === MailType::Sendmail->value)
+                ->schema([
+                    TextInput::make('mail.mailers.sendmail.path')
+                        ->label(__('setting.mail_sendmail_path'))
+                        ->required(),
+                ]);
+    }
+
+    private function smtpSection(): Section
+    {
+        $isDemo = config('app.demo');
+        $demoText = function (): ?string {
+            if (config('app.demo')) {
+                return __('setting.hidden_when_in_demo');
+            }
+
+            return null;
+        };
+
+        return Section::make(__('setting.mail_smtp'))
+            ->description(__('setting.mail_smtp_section_description'))
+            ->visible(fn (Get $get): bool => $get('mail.default') === MailType::SMTP->value)
+            ->schema([
+                TextInput::make('mail.mailers.smtp.host')
+                    ->label(__('setting.mail_smtp_host'))
+                    ->password($isDemo)
+                    ->helperText($demoText)
+                    ->required(),
+
+                TextInput::make('mail.mailers.smtp.port')
+                    ->label(__('setting.mail_smtp_port'))
+                    ->integer()
+                    ->required(),
+
+                TextInput::make('mail.mailers.smtp.username')
+                    ->label(__('setting.mail_smtp_username'))
+                    ->password($isDemo)
+                    ->helperText($demoText)
+                    ->autocomplete(false)
+                    ->nullable(),
+
+                TextInput::make('mail.mailers.smtp.password')
+                    ->label(__('setting.mail_smtp_password'))
+                    ->autocomplete(false)
+                    ->password()
+                    ->revealable()
+                    ->nullable(),
+
+                Radio::make('mail.mailers.smtp.encryption')
+                    ->label(__('setting.mail_smtp_encryption'))
+//                         ->required()
+                    ->options([
+                        '' => __('setting.mail_encryption_none'),
+                        'ssl' => 'SSL',
+                        'tls' => 'TLS',
+                        'starttls' => 'STARTTLS',
+                    ]),
+            ]);
+    }
+
+    private function mailgunSection(): Section
+    {
+        return
+
+            Section::make(__('setting.mail_mailgun'))
+                ->description(__('setting.mail_mailgun_section_description'))
+                ->visible(fn (Get $get): bool => $get('mail.default') === MailType::Mailgun->value)
+                ->schema([
+                    TextInput::make('services.mailgun.domain')
+                        ->label(__('setting.mail_mailgun_domain'))
+                        ->string()
+                        ->required(),
+
+                    TextInput::make('services.mailgun.secret')
+                        ->label(__('setting.mail_mailgun_secret'))
+                        ->password()
+                        ->revealable()
+                        ->required(),
+
+                    TextInput::make('services.mailgun.endpoint')
+                        ->label(__('setting.mail_mailgun_endpoint'))
+                        ->string()
+                        ->required(),
+                ]);
+    }
+
+    private function postmarkSection(): Section
+    {
+        return
+
+            Section::make(__('setting.mail_postmark'))
+                ->description(__('setting.mail_postmark_section_description'))
+                ->visible(fn (Get $get): bool => $get('mail.default') === MailType::Postmark->value)
+                ->schema([
+                    TextInput::make('services.postmark.token')
+                        ->label(__('setting.mail_postmark_token'))
+                        ->password()
+                        ->revealable()
+                        ->required(),
+                ]);
+    }
+
+    private function sesSection(): Section
+    {
+        return
+
+            Section::make(__('setting.mail_ses'))
+                ->description(__('setting.mail_ses_section_description'))
+                ->visible(fn (Get $get): bool => $get('mail.default') === MailType::SES->value)
+                ->schema([
+                    TextInput::make('services.ses.key')
+                        ->label(__('setting.mail_ses_key'))
+                        ->required(),
+
+                    TextInput::make('services.ses.secret')
+                        ->label(__('setting.mail_ses_secret'))
+                        ->password()
+                        ->revealable()
+                        ->required(),
+
+                    TextInput::make('services.ses.region')
+                        ->label(__('setting.mail_ses_region'))
+                        ->required(),
+                ]);
+    }
+
     public function getTitle(): string|Htmlable
     {
         return __('setting.mail');
@@ -160,141 +326,14 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
 
     public function form(Form $form): Form
     {
-        $isDemo = config('app.demo');
-        $demoText = function (): ?string {
-            if (config('app.demo')) {
-                return __('setting.hidden_when_in_demo');
-            }
-
-            return null;
-        };
-
         return $form->schema([
-            Section::make(__('setting.mail_sender'))
-                ->description(__('setting.mail_sender_section_description'))
-                ->collapsed()
-                ->schema([
-                    TextInput::make('mail.from.address')
-                        ->label(__('setting.mail_from_address'))
-                        ->email()
-                        ->required(),
-
-                    TextInput::make('mail.from.name')
-                        ->label(__('setting.mail_from_name'))
-                        ->string()
-                        ->required(),
-                ]),
-
-            Section::make(__('setting.mail'))
-                ->description(__('setting.mail_section_description'))
-                ->schema([
-                    Radio::make('mail.default')
-                        ->label(__('setting.mail_driver'))
-                        ->options(MailType::options())
-                        ->descriptions(MailType::descriptions())
-                        ->live()
-                        ->required(),
-                ]),
-
-            Section::make(__('setting.mail_sendmail'))
-                ->description(__('setting.mail_sendmail_section_description'))
-                ->visible(fn (Get $get): bool => $get('mail.default') === MailType::Sendmail->value)
-                ->schema([
-                    TextInput::make('mail.mailers.sendmail.path')
-                        ->label(__('setting.mail_sendmail_path'))
-                        ->required(),
-                ]),
-
-            Section::make(__('setting.mail_smtp'))
-                ->description(__('setting.mail_smtp_section_description'))
-                ->visible(fn (Get $get): bool => $get('mail.default') === MailType::SMTP->value)
-                ->schema([
-                    TextInput::make('mail.mailers.smtp.host')
-                        ->label(__('setting.mail_smtp_host'))
-                        ->password($isDemo)
-                        ->helperText($demoText)
-                        ->required(),
-
-                    TextInput::make('mail.mailers.smtp.port')
-                        ->label(__('setting.mail_smtp_port'))
-                        ->integer()
-                        ->required(),
-
-                    TextInput::make('mail.mailers.smtp.username')
-                        ->label(__('setting.mail_smtp_username'))
-                        ->password($isDemo)
-                        ->helperText($demoText)
-                        ->autocomplete(false)
-                        ->nullable(),
-
-                    TextInput::make('mail.mailers.smtp.password')
-                        ->label(__('setting.mail_smtp_password'))
-                        ->autocomplete(false)
-                        ->password()
-                        ->revealable()
-                        ->nullable(),
-
-                    Radio::make('mail.mailers.smtp.encryption')
-                        ->label(__('setting.mail_smtp_encryption'))
-//                         ->required()
-                        ->options([
-                            '' => __('setting.mail_encryption_none'),
-                            'ssl' => 'SSL',
-                            'tls' => 'TLS',
-                            'starttls' => 'STARTTLS',
-                        ]),
-                ]),
-
-            Section::make(__('setting.mail_mailgun'))
-                ->description(__('setting.mail_mailgun_section_description'))
-                ->visible(fn (Get $get): bool => $get('mail.default') === MailType::Mailgun->value)
-                ->schema([
-                    TextInput::make('services.mailgun.domain')
-                        ->label(__('setting.mail_mailgun_domain'))
-                        ->string()
-                        ->required(),
-
-                    TextInput::make('services.mailgun.secret')
-                        ->label(__('setting.mail_mailgun_secret'))
-                        ->password()
-                        ->revealable()
-                        ->required(),
-
-                    TextInput::make('services.mailgun.endpoint')
-                        ->label(__('setting.mail_mailgun_endpoint'))
-                        ->string()
-                        ->required(),
-                ]),
-
-            Section::make(__('setting.mail_postmark'))
-                ->description(__('setting.mail_postmark_section_description'))
-                ->visible(fn (Get $get): bool => $get('mail.default') === MailType::Postmark->value)
-                ->schema([
-                    TextInput::make('services.postmark.token')
-                        ->label(__('setting.mail_postmark_token'))
-                        ->password()
-                        ->revealable()
-                        ->required(),
-                ]),
-
-            Section::make(__('setting.mail_ses'))
-                ->description(__('setting.mail_ses_section_description'))
-                ->visible(fn (Get $get): bool => $get('mail.default') === MailType::SES->value)
-                ->schema([
-                    TextInput::make('services.ses.key')
-                        ->label(__('setting.mail_ses_key'))
-                        ->required(),
-
-                    TextInput::make('services.ses.secret')
-                        ->label(__('setting.mail_ses_secret'))
-                        ->password()
-                        ->revealable()
-                        ->required(),
-
-                    TextInput::make('services.ses.region')
-                        ->label(__('setting.mail_ses_region'))
-                        ->required(),
-                ]),
+            $this->senderSection(),
+            $this->driverSection(),
+            $this->sendmailSection(),
+            $this->smtpSection(),
+            $this->mailgunSection(),
+            $this->postmarkSection(),
+            $this->sesSection(),
         ])->disabled(config('app.demo'));
     }
 

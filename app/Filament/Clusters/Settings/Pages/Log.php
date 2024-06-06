@@ -38,6 +38,31 @@ class Log extends Page implements HasForms
 
     public bool $isButtonDisabled = false;
 
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('send_log')
+                ->label(__('setting.log_button_test'))
+                ->modalWidth(MaxWidth::Medium)
+                ->form([
+                    Textarea::make('message')
+                        ->label(__('setting.log_message')),
+                ])
+                ->action(function (array $data): void {
+                    try {
+                        \Illuminate\Support\Facades\Log::debug($data['message'] ?? 'Testing log');
+
+                        Notification::make('log_test_sent')
+                            ->title(__('setting.log_test_sent'))
+                            ->success()
+                            ->send();
+
+                    } catch (\Exception) {
+                    }
+                }),
+        ];
+    }
+
     public function getTitle(): string|Htmlable
     {
         return __('setting.log');
@@ -73,31 +98,6 @@ class Log extends Page implements HasForms
 
             'isButtonDisabled' => config('app.demo'),
         ]);
-    }
-
-    protected function getHeaderActions(): array
-    {
-        return [
-            Action::make('send_log')
-                ->label(__('setting.log_button_test'))
-                ->modalWidth(MaxWidth::Medium)
-                ->form([
-                    Textarea::make('message')
-                        ->label(__('setting.log_message')),
-                ])
-                ->action(function (array $data): void {
-                    try {
-                        \Illuminate\Support\Facades\Log::debug($data['message'] ?? 'Testing log');
-
-                        Notification::make('log_test_sent')
-                            ->title(__('setting.log_test_sent'))
-                            ->success()
-                            ->send();
-
-                    } catch (\Exception) {
-                    }
-                }),
-        ];
     }
 
     public function form(Form $form): Form

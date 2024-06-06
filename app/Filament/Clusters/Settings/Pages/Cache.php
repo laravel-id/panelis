@@ -37,26 +37,111 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
 
     public bool $isButtonDisabled = false;
 
-    public function getTitle(): string|Htmlable
+    private function driverSection(): Section
     {
-        return __('setting.cache');
+        return Section::make(__('setting.cache'))
+            ->description(__('setting.cache_section_description'))
+            ->schema([
+                Radio::make('cache.default')
+                    ->label(__('setting.cache_driver'))
+                    ->options(CacheDriver::options())
+                    ->descriptions(CacheDriver::getDescriptions())
+                    ->live()
+                    ->required(),
+            ]);
     }
 
-    public static function getNavigationLabel(): string
+    private function memcachedSection(): Section
     {
-        return __('navigation.setting_cache');
+        return Section::make('setting.cache_memcached')
+            ->description(__('setting.cache_memcached_description'))
+            ->visible(fn (Get $get): bool => $get('cache.default') === CacheDriver::Memcached->value)
+            ->schema([
+                TextInput::make('cache.stores.memcached.servers.host')
+                    ->label(__('setting.cache_memcached_host'))
+                    ->required(),
+
+                TextInput::make('cache.stores.memcached.servers.port')
+                    ->label(__('setting.cache_memcached_port'))
+                    ->numeric()
+                    ->required(),
+
+                TextInput::make('cache.stores.memcached.sasl.username')
+                    ->label(__('setting.cache_memcached_username'))
+                    ->numeric()
+                    ->nullable(),
+
+                TextInput::make('cache.stores.memcached.sasl.password')
+                    ->label(__('setting.cache_memcached_password'))
+                    ->password()
+                    ->revealable()
+                    ->nullable(),
+            ]);
     }
 
-    public function mount(): void
+    private function redisSection(): Section
     {
-        $this->form->fill([
-            'cache' => config('cache'),
-            'database' => [
-                'redis' => config('database.redis'),
-            ],
+        return
 
-            'isButtonDisabled' => config('app.demo'),
-        ]);
+            Section::make('setting.cache_redis')
+                ->description(__('setting.cache_redis_description'))
+                ->visible(fn (Get $get): bool => $get('cache.default') === CacheDriver::Redis->value)
+                ->schema([
+                    TextInput::make('database.redis.cache.host')
+                        ->label(__('setting.cache_redis_host'))
+                        ->required(),
+
+                    TextInput::make('database.redis.cache.port')
+                        ->label(__('setting.cache_redis_port'))
+                        ->required(),
+
+                    TextInput::make('database.redis.cache.database')
+                        ->label(__('setting.cache_redis_database'))
+                        ->numeric()
+                        ->required(),
+
+                    TextInput::make('database.redis.cache.username')
+                        ->label(__('setting.cache_redis_username'))
+                        ->string(),
+
+                    TextInput::make('database.redis.cache.password')
+                        ->label(__('setting.cache_redis_password'))
+                        ->string()
+                        ->password()
+                        ->revealable(),
+                ]);
+    }
+
+    private function dynamodbSection(): Section
+    {
+        return
+
+            Section::make(__('setting.cache_dynamodb'))
+                ->description(__('setting.cache_dynamodb_description'))
+                ->visible(fn (Get $get): bool => $get('cache.default') === CacheDriver::DynamoDB->value)
+                ->schema([
+                    TextInput::make('cache.stores.dynamodb.key')
+                        ->label(__('setting.cache_dynamodb_key'))
+                        ->required(),
+
+                    TextInput::make('cache.stores.dynamodb.secret')
+                        ->label(__('setting.cache_dynamodb_secret'))
+                        ->password()
+                        ->revealable()
+                        ->required(),
+
+                    TextInput::make('cache.stores.dynamodb.region')
+                        ->label(__('setting.cache_dynamodb_region'))
+                        ->required(),
+
+                    TextInput::make('cache.stores.dynamodb.table')
+                        ->label(__('setting.cache_dynamodb_table'))
+                        ->required(),
+
+                    TextInput::make('cache.stores.dynamodb.endpoint')
+                        ->label(__('setting.cache_dynamodb_endpoint'))
+                        ->required(),
+                ]);
     }
 
     protected function getHeaderActions(): array
@@ -104,88 +189,35 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
         ];
     }
 
+    public function getTitle(): string|Htmlable
+    {
+        return __('setting.cache');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('navigation.setting_cache');
+    }
+
+    public function mount(): void
+    {
+        $this->form->fill([
+            'cache' => config('cache'),
+            'database' => [
+                'redis' => config('database.redis'),
+            ],
+
+            'isButtonDisabled' => config('app.demo'),
+        ]);
+    }
+
     public function form(Form $form): Form
     {
         return $form->schema([
-            Section::make(__('setting.cache'))
-                ->description(__('setting.cache_section_description'))
-                ->schema([
-                    Radio::make('cache.default')
-                        ->label(__('setting.cache_driver'))
-                        ->options(CacheDriver::options())
-                        ->descriptions(CacheDriver::getDescriptions())
-                        ->live()
-                        ->required(),
-                ]),
-
-            Section::make('setting.cache_memcached')
-                ->description(__('setting.cache_memcached_description'))
-                ->visible(fn (Get $get): bool => $get('cache.default') === CacheDriver::Memcached->value)
-                ->schema([
-                    TextInput::make('cache.stores.memcached.servers.host')
-                        ->label(__('setting.cache_memcached_host'))
-                        ->required(),
-
-                    TextInput::make('cache.stores.memcached.servers.port')
-                        ->label(__('setting.cache_memcached_port'))
-                        ->numeric()
-                        ->required(),
-                ]),
-
-            Section::make('setting.cache_redis')
-                ->description(__('setting.cache_redis_description'))
-                ->visible(fn (Get $get): bool => $get('cache.default') === CacheDriver::Redis->value)
-                ->schema([
-                    TextInput::make('database.redis.cache.host')
-                        ->label(__('setting.cache_redis_host'))
-                        ->required(),
-
-                    TextInput::make('database.redis.cache.port')
-                        ->label(__('setting.cache_redis_port'))
-                        ->required(),
-
-                    TextInput::make('database.redis.cache.database')
-                        ->label(__('setting.cache_redis_database'))
-                        ->numeric()
-                        ->required(),
-
-                    TextInput::make('database.redis.cache.username')
-                        ->label(__('setting.cache_redis_username'))
-                        ->string(),
-
-                    TextInput::make('database.redis.cache.password')
-                        ->label(__('setting.cache_redis_password'))
-                        ->string()
-                        ->password()
-                        ->revealable(),
-                ]),
-
-            Section::make(__('setting.cache_dynamodb'))
-                ->description(__('setting.cache_dynamodb_description'))
-                ->visible(fn (Get $get): bool => $get('cache.default') === CacheDriver::DynamoDB->value)
-                ->schema([
-                    TextInput::make('cache.stores.dynamodb.key')
-                        ->label(__('setting.cache_dynamodb_key'))
-                        ->required(),
-
-                    TextInput::make('cache.stores.dynamodb.secret')
-                        ->label(__('setting.cache_dynamodb_secret'))
-                        ->password()
-                        ->revealable()
-                        ->required(),
-
-                    TextInput::make('cache.stores.dynamodb.region')
-                        ->label(__('setting.cache_dynamodb_region'))
-                        ->required(),
-
-                    TextInput::make('cache.stores.dynamodb.table')
-                        ->label(__('setting.cache_dynamodb_table'))
-                        ->required(),
-
-                    TextInput::make('cache.stores.dynamodb.endpoint')
-                        ->label(__('setting.cache_dynamodb_endpoint'))
-                        ->required(),
-                ]),
+            $this->driverSection(),
+            $this->memcachedSection(),
+            $this->redisSection(),
+            $this->dynamodbSection(),
         ])
             ->disabled(config('app.demo'));
     }
