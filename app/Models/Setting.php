@@ -15,6 +15,9 @@ use Illuminate\Support\Str;
 
 /**
  * @method static updateOrCreate(array $keys, array $data)
+ *
+ * @property string $key
+ * @property mixed $value
  */
 class Setting extends Model
 {

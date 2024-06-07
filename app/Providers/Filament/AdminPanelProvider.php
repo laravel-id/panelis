@@ -8,7 +8,11 @@ use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Auth\RequestPasswordReset;
 use App\Filament\Pages\EditBranch;
 use App\Filament\Pages\RegisterBranch;
+use App\Http\Middleware\LanguageSwitcher;
+use App\Http\Middleware\OverrideConfig;
 use App\Http\Middleware\OverrideUserConfig;
+use App\Http\Middleware\RegisterModules;
+use App\Http\Middleware\RegisterNavigations;
 use App\Http\Middleware\SetTheme;
 use App\Models\Branch;
 use Filament\Http\Middleware\Authenticate;
@@ -70,6 +74,10 @@ class AdminPanelProvider extends PanelProvider
                 DispatchServingFilamentEvent::class,
 
                 // custom middlewares
+                OverrideConfig::class,
+                LanguageSwitcher::class,
+                RegisterModules::class,
+                RegisterNavigations::class,
                 SetTheme::class,
             ])
             ->authMiddleware([
