@@ -3,14 +3,12 @@
 namespace App\Filament\Pages;
 
 use App\Events\Branch\BranchUpdated;
-use App\Models\Branch;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Pages\Tenancy\EditTenantProfile;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
 
 class EditBranch extends EditTenantProfile
 {
@@ -26,6 +24,7 @@ class EditBranch extends EditTenantProfile
                 TextInput::make('name')
                     ->label(__('branch.name'))
                     ->required()
+                    ->unique(ignoreRecord: true)
                     ->maxLength(100),
 
                 TextInput::make('slug')
@@ -51,14 +50,13 @@ class EditBranch extends EditTenantProfile
         ]);
     }
 
-    public function handleRecordUpdate(Model $model, array $data): Branch
+    public function handleRecordUpdate(Model $record, array $data): Model
     {
-        $data['slug'] = Str::slug($data['name']);
-        $model->update($data);
+        $record->update($data);
 
-        event(new BranchUpdated($model));
+        event(new BranchUpdated($record));
 
-        return $model;
+        return $record;
     }
 
     public function getRedirectUrl(): ?string
