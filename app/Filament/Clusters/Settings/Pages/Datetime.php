@@ -46,7 +46,7 @@ class Datetime extends Page
     {
         $this->form->fill([
             'app.datetime_timezone' => config('app.datetime_timezone', config('app.timezone')),
-            'app.datetime_format' => config('app.datetime_format', 'Y m d H:i'),
+            'app.datetime_format' => config('app.datetime_format', 'Y-m-d H:i'),
         ]);
     }
 
