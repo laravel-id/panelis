@@ -3,6 +3,8 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\RoleResource\Pages;
+use App\Models\Permission;
+use App\Models\Role;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -10,8 +12,6 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
-use Spatie\Permission\Models\Permission;
-use Spatie\Permission\Models\Role;
 
 class RoleResource extends Resource
 {
@@ -25,12 +25,12 @@ class RoleResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('User management');
+        return __('navigation.user_management');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('Role');
+        return __('navigation.role');
     }
 
     public static function getActiveNavigationIcon(): ?string
@@ -40,7 +40,7 @@ class RoleResource extends Resource
 
     public static function getLabel(): ?string
     {
-        return __('Role');
+        return __('user.role');
     }
 
     public static function shouldRegisterNavigation(): bool
@@ -53,17 +53,19 @@ class RoleResource extends Resource
         return $form
             ->columns(3)
             ->schema([
-                Forms\Components\Section::make('Role')
-                    ->description('Create a new role that to be assigned to user')
+                Forms\Components\Section::make(__('user.role'))
+                    ->description(__('user.role_section_description'))
                     ->columnSpan(fn (?Model $record): int => empty($record) ? 3 : 2)
                     ->schema([
                         Forms\Components\TextInput::make('name')
+                            ->label(__('user.role_name'))
                             ->required()
                             ->unique(ignorable: $form->getRecord())
                             ->minLength(3)
                             ->maxLength(50),
 
                         Forms\Components\Textarea::make('description')
+                            ->label(__('user.role_description'))
                             ->required()
                             ->rows(3)
                             ->maxLength(250),
@@ -74,20 +76,19 @@ class RoleResource extends Resource
                     ->columnSpan(1)
                     ->schema([
                         Forms\Components\Placeholder::make('created_at')
-                            ->translateLabel()
-                            ->content(fn (?Model $record): string => $record->created_at),
+                            ->label(__('ui.created_at'))
+                            ->content(fn (Role $role): string => $role->local_created_at),
 
-                        Forms\Components\Placeholder::make('updated_at')
-                            ->translateLabel()
-                            ->content(fn (?Model $record): string => $record->updated_at),
+                        Forms\Components\Placeholder::make('local_updated_at')
+                            ->label(__('ui.updated_at'))
+                            ->content(fn (Role $role): string => $role->local_updated_at),
                     ]),
 
-                Forms\Components\Section::make('Permission')
-                    ->label(__('Permission'))
-                    ->description(__('Set default permission for role'))
+                Forms\Components\Section::make(__('user.permission'))
+                    ->description(__('user.permission_section_description'))
                     ->schema([
                         Forms\Components\CheckboxList::make('permission_id')
-                            ->label(__('Permission'))
+                            ->label(__('user.permission'))
                             ->columns(3)
                             ->gridDirection('row')
                             ->searchable()
@@ -110,22 +111,20 @@ class RoleResource extends Resource
             ->paginated(false)
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->translateLabel()
+                    ->label(__('user.role_name'))
                     ->searchable()
                     ->sortable()
-                    ->description(fn (?Model $record): string => $record->description),
+                    ->description(fn (Role $role): string => $role->description),
 
                 Tables\Columns\TextColumn::make('users_count')
-                    ->translateLabel()
+                    ->label(__('user.role_user_count'))
                     ->counts('users')
                     ->color('primary')
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->translateLabel()
-                    ->tooltip(fn (?Model $record): string => $record->updated_at)
-                    ->sortable()
-                    ->since(),
+                Tables\Columns\TextColumn::make('local_updated_at')
+                    ->label(__('user.role_updated_at'))
+                    ->sortable(),
             ])
             ->filters([
                 //
@@ -133,8 +132,8 @@ class RoleResource extends Resource
             ->actions([
                 Tables\Actions\EditAction::make()->visible($canUpdate),
                 Tables\Actions\DeleteAction::make()
-                    ->disabled(function (?Model $record): bool {
-                        return $record->users_count >= 1;
+                    ->disabled(function (Role $role): bool {
+                        return $role->users_count >= 1;
                     })
                     ->visible($canDelete),
             ])

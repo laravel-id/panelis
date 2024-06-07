@@ -3,12 +3,15 @@
 /public/build
 /public/hot
 /public/storage
+/plugins
 /storage/*.key
 /vendor
+.dockerignore
 .env
 .env.backup
 .env.production
 .phpunit.result.cache
+Dockerfile
 fly.toml
 Homestead.json
 Homestead.yaml

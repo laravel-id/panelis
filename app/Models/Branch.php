@@ -4,12 +4,15 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * @method static whereNotNull(string $string)
  * @method static find(mixed $branch)
+ * @method static orderBy(string $string)
+ * @method static whereSlug(string $slug)
  */
 class Branch extends Model
 {
@@ -24,6 +27,14 @@ class Branch extends Model
         'phone',
         'email',
     ];
+
+    /**
+     * Get user as owner of branch.
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
+    }
 
     public function users(): BelongsToMany
     {

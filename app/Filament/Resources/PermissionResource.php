@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PermissionResource\Pages;
+use App\Models\Permission;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -10,7 +11,6 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
-use Spatie\Permission\Models\Permission;
 
 class PermissionResource extends Resource
 {
@@ -24,12 +24,17 @@ class PermissionResource extends Resource
 
     public static function getLabel(): ?string
     {
-        return __('Permission');
+        return __('user.permission');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('navigation.permission');
     }
 
     public static function getNavigationGroup(): ?string
     {
-        return __('User management');
+        return __('navigation.user_management');
     }
 
     public static function getActiveNavigationIcon(): ?string
@@ -48,7 +53,7 @@ class PermissionResource extends Resource
             ->columns(1)
             ->schema([
                 Forms\Components\TextInput::make('name')
-                    ->translateLabel()
+                    ->label(__('user.permission_name'))
                     ->disabledOn('edit')
                     ->required()
                     ->unique(ignorable: $form->getRecord())
@@ -56,7 +61,7 @@ class PermissionResource extends Resource
                     ->maxLength(20),
 
                 Forms\Components\Textarea::make('description')
-                    ->translateLabel()
+                    ->label(__('user.permission_description'))
                     ->maxLength(250),
             ]);
     }
@@ -69,15 +74,14 @@ class PermissionResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    ->translateLabel()
+                    ->label(__('user.permission_name'))
                     ->searchable()
                     ->sortable()
                     ->description(fn (?Model $record): string => $record?->description ?? ''),
 
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->translateLabel()
-                    ->sortable()
-                    ->since(),
+                Tables\Columns\TextColumn::make('local_updated_at')
+                    ->label(__('ui.updated_at'))
+                    ->sortable(),
             ])
             ->filters([
                 //

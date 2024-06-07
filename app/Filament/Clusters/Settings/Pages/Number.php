@@ -40,7 +40,7 @@ class Number extends Page
 
     public static function getNavigationLabel(): string
     {
-        return __('setting.number');
+        return __('navigation.setting_number');
     }
 
     public function mount(): void
@@ -59,26 +59,29 @@ class Number extends Page
     {
         return $form->schema([
             Section::make(__('setting.number'))
-                ->description(__('setting.number_info'))
+                ->description(__('setting.number_section_description'))
                 ->schema([
                     TextInput::make('app.currency_symbol')
+                        ->label(__('setting.number_currency_symbol'))
                         ->live()
                         ->minValue(1)
                         ->maxValue(10),
 
                     Toggle::make('app.number_symbol_suffix')
-                        ->label(__('setting.currency_symbol_as_suffix'))
-                        ->helperText(__('setting.currency_symbol_as_suffix_helper'))
+                        ->label(__('setting.number_currency_symbol_as_suffix'))
+                        ->helperText(__('setting.number_helper_currency_symbol_as_suffix'))
                         ->live()
                         ->disabled(fn (Get $get): bool => empty($get('app.currency_symbol')))
                         ->nullable(),
 
                     Radio::make('app.number_format')
+                        ->label(__('setting.number_format'))
                         ->required()
                         ->live()
                         ->options(NumberFormat::options()),
 
                     Placeholder::make('sample_display')
+                        ->label(__('setting.number_sample_display'))
                         ->content(function (Get $get): ?string {
                             $format = $get('app.number_format');
 

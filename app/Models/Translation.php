@@ -2,12 +2,20 @@
 
 namespace App\Models;
 
+use App\Models\Traits\HasLocalTime;
 use Illuminate\Contracts\Database\Query\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Spatie\TranslationLoader\LanguageLine;
 
+/**
+ * @method static orderBy(string $sort, ?string $order = null)
+ *
+ * @property bool $is_system
+ */
 class Translation extends LanguageLine
 {
+    use HasLocalTime;
+
     public $table = 'language_lines';
 
     protected $casts = [

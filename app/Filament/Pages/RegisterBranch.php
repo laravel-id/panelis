@@ -24,9 +24,10 @@ class RegisterBranch extends RegisterTenant
         return $form->schema([
             TextInput::make('name')
                 ->label(__('branch.name'))
-                ->maxLength(100)
+                ->maxLength(50)
+                ->minLength(3)
                 ->required()
-                ->unique()
+                ->unique(ignoreRecord: true)
                 ->live(onBlur: true)
                 ->afterStateUpdated(function (Set $set, ?string $state): void {
                     $set('slug', Str::slug($state));
@@ -35,6 +36,9 @@ class RegisterBranch extends RegisterTenant
             TextInput::make('slug')
                 ->label(__('branch.alias'))
                 ->required()
+                ->unique(ignoreRecord: true)
+                ->maxLength(60)
+                ->minLength(3)
                 ->alphaDash(),
 
             TextInput::make('phone')

@@ -8,7 +8,8 @@ use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Auth\RequestPasswordReset;
 use App\Filament\Pages\EditBranch;
 use App\Filament\Pages\RegisterBranch;
-use App\Http\Middleware\OverrideUserConfig;
+use App\Http\Middleware\RegisterModules;
+use App\Http\Middleware\RegisterNavigations;
 use App\Http\Middleware\SetTheme;
 use App\Models\Branch;
 use Filament\Http\Middleware\Authenticate;
@@ -25,13 +26,13 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Panelis\Todo\TodoPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
         return $panel
-
             ->tenant(Branch::class, slugAttribute: 'slug')
             ->tenantRegistration(RegisterBranch::class)
             ->tenantProfile(EditBranch::class)
@@ -42,7 +43,11 @@ class AdminPanelProvider extends PanelProvider
             // uncomment to set different path
             ->path('admin')
 
-            // ->registration(Register::class)
+            ->plugins([
+                //TodoPlugin::make(),
+            ])
+
+            //->registration(Register::class)
             ->login(Login::class)
             ->passwordReset(RequestPasswordReset::class)
             ->profile(EditProfile::class)
@@ -70,13 +75,14 @@ class AdminPanelProvider extends PanelProvider
                 DispatchServingFilamentEvent::class,
 
                 // custom middlewares
+                RegisterModules::class,
+                RegisterNavigations::class,
                 SetTheme::class,
             ])
             ->authMiddleware([
                 Authenticate::class,
 
                 // custom middlewares
-                OverrideUserConfig::class,
             ]);
     }
 }
