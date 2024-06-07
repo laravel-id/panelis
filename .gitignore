@@ -3,6 +3,7 @@
 /public/build
 /public/hot
 /public/storage
+/plugins
 /storage/*.key
 /vendor
 .dockerignore

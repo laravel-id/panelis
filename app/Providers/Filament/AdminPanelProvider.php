@@ -26,13 +26,13 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Panelis\Todo\TodoPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
         return $panel
-
             ->tenant(Branch::class, slugAttribute: 'slug')
             ->tenantRegistration(RegisterBranch::class)
             ->tenantProfile(EditBranch::class)
@@ -43,7 +43,11 @@ class AdminPanelProvider extends PanelProvider
             // uncomment to set different path
             ->path('admin')
 
-            // ->registration(Register::class)
+            ->plugins([
+                //TodoPlugin::make(),
+            ])
+
+            //->registration(Register::class)
             ->login(Login::class)
             ->passwordReset(RequestPasswordReset::class)
             ->profile(EditProfile::class)
