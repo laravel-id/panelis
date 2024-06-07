@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Schema;
 use Symfony\Component\HttpFoundation\Response;
 
-class OverrideUserConfig
+class OverrideConfig
 {
     /**
      * Handle an incoming request.
@@ -27,16 +27,14 @@ class OverrideUserConfig
             return $next($request);
         }
 
-        if (! empty($request->user())) {
-            Setting::getByUser($request->user()->id)->each(function (Setting $setting): void {
-                $value = $setting->value;
-                if ($value === '1' || $value === '0') {
-                    $value = boolval($value);
-                }
+        Setting::getAll()->each(function (Setting $setting): void {
+            $value = $setting->value;
+            if ($value === '1' || $value === '0') {
+                $value = boolval($value);
+            }
 
-                Config::set($setting->key, $value);
-            });
-        }
+            Config::set($setting->key, $value);
+        });
 
         return $next($request);
     }

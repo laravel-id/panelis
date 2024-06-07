@@ -2,7 +2,7 @@
 
 namespace App\Http\Middleware;
 
-use App\Models\Setting;
+use App\Models\Module;
 use Closure;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Schema;
 use Symfony\Component\HttpFoundation\Response;
 
-class OverrideUserConfig
+class RegisterModules
 {
     /**
      * Handle an incoming request.
@@ -19,24 +19,22 @@ class OverrideUserConfig
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $hasSetting = Cache::rememberForever('has_setting', function (): bool {
-            return Schema::hasTable((new Setting)->getTable());
+        $hasModule = Cache::rememberForever('has_module', function (): bool {
+            return Schema::hasTable((new Module)->getTable());
         });
 
-        if (! $hasSetting) {
+        if (!$hasModule) {
             return $next($request);
         }
 
-        if (! empty($request->user())) {
-            Setting::getByUser($request->user()->id)->each(function (Setting $setting): void {
-                $value = $setting->value;
-                if ($value === '1' || $value === '0') {
-                    $value = boolval($value);
-                }
-
-                Config::set($setting->key, $value);
+            $modules = Cache::remember('modules', now()->addHour(), function () {
+                return Module::query()->select('name', 'is_enabled')
+                    ->get();
             });
-        }
+
+        $modules->each(function (Module $module) use ($hasModule) {
+           Config::set(sprintf('modules.%s', strtolower($module->name)), $module->is_enabled);
+        });
 
         return $next($request);
     }
