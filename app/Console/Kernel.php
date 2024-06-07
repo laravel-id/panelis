@@ -2,7 +2,7 @@
 
 namespace App\Console;
 
-use App\Models\Enums\DatabasePeriod;
+use App\Filament\Clusters\Databases\Enums\DatabasePeriod;
 use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;

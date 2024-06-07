@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Models\Enums;
+namespace App\Filament\Clusters\Settings\Enums;
 
-enum LogChannel: string
+use App\Models\Enums\HasOption;
+
+enum LogChannel: string implements HasOption
 {
     case Single = 'single';
 
@@ -22,7 +24,7 @@ enum LogChannel: string
     {
         return collect(LogChannel::cases())
             ->mapWithKeys(function (LogChannel $case): array {
-                return [$case->value => $case->getLabel()];
+                return [$case->value => $case->label()];
             })
             ->sortKeys()
             ->toArray();
@@ -32,13 +34,18 @@ enum LogChannel: string
     {
         return collect(LogChannel::cases())
             ->mapWithKeys(function (LogChannel $case): array {
-                return [$case->value => __(sprintf('setting.log_%s_description', $case->value))];
+                return [$case->value => $case->description()];
             })
             ->toArray();
     }
 
-    public function getLabel(): string
+    public function label(): string
     {
         return __(sprintf('setting.log_type_%s', $this->value));
+    }
+
+    public function description(): string
+    {
+        return __(sprintf('setting.log_%s_description', $this->value));
     }
 }
