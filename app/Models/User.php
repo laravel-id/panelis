@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Models\Traits\HasLocalTime;
+use Carbon\Carbon;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
@@ -33,6 +34,7 @@ class User extends Authenticatable implements FilamentUser, HasTenants
     use HasApiTokens, HasFactory, Notifiable;
     use HasLocalTime;
     use HasRoles;
+
     use SoftDeletes;
 
     /**
