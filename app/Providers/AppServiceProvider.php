@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use App\Services\Database\Database;
 use App\Services\Database\DatabaseFactory;
-use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
 use Illuminate\Support\Number;
 use Illuminate\Support\ServiceProvider;
 
@@ -25,11 +24,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        LanguageSwitch::configureUsing(function (LanguageSwitch $lang) {
-            $lang->locales(['id', 'en'])
-                ->circular();
-        });
-
         Number::macro('money', function (
             int|float $amount,
             ?string $format = null,
