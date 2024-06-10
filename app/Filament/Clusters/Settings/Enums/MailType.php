@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Models\Enums;
+namespace App\Filament\Clusters\Settings\Enums;
 
-enum MailType: string
+use App\Models\Enums\HasOption;
+
+enum MailType: string implements HasOption
 {
     case Log = 'log';
 
@@ -20,7 +22,7 @@ enum MailType: string
     {
         return collect(MailType::cases())
             ->mapWithKeys(function (MailType $case): array {
-                return [$case->value => $case->getLabel()];
+                return [$case->value => $case->label()];
             })
             ->toArray();
     }
@@ -29,12 +31,12 @@ enum MailType: string
     {
         return collect(MailType::cases())
             ->mapWithKeys(function (MailType $case): array {
-                return [$case->value => __(sprintf('setting.mail_%s_description', $case->value))];
+                return [$case->value => __(sprintf('setting.mail_description_%s', $case->value))];
             })
             ->toArray();
     }
 
-    public function getLabel(): string
+    public function label(): string
     {
         return __(sprintf('setting.mail_type_%s', $this->value));
     }

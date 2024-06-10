@@ -6,6 +6,7 @@ namespace App\Models;
 use App\Models\Traits\HasLocalTime;
 use Carbon\Carbon;
 use Filament\Models\Contracts\FilamentUser;
+use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -18,6 +19,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Storage;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -29,12 +31,11 @@ use Spatie\Permission\Traits\HasRoles;
  * @property BelongsToMany $branches
  * @property Role $roles
  */
-class User extends Authenticatable implements FilamentUser, HasTenants
+class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenants
 {
     use HasApiTokens, HasFactory, Notifiable;
     use HasLocalTime;
     use HasRoles;
-
     use SoftDeletes;
 
     /**
@@ -46,6 +47,7 @@ class User extends Authenticatable implements FilamentUser, HasTenants
         'name',
         'email',
         'password',
+        'avatar',
     ];
 
     /**
@@ -75,6 +77,15 @@ class User extends Authenticatable implements FilamentUser, HasTenants
         }
 
         return false;
+    }
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        if (empty($this->avatar)) {
+            return null;
+        }
+
+        return Storage::disk('public')->url($this->avatar);
     }
 
     public function roles(): MorphToMany

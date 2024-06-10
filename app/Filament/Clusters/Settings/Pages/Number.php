@@ -4,7 +4,7 @@ namespace App\Filament\Clusters\Settings\Pages;
 
 use App\Events\SettingUpdated;
 use App\Filament\Clusters\Settings;
-use App\Models\Enums\NumberFormat;
+use App\Filament\Clusters\Settings\Enums\NumberFormat;
 use App\Models\Setting;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Radio;

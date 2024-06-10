@@ -3,7 +3,7 @@
 namespace App\Filament\Clusters\Settings\Pages;
 
 use App\Filament\Clusters\Settings;
-use App\Models\Enums\CacheDriver;
+use App\Filament\Clusters\Settings\Enums\CacheDriver;
 use App\Models\Setting;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Radio;
@@ -45,7 +45,7 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
                 Radio::make('cache.default')
                     ->label(__('setting.cache_driver'))
                     ->options(CacheDriver::options())
-                    ->descriptions(CacheDriver::getDescriptions())
+                    ->descriptions(CacheDriver::descriptions())
                     ->live()
                     ->required(),
             ]);

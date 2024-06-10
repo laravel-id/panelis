@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Models\Enums;
+namespace App\Filament\Clusters\Settings\Enums;
 
-enum LogLevel: string
+use App\Models\Enums\HasOption;
+
+enum LogLevel: string implements HasOption
 {
     case Debug = 'debug';
 
@@ -24,12 +26,12 @@ enum LogLevel: string
     {
         return collect(LogLevel::cases())
             ->mapWithKeys(function (LogLevel $case): array {
-                return [$case->value => $case->getLabel()];
+                return [$case->value => $case->label()];
             })
             ->toArray();
     }
 
-    public function getLabel(): string
+    public function label(): string
     {
         return __(sprintf('setting.log_level_%s', $this->value));
     }

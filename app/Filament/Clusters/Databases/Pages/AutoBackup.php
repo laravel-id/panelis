@@ -3,8 +3,7 @@
 namespace App\Filament\Clusters\Databases\Pages;
 
 use App\Filament\Clusters\Databases;
-use App\Models\Enums\DatabasePeriod;
-use App\Models\Enums\DatabaseType;
+use App\Filament\Clusters\Databases\Enums\DatabasePeriod;
 use App\Models\Setting;
 use App\Services\Database\Database;
 use Exception;
@@ -65,7 +64,7 @@ class AutoBackup extends Page implements HasForms
     {
         return [
             Action::make('backup')
-                ->label(__('database.button_backup_manually'))
+                ->label(__('database.button_backup_now'))
                 ->disabled(config('app.demo'))
                 ->requiresConfirmation()
                 ->action(function (): void {
