@@ -48,6 +48,7 @@ class General extends Page
     {
         $this->form->fill([
             'app' => [
+                'url' => config('app.url'),
                 'debug' => config('app.debug'),
                 'name' => config('app.name'),
                 'description' => config('app.description'),
@@ -79,6 +80,11 @@ class General extends Page
             Section::make(__('setting.general'))
                 ->description(__('setting.general_section_description'))
                 ->schema([
+                    TextInput::make('app.url')
+                        ->label(__('setting.url'))
+                        ->url()
+                        ->required(),
+
                     TextInput::make('app.name')
                         ->label(__('setting.brand'))
                         ->required()
