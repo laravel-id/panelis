@@ -3,8 +3,8 @@
 namespace App\Filament\Clusters\Settings\Pages;
 
 use App\Filament\Clusters\Settings;
-use App\Models\Enums\LogChannel;
-use App\Models\Enums\LogLevel;
+use App\Filament\Clusters\Settings\Enums\LogChannel;
+use App\Filament\Clusters\Settings\Enums\LogLevel;
 use App\Models\Setting;
 use Filament\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
@@ -106,10 +106,10 @@ class Log extends Page implements HasForms
             ->disabled(config('app.demo'))
             ->schema([
                 Section::make(__('setting.log'))
-                    ->label(__('setting.log_channel'))
                     ->description(__('setting.log_section_description'))
                     ->schema([
                         CheckboxList::make('logging.channels.stack.channels')
+                            ->label(__('setting.log_channel'))
                             ->descriptions(LogChannel::descriptions())
                             ->live()
                             ->required()
@@ -147,7 +147,6 @@ class Log extends Page implements HasForms
                     ->visible(function (Get $get): bool {
                         return in_array('papertrail', $get('logging.channels.stack.channels'));
                     })
-                    ->description(__('setting.log_papertrail_description'))
                     ->schema([
                         Select::make('logging.channels.papertrail.level')
                             ->label(__('setting.log_level'))

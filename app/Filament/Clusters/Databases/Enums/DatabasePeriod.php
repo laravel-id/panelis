@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models\Enums;
+namespace App\Filament\Clusters\Databases\Enums;
 
 enum DatabasePeriod: string
 {

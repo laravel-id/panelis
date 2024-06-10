@@ -1,8 +1,10 @@
 <?php
 
-namespace App\Models\Enums;
+namespace App\Filament\Clusters\Settings\Enums;
 
-enum CacheDriver: string
+use App\Models\Enums\HasOption;
+
+enum CacheDriver: string implements HasOption
 {
     case File = 'file';
 
@@ -20,24 +22,24 @@ enum CacheDriver: string
     {
         return collect(CacheDriver::cases())
             ->mapWithKeys(function (CacheDriver $case): array {
-                return [$case->value => $case->getLabel()];
+                return [$case->value => $case->label()];
             })
             ->toArray();
     }
 
-    public static function getDescriptions(): array
+    public static function descriptions(): array
     {
         return collect(CacheDriver::cases())
-            ->mapWithKeys(fn (CacheDriver $case): array => [$case->value => $case->getDescription()])
+            ->mapWithKeys(fn (CacheDriver $case): array => [$case->value => $case->description()])
             ->toArray();
     }
 
-    public function getLabel(): string
+    public function label(): string
     {
         return __(sprintf('setting.cache_driver_%s', $this->value));
     }
 
-    public function getDescription(): string
+    public function description(): string
     {
         return __(sprintf('setting.cache_description_%s', $this->value));
     }

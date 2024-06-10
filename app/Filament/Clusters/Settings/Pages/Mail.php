@@ -4,9 +4,9 @@ namespace App\Filament\Clusters\Settings\Pages;
 
 use App\Events\SettingUpdated;
 use App\Filament\Clusters\Settings;
+use App\Filament\Clusters\Settings\Enums\MailType;
 use App\Mail\TestMail;
 use App\Models\Branch;
-use App\Models\Enums\MailType;
 use App\Models\Setting;
 use Exception;
 use Filament\Actions\Action;
@@ -83,7 +83,6 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
         return
 
             Section::make(__('setting.mail_sendmail'))
-                ->description(__('setting.mail_sendmail_section_description'))
                 ->visible(fn (Get $get): bool => $get('mail.default') === MailType::Sendmail->value)
                 ->schema([
                     TextInput::make('mail.mailers.sendmail.path')
@@ -104,7 +103,6 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
         };
 
         return Section::make(__('setting.mail_smtp'))
-            ->description(__('setting.mail_smtp_section_description'))
             ->visible(fn (Get $get): bool => $get('mail.default') === MailType::SMTP->value)
             ->schema([
                 TextInput::make('mail.mailers.smtp.host')
@@ -149,7 +147,6 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
         return
 
             Section::make(__('setting.mail_mailgun'))
-                ->description(__('setting.mail_mailgun_section_description'))
                 ->visible(fn (Get $get): bool => $get('mail.default') === MailType::Mailgun->value)
                 ->schema([
                     TextInput::make('services.mailgun.domain')
@@ -175,7 +172,6 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
         return
 
             Section::make(__('setting.mail_postmark'))
-                ->description(__('setting.mail_postmark_section_description'))
                 ->visible(fn (Get $get): bool => $get('mail.default') === MailType::Postmark->value)
                 ->schema([
                     TextInput::make('services.postmark.token')
@@ -191,7 +187,6 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
         return
 
             Section::make(__('setting.mail_ses'))
-                ->description(__('setting.mail_ses_section_description'))
                 ->visible(fn (Get $get): bool => $get('mail.default') === MailType::SES->value)
                 ->schema([
                     TextInput::make('services.ses.key')

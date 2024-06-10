@@ -16,7 +16,6 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
-use Illuminate\Support\HtmlString;
 
 class Datetime extends Page
 {
@@ -70,11 +69,9 @@ class Datetime extends Page
                     TextInput::make('app.datetime_format')
                         ->label(__('setting.datetime_format'))
                         ->hint(function (): Htmlable {
-                            $html = __('setting.datetime_format_sample', [
-                                'link' => 'https://www.php.net/manual/en/datetime.format.php',
-                            ]);
-
-                            return new HtmlString($html);
+                            return str(__('setting.datetime_format_sample'))
+                                ->inlineMarkdown()
+                                ->toHtmlString();
                         })
                         ->hintColor('primary')
                         ->live()

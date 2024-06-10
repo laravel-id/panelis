@@ -1,10 +1,11 @@
 <?php
 
-namespace App\Models\Enums;
+namespace App\Filament\Clusters\Settings\Enums;
 
+use App\Models\Enums\HasOption;
 use Illuminate\Support\Number;
 
-enum NumberFormat: string
+enum NumberFormat: string implements HasOption
 {
     case Plain = '';
 
@@ -21,13 +22,13 @@ enum NumberFormat: string
     public static function options(): array
     {
         return collect(NumberFormat::cases())
-            ->mapWithKeys(function ($format) {
-                return [$format->value => $format->getFormattedNumber()];
+            ->mapWithKeys(function (NumberFormat $format) {
+                return [$format->value => $format->label()];
             })
             ->toArray();
     }
 
-    public function getFormattedNumber(): string
+    public function label(): string
     {
         return Number::money(10_000.12, format: $this->value, symbol: '');
     }
