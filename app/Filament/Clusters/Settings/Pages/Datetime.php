@@ -63,6 +63,7 @@ class Datetime extends Page
                         ->options(array_combine($timezones->toArray(), $timezones->toArray()))
                         ->required()
                         ->searchable()
+                        ->in($timezones->toArray())
                         ->live()
                         ->label(__('setting.datetime_timezone')),
 
