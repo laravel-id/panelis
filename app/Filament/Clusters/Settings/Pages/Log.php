@@ -113,7 +113,8 @@ class Log extends Page implements HasForms
                             ->descriptions(LogChannel::descriptions())
                             ->live()
                             ->required()
-                            ->options(LogChannel::options()),
+                            ->options(LogChannel::options())
+                            ->enum(LogChannel::class),
                     ]),
 
                 Section::make(__('setting.log_slack'))
@@ -125,7 +126,8 @@ class Log extends Page implements HasForms
                             ->label(__('setting.log_level'))
                             ->options(LogLevel::options())
                             ->searchable()
-                            ->required(),
+                            ->required()
+                            ->enum(LogLevel::class),
 
                         TextInput::make('logging.channels.slack.url')
                             ->label(__('setting.slack_webhook_url'))
@@ -152,7 +154,8 @@ class Log extends Page implements HasForms
                             ->label(__('setting.log_level'))
                             ->options(LogLevel::options())
                             ->searchable()
-                            ->required(),
+                            ->required()
+                            ->enum(LogLevel::class),
 
                         TextInput::make('logging.channels.papertrail.url')
                             ->label(__('setting.log_papertrail_url'))
