@@ -73,6 +73,7 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
                         ->label(__('setting.mail_driver'))
                         ->options(MailType::options())
                         ->descriptions(MailType::descriptions())
+                        ->enum(MailType::class)
                         ->live()
                         ->required(),
                 ]);
