@@ -78,7 +78,8 @@ class Number extends Page
                         ->label(__('setting.number_format'))
                         ->required()
                         ->live()
-                        ->options(NumberFormat::options()),
+                        ->options(NumberFormat::options())
+                        ->enum(NumberFormat::class),
 
                     Placeholder::make('sample_display')
                         ->label(__('setting.number_sample_display'))
