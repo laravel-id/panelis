@@ -113,8 +113,7 @@ class Log extends Page implements HasForms
                             ->descriptions(LogChannel::descriptions())
                             ->live()
                             ->required()
-                            ->options(LogChannel::options())
-                            ->enum(LogChannel::class),
+                            ->options(LogChannel::options()),
                     ]),
 
                 Section::make(__('setting.log_slack'))
