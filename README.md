@@ -2,6 +2,8 @@
 
 Panelis is a ready-to-use admin panel built with [Laravel](https://laravel.com) and [Filament](https://filamentphp.com), making it easy to manage your Laravel application.
 
+![General Setting](https://res.cloudinary.com/bentang-nusantara/image/upload/v1717988251/rztab4nmtpjqixx5rwic.png)
+
 ### Features:
 - Blog
 - Location, including country, region, and district
