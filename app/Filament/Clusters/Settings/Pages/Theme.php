@@ -44,7 +44,6 @@ class Theme extends Page implements HasForms
 
     public function mount(): void
     {
-
         $this->form->fill([
             'color' => collect($this->colors)
                 ->mapWithKeys(function (string $color): array {
@@ -59,7 +58,9 @@ class Theme extends Page implements HasForms
         $colorsInput = [];
         foreach ($this->colors as $color) {
             $colorsInput[] = ColorPicker::make(sprintf('color.%s', $color))
-                ->label(__(sprintf('setting.color_%s', $color)));
+                ->label(__(sprintf('setting.color_%s', $color)))
+                ->nullable()
+                ->hexColor();
         }
 
         return $form->schema([
