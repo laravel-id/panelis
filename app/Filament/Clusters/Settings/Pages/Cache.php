@@ -47,7 +47,8 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
                     ->options(CacheDriver::options())
                     ->descriptions(CacheDriver::descriptions())
                     ->live()
-                    ->required(),
+                    ->required()
+                    ->enum(CacheDriver::class),
             ]);
     }
 
