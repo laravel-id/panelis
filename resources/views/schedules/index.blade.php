@@ -9,7 +9,10 @@
     </fieldset>
   </form>
 
-  <a href="{{ route('index') }}" class="button" role="button">@lang('event.schedule_button_clear_filter')</a>
+  @if (!empty(request('keyword')))
+    <a href="{{ route('index') }}" class="button" role="button">@lang('event.schedule_button_clear_filter')</a>
+  @endif
+
   @endif
   <hr>
 
