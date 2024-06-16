@@ -45,11 +45,14 @@ class Theme extends Page implements HasForms
     public function mount(): void
     {
         $this->form->fill([
-            'color' => collect($this->colors)
-                ->mapWithKeys(function (string $color): array {
-                    return [$color => config(sprintf('color.%s', $color))];
-                })
-                ->toArray(),
+            'color' => array_merge(
+                ['theme'],
+                collect($this->colors)
+                    ->mapWithKeys(function (string $color): array {
+                        return [$color => config(sprintf('color.%s', $color))];
+                    })
+                    ->toArray(),
+            ),
         ]);
     }
 
@@ -64,6 +67,10 @@ class Theme extends Page implements HasForms
         }
 
         return $form->schema([
+            Section::make(__('setting.theme_app'))
+                ->description(__('setting.theme_app_section_description'))
+                ->schema(Settings\Forms\AppThemeForm::schema()),
+
             Section::make(__('setting.theme'))
                 ->description(__('setting.theme_section_description'))
                 ->schema($colorsInput),
