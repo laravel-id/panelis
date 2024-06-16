@@ -33,10 +33,6 @@ class AdminPanelProvider extends PanelProvider
     public function panel(Panel $panel): Panel
     {
         return $panel
-            ->tenant(Branch::class, slugAttribute: 'slug')
-            ->tenantRegistration(RegisterBranch::class)
-            ->tenantProfile(EditBranch::class)
-
             ->default()
             ->id('admin')
 

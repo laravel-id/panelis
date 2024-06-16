@@ -12,6 +12,10 @@ class District extends Model
 {
     use HasFactory;
 
+    protected $guarded = [
+        'id',
+    ];
+
     public function region(): BelongsTo
     {
         return $this->belongsTo(Region::class);
