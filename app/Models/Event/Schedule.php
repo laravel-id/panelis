@@ -146,6 +146,7 @@ class Schedule extends Model
             ->when(! empty($request['keyword']), function ($builder) use ($request) {
                 $builder->whereAny(['title', 'description', 'location'], 'LIKE', '%'.$request['keyword'].'%')
                     ->orWhereRelation('organizers', 'name', 'LIKE', '%'.$request['keyword'].'%')
+                    ->orWhereRelation('organizers', 'slug', 'LIKE', '%'.$request['keyword'].'%')
                     ->orWhereRelation('district', 'name', 'LIKE', '%'.$request['keyword'].'%');
             })
             ->where('started_at', '>=', now($timezone)->toDateString())
