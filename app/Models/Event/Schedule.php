@@ -69,7 +69,7 @@ class Schedule extends Model
         return null;
     }
 
-    public function getFullLocationAttribute(): string
+    public function getFullLocationAttribute(): ?string
     {
         $location = $this->location;
 
@@ -139,14 +139,16 @@ class Schedule extends Model
 
     public static function getPublishedSchedules(array $request): Collection
     {
+        $timezone = config('app.datetime_timezone', config('app.timezone'));
+
         return self::query()
-            ->with(['organizers', 'packages'])
+            ->with(['district'])
             ->when(! empty($request['keyword']), function ($builder) use ($request) {
                 $builder->whereAny(['title', 'description', 'location'], 'LIKE', '%'.$request['keyword'].'%')
                     ->orWhereRelation('organizers', 'name', 'LIKE', '%'.$request['keyword'].'%')
                     ->orWhereRelation('district', 'name', 'LIKE', '%'.$request['keyword'].'%');
             })
-            ->where('started_at', '>=', now())
+            ->where('started_at', '>=', now($timezone)->toDateString())
             ->orderBy('started_at')
             ->get();
     }
@@ -166,6 +168,7 @@ class Schedule extends Model
             ->when(! empty($month), fn ($builder) => $builder->whereMonth('started_at', $month))
             ->whereYear('started_at', $year)
             ->orderBy('created_at')
+            ->with(['district'])
             ->get();
     }
 
@@ -173,7 +176,9 @@ class Schedule extends Model
     {
         return self::query()
             ->orderBy('started_at')
-            ->whereDate('started_at', '<=', now())
+            ->whereDate('started_at', '<=', now(
+                config('app.datetime_timezone', config('app.timezone'))
+            ))
             ->get();
     }
 }
