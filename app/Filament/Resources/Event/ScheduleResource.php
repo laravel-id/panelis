@@ -15,6 +15,7 @@ use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\RestoreAction;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
@@ -144,6 +145,7 @@ class ScheduleResource extends Resource
             ])
             ->actions([
                 EditAction::make(),
+                RestoreAction::make(),
             ])
             ->bulkActions([
 
