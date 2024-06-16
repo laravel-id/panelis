@@ -4,7 +4,6 @@ namespace App\Filament\Resources\Event;
 
 use App\Filament\Resources\Event\OrganizerResource\Forms\OrganizerForm;
 use App\Filament\Resources\Event\OrganizerResource\Pages;
-use App\Filament\Resources\Event\OrganizerResource\RelationManagers;
 use App\Models\Event\Organizer;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -16,8 +15,6 @@ use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class OrganizerResource extends Resource
@@ -28,9 +25,6 @@ class OrganizerResource extends Resource
 
     protected static ?int $navigationSort = 1;
 
-    /**
-     * @return string|null
-     */
     public static function getNavigationGroup(): ?string
     {
         return __('navigation.event');
@@ -64,18 +58,18 @@ class OrganizerResource extends Resource
                         ->weight(FontWeight::Bold)
                         ->sortable()
                         ->searchable()
-                        ->description(fn(Organizer $organizer): ?string => Str::words($organizer->description, 10)),
+                        ->description(fn (Organizer $organizer): ?string => Str::words($organizer->description, 10)),
                 ]),
 
                 Panel::make([
                     Stack::make([
                         TextColumn::make('phone')
                             ->icon('heroicon-m-phone')
-                        ->copyable(),
+                            ->copyable(),
 
                         TextColumn::make('email')
                             ->icon('heroicon-m-envelope')
-                        ->copyable(),
+                            ->copyable(),
 
                         TextColumn::make('website')
                             ->icon('heroicon-m-link')
@@ -95,10 +89,10 @@ class OrganizerResource extends Resource
                 ])
                     ->collapsible()
                     ->visible(function (?Organizer $organizer): bool {
-                        return !empty($organizer->phone)
-                            || !empty($organizer->email)
-                            || !empty($organizer->website)
-                            || !empty($organizer->address);
+                        return ! empty($organizer->phone)
+                            || ! empty($organizer->email)
+                            || ! empty($organizer->website)
+                            || ! empty($organizer->address);
                     }),
             ])
             ->filters([

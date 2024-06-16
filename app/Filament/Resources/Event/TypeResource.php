@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Event;
 
 use App\Filament\Resources\Event\TypeResource\Pages;
-use App\Filament\Resources\Event\TypeResource\RelationManagers;
 use App\Models\Event\Type;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
@@ -13,8 +12,6 @@ use Filament\Resources\Resource;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
 
 class TypeResource extends Resource
@@ -46,7 +43,7 @@ class TypeResource extends Resource
                             ->label(__('event.type_title'))
                             ->live(onBlur: true)
                             ->afterStateUpdated(function (Set $set, ?string $state): void {
-                                if (!empty($state)) {
+                                if (! empty($state)) {
                                     $set('slug', Str::slug($state));
                                 }
                             })

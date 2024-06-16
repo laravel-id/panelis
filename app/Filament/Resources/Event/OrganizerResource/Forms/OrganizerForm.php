@@ -47,8 +47,8 @@ class OrganizerForm
                                 ->minLength(2)
                                 ->maxLength(50)
                                 ->required()
-                                ->afterStateUpdated(function(?string $state, Set $set): void {
-                                    if (!empty($state)) {
+                                ->afterStateUpdated(function (?string $state, Set $set): void {
+                                    if (! empty($state)) {
                                         $set('slug', Str::slug($state));
                                     }
                                 }),

@@ -119,7 +119,7 @@ class UserResource extends Resource
                             ->label(__('user.role_name'))
                             ->relationship('roles', 'name')
                             ->descriptions(Role::pluck('description', 'id'))
-                            ->required(fn(User $user): bool => !$user->isRoot()),
+                            ->required(fn (User $user): bool => ! $user->isRoot()),
                     ]),
 
                 Section::make(__('user.profile'))

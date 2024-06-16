@@ -2,15 +2,11 @@
 
 namespace App\Filament\Resources\Event;
 
-use App\Filament\Resources\Event\ScheduleResource\Forms\CategoryForm;
 use App\Filament\Resources\Event\ScheduleResource\Forms\OrganizerForm;
 use App\Filament\Resources\Event\ScheduleResource\Forms\PackageForm;
 use App\Filament\Resources\Event\ScheduleResource\Forms\ScheduleForm;
-use App\Filament\Resources\Event\ScheduleResource\Infolists\ScheduleInfo;
 use App\Filament\Resources\Event\ScheduleResource\Pages;
-use App\Filament\Resources\Event\ScheduleResource\RelationManagers;
 use App\Filament\Resources\Event\TypeResource\Forms\TypeForm;
-use App\Models\Event\Category;
 use App\Models\Event\Organizer;
 use App\Models\Event\Schedule;
 use App\Models\Event\Type;
@@ -26,9 +22,6 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
-use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Str;
 
 class ScheduleResource extends Resource
@@ -38,7 +31,6 @@ class ScheduleResource extends Resource
     protected static ?string $navigationIcon = 'heroicon-o-calendar-days';
 
     protected static ?int $navigationSort = 3;
-
 
     public static function getNavigationGroup(): ?string
     {
@@ -112,7 +104,7 @@ class ScheduleResource extends Resource
                 TextColumn::make('location')
                     ->icon('heroicon-s-map-pin')
                     ->url(function (Schedule $schedule): ?string {
-                        if (!empty($schedule->metadata['location_url'])) {
+                        if (! empty($schedule->metadata['location_url'])) {
                             return $schedule->metadata['location_url'];
                         }
 

@@ -25,7 +25,7 @@ class SettingServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if (!$this->app->runningInConsole()) {
+        if (! $this->app->runningInConsole()) {
             // sometimes, when in CLI, this feature not really works
             // for example, when deploying using Docker
 
@@ -41,7 +41,7 @@ class SettingServiceProvider extends ServiceProvider
                 if (Auth::check()) {
                     Setting::getByUser(Auth::id())->each(function (Setting $setting): void {
                         // override config from db with user's
-                       Config::set($setting->key, $setting->value);
+                        Config::set($setting->key, $setting->value);
                     });
                 }
             }

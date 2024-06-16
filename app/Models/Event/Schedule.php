@@ -62,7 +62,7 @@ class Schedule extends Model
 
     public function getFinishTimeAttribute(): ?string
     {
-        if (!empty($this->finished_at)) {
+        if (! empty($this->finished_at)) {
             return $this->finished_at->format('H:i');
         }
 
@@ -73,11 +73,11 @@ class Schedule extends Model
     {
         $location = $this->location;
 
-        if (!empty($this->district)) {
+        if (! empty($this->district)) {
             $location = sprintf('%s, %s', $this->location, $this->district->name);
         }
 
-        if (!empty($this->metadata['location_url'])) {
+        if (! empty($this->metadata['location_url'])) {
             return Str::of(sprintf('[%s](%s)', $location, $this->metadata['location_url']))
                 ->inlineMarkdown()
                 ->toHtmlString();
@@ -95,7 +95,7 @@ class Schedule extends Model
     {
         $format = config('app.datetime_format', 'd M Y H:i');
 
-        if (!empty($this->finished_at)) {
+        if (! empty($this->finished_at)) {
             if ($this->started_at->isSameDay($this->finished_at)) {
                 return vsprintf('%s - %s', [
                     $this->started_at->translatedFormat($format),
@@ -141,10 +141,10 @@ class Schedule extends Model
     {
         return self::query()
             ->with(['organizers', 'packages'])
-            ->when(!empty($request['keyword']), function ($builder) use ($request) {
-                $builder->whereAny(['title', 'description', 'location'], 'LIKE', '%' . $request['keyword'] . '%')
-                    ->orWhereRelation('organizers', 'name', 'LIKE', '%' . $request['keyword'] . '%')
-                    ->orWhereRelation('district', 'name', 'LIKE', '%' . $request['keyword'] . '%');
+            ->when(! empty($request['keyword']), function ($builder) use ($request) {
+                $builder->whereAny(['title', 'description', 'location'], 'LIKE', '%'.$request['keyword'].'%')
+                    ->orWhereRelation('organizers', 'name', 'LIKE', '%'.$request['keyword'].'%')
+                    ->orWhereRelation('district', 'name', 'LIKE', '%'.$request['keyword'].'%');
             })
             ->where('started_at', '>=', now())
             ->orderBy('started_at')
@@ -163,7 +163,7 @@ class Schedule extends Model
     public static function getFilteredSchedules(int $year, ?int $month = null): Collection
     {
         return self::query()
-            ->when(!empty($month), fn($builder) => $builder->whereMonth('started_at', $month))
+            ->when(! empty($month), fn ($builder) => $builder->whereMonth('started_at', $month))
             ->whereYear('started_at', $year)
             ->orderBy('created_at')
             ->get();

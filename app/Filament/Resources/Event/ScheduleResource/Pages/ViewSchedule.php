@@ -40,7 +40,7 @@ class ViewSchedule extends ViewRecord
                     ->schema([
                         TextEntry::make('title')
                             ->hiddenLabel()
-                            ->url(fn(Schedule $schedule): string => route('schedule.view', [
+                            ->url(fn (Schedule $schedule): string => route('schedule.view', [
                                 $schedule->started_at->format('Y'),
                                 $schedule->slug,
                             ]))
@@ -51,7 +51,7 @@ class ViewSchedule extends ViewRecord
 
                         TextEntry::make('description')
                             ->hiddenLabel()
-                            ->hidden(fn(Schedule $schedule): bool => empty($schedule->description))
+                            ->hidden(fn (Schedule $schedule): bool => empty($schedule->description))
                             ->label(__('event.schedule_description'))
                             ->markdown(),
 
@@ -60,7 +60,7 @@ class ViewSchedule extends ViewRecord
                             ->date(config('app.datetime_format')),
 
                         TextEntry::make('finished_at')
-                            ->visible(fn(Schedule $schedule): bool => !empty($schedule->finished_at))
+                            ->visible(fn (Schedule $schedule): bool => ! empty($schedule->finished_at))
                             ->date(),
 
                         IconEntry::make('is_virtual')
@@ -68,7 +68,7 @@ class ViewSchedule extends ViewRecord
                             ->label(__('event.schedule_is_virtual')),
 
                         TextEntry::make('full_location')
-                            ->visible(fn(Schedule $schedule): bool => !$schedule->is_virtual)
+                            ->visible(fn (Schedule $schedule): bool => ! $schedule->is_virtual)
                             ->html()
                             ->openUrlInNewTab()
                             ->icon('heroicon-s-map-pin')
@@ -92,7 +92,7 @@ class ViewSchedule extends ViewRecord
                         ImageEntry::make('poster')
                             ->height(500)
                             ->hiddenLabel()
-                            ->visible(fn(Schedule $schedule): bool => !empty($schedule->poster))
+                            ->visible(fn (Schedule $schedule): bool => ! empty($schedule->poster))
                             ->alignment(Alignment::Center)
                             ->extraImgAttributes([
                                 'alt' => 'Poster',
@@ -112,8 +112,8 @@ class ViewSchedule extends ViewRecord
 
                         TextEntry::make('url')
                             ->label(__('event.schedule_url'))
-                            ->url(fn(Schedule $schedule): ?string => $schedule->url)
-                            ->formatStateUsing(fn(Schedule $schedule): string => Str::limit($schedule->url, 100)),
+                            ->url(fn (Schedule $schedule): ?string => $schedule->url)
+                            ->formatStateUsing(fn (Schedule $schedule): string => Str::limit($schedule->url, 100)),
 
                         TextEntry::make('updated_at')
                             ->label(__('ui.updated_at'))
@@ -136,7 +136,7 @@ class ViewSchedule extends ViewRecord
 
                                 TextEntry::make('description')
                                     ->label(__('event.package_description')),
-                            ])
+                            ]),
                     ]),
             ]);
     }

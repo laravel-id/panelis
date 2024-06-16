@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\Event\ScheduleResource\Forms;
 
 use App\Models\Location\District;
-use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
@@ -13,7 +12,6 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Get;
@@ -50,7 +48,7 @@ class ScheduleForm
                                 ->maxLength(250)
                                 ->live(onBlur: true)
                                 ->afterStateUpdated(function (Set $set, ?string $state): void {
-                                    if (!empty($state)) {
+                                    if (! empty($state)) {
                                         $set('slug', Str::slug($state));
                                     }
                                 })
@@ -100,7 +98,7 @@ class ScheduleForm
                                 ->closeOnDateSelection()
                                 ->seconds(false)
                                 ->native(false)
-                                ->minDate(fn(Get $get) => $get('started_at'))
+                                ->minDate(fn (Get $get) => $get('started_at'))
                                 ->nullable(),
                         ]),
 
@@ -115,14 +113,14 @@ class ScheduleForm
 
                             TextInput::make('location')
                                 ->label(__('event.schedule_location'))
-                                ->hidden(fn(Get $get): bool => $get('is_virtual'))
+                                ->hidden(fn (Get $get): bool => $get('is_virtual'))
                                 ->required(),
 
                             Select::make('district_id')
-                            ->label(__('event.schedule_district'))
-                            ->searchable()
+                                ->label(__('event.schedule_district'))
+                                ->searchable()
                                 ->preload()
-                            ->options(District::query()->pluck('name', 'id')),
+                                ->options(District::query()->pluck('name', 'id')),
                         ]),
 
                     Section::make(__('event.schedule_who'))

@@ -3,7 +3,6 @@
 namespace Database\Seeders;
 
 use App\Models\Event\Organizer;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
 class OrganizerTableSeeder extends Seeder

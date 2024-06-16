@@ -2,7 +2,6 @@
 
 use App\Http\Controllers\OrganizerController;
 use App\Http\Controllers\ScheduleController;
-use App\Http\Controllers\URLController;
 use Illuminate\Support\Facades\Route;
 
 /*
