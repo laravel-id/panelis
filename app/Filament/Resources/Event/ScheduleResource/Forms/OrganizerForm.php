@@ -12,7 +12,7 @@ class OrganizerForm
     {
         return [
             Select::make('organizers')
-                ->relationship('organizers', ignoreRecord: true)
+                ->relationship('organizers', 'name')
                 ->native(false)
                 ->multiple()
                 ->searchable(['name', 'email'])
