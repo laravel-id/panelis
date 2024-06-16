@@ -1,5 +1,8 @@
 <?php
 
+use App\Http\Controllers\OrganizerController;
+use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\URLController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -12,11 +15,13 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
+Route::get('/', [ScheduleController::class, 'index'])->name('index');
 
-Route::get('/', function () {
-    if (config('app.demo')) {
-        return redirect()->route('filament.admin.auth.login');
-    }
+Route::get('/organizer/{organizer:slug}', [OrganizerController::class, 'view'])->name('organizer.view');
 
-    return view('welcome');
-});
+Route::get('/go', [ScheduleController::class, 'go'])->name('schedule.go');
+Route::get('/archive', [ScheduleController::class, 'archive'])->name('schedule.archive');
+Route::get('/{year}/{month?}', [ScheduleController::class, 'filter'])
+    ->where(['year' => '[0-9]+', 'month' => '[0-9]+'])
+    ->name('schedule.filter');
+Route::get('/{year}/{slug}', [ScheduleController::class, 'view'])->name('schedule.view');

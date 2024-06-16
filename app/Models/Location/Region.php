@@ -11,6 +11,10 @@ class Region extends Model
 {
     use HasFactory;
 
+    protected $guarded = [
+        'id',
+    ];
+
     public function country(): BelongsTo
     {
         return $this->belongsTo(Country::class);

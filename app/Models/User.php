@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Models\Event\Schedule;
 use App\Models\Traits\HasLocalTime;
 use Carbon\Carbon;
 use Filament\Models\Contracts\FilamentUser;
@@ -123,5 +124,10 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
     public function isRoot(): bool
     {
         return $this->roles->count() === 0;
+    }
+
+    public function schedules(): HasMany
+    {
+        return $this->hasMany(Schedule::class);
     }
 }

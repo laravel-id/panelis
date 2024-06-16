@@ -10,6 +10,10 @@ class Country extends Model
 {
     use HasFactory;
 
+    protected $guarded = [
+        'id',
+    ];
+
     public function regions(): HasMany
     {
         return $this->hasMany(Region::class);
