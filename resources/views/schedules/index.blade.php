@@ -40,10 +40,15 @@
           </td>
           <td>
             <a href="{{ route('schedule.view', [$schedule->started_at->format('Y'), $schedule->slug]) }}">{{ $schedule->title }}</a>
-            @if ($schedule->is_virtual) <sup title="@lang('event.schedule_is_virtual')"><i class="ri-earth-line"></i></sup>@endif
           </td>
           <td>{{ implode(', ', $schedule->categories) }}</td>
-          <td>{!! $schedule->full_location !!}</td>
+          <td>
+            @if ($schedule->is_virtual OR empty($schedule->full_location))
+              <i class="ri-earth-line"></i>
+            @else
+              {!! $schedule->full_location !!}
+            @endif
+          </td>
         </tr>
       @endforeach
       </tbody>
