@@ -34,6 +34,10 @@ class Kernel extends ConsoleKernel
 
                 return false;
             });
+
+        $schedule->command('app:generate-sitemap')
+            ->everySixHours()
+            ->runInBackground();
     }
 
     /**
