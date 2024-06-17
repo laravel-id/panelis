@@ -79,7 +79,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
             return true;
         }
 
-        return false;
+        return true;
     }
 
     public function getFilamentAvatarUrl(): ?string

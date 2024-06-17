@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Services\Database\Database;
 use App\Services\Database\DatabaseFactory;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Number;
 use Illuminate\Support\ServiceProvider;
 
@@ -24,6 +25,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        if ($this->app->environment('production')) {
+            URL::forceScheme('https');
+        }
+
         Number::macro('money', function (
             int|float $amount,
             ?string $format = null,
