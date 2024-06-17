@@ -3,6 +3,7 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Filament\Clusters\Settings\Enums\AvatarProvider;
 use App\Models\Traits\HasLocalTime;
 use Carbon\Carbon;
 use Filament\Models\Contracts\FilamentUser;
@@ -30,6 +31,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string $local_updated_at
  * @property BelongsToMany $branches
  * @property Role $roles
+ * @property string $email
  */
 class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenants
 {
@@ -82,6 +84,17 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
     public function getFilamentAvatarUrl(): ?string
     {
         if (empty($this->avatar)) {
+            $provider = config('user.avatar_provider');
+            if ($provider !== AvatarProvider::UIAvatars->value) {
+                $avatar = AvatarProvider::tryFrom($provider);
+
+                if (!is_null($avatar)) {
+                    return $avatar->getImageUrl($this);
+                }
+            }
+
+            // null means using UI-avatars
+            // handled by Filament
             return null;
         }
 

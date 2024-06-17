@@ -18,4 +18,12 @@ class Role extends \Spatie\Permission\Models\Role
 {
     use HasFactory;
     use HasLocalTime;
+
+    public static function options(): array
+    {
+        return self::query()
+            ->orderBy('name')
+            ->pluck('name', 'id')
+            ->toArray();
+    }
 }
