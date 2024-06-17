@@ -1,3 +1,4 @@
+@php use App\Filament\Resources\Event\ScheduleResource\Pages\EditSchedule; @endphp
 @extends('layouts.app')
 
 @section('content')
@@ -16,7 +17,9 @@
   <article>
     <header>
       {{ $schedule->title }}
-      @if ($schedule->is_virtual) <sup>@lang('event.schedule_is_virtual')</sup>@endif
+      @if ($schedule->is_virtual)
+        <sup>@lang('event.schedule_is_virtual')</sup>
+      @endif
     </header>
 
     @if (!empty($schedule->description))
@@ -58,7 +61,9 @@
           @foreach ($schedule->contacts as $contacts)
             <li>
               {{ $contacts['phone'] }}
-              @if(!empty($contacts['name'])) - {{ $contacts['name'] }} @endif
+              @if(!empty($contacts['name']))
+                - {{ $contacts['name'] }}
+              @endif
             </li>
           @endforeach
         </ul>
@@ -91,4 +96,8 @@
       </table>
     </article>
   @endif
+
+  <div>
+    <a href="{{ EditSchedule::getUrl(['record' => $schedule]) }}" role="button">@lang('event.schedule_button_edit')</a>
+  </div>
 @endsection
