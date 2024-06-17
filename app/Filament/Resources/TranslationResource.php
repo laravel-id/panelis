@@ -9,7 +9,7 @@ use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
@@ -91,6 +91,9 @@ class TranslationResource extends Resource
             ]);
     }
 
+    /**
+     * @throws \Exception
+     */
     public static function table(Table $table): Table
     {
         return $table
@@ -100,6 +103,7 @@ class TranslationResource extends Resource
                 TextColumn::make('key')
                     ->label(__('translation.key'))
                     ->sortable()
+                    ->grow(false)
                     ->searchable(),
 
                 TextColumn::make(sprintf('text.%s', config('app.locale')))
@@ -124,12 +128,10 @@ class TranslationResource extends Resource
                     ->label(__('translation.is_system')),
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+                EditAction::make(),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    // Tables\Actions\DeleteBulkAction::make(),
-                ]),
+
             ]);
     }
 
