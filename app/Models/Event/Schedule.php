@@ -177,7 +177,7 @@ class Schedule extends Model
     public static function getArchivedSchedules(): Collection
     {
         return self::query()
-            ->orderBy('started_at')
+            ->orderByDesc('started_at')
             ->whereDate('started_at', '<=', now(
                 config('app.datetime_timezone', config('app.timezone'))
             ))
