@@ -31,15 +31,16 @@ class ListTranslations extends ListRecords
         foreach ($lines as $index => $line) {
             [$group, $key] = explode('.', $index, 2);
 
-            $trans = Translation::firstOrNew([
-                'group' => $group,
-                'key' => $key,
-            ]);
+            $trans = Translation::query()
+                ->firstOrNew([
+                    'group' => $group,
+                    'key' => $key,
+                ]);
 
             $newLine = [$locale => $line['text']];
 
             $trans->is_system = $line['is_system'];
-            if (! empty($trans->text)) {
+            if (!empty($trans->text)) {
                 $trans->text = array_merge($trans->text, $newLine);
             } else {
                 $trans->text = $newLine;
