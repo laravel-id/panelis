@@ -23,4 +23,5 @@ Route::get('/archive', [ScheduleController::class, 'archive'])->name('schedule.a
 Route::get('/{year}/{month?}', [ScheduleController::class, 'filter'])
     ->where(['year' => '[0-9]+', 'month' => '[0-9]+'])
     ->name('schedule.filter');
-Route::get('/{year}/{slug}', [ScheduleController::class, 'view'])->name('schedule.view');
+Route::get('/{year}/{slug}', [ScheduleController::class, 'viewLegacy'])->name('schedule.viewLegacy');
+Route::get('/{slug}', [ScheduleController::class, 'view'])->name('schedule.view');

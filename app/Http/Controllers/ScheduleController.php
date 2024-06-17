@@ -8,12 +8,25 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\Response;
 
 class ScheduleController extends Controller
 {
-    public function view(int $year, string $slug): View
+
+    /**
+     * When someone/thing come from legacy URL, redirects to a new one.
+     *
+     * @return RedirectResponse
+     */
+    public function viewLegacy(int $year, string $slug): RedirectResponse
     {
-        $schedule = Schedule::getScheduleByYearAndSlug($year, $slug);
+        return redirect()
+            ->route('schedule.view', compact('slug'), Response::HTTP_PERMANENTLY_REDIRECT);
+    }
+
+    public function view(string $slug): View
+    {
+        $schedule = Schedule::getScheduleBySlug($slug);
 
         $organizers = $schedule->organizers
             ->map(function (Organizer $organizer): string {
@@ -23,6 +36,10 @@ class ScheduleController extends Controller
                     ->toHtmlString();
             })
             ->implode(', ');
+
+        $year = $schedule->created_at
+            ->timezone(config('app.datetime_timezone', config('app.timezone')))
+            ->format('Y');
 
         return view('schedules.view', compact('schedule', 'year', 'organizers'))
             ->with('format', config('app.datetime_format', 'd M Y H:i'))
@@ -43,12 +60,18 @@ class ScheduleController extends Controller
             ->setMonth($month)
             ->setYear($year);
 
+        $title = vsprintf('%s %s', [
+            $date->translatedFormat('F'),
+            $year = $date->format('Y'),
+        ]);
+
+        if (empty($month)) {
+            $title = $year;
+        }
+
         return view('schedules.index')
             ->with('schedules', Schedule::getFilteredSchedules($year, $month))
-            ->with('title', vsprintf('%s %s', [
-                $date->translatedFormat('F'),
-                $date->format('Y'),
-            ]));
+            ->with('title', $title);
     }
 
     public function archive(): View

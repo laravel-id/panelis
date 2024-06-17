@@ -3,6 +3,7 @@
 namespace App\Models\Event;
 
 use App\Models\Location\District;
+use App\Models\Traits\HasLocalTime;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Collection;
@@ -29,6 +30,7 @@ use Illuminate\Support\Str;
 class Schedule extends Model
 {
     use HasFactory;
+    use HasLocalTime;
     use SoftDeletes;
 
     protected $casts = [
@@ -157,10 +159,9 @@ class Schedule extends Model
             ->get();
     }
 
-    public static function getScheduleByYearAndSlug(int $year, string $slug): Model
+    public static function getScheduleBySlug(string $slug): Model
     {
         return self::query()
-            ->whereYear('started_at', $year)
             ->where('slug', $slug)
             ->with(['packages'])
             ->firstOrFail();
