@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\RoleResource\Forms\RoleForm;
 use App\Filament\Resources\RoleResource\Pages;
 use App\Models\Permission;
 use App\Models\Role;
@@ -56,20 +57,7 @@ class RoleResource extends Resource
                 Forms\Components\Section::make(__('user.role'))
                     ->description(__('user.role_section_description'))
                     ->columnSpan(fn (?Model $record): int => empty($record) ? 3 : 2)
-                    ->schema([
-                        Forms\Components\TextInput::make('name')
-                            ->label(__('user.role_name'))
-                            ->required()
-                            ->unique(ignorable: $form->getRecord())
-                            ->minLength(3)
-                            ->maxLength(50),
-
-                        Forms\Components\Textarea::make('description')
-                            ->label(__('user.role_description'))
-                            ->required()
-                            ->rows(3)
-                            ->maxLength(250),
-                    ]),
+                    ->schema(RoleForm::schema()),
 
                 Forms\Components\Section::make()
                     ->hiddenOn(Pages\CreateRole::class)
