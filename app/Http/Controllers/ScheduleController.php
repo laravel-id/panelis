@@ -38,9 +38,17 @@ class ScheduleController extends Controller
 
     public function filter(int $year, ?int $month = null): View
     {
+        $timezone = config('app.datetime_timezone', config('app.timezone'));
+        $date = now($timezone)
+            ->setMonth($month)
+            ->setYear($year);
+
         return view('schedules.index')
             ->with('schedules', Schedule::getFilteredSchedules($year, $month))
-            ->with('title', __('event.schedule_archive'));
+            ->with('title', vsprintf('%s %s', [
+                $date->translatedFormat('F'),
+                $date->format('Y'),
+            ]));
     }
 
     public function archive(): View

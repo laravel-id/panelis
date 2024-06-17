@@ -17,6 +17,7 @@ use Illuminate\Support\Str;
 /**
  * @property array $metadata
  * @property string $location
+ * @property string $full_location
  * @property string $description
  * @property int $id
  * @property bool $is_virtual
@@ -154,7 +155,7 @@ class Schedule extends Model
             ->get();
     }
 
-    public static function getScheduleByYearAndSlug(int $year, string $slug): Schedule
+    public static function getScheduleByYearAndSlug(int $year, string $slug): Model
     {
         return self::query()
             ->whereYear('started_at', $year)
@@ -168,7 +169,7 @@ class Schedule extends Model
         return self::query()
             ->when(! empty($month), fn ($builder) => $builder->whereMonth('started_at', $month))
             ->whereYear('started_at', $year)
-            ->orderBy('created_at')
+            ->orderBy('started_at')
             ->with(['district'])
             ->get();
     }
