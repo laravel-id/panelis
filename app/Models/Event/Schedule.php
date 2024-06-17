@@ -141,6 +141,7 @@ class Schedule extends Model
     public static function getPublishedSchedules(array $request): Collection
     {
         $timezone = config('app.datetime_timezone', config('app.timezone'));
+        $now = now($timezone);
 
         return self::query()
             ->with(['district'])
@@ -150,7 +151,8 @@ class Schedule extends Model
                     ->orWhereRelation('organizers', 'slug', 'LIKE', '%'.$request['keyword'].'%')
                     ->orWhereRelation('district', 'name', 'LIKE', '%'.$request['keyword'].'%');
             })
-            ->where('started_at', '>=', now($timezone)->toDateString())
+            ->whereDate('started_at', '>=', $now)
+            ->whereDate('started_at', '<=', $now->addYear())
             ->orderBy('started_at')
             ->get();
     }
