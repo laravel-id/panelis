@@ -156,7 +156,7 @@ class Schedule extends Model
             ->when(! empty($request['keyword']), function ($builder) use ($request) {
                 $keyword = sprintf('%%%s%%', $request['keyword']);
 
-                $builder->whereAny(['title', 'description', 'location'], 'LIKE', $keyword)
+                $builder->whereAny(['title', 'description', 'location', 'categories'], 'LIKE', $keyword)
                     ->orWhereRelation('types', 'title', 'LIKE', $keyword)
                     ->orWhereRelation('organizers', 'name', 'LIKE', $keyword)
                     ->orWhereRelation('organizers', 'slug', 'LIKE', $keyword)
