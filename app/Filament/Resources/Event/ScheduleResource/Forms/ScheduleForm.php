@@ -67,7 +67,16 @@ class ScheduleForm
                                 ->maxLength(1000),
 
                             TagsInput::make('categories')
-                                ->label(__('event.schedule_category')),
+                                ->label(__('event.schedule_category'))
+                                ->splitKeys(['Tab', ' '])
+                                ->reorderable()
+                                ->suggestions([
+                                    '5K',
+                                    '10K',
+                                    '15K',
+                                    '21K',
+                                    '42K',
+                                ]),
 
                             TextInput::make('url')
                                 ->label(__('event.schedule_url'))
