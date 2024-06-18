@@ -97,6 +97,12 @@ class Schedule extends Model
     public function getHeldAtAttribute(): string
     {
         $format = config('app.datetime_format', 'd M Y H:i');
+        $timezone = config('app.datetime_timezone', config('app.timezone'));
+
+        $this->started_at = $this->started_at->timezone($timezone);
+        if (!empty($this->finished_at)) {
+            $this->finished_at = $this->finished_at->timezone($timezone);
+        }
 
         if (! empty($this->finished_at)) {
             if ($this->started_at->isSameDay($this->finished_at)) {
@@ -148,10 +154,13 @@ class Schedule extends Model
         return self::query()
             ->with(['district'])
             ->when(! empty($request['keyword']), function ($builder) use ($request) {
-                $builder->whereAny(['title', 'description', 'location'], 'LIKE', '%'.$request['keyword'].'%')
-                    ->orWhereRelation('organizers', 'name', 'LIKE', '%'.$request['keyword'].'%')
-                    ->orWhereRelation('organizers', 'slug', 'LIKE', '%'.$request['keyword'].'%')
-                    ->orWhereRelation('district', 'name', 'LIKE', '%'.$request['keyword'].'%');
+                $keyword = sprintf('%%%s%%', $request['keyword']);
+
+                $builder->whereAny(['title', 'description', 'location'], 'LIKE', $keyword)
+                    ->orWhereRelation('types', 'title', 'LIKE', $keyword)
+                    ->orWhereRelation('organizers', 'name', 'LIKE', $keyword)
+                    ->orWhereRelation('organizers', 'slug', 'LIKE', $keyword)
+                    ->orWhereRelation('district', 'name', 'LIKE', $keyword);
             })
             ->whereDate('started_at', '>=', $now)
             ->whereDate('started_at', '<=', $now->addYear())

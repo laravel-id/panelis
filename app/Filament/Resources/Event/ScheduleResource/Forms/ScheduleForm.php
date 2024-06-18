@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Event\ScheduleResource\Forms;
 
 use App\Models\Location\District;
+use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
@@ -141,6 +142,10 @@ class ScheduleForm
                                     TextInput::make('email')
                                         ->label(__('event.schedule_contact_email'))
                                         ->email()
+                                        ->nullable(),
+
+                                    Checkbox::make('is_wa')
+                                        ->label(__('event.schedule_contact_is_wa'))
                                         ->nullable(),
                                 ]),
                         ]),

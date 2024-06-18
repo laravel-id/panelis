@@ -32,6 +32,8 @@ class ViewSchedule extends ViewRecord
 
     public function infolist(Infolist $infolist): Infolist
     {
+        $timezone = config('app.datetime_timezone', config('app.timezone'));
+
         return $infolist
             ->columns(3)
             ->schema([
@@ -43,7 +45,6 @@ class ViewSchedule extends ViewRecord
                             ->hiddenLabel()
                             ->columnSpan(2)
                             ->url(fn(Schedule $schedule): string => route('schedule.view', [
-                                $schedule->started_at->format('Y'),
                                 $schedule->slug,
                             ]))
                             ->label(__('event.schedule_title'))
@@ -62,11 +63,11 @@ class ViewSchedule extends ViewRecord
 
                         TextEntry::make('started_at')
                             ->label(__('event.schedule_started_at'))
-                            ->dateTime(config('app.datetime_format')),
+                            ->dateTime(config('app.datetime_format'), $timezone),
 
                         TextEntry::make('finished_at')
                             ->visible(fn(Schedule $schedule): bool => !empty($schedule->finished_at))
-                            ->dateTime(config('app.datetime_format')),
+                            ->dateTime(config('app.datetime_format'), $timezone),
 
                         TextEntry::make('full_location')
                             ->html()

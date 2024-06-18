@@ -29,44 +29,47 @@
 
     @if(!empty($organizers))
       <p><small>@lang('event.organizer'):</small></p>
-      <p>{!! $organizers !!}</p>
+      <p><i class="ri-community-line"></i> {!! $organizers !!}</p>
       <hr/>
     @endif
 
     @if(!empty($schedule->types))
       <p><small>@lang('event.type')</small></p>
-      <p>{{ $schedule->types->implode('title', ', ') }}</p>
+      <p><i class="ri-run-line"></i> {{ $schedule->types->implode('title', ', ') }}</p>
       <hr/>
     @endif
 
     <p><small>@lang('event.category')</small></p>
-    <p>{{ implode(', ', $schedule->categories) }}</p>
+    <p><i class="ri-node-tree"></i> {{ implode(', ', $schedule->categories) }}</p>
     <hr/>
 
     <p><small>@lang('event.schedule_datetime'):</small></p>
-    <p>{{ $schedule->held_at }}</p>
+    <p><i class="ri-calendar-2-line"></i> {{ $schedule->held_at }}</p>
     <hr/>
 
     <p><small>@lang('event.schedule_location'):</small></p>
-    <i class="ri-map-pin-line"></i>
-    {!! $schedule->full_location !!}
+    <p><i class="ri-map-pin-line"></i> {!! $schedule->full_location !!}</p>
 
     @if ($schedule->started_at->gt(now()))
       <hr/>
       <p><small>@lang('event.schedule_info_registration'):</small></p>
-      <a href="{{ $schedule->external_url }}">{{ $schedule->url }}</a>
+      <p><i class="ri-external-link-line"></i> <a href="{{ $schedule->external_url }}">{{ $schedule->url }}</a></p>
 
       @if(!empty($schedule->contacts))
-        <ul>
           @foreach ($schedule->contacts as $contacts)
-            <li>
-              {{ $contacts['phone'] }}
-              @if(!empty($contacts['name']))
+            <div>
+              @if (!empty($contacts['is_wa']) && $contacts['is_wa'] === true)
+                <i class="ri-whatsapp-line"></i>
+              @else
+                <i class="ri-phone-line"></i>
+              @endif
+
+              <span>{{ $contacts['phone'] }}</span>
+              @if (!empty($contacts['name']))
                 - {{ $contacts['name'] }}
               @endif
-            </li>
+            </div>
           @endforeach
-        </ul>
       @endif
     @endif
   </article>
