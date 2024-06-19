@@ -37,11 +37,13 @@ class ScheduleController extends Controller
             })
             ->implode(', ');
 
+        $timezone = config('app.datetime_timezone', config('app.timezone'));
+
         $year = $schedule->created_at
-            ->timezone(config('app.datetime_timezone', config('app.timezone')))
+            ->timezone($timezone)
             ->format('Y');
 
-        return view('schedules.view', compact('schedule', 'year', 'organizers'))
+        return view('schedules.view', compact('schedule', 'year', 'organizers', 'timezone'))
             ->with('format', config('app.datetime_format', 'd M Y H:i'))
             ->with('title', sprintf('%s - %s', $schedule->title, $year));
     }

@@ -82,6 +82,7 @@
         <thead>
         <tr>
           <th scope="col">@lang('event.package_title')</th>
+          <th scope="col">@lang('event.package_time')</th>
           <th scope="col">@lang('event.package_price')</th>
           <th scope="col">@lang('event.package_description')</th>
         </tr>
@@ -91,6 +92,13 @@
         @foreach($schedule->packages as $package)
           <tr>
             <td>{{ $package->title }}</td>
+            <td>
+              @if (!empty($package->started_at) AND !empty($package->ended_at))
+                {{ $package->started_at->timezone($timezone)->format($format) }} - {{ $package->ended_at->timezone($timezone)->format($format) }}
+              @else
+                -
+              @endif
+            </td>
             <td>{{ $package->price > 0 ? Number::money($package->price) : '-' }}</td>
             <td>{{ $package->description ?? '-' }}</td>
           </tr>

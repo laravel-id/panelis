@@ -16,12 +16,16 @@ class Package extends Model
     protected $casts = [
         'sort' => 'int',
         'price' => 'float',
+        'started_at' => 'datetime',
+        'ended_at' => 'datetime',
     ];
 
     protected $fillable = [
         'sort',
         'title',
         'price',
+        'started_at',
+        'ended_at',
         'description',
     ];
 

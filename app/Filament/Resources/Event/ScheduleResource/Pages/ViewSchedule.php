@@ -32,6 +32,7 @@ class ViewSchedule extends ViewRecord
 
     public function infolist(Infolist $infolist): Infolist
     {
+        $dateFormat = config('app.datetime_format', 'Y-m-d H:i');
         $timezone = config('app.datetime_timezone', config('app.timezone'));
 
         return $infolist
@@ -63,16 +64,20 @@ class ViewSchedule extends ViewRecord
 
                         TextEntry::make('started_at')
                             ->label(__('event.schedule_started_at'))
-                            ->dateTime(config('app.datetime_format'), $timezone),
+                            ->size(TextEntry\TextEntrySize::Medium)
+                            ->dateTime($dateFormat, $timezone),
 
                         TextEntry::make('finished_at')
+                            ->label(__('event.schedule_finished_at'))
+                            ->size(TextEntry\TextEntrySize::Medium)
                             ->visible(fn(Schedule $schedule): bool => !empty($schedule->finished_at))
-                            ->dateTime(config('app.datetime_format'), $timezone),
+                            ->dateTime($dateFormat, $timezone),
 
                         TextEntry::make('full_location')
                             ->html()
                             ->openUrlInNewTab()
                             ->label(__('event.schedule_location'))
+                            ->size(TextEntry\TextEntrySize::Medium)
                             ->icon(fn(Schedule $schedule): string => $schedule->is_virtual ? 'heroicon-s-globe-alt' : 'heroicon-s-map-pin')
                             ->formatStateUsing(function (Schedule $schedule): string {
                                 if ($schedule->is_virtual) {
@@ -88,12 +93,15 @@ class ViewSchedule extends ViewRecord
                             ->columnSpan(2)
                             ->schema([
                                 TextEntry::make('name')
+                                    ->icon('heroicon-s-user')
                                     ->label(__('event.schedule_contact_name')),
 
                                 TextEntry::make('phone')
+                                    ->icon('heroicon-s-phone')
                                     ->label(__('event.schedule_contact_phone')),
 
                                 TextEntry::make('email')
+                                    ->icon('heroicon-s-envelope')
                                     ->label(__('event.schedule_contact_email')),
                             ]),
 
@@ -129,11 +137,11 @@ class ViewSchedule extends ViewRecord
 
                         TextEntry::make('created_at')
                             ->label(__('ui.created_at'))
-                            ->since(),
+                            ->since($timezone),
 
                         TextEntry::make('updated_at')
                             ->label(__('ui.updated_at'))
-                            ->since(),
+                            ->since($timezone),
                     ]),
 
                 Section::make(__('event.package'))
@@ -150,8 +158,17 @@ class ViewSchedule extends ViewRecord
                                         return Number::money($package->price);
                                     }),
 
+                                TextEntry::make('started_at')
+                                    ->label(__('event.package_started_at'))
+                                    ->dateTime($dateFormat, $timezone),
+
+                                TextEntry::make('ended_at')
+                                    ->label(__('event.package_ended_at'))
+                                    ->dateTime($dateFormat, $timezone),
+
                                 TextEntry::make('description')
-                                    ->label(__('event.package_description')),
+                                    ->label(__('event.package_description'))
+                                    ->default('-'),
                             ]),
                     ]),
             ]);
