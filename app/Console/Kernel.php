@@ -36,7 +36,7 @@ class Kernel extends ConsoleKernel
             });
 
         $schedule->command('app:generate-sitemap')
-            ->everySixHours()
+            ->hourly()
             ->runInBackground();
 
         $schedule->command('telescope:prune --hours=48')->daily();
