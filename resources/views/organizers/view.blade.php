@@ -47,7 +47,7 @@
               {{ $schedule->started_at->translatedFormat('d M') }}<sup>{{ $schedule->started_at->format('y') }}</sup>
             </td>
             <td>
-              <a href="{{ route('schedule.view', [$schedule->started_at->format('Y'), $schedule->slug]) }}">{{ $schedule->title }}</a>
+              <a href="{{ route('schedule.view', $schedule->slug) }}">{{ $schedule->title }}</a>
             </td>
             <td>{{ implode(', ', $schedule->categories) }}</td>
             <td>{!! $schedule->full_location !!}</td>
