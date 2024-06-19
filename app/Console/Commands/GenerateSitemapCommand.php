@@ -5,7 +5,6 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Psr\Http\Message\UriInterface;
 use Spatie\Sitemap\SitemapGenerator;
-use Spatie\Sitemap\Tags\Url;
 
 class GenerateSitemapCommand extends Command
 {
@@ -31,6 +30,9 @@ class GenerateSitemapCommand extends Command
         SitemapGenerator::create(config('app.url'))
             ->shouldCrawl(function (UriInterface $uri): bool {
                 return !str_contains($uri->getPath(), '/go');
+            })
+            ->shouldCrawl(function (UriInterface $uri): bool {
+                return !str_contains($uri->getPath(), 'admin');
             })
             ->writeToFile(public_path('sitemap.xml'));
 
