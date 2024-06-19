@@ -44,7 +44,7 @@
     <hr/>
 
     <p><small>@lang('event.schedule_datetime'):</small></p>
-    <p><i class="ri-calendar-2-line"></i> {{ $schedule->held_at }}</p>
+    <p><i class="ri-calendar-2-line"></i> {{ $schedule->started_at->timezone($timezone)->translatedFormat('D') }}, {{ $schedule->held_at }}</p>
     <hr/>
 
     <p><small>@lang('event.schedule_location'):</small></p>
@@ -94,7 +94,12 @@
             <td>{{ $package->title }}</td>
             <td>
               @if (!empty($package->started_at) AND !empty($package->ended_at))
-                {{ $package->started_at->timezone($timezone)->format($format) }} - {{ $package->ended_at->timezone($timezone)->format($format) }}
+                {{
+                    vsprintf('%s - %s', [
+                        $package->started_at->translatedFormat($dateFormat),
+                        $package->ended_at->translatedFormat($dateFormat),
+                    ])
+                }}
               @else
                 -
               @endif

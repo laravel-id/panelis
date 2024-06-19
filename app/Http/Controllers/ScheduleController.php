@@ -43,8 +43,18 @@ class ScheduleController extends Controller
             ->timezone($timezone)
             ->format('Y');
 
-        return view('schedules.view', compact('schedule', 'year', 'organizers', 'timezone'))
-            ->with('format', config('app.datetime_format', 'd M Y H:i'))
+        $format = config('app.datetime_format', 'd M Y H:i');
+        $dateFormat = str_replace(['H', 'i', 'g', 'G', 'u', ':', 'Y', 'y'], '', $format);
+
+        return view('schedules.view')
+            ->with(compact(
+                'schedule',
+                'year',
+                'organizers',
+                'timezone',
+                'format',
+                'dateFormat',
+            ))
             ->with('title', sprintf('%s - %s', $schedule->title, $year));
     }
 
