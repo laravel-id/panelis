@@ -36,7 +36,7 @@
       @foreach($schedules as $schedule)
         <tr>
           <td>
-            {{ $schedule->started_at->translatedFormat('d M') }}<sup>{{ $schedule->started_at->format('y') }}</sup>
+            {{ $schedule->started_at->timezone($timezone)->translatedFormat('d M') }}<sup>{{ $schedule->started_at->timezone($timezone)->format('y') }}</sup>
           </td>
           <td>
             <a href="{{ route('schedule.view', ['slug' => $schedule->slug]) }}">{{ $schedule->title }}</a>

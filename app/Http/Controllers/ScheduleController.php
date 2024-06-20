@@ -12,6 +12,12 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ScheduleController extends Controller
 {
+    private string $timezone = 'UTC';
+
+    public function __construct()
+    {
+        $this->timezone = config('app.datetime_timezone', config('app.timezone'));
+    }
 
     /**
      * When someone/thing come from legacy URL, redirects to a new one.
@@ -37,10 +43,8 @@ class ScheduleController extends Controller
             })
             ->implode(', ');
 
-        $timezone = config('app.datetime_timezone', config('app.timezone'));
-
         $year = $schedule->created_at
-            ->timezone($timezone)
+            ->timezone($this->timezone)
             ->format('Y');
 
         $format = config('app.datetime_format', 'd M Y H:i');
@@ -51,24 +55,24 @@ class ScheduleController extends Controller
                 'schedule',
                 'year',
                 'organizers',
-                'timezone',
                 'format',
                 'dateFormat',
             ))
+            ->with('timezone', $this->timezone)
             ->with('title', sprintf('%s - %s', $schedule->title, $year));
     }
 
     public function index(Request $request): View
     {
         return view('schedules.index')
+            ->with('timezone', $this->timezone)
             ->with('schedules', Schedule::getPublishedSchedules($request->toArray()))
             ->with('search', true);
     }
 
     public function filter(int $year, ?int $month = null): View
     {
-        $timezone = config('app.datetime_timezone', config('app.timezone'));
-        $date = now($timezone)
+        $date = now($this->timezone)
             ->setMonth($month)
             ->setYear($year);
 
