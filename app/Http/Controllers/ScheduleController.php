@@ -12,11 +12,13 @@ use Symfony\Component\HttpFoundation\Response;
 
 class ScheduleController extends Controller
 {
-    private string $timezone = 'UTC';
+    private string $timezone;
 
     public function __construct()
     {
         $this->timezone = config('app.datetime_timezone', config('app.timezone'));
+
+        view()->share('timezone', $this->timezone);
     }
 
     /**
@@ -58,14 +60,12 @@ class ScheduleController extends Controller
                 'format',
                 'dateFormat',
             ))
-            ->with('timezone', $this->timezone)
             ->with('title', sprintf('%s - %s', $schedule->title, $year));
     }
 
     public function index(Request $request): View
     {
         return view('schedules.index')
-            ->with('timezone', $this->timezone)
             ->with('schedules', Schedule::getPublishedSchedules($request->toArray()))
             ->with('search', true);
     }
