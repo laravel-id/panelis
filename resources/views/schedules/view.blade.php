@@ -65,7 +65,13 @@
               <i class="ri-phone-line"></i>
             @endif
 
-            <span>{{ $contacts['phone'] }}</span>
+            <span>
+              @if (!empty($contacts['wa_url']))
+                <a href="{{ $contacts['wa_url'] }}" target="_blank">{{ $contacts['phone'] }}</a>
+              @else
+                {{ $contacts['phone'] }}
+              @endif
+            </span>
             @if (!empty($contacts['name']))
               - {{ $contacts['name'] }}
             @endif

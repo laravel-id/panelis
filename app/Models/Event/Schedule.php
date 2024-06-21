@@ -6,6 +6,7 @@ use App\Models\Location\District;
 use App\Models\Traits\HasLocalTime;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -57,6 +58,36 @@ class Schedule extends Model
         'url',
         'metadata',
     ];
+
+    public function contacts(): Attribute
+    {
+        return Attribute::make(
+            get: function (?string $value): array {
+                return collect(json_decode($value, true))
+                    ->map(function (array $contact): array {
+                        if (!empty($contact['is_wa']) && $contact['is_wa'] === true && !empty($contact['phone'])) {
+                            $phone = $contact['phone'];
+
+                            // assume it's local number
+                            if (str_starts_with($phone, '0')) {
+                                $phone = ltrim($phone, '0');
+                                $phone = sprintf('%s%s', '62', $phone);
+                            }
+
+                            // provider country number
+                            if (str_starts_with($phone, '+')) {
+                                $phone = str_replace('+', '', $phone);
+                            }
+
+                            $contact['wa_url'] = sprintf('https://wa.me/%s', $phone);
+                        }
+
+                        return $contact;
+                    })
+                    ->toArray();
+            },
+        );
+    }
 
     public function getStartTimeAttribute(): string
     {
