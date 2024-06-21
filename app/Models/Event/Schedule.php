@@ -15,6 +15,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use Spatie\Sitemap\Contracts\Sitemapable;
+use Spatie\Sitemap\Tags\Url;
 
 /**
  * @property array $metadata
@@ -28,7 +30,7 @@ use Illuminate\Support\Str;
  * @property Carbon $started_at
  * @property Collection $organizers
  */
-class Schedule extends Model
+class Schedule extends Model implements Sitemapable
 {
     use HasFactory;
     use HasLocalTime;
@@ -177,7 +179,7 @@ class Schedule extends Model
         return $this->belongsTo(District::class);
     }
 
-    public static function getPublishedSchedules(array $request): Collection
+    public static function getPublishedSchedules(?array $request = null): Collection
     {
         $timezone = config('app.datetime_timezone', config('app.timezone'));
         $now = now($timezone);
@@ -225,5 +227,10 @@ class Schedule extends Model
                 config('app.datetime_timezone', config('app.timezone'))
             ))
             ->get();
+    }
+
+    public function toSitemapTag(): Url|string|array
+    {
+        return route('schedule.view', $this->slug);
     }
 }
