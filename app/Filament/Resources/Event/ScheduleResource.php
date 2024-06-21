@@ -6,6 +6,7 @@ use App\Filament\Resources\Event\ScheduleResource\Forms\OrganizerForm;
 use App\Filament\Resources\Event\ScheduleResource\Forms\PackageForm;
 use App\Filament\Resources\Event\ScheduleResource\Forms\ScheduleForm;
 use App\Filament\Resources\Event\ScheduleResource\Pages;
+use app\Filament\Resources\Event\ScheduleResource\Widgets\ScheduleOverview;
 use App\Filament\Resources\Event\TypeResource\Forms\TypeForm;
 use App\Models\Event\Organizer;
 use App\Models\Event\Schedule;
@@ -41,6 +42,13 @@ class ScheduleResource extends Resource
     public static function getLabel(): ?string
     {
         return __('event.schedule');
+    }
+
+    public static function getWidgets(): array
+    {
+        return [
+            ScheduleOverview::class,
+        ];
     }
 
     public static function form(Form $form): Form
