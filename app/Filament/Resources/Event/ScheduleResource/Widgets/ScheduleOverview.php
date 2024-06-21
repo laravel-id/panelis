@@ -14,7 +14,7 @@ class ScheduleOverview extends BaseWidget
 
         return [
             Stat::make(
-                __('schedule.widget_current_month'),
+                __('event.schedule_widget_current_month'),
                 Schedule::query()
                     ->whereDate('started_at', '>=', $now->startOfMonth())
                     ->whereDate('started_at', '<=', $now->endOfMonth())
@@ -24,7 +24,7 @@ class ScheduleOverview extends BaseWidget
                 ->description(__('event.schedule_widget_this_month_description')),
 
             Stat::make(
-                __('schedule.widget_next_month'),
+                __('event.schedule_widget_next_month'),
                 Schedule::query()
                     ->whereDate('started_at', '>=', $now->addMonth()->startOfMonth())
                     ->whereDate('started_at', '<=', $now->addMonth()->endOfMonth())
@@ -33,7 +33,7 @@ class ScheduleOverview extends BaseWidget
                 ->description(__('event.schedule_widget_next_month_description')),
 
             Stat::make(
-                __('schedule.widget_this_year'),
+                __('event.schedule_widget_this_year'),
                 Schedule::query()
                     ->whereYear('started_at', $now->year)
                     ->count(),
