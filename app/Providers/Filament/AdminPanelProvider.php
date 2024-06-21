@@ -24,6 +24,7 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Panelis\Todo\TodoPlugin;
+use pxlrbt\FilamentEnvironmentIndicator\EnvironmentIndicatorPlugin;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -38,6 +39,8 @@ class AdminPanelProvider extends PanelProvider
 
             ->plugins([
                 //TodoPlugin::make(),
+                EnvironmentIndicatorPlugin::make()
+                    ->visible(!app()->isProduction()),
             ])
 
             //->registration(Register::class)
