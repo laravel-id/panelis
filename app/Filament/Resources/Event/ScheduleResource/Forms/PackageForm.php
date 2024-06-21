@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Event\ScheduleResource\Forms;
 
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
@@ -18,39 +19,52 @@ class PackageForm
         return [
             Repeater::make(__('event.package'))
                 ->relationship('packages')
+                ->columns(1)
+                ->columns([
+                    'md' => 1,
+                    'lg' => 2,
+                ])
                 ->schema([
-                    TextInput::make('title')
-                        ->label(__('event.package_title'))
-                        ->maxLength(250)
-                        ->required(),
+                    Grid::make()
+                        ->columnSpan(2)
+                        ->schema([
+                            TextInput::make('title')
+                                ->label(__('event.package_title'))
+                                ->maxLength(250)
+                                ->required(),
 
-                    TextInput::make('price')
-                        ->label(__('event.package_price'))
-                        ->default(0)
-                        ->numeric()
-                        ->required(),
+                            TextInput::make('price')
+                                ->label(__('event.package_price'))
+                                ->default(0)
+                                ->numeric()
+                                ->required(),
+                        ]),
 
-                    DatetimePicker::make('started_at')
-                        ->label(__('event.package_started_at'))
-                        ->native(false)
-                        ->seconds(false)
-                        ->minutesStep(30)
-                        ->closeOnDateSelection()
-                        ->timezone($timezone)
-                        ->locale($locale)
-                        ->live(onBlur: true)
-                        ->nullable(),
+                    Grid::make()
+                        ->columnSpan(2)
+                        ->schema([
+                            DatetimePicker::make('started_at')
+                                ->label(__('event.package_started_at'))
+                                ->native(false)
+                                ->seconds(false)
+                                ->minutesStep(30)
+                                ->closeOnDateSelection()
+                                ->timezone($timezone)
+                                ->locale($locale)
+                                ->live(onBlur: true)
+                                ->nullable(),
 
-                    DatetimePicker::make('ended_at')
-                        ->label(__('event.package_ended_at'))
-                        ->native(false)
-                        ->seconds(false)
-                        ->minutesStep(30)
-                        ->closeOnDateSelection()
-                        ->timezone($timezone)
-                        ->locale($locale)
-                        ->minDate(fn(Get $get): ?string => $get('started_at'))
-                        ->nullable(),
+                            DatetimePicker::make('ended_at')
+                                ->label(__('event.package_ended_at'))
+                                ->native(false)
+                                ->seconds(false)
+                                ->minutesStep(30)
+                                ->closeOnDateSelection()
+                                ->timezone($timezone)
+                                ->locale($locale)
+                                ->minDate(fn(Get $get): ?string => $get('started_at'))
+                                ->nullable(),
+                        ]),
 
                     Textarea::make('description')
                         ->label(__('event.package_description'))

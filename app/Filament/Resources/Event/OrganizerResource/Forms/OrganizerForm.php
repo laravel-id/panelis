@@ -20,7 +20,6 @@ class OrganizerForm
     {
         return [
             Section::make(__('event.organizer_info'))
-                ->columnSpan(1)
                 ->schema([
                     FileUpload::make('logo')
                         ->hiddenLabel()
@@ -38,10 +37,12 @@ class OrganizerForm
                         }),
 
                     Grid::make('organizer_name')
-                        ->columns(2)
+                        ->columns([
+                            'md' => 1,
+                            'lg' => 3,
+                        ])
                         ->schema([
                             TextInput::make('name')
-                                ->columnSpan(2)
                                 ->label(__('event.organizer_name'))
                                 ->live(onBlur: true)
                                 ->minLength(2)
@@ -62,7 +63,6 @@ class OrganizerForm
                                 ->label(__('event.organizer_brand_color'))
                                 ->nullable()
                                 ->hex(),
-
                         ]),
 
                     MarkdownEditor::make('description')

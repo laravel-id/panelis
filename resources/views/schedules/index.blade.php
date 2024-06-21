@@ -2,7 +2,7 @@
 
 @section('content')
   @if(!empty($search) AND $search)
-  <form>
+  <form action="{{ url()->current() }}">
     <fieldset role="group">
       <input name="keyword" value="{{ request('keyword') }}" type="text" placeholder="@lang('event.schedule_placeholder_search')" />
       <button type="submit"><i class="ri-search-line"></i></button>

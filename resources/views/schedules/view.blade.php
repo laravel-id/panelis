@@ -44,7 +44,8 @@
     <hr/>
 
     <p><small>@lang('event.schedule_datetime'):</small></p>
-    <p><i class="ri-calendar-2-line"></i> {{ $schedule->started_at->timezone($timezone)->translatedFormat('D') }}, {{ $schedule->held_at }}</p>
+    <p><i class="ri-calendar-2-line"></i> {{ $schedule->started_at->timezone($timezone)->translatedFormat('D') }}
+      , {{ $schedule->held_at }}</p>
     <hr/>
 
     <p><small>@lang('event.schedule_location'):</small></p>
@@ -56,20 +57,20 @@
       <p><i class="ri-external-link-line"></i> <a href="{{ $schedule->external_url }}">{{ $schedule->url }}</a></p>
 
       @if(!empty($schedule->contacts))
-          @foreach ($schedule->contacts as $contacts)
-            <div>
-              @if (!empty($contacts['is_wa']) && $contacts['is_wa'] === true)
-                <i class="ri-whatsapp-line"></i>
-              @else
-                <i class="ri-phone-line"></i>
-              @endif
+        @foreach ($schedule->contacts as $contacts)
+          <div>
+            @if (!empty($contacts['is_wa']) && $contacts['is_wa'] === true)
+              <i class="ri-whatsapp-line"></i>
+            @else
+              <i class="ri-phone-line"></i>
+            @endif
 
-              <span>{{ $contacts['phone'] }}</span>
-              @if (!empty($contacts['name']))
-                - {{ $contacts['name'] }}
-              @endif
-            </div>
-          @endforeach
+            <span>{{ $contacts['phone'] }}</span>
+            @if (!empty($contacts['name']))
+              - {{ $contacts['name'] }}
+            @endif
+          </div>
+        @endforeach
       @endif
     @endif
   </article>
@@ -78,38 +79,40 @@
     <article>
       <header>@lang('event.package')</header>
 
-      <table>
-        <thead>
-        <tr>
-          <th scope="col">@lang('event.package_title')</th>
-          <th scope="col">@lang('event.package_time')</th>
-          <th scope="col">@lang('event.package_price')</th>
-          <th scope="col">@lang('event.package_description')</th>
-        </tr>
-        </thead>
-
-        <tbody>
-        @foreach($schedule->packages as $package)
+      <div class="overflow-auto">
+        <table>
+          <thead>
           <tr>
-            <td>{{ $package->title }}</td>
-            <td>
-              @if (!empty($package->started_at) AND !empty($package->ended_at))
-                {{
-                    vsprintf('%s - %s', [
-                        $package->started_at->translatedFormat($dateFormat),
-                        $package->ended_at->translatedFormat($dateFormat),
-                    ])
-                }}
-              @else
-                -
-              @endif
-            </td>
-            <td>{{ $package->price > 0 ? Number::money($package->price) : '-' }}</td>
-            <td>{{ $package->description ?? '-' }}</td>
+            <th scope="col">@lang('event.package_title')</th>
+            <th scope="col">@lang('event.package_time')</th>
+            <th scope="col">@lang('event.package_price')</th>
+            <th scope="col">@lang('event.package_description')</th>
           </tr>
-        @endforeach
-        </tbody>
-      </table>
+          </thead>
+
+          <tbody>
+          @foreach($schedule->packages as $package)
+            <tr>
+              <td>{{ $package->title }}</td>
+              <td>
+                @if (!empty($package->started_at) AND !empty($package->ended_at))
+                  {{
+                      vsprintf('%s - %s', [
+                          $package->started_at->translatedFormat($dateFormat),
+                          $package->ended_at->translatedFormat($dateFormat),
+                      ])
+                  }}
+                @else
+                  -
+                @endif
+              </td>
+              <td>{{ $package->price > 0 ? Number::money($package->price) : '-' }}</td>
+              <td>{{ $package->description ?? '-' }}</td>
+            </tr>
+          @endforeach
+          </tbody>
+        </table>
+      </div>
     </article>
   @endif
 

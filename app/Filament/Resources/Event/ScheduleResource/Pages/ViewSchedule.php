@@ -64,11 +64,13 @@ class ViewSchedule extends ViewRecord
 
                         TextEntry::make('started_at')
                             ->label(__('event.schedule_started_at'))
+                            ->icon('heroicon-s-calendar')
                             ->size(TextEntry\TextEntrySize::Medium)
                             ->dateTime($dateFormat, $timezone),
 
                         TextEntry::make('finished_at')
                             ->label(__('event.schedule_finished_at'))
+                            ->icon('heroicon-s-calendar')
                             ->size(TextEntry\TextEntrySize::Medium)
                             ->visible(fn(Schedule $schedule): bool => !empty($schedule->finished_at))
                             ->dateTime($dateFormat, $timezone),
