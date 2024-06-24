@@ -21,7 +21,7 @@ class RegionResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('location.navigation');
+        return __('navigation.location');
     }
 
     public static function getNavigationLabel(): string
