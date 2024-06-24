@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Event\ScheduleResource\Pages;
 
 use App\Filament\Resources\Event\ScheduleResource;
+use AshAllenDesign\ShortURL\Facades\ShortURL;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
@@ -22,6 +23,16 @@ class EditSchedule extends EditRecord
     {
         if (empty($data['description'])) {
             $data['description'] = '';
+        }
+
+        $exists = \App\Models\ShortURL::query()
+            ->where('destination_url', $data['url'])
+            ->exists();
+
+        if (! $exists) {
+            ShortURL::destinationUrl($data['url'])
+                ->trackVisits()
+                ->make();
         }
 
         return $data;

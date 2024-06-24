@@ -3,6 +3,7 @@
 namespace App\Models\Event;
 
 use App\Models\Location\District;
+use App\Models\ShortURL;
 use App\Models\Traits\HasLocalTime;
 use App\Models\User;
 use Carbon\Carbon;
@@ -29,6 +30,7 @@ use Spatie\Sitemap\Tags\Url;
  * @property string $slug
  * @property Carbon $started_at
  * @property Collection $organizers
+ * @property ?string $external_url
  */
 class Schedule extends Model implements Sitemapable
 {
@@ -67,7 +69,7 @@ class Schedule extends Model implements Sitemapable
             get: function (?string $value): array {
                 return collect(json_decode($value, true))
                     ->map(function (array $contact): array {
-                        if (!empty($contact['is_wa']) && $contact['is_wa'] === true && !empty($contact['phone'])) {
+                        if (! empty($contact['is_wa']) && $contact['is_wa'] === true && ! empty($contact['phone'])) {
                             $phone = $contact['phone'];
 
                             // assume it's local number
@@ -124,6 +126,14 @@ class Schedule extends Model implements Sitemapable
 
     public function getExternalUrlAttribute(): string
     {
+        $url = ShortURL::query()
+            ->where('destination_url', $this->url)
+            ->first();
+
+        if (! empty($url)) {
+            return $url->default_short_url;
+        }
+
         return route('schedule.go', ['url' => $this->url]);
     }
 
@@ -133,7 +143,7 @@ class Schedule extends Model implements Sitemapable
         $timezone = config('app.datetime_timezone', config('app.timezone'));
 
         $this->started_at = $this->started_at->timezone($timezone);
-        if (!empty($this->finished_at)) {
+        if (! empty($this->finished_at)) {
             $this->finished_at = $this->finished_at->timezone($timezone);
         }
 

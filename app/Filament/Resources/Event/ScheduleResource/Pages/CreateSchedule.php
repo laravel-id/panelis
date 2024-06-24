@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Event\ScheduleResource\Pages;
 
 use App\Filament\Resources\Event\ScheduleResource;
+use AshAllenDesign\ShortURL\Facades\ShortURL;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateSchedule extends CreateRecord
@@ -14,6 +15,10 @@ class CreateSchedule extends CreateRecord
         if (empty($data['description'])) {
             $data['description'] = '';
         }
+
+        ShortURL::destinationUrl($data['url'])
+            ->trackVisits()
+            ->make();
 
         return $data;
     }

@@ -54,7 +54,7 @@
     @if ($schedule->started_at->gt(now()))
       <hr/>
       <p><small>@lang('event.schedule_info_registration'):</small></p>
-      <p><i class="ri-external-link-line"></i> <a href="{{ $schedule->external_url }}">{{ $schedule->url }}</a></p>
+      <p><i class="ri-external-link-line"></i> <a href="{{ $schedule->external_url }}">{{ $schedule->external_url }}</a></p>
 
       @if(!empty($schedule->contacts))
         @foreach ($schedule->contacts as $contacts)

@@ -45,7 +45,7 @@ class ViewSchedule extends ViewRecord
                         TextEntry::make('title')
                             ->hiddenLabel()
                             ->columnSpan(2)
-                            ->url(fn(Schedule $schedule): string => route('schedule.view', [
+                            ->url(fn (Schedule $schedule): string => route('schedule.view', [
                                 $schedule->slug,
                             ]))
                             ->label(__('event.schedule_title'))
@@ -58,7 +58,7 @@ class ViewSchedule extends ViewRecord
                         TextEntry::make('description')
                             ->columnSpan(2)
                             ->hiddenLabel()
-                            ->hidden(fn(Schedule $schedule): bool => empty($schedule->description))
+                            ->hidden(fn (Schedule $schedule): bool => empty($schedule->description))
                             ->label(__('event.schedule_description'))
                             ->markdown(),
 
@@ -72,7 +72,7 @@ class ViewSchedule extends ViewRecord
                             ->label(__('event.schedule_finished_at'))
                             ->icon('heroicon-s-calendar')
                             ->size(TextEntry\TextEntrySize::Medium)
-                            ->visible(fn(Schedule $schedule): bool => !empty($schedule->finished_at))
+                            ->visible(fn (Schedule $schedule): bool => ! empty($schedule->finished_at))
                             ->dateTime($dateFormat, $timezone),
 
                         TextEntry::make('full_location')
@@ -80,7 +80,7 @@ class ViewSchedule extends ViewRecord
                             ->openUrlInNewTab()
                             ->label(__('event.schedule_location'))
                             ->size(TextEntry\TextEntrySize::Medium)
-                            ->icon(fn(Schedule $schedule): string => $schedule->is_virtual ? 'heroicon-s-globe-alt' : 'heroicon-s-map-pin')
+                            ->icon(fn (Schedule $schedule): string => $schedule->is_virtual ? 'heroicon-s-globe-alt' : 'heroicon-s-map-pin')
                             ->formatStateUsing(function (Schedule $schedule): string {
                                 if ($schedule->is_virtual) {
                                     return __('event.schedule_is_virtual');
@@ -118,7 +118,7 @@ class ViewSchedule extends ViewRecord
                         ImageEntry::make('poster')
                             ->height(500)
                             ->hiddenLabel()
-                            ->visible(fn(Schedule $schedule): bool => !empty($schedule->poster))
+                            ->visible(fn (Schedule $schedule): bool => ! empty($schedule->poster))
                             ->alignment(Alignment::Center)
                             ->extraImgAttributes([
                                 'alt' => 'Poster',
@@ -134,8 +134,13 @@ class ViewSchedule extends ViewRecord
 
                         TextEntry::make('url')
                             ->label(__('event.schedule_url'))
-                            ->url(fn(Schedule $schedule): ?string => $schedule->url)
-                            ->formatStateUsing(fn(Schedule $schedule): string => Str::limit($schedule->url, 100)),
+                            ->url(fn (Schedule $schedule): ?string => $schedule->url)
+                            ->formatStateUsing(fn (Schedule $schedule): string => Str::limit($schedule->url, 100)),
+
+                        TextEntry::make('external_url')
+                            ->label(__('event.schedule_alias_url'))
+                            ->url(fn (Schedule $schedule): ?string => $schedule->external_url)
+                            ->default('-'),
 
                         TextEntry::make('created_at')
                             ->label(__('ui.created_at'))
