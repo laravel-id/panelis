@@ -3,7 +3,7 @@
 namespace App\Console\Commands\Schedules;
 
 use App\Models\Event\Schedule;
-use App\Models\ShortURL;
+use App\Models\URL\ShortURL;
 use AshAllenDesign\ShortURL\Facades\ShortURL as URLShortener;
 use Illuminate\Console\Command;
 

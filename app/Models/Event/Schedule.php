@@ -3,8 +3,8 @@
 namespace App\Models\Event;
 
 use App\Models\Location\District;
-use App\Models\ShortURL;
 use App\Models\Traits\HasLocalTime;
+use App\Models\URL\ShortURL;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
