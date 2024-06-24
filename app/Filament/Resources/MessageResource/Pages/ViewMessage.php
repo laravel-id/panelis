@@ -23,8 +23,7 @@ class ViewMessage extends ViewRecord
                 ->visible(fn (Message $message): bool => $message->status !== MessageStatus::Spam)
                 ->label(__('message.button_mark_as_spam'))
                 ->action(function (Message $message): void {
-                    $message->status = MessageStatus::Spam;
-                    $message->save();
+                    $message->markAsSpam();
 
                     Notification::make('marked_as_spam')
                         ->title(__('message.marked_as_spam'))
@@ -36,11 +35,11 @@ class ViewMessage extends ViewRecord
                 ->visible(fn (Message $message): bool => $message->status === MessageStatus::Spam)
                 ->label(__('message.button_unmark_as_spam'))
                 ->action(function (Message $message): void {
-                    $message->status = MessageStatus::Read;
-                    $message->save();
+                    // alias for not spam
+                    $message->markAsRead();
 
                     Notification::make('marked_as_spam')
-                        ->title(__('message.marked_as_spam'))
+                        ->title(__('message.unmarked_as_spam'))
                         ->success()
                         ->send();
                 }),
@@ -50,9 +49,8 @@ class ViewMessage extends ViewRecord
     public function infolist(Infolist $infolist): Infolist
     {
         $message = self::getRecord();
-        if (in_array($message->status, [MessageStatus::Unread])) {
-            $message->status = MessageStatus::Read;
-            $message->save();
+        if ($message->status === MessageStatus::Unread) {
+            $message->markAsRead();
         }
 
         return $infolist

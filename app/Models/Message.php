@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @property MessageStatus $status
  * @property int $id
+ * @property ?string $email
  */
 class Message extends Model
 {
@@ -31,4 +32,25 @@ class Message extends Model
     protected $casts = [
         'status' => MessageStatus::class,
     ];
+
+    public function markAsRead(): bool
+    {
+        $this->status = MessageStatus::Read;
+
+        return $this->save();
+    }
+
+    public function markAsUnread(): bool
+    {
+        $this->status = MessageStatus::Unread;
+
+        return $this->save();
+    }
+
+    public function markAsSpam(): bool
+    {
+        $this->status = MessageStatus::Spam;
+
+        return $this->save();
+    }
 }

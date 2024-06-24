@@ -35,6 +35,13 @@ class MessageResource extends Resource
         return __('navigation.message');
     }
 
+    public static function getNavigationBadge(): ?string
+    {
+        return Message::query()
+            ->where('status', MessageStatus::Unread)
+            ->count();
+    }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -48,6 +55,14 @@ class MessageResource extends Resource
      */
     public static function table(Table $table): Table
     {
+        $fontWeight = function (Message $message): FontWeight {
+            if ($message->status === MessageStatus::Unread) {
+                return FontWeight::Bold;
+            }
+
+            return FontWeight::Light;
+        };
+
         return $table
             ->recordUrl(function (Message $message): string {
                 return Pages\ViewMessage::getUrl([$message->id]);
@@ -56,24 +71,26 @@ class MessageResource extends Resource
             ->columns([
                 TextColumn::make('name')
                     ->label(__('message.name'))
-                    ->description(fn (Message $message): ?string => $message->email)
+                    ->description(fn(Message $message): ?string => $message->email)
+                    ->weight(fn(Message $message): FontWeight => $fontWeight($message))
+                    ->grow(false)
                     ->searchable(),
 
                 TextColumn::make('subject')
                     ->label(__('message.subject'))
-                    ->weight(function (Message $message): FontWeight {
-                        if ($message->status === MessageStatus::Unread) {
-                            return FontWeight::Bold;
-                        }
-
-                        return FontWeight::Light;
-                    })
+                    ->default(__('message.no_subject'))
+                    ->weight(fn(Message $message): FontWeight => $fontWeight($message))
                     ->searchable(),
 
                 TextColumn::make('body')
                     ->label(__('message.body'))
-                    ->words(10)
+                    ->words(8)
                     ->searchable(),
+
+                TextColumn::make('created_at')
+                    ->label(__('ui.created_at'))
+                    ->sortable()
+                    ->since(config('app.datetime_timezone', config('app.timezone'))),
             ])
             ->filters([
                 SelectFilter::make('status')
@@ -83,11 +100,10 @@ class MessageResource extends Resource
             ->actions([
                 Action::make('mark_as_read')
                     ->label(__('message.button_mark_as_read'))
-                    ->disabled(fn (Message $message): bool => $message->status !== MessageStatus::Unread)
+                    ->disabled(fn(Message $message): bool => $message->status !== MessageStatus::Unread)
                     ->icon('heroicon-o-envelope-open')
                     ->action(function (Message $message): void {
-                        $message->status = MessageStatus::Read;
-                        $message->save();
+                        $message->markAsRead();
 
                         Notification::make('marked_as_read')
                             ->title(__('message.marked_as_read'))
@@ -96,13 +112,25 @@ class MessageResource extends Resource
                     }),
 
                 ActionGroup::make([
+                    Action::make('mark_as_unread')
+                        ->label(__('message.button_mark_as_unread'))
+                        ->disabled(fn(Message $message): bool => $message->status !== MessageStatus::Read)
+                        ->icon('heroicon-o-envelope')
+                        ->action(function (Message $message): void {
+                            $message->markAsUnread();
+
+                            Notification::make('marked_as_unread')
+                                ->title(__('message.marked_as_unread'))
+                                ->success()
+                                ->send();
+                        }),
+
                     Action::make('mark_as_spam')
                         ->label(__('message.button_mark_as_spam'))
                         ->icon('heroicon-o-exclamation-triangle')
                         ->color('warning')
                         ->action(function (Message $message): void {
-                            $message->status = MessageStatus::Spam;
-                            $message->save();
+                            $message->markAsSpam();
 
                             Notification::make('marked_as_spam')
                                 ->title(__('message.marked_as_spam'))
@@ -117,13 +145,22 @@ class MessageResource extends Resource
                         ->label(__('message.button_mark_as_read'))
                         ->icon('heroicon-o-envelope-open')
                         ->action(function (Collection $records): void {
-                            $records->each(function (Message $message): void {
-                                $message->status = MessageStatus::Read;
-                                $message->save();
-                            });
+                            $records->each->markAsRead();
 
                             Notification::make('marked_as_read')
                                 ->title(__('message.marked_as_read'))
+                                ->success()
+                                ->send();
+                        }),
+
+                    BulkAction::make('mark_as_unread')
+                        ->label(__('message.button_mark_as_unread'))
+                        ->icon('heroicon-o-envelope')
+                        ->action(function (Collection $records): void {
+                            $records->each->markAsUnread();
+
+                            Notification::make('marked_as_unread')
+                                ->title(__('message.marked_as_unread'))
                                 ->success()
                                 ->send();
                         }),
@@ -134,10 +171,7 @@ class MessageResource extends Resource
                         ->icon('heroicon-o-exclamation-triangle')
                         ->color('warning')
                         ->action(function (Collection $records): void {
-                            $records->each(function (Message $message): void {
-                                $message->status = MessageStatus::Spam;
-                                $message->save();
-                            });
+                            $records->each->markAsSpam();
 
                             Notification::make('marked_as_spam')
                                 ->title(__('message.marked_as_spam'))

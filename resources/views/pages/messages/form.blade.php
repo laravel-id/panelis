@@ -22,7 +22,7 @@
 
           <label>
             @lang('message.email')
-            <input type="text" name="email" value="{{ old('email') }}" placeholder="@lang('message.email')" @error('email') aria-invalid="true" @enderror>
+            <input type="text" name="email" value="{{ old('email') }}" placeholder="@lang('message.placeholder_email')" @error('email') aria-invalid="true" @enderror>
             <small>@lang('message.provide_email_if_want_reply')</small>
           </label>
         </div>
@@ -37,7 +37,7 @@
           <textarea name="body" rows="5" @error('body') aria-invalid="true" @enderror>{{ old('body') }}</textarea>
         </label>
 
-        <button type="submit">@lang('message.submit')</button>
+        <button type="submit">@lang('message.button_submit')</button>
       </fieldset>
     </form>
   </article>
