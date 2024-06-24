@@ -92,11 +92,11 @@ class ShortURLResource extends Resource
         return $table
             ->columns([
                 IconColumn::make('single_use')
-                    ->label('url.single_use')
+                    ->label(__('url.single_use'))
                     ->boolean(),
 
                 IconColumn::make('track_visits')
-                    ->label('url.track_visit')
+                    ->label(__('url.track_visit'))
                     ->boolean(),
 
                 TextColumn::make('default_short_url')
@@ -105,7 +105,7 @@ class ShortURLResource extends Resource
                     ->searchable(),
 
                 TextColumn::make('destination_url')
-                    ->label('url.destination_url')
+                    ->label(__('url.destination_url'))
                     ->copyable()
                     ->searchable()
                     ->limit(50),
@@ -116,7 +116,7 @@ class ShortURLResource extends Resource
                     ->since($timezone),
 
                 TextColumn::make('created_at')
-                    ->label(__('url.created_at'))
+                    ->label(__('ui.created_at'))
                     ->sortable()
                     ->since($timezone),
             ])
