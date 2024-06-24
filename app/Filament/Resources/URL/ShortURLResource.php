@@ -5,16 +5,22 @@ namespace App\Filament\Resources\URL;
 use App\Filament\Resources\URL\ShortURLResource\Pages;
 use App\Models\URL\ShortURL;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\FontWeight;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Str;
 
 class ShortURLResource extends Resource
 {
@@ -39,6 +45,8 @@ class ShortURLResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $timezone = config('app.datetime_timezone', config('app.timezone'));
+
         return $form
             ->schema([
                 Section::make(__('url.short_url'))
@@ -61,8 +69,10 @@ class ShortURLResource extends Resource
                         DateTimePicker::make('deactivated_at')
                             ->label(__('url.expired_at'))
                             ->native(false)
-                            ->timezone(config('app.datetime_timezone', config('app.timezone')))
-                            ->nullable(),
+                            ->seconds(false)
+                            ->timezone($timezone)
+                            ->nullable()
+                            ->minDate(now($timezone)),
 
                         TextInput::make('url_key')
                             ->label(__('url.key'))
@@ -78,6 +88,15 @@ class ShortURLResource extends Resource
                             ->nullable()
                             ->unique(ignoreRecord: true)
                             ->alphaDash(),
+
+                        Placeholder::make('short_url')
+                            ->label(__('url.short_url'))
+                            ->visibleOn(Pages\EditShortURL::class)
+                            ->content(function (ShortURL $url): Htmlable {
+                                return Str::of(sprintf('[%s](%s)', $url->default_short_url, $url->default_short_url))
+                                    ->inlineMarkdown()
+                                    ->toHtmlString();
+                            }),
                     ]),
             ]);
     }
@@ -99,16 +118,21 @@ class ShortURLResource extends Resource
                     ->label(__('url.track_visit'))
                     ->boolean(),
 
-                TextColumn::make('default_short_url')
+                TextColumn::make('url_key')
                     ->label(__('url.short_url'))
+                    ->weight(FontWeight::Bold)
                     ->copyable()
+                    ->copyMessage(__('url.short_url_copied'))
+                    ->copyableState(fn (ShortURL $url): string => $url->default_short_url)
+                    ->description(function (ShortURL $url): string {
+                        return Str::limit($url->default_short_url, 40);
+                    })
                     ->searchable(),
 
-                TextColumn::make('destination_url')
-                    ->label(__('url.destination_url'))
-                    ->copyable()
-                    ->searchable()
-                    ->limit(50),
+                TextColumn::make('visits_count')
+                    ->counts('visits')
+                    ->label(__('url.total_visit'))
+                    ->badge(),
 
                 TextColumn::make('deactivated_at')
                     ->label(__('url.expired_at'))
@@ -131,7 +155,9 @@ class ShortURLResource extends Resource
                 EditAction::make(),
             ])
             ->bulkActions([
-
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
+                ]),
             ]);
     }
 
