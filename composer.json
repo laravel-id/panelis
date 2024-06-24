@@ -6,6 +6,7 @@
     "license": "MIT",
     "require": {
         "php": "^8.1",
+        "ashallendesign/short-url": "^8.0",
         "bezhansalleh/filament-language-switch": "^3.1",
         "calebporzio/sushi": "^2.5",
         "filament/filament": "^3.2",
