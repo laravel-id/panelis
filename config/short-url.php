@@ -11,7 +11,7 @@ return [
     | is registered for the short URL route.
     |
     */
-    'prefix' => '/e',
+    'prefix' => null,
 
     /*
     |--------------------------------------------------------------------------
@@ -63,7 +63,7 @@ return [
     | AshAllenDesign\ShortURL\Controllers\ShortURLController
     |
     */
-    'disable_default_route' => false,
+    'disable_default_route' => true,
 
     /*
     |--------------------------------------------------------------------------

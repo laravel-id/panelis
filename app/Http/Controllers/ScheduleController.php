@@ -4,11 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Event\Organizer;
 use App\Models\Event\Schedule;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
-use Symfony\Component\HttpFoundation\Response;
 
 class ScheduleController extends Controller
 {
@@ -19,17 +17,6 @@ class ScheduleController extends Controller
         $this->timezone = config('app.datetime_timezone', config('app.timezone'));
 
         view()->share('timezone', $this->timezone);
-    }
-
-    /**
-     * When someone/thing come from legacy URL, redirects to a new one.
-     *
-     * @return RedirectResponse
-     */
-    public function viewLegacy(int $year, string $slug): RedirectResponse
-    {
-        return redirect()
-            ->route('schedule.view', compact('slug'), Response::HTTP_PERMANENTLY_REDIRECT);
     }
 
     public function view(string $slug): View
@@ -95,14 +82,5 @@ class ScheduleController extends Controller
         return view('schedules.index')
             ->with('schedules', Schedule::getArchivedSchedules())
             ->with('title', __('event.schedule_archive'));
-    }
-
-    public function go(Request $request): RedirectResponse
-    {
-        if (empty($request->get('url'))) {
-            return redirect()->route('index');
-        }
-
-        return redirect()->to($request->get('url'));
     }
 }
