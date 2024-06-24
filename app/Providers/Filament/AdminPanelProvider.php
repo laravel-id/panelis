@@ -12,6 +12,8 @@ use App\Http\Middleware\SetTheme;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationGroup;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -36,11 +38,23 @@ class AdminPanelProvider extends PanelProvider
 
             // uncomment to set different path
             ->path('admin')
-
             ->plugins([
                 //TodoPlugin::make(),
                 EnvironmentIndicatorPlugin::make()
                     ->visible(!app()->isProduction()),
+            ])
+            ->navigationItems([
+                NavigationItem::make(__('navigation.website'))
+                    ->icon('heroicon-o-globe-alt')
+                    ->url(config('app.url'), shouldOpenInNewTab: true),
+            ])
+            ->navigationGroups([
+                NavigationGroup::make(__('navigation.event')),
+                NavigationGroup::make(__('navigation.location'))
+                    ->collapsed(),
+                NavigationGroup::make(__('navigation.user')),
+                NavigationGroup::make(__('navigation.system'))
+                    ->collapsed(),
             ])
 
             //->registration(Register::class)
