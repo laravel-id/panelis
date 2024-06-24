@@ -16,6 +16,7 @@
     </ul>
     <ul>
       <li><a href="{{ route('schedule.archive') }}">@lang('event.schedule_archive')</a></li>
+      <li><a href="{{ route('message.form') }}">@lang('message.contact')</a></li>
     </ul>
   </nav>
 

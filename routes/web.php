@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\MessageController;
 use App\Http\Controllers\OrganizerController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SitemapController;
@@ -16,6 +17,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::get('/', [ScheduleController::class, 'index'])->name('index');
+
+Route::get('/contact', [MessageController::class, 'form'])->name('message.form');
+Route::post('/contact', [MessageController::class, 'submit'])->name('message.submit');
 
 Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
 
