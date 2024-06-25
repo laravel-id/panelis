@@ -5,6 +5,7 @@ namespace App\Filament\Resources;
 use App\Filament\Resources\MessageResource\Enums\MessageStatus;
 use App\Filament\Resources\MessageResource\Pages;
 use App\Models\Message;
+use Exception;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
@@ -15,8 +16,10 @@ use Filament\Tables\Actions\BulkAction;
 use Filament\Tables\Actions\BulkActionGroup;
 use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\QueryBuilder;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
 class MessageResource extends Resource
@@ -50,12 +53,17 @@ class MessageResource extends Resource
             ]);
     }
 
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->where('status', '!=', MessageStatus::Spam);
+    }
+
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public static function table(Table $table): Table
     {
-        $fontWeight = function (Message $message): FontWeight {
+        $unread = function (Message $message): FontWeight {
             if ($message->status === MessageStatus::Unread) {
                 return FontWeight::Bold;
             }
@@ -71,19 +79,21 @@ class MessageResource extends Resource
             ->columns([
                 TextColumn::make('name')
                     ->label(__('message.name'))
-                    ->description(fn(Message $message): ?string => $message->email)
-                    ->weight(fn(Message $message): FontWeight => $fontWeight($message))
+                    ->description(fn (Message $message): ?string => $message->email)
+                    ->weight(fn (Message $message): FontWeight => $unread($message))
                     ->grow(false)
                     ->searchable(),
 
                 TextColumn::make('subject')
                     ->label(__('message.subject'))
                     ->default(__('message.no_subject'))
-                    ->weight(fn(Message $message): FontWeight => $fontWeight($message))
+                    ->weight(fn (Message $message): FontWeight => $unread($message))
+                    ->toggleable()
                     ->searchable(),
 
                 TextColumn::make('body')
                     ->label(__('message.body'))
+                    ->toggleable()
                     ->words(8)
                     ->searchable(),
 
@@ -96,11 +106,29 @@ class MessageResource extends Resource
                 SelectFilter::make('status')
                     ->label(__('message.status'))
                     ->options(MessageStatus::options()),
+
+                QueryBuilder::make()
+                    ->constraints([
+                        QueryBuilder\Constraints\TextConstraint::make('name')
+                            ->label(__('message.name')),
+
+                        QueryBuilder\Constraints\TextConstraint::make('email')
+                            ->label(__('message.email')),
+
+                        QueryBuilder\Constraints\TextConstraint::make('subject')
+                            ->label(__('message.subject')),
+
+                        QueryBuilder\Constraints\TextConstraint::make('body')
+                            ->label(__('message.body')),
+
+                        QueryBuilder\Constraints\DateConstraint::make('created_at')
+                            ->label(__('message.sent_at')),
+                    ]),
             ])
             ->actions([
                 Action::make('mark_as_read')
                     ->label(__('message.button_mark_as_read'))
-                    ->disabled(fn(Message $message): bool => $message->status !== MessageStatus::Unread)
+                    ->disabled(fn (Message $message): bool => $message->status !== MessageStatus::Unread)
                     ->icon('heroicon-o-envelope-open')
                     ->action(function (Message $message): void {
                         $message->markAsRead();
@@ -114,7 +142,7 @@ class MessageResource extends Resource
                 ActionGroup::make([
                     Action::make('mark_as_unread')
                         ->label(__('message.button_mark_as_unread'))
-                        ->disabled(fn(Message $message): bool => $message->status !== MessageStatus::Read)
+                        ->disabled(fn (Message $message): bool => $message->status !== MessageStatus::Read)
                         ->icon('heroicon-o-envelope')
                         ->action(function (Message $message): void {
                             $message->markAsUnread();
