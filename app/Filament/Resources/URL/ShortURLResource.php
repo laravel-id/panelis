@@ -17,6 +17,7 @@ use Filament\Tables\Actions\DeleteBulkAction;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
@@ -83,7 +84,7 @@ class ShortURLResource extends Resource
                                     config('short-url.prefix'),
                                 ]);
 
-                                return rtrim($url, '/').'/';
+                                return rtrim($url, '/') . '/';
                             })
                             ->nullable()
                             ->unique(ignoreRecord: true)
@@ -114,16 +115,15 @@ class ShortURLResource extends Resource
                     ->label(__('url.single_use'))
                     ->boolean(),
 
-                IconColumn::make('track_visits')
-                    ->label(__('url.track_visit'))
-                    ->boolean(),
+                ToggleColumn::make('track_visits')
+                    ->label(__('url.track_visit')),
 
                 TextColumn::make('url_key')
                     ->label(__('url.short_url'))
                     ->weight(FontWeight::Bold)
                     ->copyable()
                     ->copyMessage(__('url.short_url_copied'))
-                    ->copyableState(fn (ShortURL $url): string => $url->default_short_url)
+                    ->copyableState(fn(ShortURL $url): string => $url->default_short_url)
                     ->description(function (ShortURL $url): string {
                         return Str::limit($url->destination_url, 40);
                     })
