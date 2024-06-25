@@ -42,7 +42,7 @@ class Package extends Model
     {
         return Attribute::make(
             get: function (?string $value): ?Carbon {
-                if (!empty($value)) {
+                if (! empty($value)) {
                     return Carbon::parse($value)->timezone(config('app.datetime_timezone', config('app.timezone')));
                 }
 
@@ -55,7 +55,7 @@ class Package extends Model
     {
         return Attribute::make(
             get: function (?string $value): ?Carbon {
-                if (!empty($value)) {
+                if (! empty($value)) {
                     return Carbon::parse($value)->timezone(config('app.datetime_timezone', config('app.timezone')));
                 }
 

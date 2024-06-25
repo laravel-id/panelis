@@ -29,10 +29,10 @@ class GenerateSitemapCommand extends Command
     {
         SitemapGenerator::create(config('app.url'))
             ->shouldCrawl(function (UriInterface $uri): bool {
-                return !str_contains($uri->getPath(), '/go');
+                return ! str_contains($uri->getPath(), '/go');
             })
             ->shouldCrawl(function (UriInterface $uri): bool {
-                return !str_contains($uri->getPath(), 'admin');
+                return ! str_contains($uri->getPath(), 'admin');
             })
             ->writeToFile(public_path('sitemap.xml'));
 

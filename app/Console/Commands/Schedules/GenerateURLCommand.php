@@ -33,13 +33,12 @@ class GenerateURLCommand extends Command
                 ->where('destination_url', $schedule->url)
                 ->exists();
 
-            if (!$exists) {
+            if (! $exists) {
                 URLShortener::destinationUrl($schedule->url)
                     ->trackVisits()
                     ->make();
             }
         });
-
 
         return 0;
     }

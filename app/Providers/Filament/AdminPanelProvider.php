@@ -40,7 +40,7 @@ class AdminPanelProvider extends PanelProvider
             ->plugins([
                 //TodoPlugin::make(),
                 EnvironmentIndicatorPlugin::make()
-                    ->visible(!app()->isProduction()),
+                    ->visible(! app()->isProduction()),
             ])
             ->navigationItems([
                 NavigationItem::make(__('navigation.website'))

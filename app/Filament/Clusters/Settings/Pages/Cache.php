@@ -8,7 +8,6 @@ use App\Models\Setting;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
@@ -121,17 +120,17 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
 
             Section::make(__('setting.cache_memcached'))
                 ->description(__('setting.cache_memcached_description'))
-                ->visible(fn(Get $get): bool => $get('cache.default') === CacheDriver::Memcached->value)
+                ->visible(fn (Get $get): bool => $get('cache.default') === CacheDriver::Memcached->value)
                 ->schema(Settings\Forms\Cache\MemcachedForm::schema()),
 
             Section::make(__('setting.cache_redis'))
                 ->description(__('setting.cache_redis_section_description'))
-                ->visible(fn(Get $get): bool => $get('cache.default') === CacheDriver::Redis->value)
+                ->visible(fn (Get $get): bool => $get('cache.default') === CacheDriver::Redis->value)
                 ->schema(Settings\Forms\Cache\RedisForm::schema()),
 
             Section::make(__('setting.cache_dynamodb'))
                 ->description(__('setting.cache_dynamodb_section_description'))
-                ->visible(fn(Get $get): bool => $get('cache.default') === CacheDriver::DynamoDB->value)
+                ->visible(fn (Get $get): bool => $get('cache.default') === CacheDriver::DynamoDB->value)
                 ->schema(Settings\Forms\Cache\DynamoDBForm::schema()),
         ])
             ->disabled(config('app.demo'));

@@ -40,7 +40,7 @@ class ListTranslations extends ListRecords
             $newLine = [$locale => $line['text']];
 
             $trans->is_system = $line['is_system'];
-            if (!empty($trans->text)) {
+            if (! empty($trans->text)) {
                 $trans->text = array_merge($trans->text, $newLine);
             } else {
                 $trans->text = $newLine;

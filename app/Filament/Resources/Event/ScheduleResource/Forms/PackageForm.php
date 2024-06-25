@@ -62,7 +62,7 @@ class PackageForm
                                 ->closeOnDateSelection()
                                 ->timezone($timezone)
                                 ->locale($locale)
-                                ->minDate(fn(Get $get): ?string => $get('started_at'))
+                                ->minDate(fn (Get $get): ?string => $get('started_at'))
                                 ->nullable(),
                         ]),
 
