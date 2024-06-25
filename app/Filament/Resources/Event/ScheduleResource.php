@@ -4,8 +4,10 @@ namespace App\Filament\Resources\Event;
 
 use App\Filament\Resources\Event\ScheduleResource\Forms\OrganizerForm;
 use App\Filament\Resources\Event\ScheduleResource\Forms\PackageForm;
+use App\Filament\Resources\Event\ScheduleResource\Forms\ReplicateForm;
 use App\Filament\Resources\Event\ScheduleResource\Forms\ScheduleForm;
 use App\Filament\Resources\Event\ScheduleResource\Pages;
+use App\Filament\Resources\Event\ScheduleResource\Pages\ViewSchedule;
 use app\Filament\Resources\Event\ScheduleResource\Widgets\ScheduleOverview;
 use App\Filament\Resources\Event\TypeResource\Forms\TypeForm;
 use App\Models\Event\Organizer;
@@ -15,7 +17,10 @@ use Filament\Forms\Components\Wizard;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Support\Enums\FontWeight;
+use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ReplicateAction;
 use Filament\Tables\Actions\RestoreAction;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -153,7 +158,24 @@ class ScheduleResource extends Resource
             ])
             ->actions([
                 EditAction::make(),
+
                 RestoreAction::make(),
+
+                ActionGroup::make([
+                    ReplicateAction::make()
+                        ->form(ReplicateForm::make())
+                        ->beforeReplicaSaved(function (ReplicateAction $action, Schedule $schedule, Schedule $replica, array $data): void {
+                            ScheduleResource\Actions\ReplicateAction::beforeReplicate($schedule, $replica, $data);
+                        })
+                        ->after(function (Schedule $schedule, Schedule $replica, array $data): void {
+                            ScheduleResource\Actions\ReplicateAction::afterReplicate($schedule, $replica, $data);
+                        })
+                        ->successRedirectUrl(function (Schedule $replica): string {
+                            return ViewSchedule::getUrl(['record' => $replica]);
+                        }),
+
+                    DeleteAction::make(),
+                ]),
             ])
             ->bulkActions([
 

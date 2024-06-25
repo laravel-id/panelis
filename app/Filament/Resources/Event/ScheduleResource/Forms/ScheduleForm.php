@@ -92,7 +92,7 @@ class ScheduleForm
                                 ->suffixIcon('heroicon-s-calendar')
                                 ->timezone($timezone)
                                 ->locale($locale)
-                                ->minutesStep(30)
+                                ->minutesStep(15)
                                 ->closeOnDateSelection()
                                 ->seconds(false)
                                 ->native(false)
@@ -104,7 +104,7 @@ class ScheduleForm
                                 ->suffixIcon('heroicon-s-calendar')
                                 ->timezone($timezone)
                                 ->locale($locale)
-                                ->minutesStep(30)
+                                ->minutesStep(15)
                                 ->closeOnDateSelection()
                                 ->seconds(false)
                                 ->native(false)
@@ -123,11 +123,12 @@ class ScheduleForm
 
                             TextInput::make('location')
                                 ->label(__('event.schedule_location'))
-                                ->hidden(fn (Get $get): bool => $get('is_virtual'))
+                                ->hidden(fn (Get $get): bool => $get('is_virtual') ?? false)
                                 ->required(),
 
                             Select::make('district_id')
                                 ->label(__('event.schedule_district'))
+                                ->hidden(fn (Get $get): bool => $get('is_virtual') ?? false)
                                 ->searchable()
                                 ->preload()
                                 ->options(District::query()->pluck('name', 'id')),

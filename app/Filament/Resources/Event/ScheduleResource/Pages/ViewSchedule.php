@@ -27,6 +27,22 @@ class ViewSchedule extends ViewRecord
     {
         return [
             Actions\EditAction::make(),
+
+            Actions\ActionGroup::make([
+                Actions\ReplicateAction::make()
+                    ->form(ScheduleResource\Forms\ReplicateForm::make())
+                    ->beforeReplicaSaved(function (Actions\ReplicateAction $action, Schedule $schedule, Schedule $replica, array $data): void {
+                        ScheduleResource\Actions\ReplicateAction::beforeReplicate($schedule, $replica, $data);
+                    })
+                    ->after(function (Schedule $schedule, Schedule $replica, array $data): void {
+                        ScheduleResource\Actions\ReplicateAction::afterReplicate($schedule, $replica, $data);
+                    })
+                    ->successRedirectUrl(function (Schedule $replica): string {
+                        return ViewSchedule::getUrl(['record' => $replica]);
+                    }),
+
+                Actions\DeleteAction::make(),
+            ]),
         ];
     }
 

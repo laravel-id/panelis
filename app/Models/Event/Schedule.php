@@ -31,6 +31,8 @@ use Spatie\Sitemap\Tags\Url;
  * @property Carbon $started_at
  * @property Collection $organizers
  * @property ?string $external_url
+ * @property Collection $packages
+ * @property Collection $types
  */
 class Schedule extends Model implements Sitemapable
 {
