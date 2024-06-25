@@ -127,7 +127,7 @@ class ShortURLResource extends Resource
                     ->description(function (ShortURL $url): string {
                         return Str::limit($url->destination_url, 40);
                     })
-                    ->searchable(),
+                    ->searchable(['destination_url', 'url_key', 'default_short_url']),
 
                 TextColumn::make('visits_count')
                     ->counts('visits')
