@@ -125,7 +125,7 @@ class ShortURLResource extends Resource
                     ->copyMessage(__('url.short_url_copied'))
                     ->copyableState(fn (ShortURL $url): string => $url->default_short_url)
                     ->description(function (ShortURL $url): string {
-                        return Str::limit($url->default_short_url, 40);
+                        return Str::limit($url->destination_url, 40);
                     })
                     ->searchable(),
 
