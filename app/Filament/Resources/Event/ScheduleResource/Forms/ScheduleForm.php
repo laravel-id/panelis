@@ -57,6 +57,7 @@ class ScheduleForm
 
                             TextInput::make('slug')
                                 ->label(__('event.schedule_slug'))
+                                ->prefix(route('schedule.view', '').'/')
                                 ->minLength(3)
                                 ->maxLength(300)
                                 ->required()
