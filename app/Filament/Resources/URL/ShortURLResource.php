@@ -132,6 +132,7 @@ class ShortURLResource extends Resource
                 TextColumn::make('visits_count')
                     ->counts('visits')
                     ->label(__('url.total_visit'))
+                    ->sortable()
                     ->badge(),
 
                 TextColumn::make('deactivated_at')
