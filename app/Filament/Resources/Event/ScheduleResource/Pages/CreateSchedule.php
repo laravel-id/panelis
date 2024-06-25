@@ -16,10 +16,13 @@ class CreateSchedule extends CreateRecord
             $data['description'] = '';
         }
 
-        ShortURL::destinationUrl($data['url'])
+        return $data;
+    }
+
+    protected function afterCreate(): void
+    {
+        ShortURL::destinationUrl($this->record->url)
             ->trackVisits()
             ->make();
-
-        return $data;
     }
 }

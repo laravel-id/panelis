@@ -26,16 +26,19 @@ class EditSchedule extends EditRecord
             $data['description'] = '';
         }
 
+        return $data;
+    }
+
+    protected function afterSave(): void
+    {
         $exists = ShortURL::query()
-            ->where('destination_url', $data['url'])
+            ->where('destination_url', $this->record->url)
             ->exists();
 
         if (! $exists) {
-            URLShortener::destinationUrl($data['url'])
+            URLShortener::destinationUrl($this->record->url)
                 ->trackVisits()
                 ->make();
         }
-
-        return $data;
     }
 }
