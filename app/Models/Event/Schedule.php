@@ -126,7 +126,7 @@ class Schedule extends Model implements Sitemapable
         return $location;
     }
 
-    public function getExternalUrlAttribute(): string
+    public function getExternalUrlAttribute(): ?string
     {
         $url = ShortURL::query()
             ->where('destination_url', $this->url)
@@ -136,7 +136,7 @@ class Schedule extends Model implements Sitemapable
             return $url->default_short_url;
         }
 
-        return route('schedule.go', ['url' => $this->url]);
+        return null;
     }
 
     public function getHeldAtAttribute(): string
