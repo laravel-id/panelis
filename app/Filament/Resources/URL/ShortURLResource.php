@@ -46,8 +46,6 @@ class ShortURLResource extends Resource
 
     public static function form(Form $form): Form
     {
-        $timezone = config('app.datetime_timezone', config('app.timezone'));
-
         return $form
             ->schema([
                 Section::make(__('url.short_url'))
@@ -71,9 +69,9 @@ class ShortURLResource extends Resource
                             ->label(__('url.expired_at'))
                             ->native(false)
                             ->seconds(false)
-                            ->timezone($timezone)
+                            ->timezone(get_timezone())
                             ->nullable()
-                            ->minDate(now($timezone)),
+                            ->minDate(now(get_timezone())),
 
                         TextInput::make('url_key')
                             ->label(__('url.key'))
@@ -107,8 +105,6 @@ class ShortURLResource extends Resource
      */
     public static function table(Table $table): Table
     {
-        $timezone = config('app.datetime_timezone', config('app.timezone'));
-
         return $table
             ->columns([
                 IconColumn::make('single_use')
@@ -138,12 +134,12 @@ class ShortURLResource extends Resource
                 TextColumn::make('deactivated_at')
                     ->label(__('url.expired_at'))
                     ->sortable()
-                    ->since($timezone),
+                    ->since(get_timezone()),
 
                 TextColumn::make('created_at')
                     ->label(__('ui.created_at'))
                     ->sortable()
-                    ->since($timezone),
+                    ->since(get_timezone()),
             ])
             ->filters([
                 TernaryFilter::make('single_use')

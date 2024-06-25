@@ -23,9 +23,6 @@ class ScheduleForm
 {
     public static function schema(): array
     {
-        $timezone = config('app.datetime_timezone', config('app.timezone'));
-        $locale = config('app.locale');
-
         return [
             Grid::make(__('event.schedule_what'))
                 ->columns(1)
@@ -91,8 +88,7 @@ class ScheduleForm
                             DateTimePicker::make('started_at')
                                 ->label(__('event.schedule_started_at'))
                                 ->suffixIcon('heroicon-s-calendar')
-                                ->timezone($timezone)
-                                ->locale($locale)
+                                ->timezone(get_timezone())
                                 ->minutesStep(15)
                                 ->closeOnDateSelection()
                                 ->seconds(false)
@@ -103,8 +99,7 @@ class ScheduleForm
                             DateTimePicker::make('finished_at')
                                 ->label(__('event.schedule_finished_at'))
                                 ->suffixIcon('heroicon-s-calendar')
-                                ->timezone($timezone)
-                                ->locale($locale)
+                                ->timezone(get_timezone())
                                 ->minutesStep(15)
                                 ->closeOnDateSelection()
                                 ->seconds(false)

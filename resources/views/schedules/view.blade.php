@@ -5,10 +5,10 @@
   <nav aria-label="breadcrumb">
     <ul>
       <li><a href="{{ route('index') }}">Home</a></li>
-      <li><a href="{{ route('schedule.filter', ['year' => $year]) }}">{{ $year }}</a></li>
+      <li><a href="{{ route('schedule.filter', ['year' => $startedAt->format('Y')]) }}">{{ $startedAt->format('Y') }}</a></li>
       <li>
-        <a href="{{ route('schedule.filter', ['year' => $year, 'month' => $schedule->started_at->format('m')]) }}">
-          {{ $schedule->started_at->translatedFormat('F') }}
+        <a href="{{ route('schedule.filter', ['year' => $startedAt->format('Y'), 'month' => $startedAt->format('m')]) }}">
+          {{ $startedAt->translatedFormat('F') }}
         </a>
       </li>
     </ul>
@@ -44,14 +44,13 @@
     <hr/>
 
     <p><small>@lang('event.schedule_datetime'):</small></p>
-    <p><i class="ri-calendar-2-line"></i> {{ $schedule->started_at->timezone($timezone)->translatedFormat('D') }}
-      , {{ $schedule->held_at }}</p>
+    <p><i class="ri-calendar-2-line"></i> {{ $startedAt->translatedFormat('D') }}, {{ $schedule->held_at }}</p>
     <hr/>
 
     <p><small>@lang('event.schedule_location'):</small></p>
     <p><i class="ri-map-pin-line"></i> {!! $schedule->full_location !!}</p>
 
-    @if ($schedule->started_at->gt(now()))
+    @if ($startedAt->gt(now($timezone)))
       <hr/>
       <p><small>@lang('event.schedule_info_registration'):</small></p>
       <p><i class="ri-external-link-line"></i> <a href="{{ $schedule->external_url }}">{{ $schedule->external_url }}</a></p>

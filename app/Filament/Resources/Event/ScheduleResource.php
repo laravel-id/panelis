@@ -134,7 +134,7 @@ class ScheduleResource extends Resource
                 TextColumn::make('started_at')
                     ->label(__('event.schedule_started_at'))
                     ->sortable()
-                    ->dateTime(config('app.datetime_format'), config('app.datetime_timezone')),
+                    ->dateTime(config('app.datetime_format'), get_timezone()),
             ])
             ->filters([
                 TernaryFilter::make('is_virtual')

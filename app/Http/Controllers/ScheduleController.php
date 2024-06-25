@@ -14,7 +14,7 @@ class ScheduleController extends Controller
 
     public function __construct()
     {
-        $this->timezone = config('app.datetime_timezone', config('app.timezone'));
+        $this->timezone = get_timezone();
 
         view()->share('timezone', $this->timezone);
     }
@@ -32,17 +32,19 @@ class ScheduleController extends Controller
             })
             ->implode(', ');
 
-        $year = $schedule->created_at
+        $year = $schedule->started_at
             ->timezone($this->timezone)
             ->format('Y');
 
-        $format = config('app.datetime_format', 'd M Y H:i');
+        $startedAt = $schedule->started_at->timezone($this->timezone);
+
+        $format = config('app.datetime_format', 'Y-m-d H:i:s');
         $dateFormat = str_replace(['H', 'i', 'g', 'G', 'u', ':', 'Y', 'y'], '', $format);
 
         return view('schedules.view')
             ->with(compact(
                 'schedule',
-                'year',
+                'startedAt',
                 'organizers',
                 'format',
                 'dateFormat',

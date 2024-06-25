@@ -24,7 +24,7 @@ class Kernel extends ConsoleKernel
 
                 if (config('database.backup_period') === DatabasePeriod::Daily->value) {
                     [$hour, $minute] = explode(':', config('database.backup_time'), 2);
-                    $time = Carbon::now(config('app.datetime_timezone'))
+                    $time = Carbon::now(get_timezone())
                         ->setHour(intval($hour))
                         ->setMinute(intval($minute))
                         ->setSecond(0);

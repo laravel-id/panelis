@@ -16,8 +16,6 @@ class ReplicateForm
 {
     public static function make(): array
     {
-        $timezone = config('app.datetime_timezone', config('app.timezone'));
-
         return [
             Section::make(__('event.schedule_what'))
                 ->collapsed()
@@ -48,7 +46,7 @@ class ReplicateForm
                 ->schema([
                     DateTimePicker::make('started_at')
                         ->label(__('event.schedule_started_at'))
-                        ->timezone($timezone)
+                        ->timezone(get_timezone())
                         ->minutesStep(15)
                         ->closeOnDateSelection()
                         ->seconds(false)
@@ -60,7 +58,7 @@ class ReplicateForm
                     DateTimePicker::make('finished_at')
                         ->label(__('event.schedule_finished_at'))
                         ->native(false)
-                        ->timezone($timezone)
+                        ->timezone(get_timezone())
                         ->minutesStep(15)
                         ->closeOnDateSelection()
                         ->seconds(false)

@@ -49,7 +49,7 @@ class ViewSchedule extends ViewRecord
     public function infolist(Infolist $infolist): Infolist
     {
         $dateFormat = config('app.datetime_format', 'Y-m-d H:i');
-        $timezone = config('app.datetime_timezone', config('app.timezone'));
+        $timezone = get_timezone();
 
         return $infolist
             ->columns(3)

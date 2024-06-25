@@ -13,9 +13,6 @@ class PackageForm
 {
     public static function schema(): array
     {
-        $timezone = config('app.datetime_timezone', config('app.timezone'));
-        $locale = config('app.locale');
-
         return [
             Repeater::make(__('event.package'))
                 ->relationship('packages')
@@ -49,8 +46,7 @@ class PackageForm
                                 ->seconds(false)
                                 ->minutesStep(30)
                                 ->closeOnDateSelection()
-                                ->timezone($timezone)
-                                ->locale($locale)
+                                ->timezone(get_timezone())
                                 ->live(onBlur: true)
                                 ->nullable(),
 
@@ -60,8 +56,7 @@ class PackageForm
                                 ->seconds(false)
                                 ->minutesStep(30)
                                 ->closeOnDateSelection()
-                                ->timezone($timezone)
-                                ->locale($locale)
+                                ->timezone(get_timezone())
                                 ->minDate(fn (Get $get): ?string => $get('started_at'))
                                 ->nullable(),
                         ]),

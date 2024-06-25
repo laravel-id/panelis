@@ -2,11 +2,13 @@
 
 namespace App\Models\Event;
 
+use App\Filament\Clusters\Databases\Pages\DatabaseType;
 use App\Models\Location\District;
 use App\Models\Traits\HasLocalTime;
 use App\Models\URL\ShortURL;
 use App\Models\User;
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -15,6 +17,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Spatie\Sitemap\Contracts\Sitemapable;
 use Spatie\Sitemap\Tags\Url;
@@ -71,7 +74,7 @@ class Schedule extends Model implements Sitemapable
             get: function (?string $value): array {
                 return collect(json_decode($value, true))
                     ->map(function (array $contact): array {
-                        if (! empty($contact['is_wa']) && $contact['is_wa'] === true && ! empty($contact['phone'])) {
+                        if (!empty($contact['is_wa']) && $contact['is_wa'] === true && !empty($contact['phone'])) {
                             $phone = $contact['phone'];
 
                             // assume it's local number
@@ -102,7 +105,7 @@ class Schedule extends Model implements Sitemapable
 
     public function getFinishTimeAttribute(): ?string
     {
-        if (! empty($this->finished_at)) {
+        if (!empty($this->finished_at)) {
             return $this->finished_at->format('H:i');
         }
 
@@ -113,11 +116,11 @@ class Schedule extends Model implements Sitemapable
     {
         $location = $this->location;
 
-        if (! empty($this->district)) {
+        if (!empty($this->district)) {
             $location = sprintf('%s, %s', $this->location, $this->district->name);
         }
 
-        if (! empty($this->metadata['location_url'])) {
+        if (!empty($this->metadata['location_url'])) {
             return Str::of(sprintf('[%s](%s)', $location, $this->metadata['location_url']))
                 ->inlineMarkdown()
                 ->toHtmlString();
@@ -132,7 +135,7 @@ class Schedule extends Model implements Sitemapable
             ->where('destination_url', $this->url)
             ->first();
 
-        if (! empty($url)) {
+        if (!empty($url)) {
             return $url->default_short_url;
         }
 
@@ -142,14 +145,14 @@ class Schedule extends Model implements Sitemapable
     public function getHeldAtAttribute(): string
     {
         $format = config('app.datetime_format', 'd M Y H:i');
-        $timezone = config('app.datetime_timezone', config('app.timezone'));
+        $timezone = get_timezone();
 
         $this->started_at = $this->started_at->timezone($timezone);
-        if (! empty($this->finished_at)) {
+        if (!empty($this->finished_at)) {
             $this->finished_at = $this->finished_at->timezone($timezone);
         }
 
-        if (! empty($this->finished_at)) {
+        if (!empty($this->finished_at)) {
             if ($this->started_at->isSameDay($this->finished_at)) {
                 return vsprintf('%s - %s', [
                     $this->started_at->translatedFormat($format),
@@ -193,12 +196,12 @@ class Schedule extends Model implements Sitemapable
 
     public static function getPublishedSchedules(?array $request = null): Collection
     {
-        $timezone = config('app.datetime_timezone', config('app.timezone'));
+        $timezone = get_timezone();
         $now = now($timezone);
 
         return self::query()
             ->with(['district'])
-            ->when(! empty($request['keyword']), function ($builder) use ($request) {
+            ->when(!empty($request['keyword']), function ($builder) use ($request) {
                 $keyword = sprintf('%%%s%%', $request['keyword']);
 
                 $builder->whereAny(['title', 'description', 'location', 'categories'], 'LIKE', $keyword)
@@ -223,9 +226,37 @@ class Schedule extends Model implements Sitemapable
 
     public static function getFilteredSchedules(int $year, ?int $month = null): Collection
     {
+        $method = __METHOD__;
+
         return self::query()
-            ->when(! empty($month), fn ($builder) => $builder->whereMonth('started_at', $month))
-            ->whereYear('started_at', $year)
+            ->when(config('database.default') !== DatabaseType::SQLite->value, function () use ($method): void {
+                Log::warning('You need to set up custom filter & selector for this query.', [
+                    'method' => $method,
+                ]);
+            })
+            ->when(config('database.default') === DatabaseType::SQLite->value, function (Builder $builder): Builder {
+                $offset = timezone_offset_get(timezone_open(get_timezone()), now()) / 60 / 60;
+                $modifier = vsprintf('%s%s hours', [
+                    $offset >= 0 ? '+' : '-',
+                    abs($offset),
+                ]);
+
+                return $builder->selectRaw('*, DATE(started_at, ?) AS local_started_at', [$modifier]);
+            })
+            ->when(!empty($month), function (Builder $builder) use ($year, $month): Builder {
+                $local = now(get_timezone())
+                    ->setMonth($month)
+                    ->setYear($year);
+
+                if (config('database.default') === DatabaseType::SQLite->value) {
+                    return $builder->whereBetween('local_started_at', [
+                        $local->startOfMonth()->toDateString(),
+                        $local->endOfMonth()->toDateString(),
+                    ]);
+                }
+
+                return $builder;
+            })
             ->orderBy('started_at')
             ->with(['district'])
             ->get();
@@ -235,9 +266,7 @@ class Schedule extends Model implements Sitemapable
     {
         return self::query()
             ->orderByDesc('started_at')
-            ->whereDate('started_at', '<=', now(
-                config('app.datetime_timezone', config('app.timezone'))
-            ))
+            ->whereDate('started_at', '<=', now(get_timezone()))
             ->get();
     }
 

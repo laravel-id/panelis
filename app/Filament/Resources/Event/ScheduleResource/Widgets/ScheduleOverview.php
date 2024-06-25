@@ -10,7 +10,7 @@ class ScheduleOverview extends BaseWidget
 {
     protected function getStats(): array
     {
-        $now = now(config('app.datetime_timezone', config('app.timezone')));
+        $now = now(get_timezone());
 
         return [
             Stat::make(

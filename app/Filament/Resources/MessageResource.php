@@ -100,7 +100,7 @@ class MessageResource extends Resource
                 TextColumn::make('created_at')
                     ->label(__('ui.created_at'))
                     ->sortable()
-                    ->since(config('app.datetime_timezone', config('app.timezone'))),
+                    ->since(get_timezone()),
             ])
             ->filters([
                 SelectFilter::make('status')

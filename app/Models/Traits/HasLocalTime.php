@@ -3,6 +3,7 @@
 namespace App\Models\Traits;
 
 use Illuminate\Database\Eloquent\Casts\Attribute;
+use Illuminate\Support\Carbon;
 
 trait HasLocalTime
 {
@@ -10,19 +11,17 @@ trait HasLocalTime
 
     protected function localCreatedAt(): Attribute
     {
-        return new Attribute(function (): string {
+        return new Attribute(function (): Carbon {
             return $this->created_at
-                ->timezone(config('app.datetime_timezone'))
-                ->translatedFormat(config('app.datetime_format', $this->default));
+                ->timezone(get_timezone());
         });
     }
 
     protected function localUpdatedAt(): Attribute
     {
-        return new Attribute(function (): string {
+        return new Attribute(function (): Carbon {
             return $this->updated_at
-                ->timezone(config('app.datetime_timezone'))
-                ->translatedFormat(config('app.datetime_format', $this->default));
+                ->timezone(get_timezone());
         });
     }
 }
