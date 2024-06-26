@@ -19,6 +19,6 @@ class GenerateImage
      */
     public function handle(object $event): void
     {
-        Schedule::generateImage($event->schedule);
+        Schedule::getImage($event->schedule);
     }
 }

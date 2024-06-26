@@ -101,7 +101,7 @@ class Schedule extends Model implements Sitemapable
 
     public function getOpengraphImageAttribute(): ?string
     {
-        return \App\Facades\Schedule::generateImage($this);
+        return \App\Facades\Schedule::getImage($this);
     }
 
     public function getStartTimeAttribute(): string
@@ -278,6 +278,7 @@ class Schedule extends Model implements Sitemapable
 
     public function toSitemapTag(): Url|string|array
     {
-        return route('schedule.view', $this->slug);
+        return Url::create(route('schedule.view', $this->slug))
+            ->addImage($this->opengraph_image);
     }
 }
