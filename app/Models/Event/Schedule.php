@@ -8,6 +8,7 @@ use App\Models\Traits\HasLocalTime;
 use App\Models\URL\ShortURL;
 use App\Models\User;
 use Carbon\Carbon;
+use Carbon\Exceptions\InvalidFormatException;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
@@ -202,11 +203,34 @@ class Schedule extends Model implements Sitemapable
 
     public static function getPublishedSchedules(?array $request = null): Collection
     {
+        $method = __METHOD__;
+
         $timezone = get_timezone();
-        $now = now($timezone);
+
+        $date = null;
+        if (! empty($request['date'])) {
+            try {
+                $date = Carbon::parse($request['date'])->timezone($timezone);
+            } catch (InvalidFormatException) {
+            }
+        }
 
         return self::query()
             ->with(['district'])
+            ->when(config('database.default') !== DatabaseType::SQLite->value, function () use ($method): void {
+                Log::warning('You need to set up custom filter & selector for this query.', [
+                    'method' => $method,
+                ]);
+            })
+            ->when(config('database.default') === DatabaseType::SQLite->value, function (Builder $builder): Builder {
+                $offset = timezone_offset_get(timezone_open(get_timezone()), now()) / 60 / 60;
+                $modifier = vsprintf('%s%s hours', [
+                    $offset >= 0 ? '+' : '-',
+                    abs($offset),
+                ]);
+
+                return $builder->selectRaw('*, DATE(started_at, ?) AS local_started_at', [$modifier]);
+            })
             ->when(! empty($request['keyword']), function ($builder) use ($request) {
                 $keyword = sprintf('%%%s%%', $request['keyword']);
 
@@ -216,8 +240,17 @@ class Schedule extends Model implements Sitemapable
                     ->orWhereRelation('organizers', 'slug', 'LIKE', $keyword)
                     ->orWhereRelation('district', 'name', 'LIKE', $keyword);
             })
-            ->whereDate('started_at', '>=', $now)
-            ->whereDate('started_at', '<=', $now->addYear())
+
+            // filter if 'date' exists
+            ->when(! empty($date), fn (Builder $builder): Builder => $builder->where('local_started_at', $date->toDateString()))
+
+            // filter by default date
+            ->when(empty($date), function (Builder $builder) use ($timezone): Builder {
+                $now = now($timezone);
+
+                return $builder->whereDate('local_started_at', '>=', $now)
+                    ->whereDate('local_started_at', '<=', $now->addYear());
+            })
             ->orderBy('started_at')
             ->get();
     }
@@ -263,6 +296,7 @@ class Schedule extends Model implements Sitemapable
 
                 return $builder;
             })
+            ->whereYear('started_at', $year)
             ->orderBy('started_at')
             ->with(['district'])
             ->get();
