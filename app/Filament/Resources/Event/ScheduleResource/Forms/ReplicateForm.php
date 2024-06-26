@@ -76,13 +76,16 @@ class ReplicateForm
 
                     TextInput::make('location')
                         ->label(__('event.schedule_location'))
-                        ->required(),
+                        ->hidden(fn (Get $get): bool => $get('is_virtual'))
+                        ->required(fn (Get $get): bool => ! $get('is_virtual')),
 
                     Select::make('district_id')
                         ->label(__('event.schedule_district'))
                         ->searchable()
                         ->preload()
-                        ->options(District::query()->pluck('name', 'id')),
+                        ->options(District::query()->pluck('name', 'id'))
+                        ->hidden(fn (Get $get): bool => $get('is_virtual'))
+                        ->required(fn (Get $get): bool => ! $get('is_virtual')),
                 ]),
 
             Toggle::make('replicate_type')
