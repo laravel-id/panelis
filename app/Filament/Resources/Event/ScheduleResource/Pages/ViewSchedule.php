@@ -6,14 +6,12 @@ use App\Filament\Resources\Event\ScheduleResource;
 use App\Models\Event\Package;
 use App\Models\Event\Schedule;
 use Filament\Actions;
-use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\KeyValueEntry;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
-use Filament\Support\Enums\Alignment;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\IconPosition;
 use Illuminate\Support\Number;
@@ -55,7 +53,6 @@ class ViewSchedule extends ViewRecord
             ->columns(3)
             ->schema([
                 Section::make(__('event.schedule'))
-                    ->columns(2)
                     ->columnSpan(2)
                     ->schema([
                         TextEntry::make('title')
@@ -131,15 +128,6 @@ class ViewSchedule extends ViewRecord
                 Section::make()
                     ->columnSpan(1)
                     ->schema([
-                        ImageEntry::make('poster')
-                            ->height(500)
-                            ->hiddenLabel()
-                            ->visible(fn (Schedule $schedule): bool => ! empty($schedule->poster))
-                            ->alignment(Alignment::Center)
-                            ->extraImgAttributes([
-                                'alt' => 'Poster',
-                                'loading' => 'lazy',
-                            ]),
 
                         TextEntry::make('organizers.name')
                             ->label(__('event.organizer'))

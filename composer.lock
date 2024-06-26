@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "dd293dc903eee5b49c85a48bc64abd99",
+    "content-hash": "d830fac4b03b55f53a680e0b868cb97d",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -2496,6 +2496,125 @@
                 "source": "https://github.com/vinkla/hashids/tree/5.0.2"
             },
             "time": "2023-02-23T15:00:54+00:00"
+        },
+        {
+            "name": "intervention/gif",
+            "version": "3.0.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Intervention/gif.git",
+                "reference": "cfececc760862f075a52acf747031bad08c8301b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Intervention/gif/zipball/cfececc760862f075a52acf747031bad08c8301b",
+                "reference": "cfececc760862f075a52acf747031bad08c8301b",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0"
+            },
+            "require-dev": {
+                "phpstan/phpstan": "^1",
+                "phpunit/phpunit": "^9"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Intervention\\Gif\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Oliver Vogel",
+                    "email": "oliver@intervention.io",
+                    "homepage": "https://intervention.io/"
+                }
+            ],
+            "description": "Native PHP GIF Encoder/Decoder",
+            "homepage": "https://github.com/intervention/gif",
+            "keywords": [
+                "animation",
+                "gd",
+                "gif",
+                "image"
+            ],
+            "support": {
+                "issues": "https://github.com/Intervention/gif/issues",
+                "source": "https://github.com/Intervention/gif/tree/3.0.0"
+            },
+            "time": "2023-11-27T18:54:30+00:00"
+        },
+        {
+            "name": "intervention/image",
+            "version": "3.1.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Intervention/image.git",
+                "reference": "3de73efee5b1f96355f4d3ff4103411527a7cfb6"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Intervention/image/zipball/3de73efee5b1f96355f4d3ff4103411527a7cfb6",
+                "reference": "3de73efee5b1f96355f4d3ff4103411527a7cfb6",
+                "shasum": ""
+            },
+            "require": {
+                "ext-mbstring": "*",
+                "intervention/gif": "^3",
+                "php": "^8.1"
+            },
+            "require-dev": {
+                "mockery/mockery": "^1.6",
+                "phpstan/phpstan": "^1",
+                "phpunit/phpunit": "^9"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "Intervention\\Image\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Oliver Vogel",
+                    "email": "oliver@intervention.io",
+                    "homepage": "https://intervention.io/"
+                }
+            ],
+            "description": "PHP image manipulation",
+            "homepage": "https://image.intervention.io/",
+            "keywords": [
+                "gd",
+                "image",
+                "imagick",
+                "resize",
+                "thumbnail",
+                "watermark"
+            ],
+            "support": {
+                "issues": "https://github.com/Intervention/image/issues",
+                "source": "https://github.com/Intervention/image/tree/3.1.0"
+            },
+            "funding": [
+                {
+                    "url": "https://paypal.me/interventionio",
+                    "type": "custom"
+                },
+                {
+                    "url": "https://github.com/Intervention",
+                    "type": "github"
+                }
+            ],
+            "time": "2023-12-16T14:21:10+00:00"
         },
         {
             "name": "kirschbaum-development/eloquent-power-joins",
@@ -5550,6 +5669,59 @@
                 }
             ],
             "time": "2024-02-26T18:08:49+00:00"
+        },
+        {
+            "name": "simonhamp/the-og",
+            "version": "v0.5.5",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/simonhamp/the-og.git",
+                "reference": "5059101ddc06be5c3671a6b35f2723d93c559f0e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/simonhamp/the-og/zipball/5059101ddc06be5c3671a6b35f2723d93c559f0e",
+                "reference": "5059101ddc06be5c3671a6b35f2723d93c559f0e",
+                "shasum": ""
+            },
+            "require": {
+                "ext-imagick": "*",
+                "intervention/image": "~3.1.0",
+                "php": "^8.2"
+            },
+            "require-dev": {
+                "phpunit/phpunit": "^10.5",
+                "spatie/phpunit-snapshot-assertions": "^5.1.1",
+                "spatie/pixelmatch-php": "^1.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "SimonHamp\\TheOg\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Simon Hamp",
+                    "email": "simon.hamp@me.com"
+                }
+            ],
+            "description": "OpenGraph Image Generator for PHP",
+            "support": {
+                "issues": "https://github.com/simonhamp/the-og/issues",
+                "source": "https://github.com/simonhamp/the-og/tree/v0.5.5"
+            },
+            "funding": [
+                {
+                    "url": "https://github.com/simonhamp",
+                    "type": "github"
+                }
+            ],
+            "time": "2024-01-25T17:45:40+00:00"
         },
         {
             "name": "spatie/browsershot",

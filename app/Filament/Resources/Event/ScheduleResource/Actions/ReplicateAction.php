@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\Event\ScheduleResource\Actions;
 
+use App\Events\Event\ScheduleCreated;
 use App\Models\Event\Schedule;
-use AshAllenDesign\ShortURL\Facades\ShortURL;
 use Illuminate\Support\Facades\DB;
 
 class ReplicateAction
@@ -14,11 +14,6 @@ class ReplicateAction
             $schedule->load(['organizers', 'types', 'packages']);
 
             $replica->fill($data);
-
-            // create short URL
-            ShortURL::destinationUrl($replica->url)
-                ->trackVisits()
-                ->make();
         });
     }
 
@@ -36,6 +31,9 @@ class ReplicateAction
             if ($data['replicate_package']) {
                 $replica->packages()->createMany($schedule->packages->toArray());
             }
+
         });
+
+        event(new ScheduleCreated($replica));
     }
 }

@@ -1,11 +1,34 @@
 @php use App\Filament\Resources\Event\ScheduleResource\Pages\EditSchedule; @endphp
 @extends('layouts.app')
 
+@push('metadata')
+  @php
+    $description = Str::limit($schedule->description, 160);
+  @endphp
+
+  <meta name="description" content="{{ $description }}">
+
+  <meta property="og:url" content="{{ url()->current() }}">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{{ $title }}">
+  <meta property="og:description" content="{{ $description }}">
+  <meta property="og:image" content="{{ $schedule->opengraph_image }}">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta property="twitter:domain" content="schedules.run">
+  <meta property="twitter:url" content="{{ url()->current() }}">
+  <meta name="twitter:title" content="{{ $title }}">
+  <meta name="twitter:description" content="{{ $description }}">
+  <meta name="twitter:image" content="{{ $schedule->opengraph_image }}">
+@endpush
+
 @section('content')
   <nav aria-label="breadcrumb">
     <ul>
       <li><a href="{{ route('index') }}">Home</a></li>
-      <li><a href="{{ route('schedule.filter', ['year' => $startedAt->format('Y')]) }}">{{ $startedAt->format('Y') }}</a></li>
+      <li>
+        <a href="{{ route('schedule.filter', ['year' => $startedAt->format('Y')]) }}">{{ $startedAt->format('Y') }}</a>
+      </li>
       <li>
         <a href="{{ route('schedule.filter', ['year' => $startedAt->format('Y'), 'month' => $startedAt->format('m')]) }}">
           {{ $startedAt->translatedFormat('F') }}
@@ -53,7 +76,9 @@
     @if ($startedAt->gt(now($timezone)))
       <hr/>
       <p><small>@lang('event.schedule_info_registration'):</small></p>
-      <p><i class="ri-external-link-line"></i> <a href="{{ $schedule->external_url }}">{{ $schedule->external_url }}</a></p>
+      <p>
+        <i class="ri-external-link-line"></i> <a href="{{ $schedule->external_url }}">{{ $schedule->external_url }}</a>
+      </p>
 
       @if(!empty($schedule->contacts))
         @foreach ($schedule->contacts as $contacts)

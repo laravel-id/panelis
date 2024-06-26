@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Facades\Event\Schedule;
 use App\Services\Database\Database;
 use App\Services\Database\DatabaseFactory;
 use Illuminate\Support\Facades\URL;
@@ -18,6 +19,8 @@ class AppServiceProvider extends ServiceProvider
         $this->app->bind(Database::class, function ($app): ?object {
             return DatabaseFactory::make();
         });
+
+        $this->app->bind('schedule', fn () => new Schedule);
     }
 
     /**

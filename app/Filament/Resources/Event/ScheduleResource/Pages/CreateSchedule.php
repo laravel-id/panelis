@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources\Event\ScheduleResource\Pages;
 
+use App\Events\Event\ScheduleCreated;
 use App\Filament\Resources\Event\ScheduleResource;
-use AshAllenDesign\ShortURL\Facades\ShortURL;
 use Filament\Resources\Pages\CreateRecord;
 
 class CreateSchedule extends CreateRecord
@@ -21,8 +21,6 @@ class CreateSchedule extends CreateRecord
 
     protected function afterCreate(): void
     {
-        ShortURL::destinationUrl($this->record->url)
-            ->trackVisits()
-            ->make();
+        event(new ScheduleCreated($this->record));
     }
 }

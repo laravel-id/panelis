@@ -2,9 +2,11 @@
 
 namespace App\Providers;
 
-use App\Events\Branch\BranchRegistered;
-use App\Events\Branch\BranchUpdated;
+use App\Events\Event\ScheduleCreated;
 use App\Events\SettingUpdated;
+use App\Listeners\Event\GenerateImage;
+use App\Listeners\Event\GenerateShortExternalUrl;
+use App\Listeners\Event\GenerateShortInternalUrl;
 use App\Listeners\Setting\FlushCache as FlushCacheSetting;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
@@ -23,11 +25,10 @@ class EventServiceProvider extends ServiceProvider
             SendEmailVerificationNotification::class,
         ],
 
-        BranchRegistered::class => [
-
-        ],
-        BranchUpdated::class => [
-
+        ScheduleCreated::class => [
+            GenerateShortExternalUrl::class,
+            GenerateShortInternalUrl::class,
+            GenerateImage::class,
         ],
 
         SettingUpdated::class => [

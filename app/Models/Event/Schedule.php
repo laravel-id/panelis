@@ -36,6 +36,7 @@ use Spatie\Sitemap\Tags\Url;
  * @property ?string $external_url
  * @property Collection $packages
  * @property Collection $types
+ * @property string $title
  */
 class Schedule extends Model implements Sitemapable
 {
@@ -74,7 +75,7 @@ class Schedule extends Model implements Sitemapable
             get: function (?string $value): array {
                 return collect(json_decode($value, true))
                     ->map(function (array $contact): array {
-                        if (!empty($contact['is_wa']) && $contact['is_wa'] === true && !empty($contact['phone'])) {
+                        if (! empty($contact['is_wa']) && $contact['is_wa'] === true && ! empty($contact['phone'])) {
                             $phone = $contact['phone'];
 
                             // assume it's local number
@@ -98,6 +99,11 @@ class Schedule extends Model implements Sitemapable
         );
     }
 
+    public function getOpengraphImageAttribute(): ?string
+    {
+        return \App\Facades\Schedule::generateImage($this);
+    }
+
     public function getStartTimeAttribute(): string
     {
         return $this->started_at->format('H:i');
@@ -105,7 +111,7 @@ class Schedule extends Model implements Sitemapable
 
     public function getFinishTimeAttribute(): ?string
     {
-        if (!empty($this->finished_at)) {
+        if (! empty($this->finished_at)) {
             return $this->finished_at->format('H:i');
         }
 
@@ -116,11 +122,11 @@ class Schedule extends Model implements Sitemapable
     {
         $location = $this->location;
 
-        if (!empty($this->district)) {
+        if (! empty($this->district)) {
             $location = sprintf('%s, %s', $this->location, $this->district->name);
         }
 
-        if (!empty($this->metadata['location_url'])) {
+        if (! empty($this->metadata['location_url'])) {
             return Str::of(sprintf('[%s](%s)', $location, $this->metadata['location_url']))
                 ->inlineMarkdown()
                 ->toHtmlString();
@@ -135,7 +141,7 @@ class Schedule extends Model implements Sitemapable
             ->where('destination_url', $this->url)
             ->first();
 
-        if (!empty($url)) {
+        if (! empty($url)) {
             return $url->default_short_url;
         }
 
@@ -148,11 +154,11 @@ class Schedule extends Model implements Sitemapable
         $timezone = get_timezone();
 
         $this->started_at = $this->started_at->timezone($timezone);
-        if (!empty($this->finished_at)) {
+        if (! empty($this->finished_at)) {
             $this->finished_at = $this->finished_at->timezone($timezone);
         }
 
-        if (!empty($this->finished_at)) {
+        if (! empty($this->finished_at)) {
             if ($this->started_at->isSameDay($this->finished_at)) {
                 return vsprintf('%s - %s', [
                     $this->started_at->translatedFormat($format),
@@ -201,7 +207,7 @@ class Schedule extends Model implements Sitemapable
 
         return self::query()
             ->with(['district'])
-            ->when(!empty($request['keyword']), function ($builder) use ($request) {
+            ->when(! empty($request['keyword']), function ($builder) use ($request) {
                 $keyword = sprintf('%%%s%%', $request['keyword']);
 
                 $builder->whereAny(['title', 'description', 'location', 'categories'], 'LIKE', $keyword)
@@ -243,7 +249,7 @@ class Schedule extends Model implements Sitemapable
 
                 return $builder->selectRaw('*, DATE(started_at, ?) AS local_started_at', [$modifier]);
             })
-            ->when(!empty($month), function (Builder $builder) use ($year, $month): Builder {
+            ->when(! empty($month), function (Builder $builder) use ($year, $month): Builder {
                 $local = now(get_timezone())
                     ->setMonth($month)
                     ->setYear($year);
