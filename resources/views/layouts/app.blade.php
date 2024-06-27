@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="{{ app()->getLocale() }}" data-theme="{{ config('theme.mode', 'light') }}">
+<html lang="{{ app()->getLocale() }}" data-theme="{{ config('color.mode', 'light') }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">

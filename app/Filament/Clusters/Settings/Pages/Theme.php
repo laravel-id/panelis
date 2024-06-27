@@ -46,7 +46,10 @@ class Theme extends Page implements HasForms
     {
         $this->form->fill([
             'color' => array_merge(
-                ['theme'],
+                [
+                    'theme' => config('color.theme'),
+                    'mode' => config('color.mode'),
+                ],
                 collect($this->colors)
                     ->mapWithKeys(function (string $color): array {
                         return [$color => config(sprintf('color.%s', $color))];
