@@ -15,7 +15,7 @@
 <main class="container">
   <nav>
     <ul>
-      <li><a href="{{ route('index') }}" title="{{ config('app.description') }}"><strong>{{ config('app.name') }}</strong></a> </li>
+      <li><a href="{{ route('index') }}"><strong>{{ config('app.name') }}</strong></a> </li>
     </ul>
     <ul>
       <li><a href="{{ route('schedule.archive') }}">@lang('event.schedule_archive')</a></li>
