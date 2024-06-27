@@ -24,18 +24,15 @@
   @if(!empty($search) AND $search)
   <form action="{{ url()->current() }}">
     <fieldset role="group">
-      <input name="keyword" value="{{ request('keyword') }}" type="text" placeholder="@lang('event.schedule_placeholder_search')" />
+      <input name="keyword" value="{{ request('keyword') }}" id="search-input" type="text" placeholder="@lang('event.schedule_placeholder_search')" />
+      @if (!empty(request('keyword')))
+      <a href="{{ url()->current() }}" type="reset" class="clear-search-btn"><i class="ri-close-line"></i></a>
+      @endif
       <button type="submit"><i class="ri-search-line"></i></button>
     </fieldset>
   </form>
-
-  @if (!empty(request('keyword')))
-    <a href="{{ route('index') }}" class="button" role="button">@lang('event.schedule_button_clear_filter')</a>
-  @endif
-
   @endif
   <hr>
-
 
   @if($schedules->isEmpty())
     <article>@lang('event.schedule_not_found')</article>

@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="{{ app()->getLocale() }}">
+<html lang="{{ app()->getLocale() }}" data-theme="{{ config('theme.mode', 'light') }}">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -9,6 +9,9 @@
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.{{ config('color.theme', 'zinc') }}.min.css"/>
   <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet"/>
+
+  @vite(['resources/css/app.css', 'resources/js/app.js'])
+
   <title>{{ $title ?? config('app.name') }}</title>
 </head>
 <body>
