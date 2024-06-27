@@ -193,7 +193,8 @@ class Schedule extends Model implements Sitemapable
 
     public function packages(): HasMany
     {
-        return $this->hasMany(Package::class);
+        return $this->hasMany(Package::class)
+            ->orderBy('sort');
     }
 
     public function district(): BelongsTo
