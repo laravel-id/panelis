@@ -147,7 +147,9 @@
     </article>
   @endif
 
-  <div>
-    <a href="{{ EditSchedule::getUrl(['record' => $schedule]) }}" role="button">@lang('event.schedule_button_edit')</a>
-  </div>
+  @auth
+    <div>
+      <a href="{{ EditSchedule::getUrl(['record' => $schedule]) }}" role="button">@lang('event.schedule_button_edit')</a>
+    </div>
+  @endauth
 @endsection
