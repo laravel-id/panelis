@@ -217,7 +217,9 @@ class Schedule extends Model implements Sitemapable
         }
 
         return self::query()
-            ->with(['district'])
+            ->with([
+                'district' => fn (BelongsTo $builder): BelongsTo => $builder->select('id', 'name'),
+            ])
             ->when(config('database.default') !== DatabaseType::SQLite->value, function () use ($method): void {
                 Log::warning('You need to set up custom filter & selector for this query.', [
                     'method' => $method,
@@ -230,7 +232,16 @@ class Schedule extends Model implements Sitemapable
                     abs($offset),
                 ]);
 
-                return $builder->selectRaw('*, DATE(started_at, ?) AS local_started_at', [$modifier]);
+                return $builder->selectRaw(<<<'SELECT'
+                    slug,
+                    title,
+                    location,
+                    categories,
+                    district_id,
+                    started_at,
+                    metadata,
+                    DATE(started_at, ?) AS local_started_at
+                SELECT, [$modifier]);
             })
             ->when(! empty($request['keyword']), function ($builder) use ($request) {
                 $keyword = sprintf('%%%s%%', $request['keyword']);
@@ -305,9 +316,28 @@ class Schedule extends Model implements Sitemapable
 
     public static function getArchivedSchedules(): Collection
     {
+        $offset = timezone_offset_get(timezone_open(get_timezone()), now()) / 60 / 60;
+        $modifier = vsprintf('%s%s hours', [
+            $offset >= 0 ? '+' : '-',
+            abs($offset),
+        ]);
+
         return self::query()
+            ->selectRaw(<<<'SELECT'
+                    slug,
+                    title,
+                    location,
+                    categories,
+                    district_id,
+                    started_at,
+                    metadata,
+                    DATE(started_at, ?) AS local_started_at
+                SELECT, [$modifier])
+            ->with([
+                'district' => fn (BelongsTo $builder): BelongsTo => $builder->select('id', 'name'),
+            ])
             ->orderByDesc('started_at')
-            ->whereDate('started_at', '<=', now(get_timezone()))
+            ->whereDate('local_started_at', '<=', now(get_timezone()))
             ->get();
     }
 
