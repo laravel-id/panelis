@@ -9,7 +9,6 @@
   @stack('metadata')
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.{{ config('color.theme', 'zinc') }}.min.css"/>
-  <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet"/>
 
   @vite(['resources/css/app.css', 'resources/js/app.js'])
   @stack('js')
