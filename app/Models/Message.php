@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Filament\Resources\MessageResource\Enums\MessageStatus;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -10,7 +11,9 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * @property MessageStatus $status
  * @property int $id
- * @property ?string $email
+ * @property null|string $email
+ *
+ * @method Builder unread()
  */
 class Message extends Model
 {
@@ -32,6 +35,16 @@ class Message extends Model
     protected $casts = [
         'status' => MessageStatus::class,
     ];
+
+    public function scopeUnread(Builder $builder): Builder
+    {
+        return $builder->whereStatus(MessageStatus::Unread);
+    }
+
+    public function scopeSpam(Builder $builder): Builder
+    {
+        return $builder->whereStatus(MessageStatus::Spam);
+    }
 
     public function markAsRead(): bool
     {

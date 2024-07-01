@@ -53,11 +53,6 @@ class MessageResource extends Resource
             ]);
     }
 
-    public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()->where('status', '!=', MessageStatus::Spam);
-    }
-
     /**
      * @throws Exception
      */
@@ -128,7 +123,7 @@ class MessageResource extends Resource
             ->actions([
                 Action::make('mark_as_read')
                     ->label(__('message.button_mark_as_read'))
-                    ->disabled(fn (Message $message): bool => $message->status !== MessageStatus::Unread)
+                    ->visible(fn (Message $message): bool => $message->status === MessageStatus::Unread)
                     ->icon('heroicon-o-envelope-open')
                     ->action(function (Message $message): void {
                         $message->markAsRead();
@@ -142,7 +137,7 @@ class MessageResource extends Resource
                 ActionGroup::make([
                     Action::make('mark_as_unread')
                         ->label(__('message.button_mark_as_unread'))
-                        ->disabled(fn (Message $message): bool => $message->status !== MessageStatus::Read)
+                        ->visible(fn (Message $message): bool => $message->status === MessageStatus::Read)
                         ->icon('heroicon-o-envelope')
                         ->action(function (Message $message): void {
                             $message->markAsUnread();
@@ -155,6 +150,7 @@ class MessageResource extends Resource
 
                     Action::make('mark_as_spam')
                         ->label(__('message.button_mark_as_spam'))
+                        ->visible(fn(Message $message): bool => $message->status !== MessageStatus::Spam)
                         ->icon('heroicon-o-exclamation-triangle')
                         ->color('warning')
                         ->action(function (Message $message): void {
