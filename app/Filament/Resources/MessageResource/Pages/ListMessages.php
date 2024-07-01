@@ -35,12 +35,12 @@ class ListMessages extends ListRecords
             'unread' => Tab::make(__('message.tab_unread'))
                 ->icon('heroicon-o-envelope')
                 ->badge(Message::unread()->count())
-                ->modifyQueryUsing(fn(Builder $query): Builder => $query->unread()),
+                ->modifyQueryUsing(fn (Builder $query): Builder => $query->unread()),
 
             'spam' => Tab::make(__('message.tab_spam'))
                 ->icon('heroicon-o-exclamation-triangle')
                 ->badge(Message::spam()->count())
-                ->modifyQueryUsing(fn(Builder $query): Builder => $query->spam()),
+                ->modifyQueryUsing(fn (Builder $query): Builder => $query->spam()),
         ];
     }
 

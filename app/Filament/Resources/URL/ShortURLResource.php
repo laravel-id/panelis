@@ -82,7 +82,7 @@ class ShortURLResource extends Resource
                                     config('short-url.prefix'),
                                 ]);
 
-                                return rtrim($url, '/') . '/';
+                                return rtrim($url, '/').'/';
                             })
                             ->nullable()
                             ->unique(ignoreRecord: true)
@@ -119,7 +119,7 @@ class ShortURLResource extends Resource
                     ->weight(FontWeight::Bold)
                     ->copyable()
                     ->copyMessage(__('url.short_url_copied'))
-                    ->copyableState(fn(ShortURL $url): string => $url->default_short_url)
+                    ->copyableState(fn (ShortURL $url): string => $url->default_short_url)
                     ->description(function (ShortURL $url): string {
                         return Str::limit($url->destination_url, 40);
                     })

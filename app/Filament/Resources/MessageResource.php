@@ -19,7 +19,6 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\QueryBuilder;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Collection;
 
 class MessageResource extends Resource
@@ -150,7 +149,7 @@ class MessageResource extends Resource
 
                     Action::make('mark_as_spam')
                         ->label(__('message.button_mark_as_spam'))
-                        ->visible(fn(Message $message): bool => $message->status !== MessageStatus::Spam)
+                        ->visible(fn (Message $message): bool => $message->status !== MessageStatus::Spam)
                         ->icon('heroicon-o-exclamation-triangle')
                         ->color('warning')
                         ->action(function (Message $message): void {
