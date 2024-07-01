@@ -4,6 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="color-scheme" content="light dark" />
+  <meta name="csrf-token" content="{{ csrf_token() }}">
 
   @stack('metadata')
 
@@ -11,6 +12,7 @@
   <link href="https://cdn.jsdelivr.net/npm/remixicon@4.3.0/fonts/remixicon.css" rel="stylesheet"/>
 
   @vite(['resources/css/app.css', 'resources/js/app.js'])
+  @stack('js')
 
   <title>{{ $title ?? config('app.name') }}</title>
 </head>
@@ -21,6 +23,7 @@
       <li><a href="{{ route('index') }}"><strong>{{ config('app.name') }}</strong></a> </li>
     </ul>
     <ul>
+      <li><a href="{{ route('schedule.calendar') }}">@lang('event.schedule_calendar')</a></li>
       <li><a href="{{ route('schedule.archive') }}">@lang('event.schedule_archive')</a></li>
       <li><a href="{{ route('message.form') }}">@lang('message.contact')</a></li>
     </ul>
@@ -28,7 +31,5 @@
 
   @yield('content')
 </main>
-
-@stack('js')
 </body>
 </html>

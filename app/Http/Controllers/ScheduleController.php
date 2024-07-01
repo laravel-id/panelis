@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Event\Organizer;
 use App\Models\Event\Schedule;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -84,5 +85,33 @@ class ScheduleController extends Controller
         return view('schedules.index')
             ->with('schedules', Schedule::getArchivedSchedules())
             ->with('title', __('event.schedule_archive'));
+    }
+
+    public function calendar(): View
+    {
+        return view('schedules.calendar')
+            ->with('title', __('event.schedule_calendar'));
+    }
+
+    public function json(Request $request): JsonResponse
+    {
+        return response()->json(
+            Schedule::getPublishedSchedules()
+                ->map(function (Schedule $schedule): array {
+                    return [
+                        'title' => $schedule->title,
+                        'start' => $schedule
+                            ->started_at
+                            ->timezone($this->timezone)
+                            ->format('Y-m-d H:i'),
+                        'end' => $schedule
+                            ->finished_at
+                            ?->timezone($this->timezone)
+                            ?->format('Y-m-d H:i') ?? null,
+                        'allDay' => false,
+                    ];
+                })
+                ->toArray(),
+        );
     }
 }

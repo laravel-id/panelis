@@ -18,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::get('/', [ScheduleController::class, 'index'])->name('index');
+Route::post('/schedules.json', [ScheduleController::class, 'json']);
 
 Route::get('/contact', [MessageController::class, 'form'])->name('message.form');
 Route::post('/contact', [MessageController::class, 'submit'])->name('message.submit');
@@ -26,6 +27,7 @@ Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
 
 Route::get('/organizer/{organizer:slug}', [OrganizerController::class, 'view'])->name('organizer.view');
 
+Route::get('/calendar', [ScheduleController::class, 'calendar'])->name('schedule.calendar');
 Route::get('/archive', [ScheduleController::class, 'archive'])->name('schedule.archive');
 Route::get('/event/{slug}', [ScheduleController::class, 'view'])->name('schedule.view');
 Route::get('/{year}/{month?}', [ScheduleController::class, 'filter'])

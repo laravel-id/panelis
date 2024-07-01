@@ -34,6 +34,8 @@
   @endif
   <hr>
 
+  <div id="calendar"></div>
+
   @if($schedules->isEmpty())
     <article>@lang('event.schedule_not_found')</article>
   @endif
