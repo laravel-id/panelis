@@ -20,8 +20,6 @@ class TranslationResource extends Resource
 {
     protected static ?string $model = Translation::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-flag';
-
     protected static bool $isScopedToTenant = false;
 
     protected static ?int $navigationSort = 2;

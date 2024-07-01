@@ -17,8 +17,6 @@ class RegionResource extends Resource
 {
     protected static ?string $model = Region::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-map';
-
     public static function getNavigationGroup(): ?string
     {
         return __('navigation.location');
@@ -27,11 +25,6 @@ class RegionResource extends Resource
     public static function getNavigationLabel(): string
     {
         return __('location.region');
-    }
-
-    public static function getActiveNavigationIcon(): ?string
-    {
-        return 'heroicon-m-map';
     }
 
     public static function getLabel(): ?string

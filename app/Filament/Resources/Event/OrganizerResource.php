@@ -21,8 +21,6 @@ class OrganizerResource extends Resource
 {
     protected static ?string $model = Organizer::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-building-office';
-
     protected static ?int $navigationSort = 1;
 
     public static function getNavigationGroup(): ?string

@@ -18,25 +18,18 @@ class RoleResource extends Resource
 {
     protected static ?string $model = Role::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-user-group';
-
     protected static ?int $navigationSort = 2;
 
     protected static bool $isScopedToTenant = false;
 
     public static function getNavigationGroup(): ?string
     {
-        return __('navigation.user_management');
+        return __('navigation.user');
     }
 
     public static function getNavigationLabel(): string
     {
         return __('navigation.role');
-    }
-
-    public static function getActiveNavigationIcon(): ?string
-    {
-        return 'heroicon-s-user-group';
     }
 
     public static function getLabel(): ?string

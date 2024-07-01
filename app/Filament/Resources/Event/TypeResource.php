@@ -18,8 +18,6 @@ class TypeResource extends Resource
 {
     protected static ?string $model = Type::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-tag';
-
     protected static ?int $navigationSort = 2;
 
     public static function getNavigationGroup(): ?string

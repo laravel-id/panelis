@@ -17,8 +17,6 @@ class DistrictResource extends Resource
 {
     protected static ?string $model = District::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-map-pin';
-
     protected static ?int $navigationSort = 3;
 
     public static function getNavigationGroup(): ?string
@@ -29,11 +27,6 @@ class DistrictResource extends Resource
     public static function getNavigationLabel(): string
     {
         return __('location.district');
-    }
-
-    public static function getActiveNavigationIcon(): ?string
-    {
-        return 'heroicon-m-map-pin';
     }
 
     public static function getLabel(): ?string

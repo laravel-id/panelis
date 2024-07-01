@@ -24,25 +24,18 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-user';
-
     protected static ?int $navigationSort = 3;
 
     protected static ?string $tenantOwnershipRelationshipName = 'branches';
 
     public static function getNavigationGroup(): ?string
     {
-        return __('navigation.user_management');
+        return __('navigation.user');
     }
 
     public static function getNavigationLabel(): string
     {
         return __('navigation.user');
-    }
-
-    public static function getActiveNavigationIcon(): ?string
-    {
-        return 'heroicon-s-user';
     }
 
     public static function getLabel(): ?string
