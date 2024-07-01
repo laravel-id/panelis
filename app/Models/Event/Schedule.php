@@ -33,6 +33,7 @@ use Spatie\Sitemap\Tags\Url;
  * @property string $url
  * @property string $slug
  * @property Carbon $started_at
+ * @property null|Carbon $finished_at
  * @property Collection $organizers
  * @property ?string $external_url
  * @property Collection $packages
@@ -239,7 +240,6 @@ class Schedule extends Model implements Sitemapable
                     categories,
                     district_id,
                     started_at,
-                    metadata,
                     DATE(started_at, ?) AS local_started_at
                 SELECT, [$modifier]);
             })
