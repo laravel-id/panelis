@@ -7,7 +7,6 @@ use App\Filament\Pages\Auth\EmailVerificationPrompt;
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Auth\RequestPasswordReset;
 use App\Http\Middleware\RegisterModules;
-use App\Http\Middleware\RegisterNavigations;
 use App\Http\Middleware\SetTheme;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
@@ -31,30 +30,48 @@ class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
+        $path = 'admin';
+
         return $panel
             ->default()
             ->id('admin')
 
             // uncomment to set different path
-            ->path('admin')
+            ->path($path)
             ->plugins([
                 //TodoPlugin::make(),
                 EnvironmentIndicatorPlugin::make()
                     ->visible(! app()->isProduction()),
             ])
+
             ->navigationItems([
                 NavigationItem::make(__('navigation.website'))
                     ->icon('heroicon-o-globe-alt')
                     ->url(config('app.url'), shouldOpenInNewTab: true),
+
+                NavigationItem::make(__('event.schedule_create'))
+                    // ->url(CreateSchedule::getUrl())
+                    ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.resources.event.schedules.create'))
+                    ->url(sprintf('/%s/event/schedules/create', $path))
+                    ->group(__('navigation.event')),
             ])
             ->navigationGroups([
-                NavigationGroup::make(__('navigation.event')),
+                NavigationGroup::make(__('navigation.event'))
+                    ->icon('heroicon-s-calendar-days'),
+
                 NavigationGroup::make(__('navigation.location'))
+                    ->icon('heroicon-s-map')
                     ->collapsed(),
-                NavigationGroup::make(__('navigation.user')),
+
+                NavigationGroup::make(__('navigation.user'))
+                    ->icon('heroicon-s-user-group'),
+
                 NavigationGroup::make(__('navigation.system'))
+                    ->icon('heroicon-s-cog-6-tooth')
                     ->collapsed(),
             ])
+
+            ->unsavedChangesAlerts()
 
             //->registration(Register::class)
             ->login(Login::class)
@@ -85,7 +102,6 @@ class AdminPanelProvider extends PanelProvider
 
                 // custom middlewares
                 RegisterModules::class,
-                RegisterNavigations::class,
                 SetTheme::class,
             ])
             ->authMiddleware([
