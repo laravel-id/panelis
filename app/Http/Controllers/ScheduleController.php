@@ -25,7 +25,7 @@ class ScheduleController extends Controller
     {
         $schedule = Schedule::getScheduleBySlug($slug);
 
-        if (empty($schedule->external_link) && now()->lt($schedule->started_at)) {
+        if (empty($schedule->external_link) && ! $schedule->is_past) {
             Log::warning('Missing external link for event.', [
                 'title' => $schedule->title,
             ]);

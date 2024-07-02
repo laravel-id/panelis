@@ -26,7 +26,7 @@
     <fieldset role="group">
       <input name="keyword" value="{{ request('keyword') }}" id="search-input" type="text" placeholder="@lang('event.schedule_placeholder_search')" />
       @if (!empty(request('keyword')))
-      <a href="{{ url()->current() }}" type="reset" class="clear-search-btn"><i class="ri-close-line"></i></a>
+      <a href="{{ url()->current() }}" type="reset" class="outline secondary"><i class="ri-close-line"></i></a>
       @endif
       <button type="submit"><i class="ri-search-line"></i></button>
     </fieldset>
@@ -58,7 +58,9 @@
             {{ $schedule->started_at->timezone($timezone)->translatedFormat('d M') }}<sup>{{ $schedule->started_at->timezone($timezone)->format('y') }}</sup>
           </td>
           <td>
-            <a href="{{ route('schedule.view', ['slug' => $schedule->slug]) }}">{{ $schedule->title }}</a>
+            <a href="{{ route('schedule.view', ['slug' => $schedule->slug]) }}" class="{{ $schedule->is_past ? 'secondary' : 'primary' }}">
+              {{ $schedule->title }}
+            </a>
           </td>
           <td>{{ implode(', ', $schedule->categories) }}</td>
           <td>

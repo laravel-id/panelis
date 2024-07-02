@@ -177,6 +177,11 @@ class Schedule extends Model implements Sitemapable
         return $this->started_at->translatedFormat($format);
     }
 
+    public function getIsPastAttribute(): bool
+    {
+        return $this->started_at->timezone(get_timezone())->lt(now(get_timezone()));
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -330,7 +335,6 @@ class Schedule extends Model implements Sitemapable
                     categories,
                     district_id,
                     started_at,
-                    metadata,
                     DATE(started_at, ?) AS local_started_at
                 SELECT, [$modifier])
             ->with([

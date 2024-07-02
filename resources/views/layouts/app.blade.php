@@ -22,7 +22,6 @@
       <li><a href="{{ route('index') }}"><strong>{{ config('app.name') }}</strong></a> </li>
     </ul>
     <ul>
-      <li><a href="{{ route('schedule.calendar') }}">@lang('event.schedule_calendar')</a></li>
       <li><a href="{{ route('schedule.archive') }}">@lang('event.schedule_archive')</a></li>
       <li><a href="{{ route('message.form') }}">@lang('message.contact')</a></li>
     </ul>

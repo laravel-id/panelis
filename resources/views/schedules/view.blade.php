@@ -73,7 +73,7 @@
     <p><small>@lang('event.schedule_location'):</small></p>
     <p><i class="ri-map-pin-line"></i> {!! $schedule->full_location !!}</p>
 
-    @if ($startedAt->gt(now($timezone)))
+    @if (!$schedule->is_past)
       <hr/>
       <p><small>@lang('event.schedule_info_registration'):</small></p>
       <p>
