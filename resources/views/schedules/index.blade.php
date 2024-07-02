@@ -30,6 +30,14 @@
       @endif
       <button type="submit"><i class="ri-search-line"></i></button>
     </fieldset>
+    <label>
+      <input name="virtual" type="checkbox" role="switch" @checked(request('virtual')) />
+      @lang('event.schedule_with_virtual')
+    </label>
+    <label>
+      <input name="past" type="checkbox" role="switch" @checked(request('past')) />
+      @lang('event.schedule_with_past')
+    </label>
   </form>
   @endif
   <hr>

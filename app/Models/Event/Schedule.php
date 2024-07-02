@@ -248,24 +248,30 @@ class Schedule extends Model implements Sitemapable
                     DATE(started_at, ?) AS local_started_at
                 SELECT, [$modifier]);
             })
-            ->when(! empty($request['keyword']), function ($builder) use ($request) {
+            ->when(! empty($request['keyword']), function (Builder $builder) use ($request): Builder {
                 $keyword = sprintf('%%%s%%', $request['keyword']);
 
-                $builder->whereAny(['title', 'description', 'location', 'categories'], 'LIKE', $keyword)
-                    ->orWhereRelation('types', 'title', 'LIKE', $keyword)
-                    ->orWhereRelation('organizers', 'name', 'LIKE', $keyword)
-                    ->orWhereRelation('organizers', 'slug', 'LIKE', $keyword)
-                    ->orWhereRelation('district', 'name', 'LIKE', $keyword);
+                return $builder->where(function (Builder $builder) use ($keyword): Builder {
+                    return $builder->whereAny(['title', 'description', 'location', 'categories'], 'LIKE', $keyword)
+                        ->orWhereRelation('types', 'title', 'LIKE', $keyword)
+                        ->orWhereRelation('organizers', 'name', 'LIKE', $keyword)
+                        ->orWhereRelation('organizers', 'slug', 'LIKE', $keyword)
+                        ->orWhereRelation('district', 'name', 'LIKE', $keyword);
+                });
             })
+
+            // do not include virtual event by default
+            ->when(empty($request['virtual']), fn (Builder $builder): Builder => $builder->where('is_virtual', false))
 
             // filter if 'date' exists
             ->when(! empty($date), fn (Builder $builder): Builder => $builder->where('local_started_at', $date->toDateString()))
 
             // filter by default date
-            ->when(empty($date), function (Builder $builder) use ($timezone): Builder {
+            ->when(empty($date), function (Builder $builder) use ($timezone, $request): Builder {
                 $now = now($timezone);
 
-                return $builder->whereDate('local_started_at', '>=', $now)
+                return $builder
+                    ->when(empty($request['past']), fn (Builder $builder): Builder => $builder->whereDate('local_started_at', '>=', $now))
                     ->whereDate('local_started_at', '<=', $now->addYear());
             })
             ->orderBy('started_at')
