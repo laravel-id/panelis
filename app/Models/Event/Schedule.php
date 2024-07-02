@@ -179,7 +179,17 @@ class Schedule extends Model implements Sitemapable
 
     public function getIsPastAttribute(): bool
     {
-        return $this->started_at->timezone(get_timezone())->lt(now(get_timezone()));
+        $now = now(get_timezone());
+
+        if (!empty($this->finished_at)) {
+            return $this->finished_at
+                ->timezone(get_timezone())
+                ->lt($now);
+        }
+
+        return $this->started_at
+            ->timezone(get_timezone())
+            ->lt($now);
     }
 
     public function user(): BelongsTo
