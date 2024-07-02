@@ -4,6 +4,7 @@ use App\Http\Controllers\MessageController;
 use App\Http\Controllers\OrganizerController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\SubscriberController;
 use AshAllenDesign\ShortURL\Facades\ShortURL;
 use Illuminate\Support\Facades\Route;
 
@@ -19,6 +20,11 @@ use Illuminate\Support\Facades\Route;
 */
 Route::get('/', [ScheduleController::class, 'index'])->name('index');
 Route::post('/schedules.json', [ScheduleController::class, 'json']);
+
+Route::get('/subscribe', [SubscriberController::class, 'form'])->name('subscriber.form');
+Route::post('/subscribe', [SubscriberController::class, 'submit'])->name('subscriber.submit');
+Route::get('/subscribe/{key}', [SubscriberController::class, 'subscribe'])->name('subscriber.subscribe');
+Route::get('/unsubscribe/{key}', [SubscriberController::class, 'unsubscribe'])->name('subscriber.unsubscribe');
 
 Route::get('/contact', [MessageController::class, 'form'])->name('message.form');
 Route::post('/contact', [MessageController::class, 'submit'])->name('message.submit');

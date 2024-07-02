@@ -1,21 +1,24 @@
 <?php
 
-namespace App\Mail;
+namespace App\Mail\Subscribers;
 
+use App\Models\Subscriber;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class OrderShipped extends Mailable
+class UnsubscribedMail extends Mailable
 {
     use Queueable, SerializesModels;
 
     /**
      * Create a new message instance.
      */
-    public function __construct()
+    public function __construct(private readonly Subscriber|Model $subscriber)
     {
         //
     }
@@ -26,7 +29,7 @@ class OrderShipped extends Mailable
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: 'Order Shipped',
+            subject: 'Unsubscribed Mail',
         );
     }
 
@@ -36,7 +39,11 @@ class OrderShipped extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'mail.orders.shipped',
+            markdown: 'emails.subscribers.unsubscribed',
+            with: [
+                'subscriber' => $this->subscriber,
+                'url' => route('subscriber.form'),
+            ]
         );
     }
 
