@@ -40,9 +40,6 @@
   <article>
     <header>
       {{ $schedule->title }}
-      @if ($schedule->is_virtual)
-        <sup>@lang('event.schedule_is_virtual')</sup>
-      @endif
     </header>
 
     @if (!empty($schedule->description))
@@ -68,10 +65,12 @@
 
     <p><small>@lang('event.schedule_datetime'):</small></p>
     <p><i class="ri-calendar-2-line"></i> {{ $startedAt->translatedFormat('D') }}, {{ $schedule->held_at }}</p>
-    <hr/>
 
-    <p><small>@lang('event.schedule_location'):</small></p>
-    <p><i class="ri-map-pin-line"></i> {!! $schedule->full_location !!}</p>
+    @if(!$schedule->is_virtual)
+      <hr/>
+      <p><small>@lang('event.schedule_location'):</small></p>
+      <p><i class="ri-map-pin-line"></i> {!! $schedule->full_location !!}</p>
+    @endif
 
     @if (!$schedule->is_past)
       <hr/>
