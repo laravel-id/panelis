@@ -1,5 +1,24 @@
 @extends('layouts.app')
 
+@push('metadata')
+  @php
+    $description = Str::limit($organizer->description, 160);
+  @endphp
+
+  <meta name="description" content="{{ $description }}">
+
+  <meta property="og:url" content="{{ url()->current() }}">
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="{{ $organizer->name }}">
+  <meta property="og:description" content="{{ $description }}">
+
+  <meta name="twitter:card" content="summary_large_image">
+  <meta property="twitter:domain" content="schedules.run">
+  <meta property="twitter:url" content="{{ url()->current() }}">
+  <meta name="twitter:title" content="{{ $organizer->name }}">
+  <meta name="twitter:description" content="{{ $description }}">
+@endpush
+
 @section('content')
   <article>
     <header>{{ $organizer->name }}</header>
@@ -44,7 +63,8 @@
         @foreach($schedules as $schedule)
           <tr>
             <td>
-              {{ $schedule->started_at->translatedFormat('d M') }}<sup>{{ $schedule->started_at->format('y') }}</sup>
+              {{ $schedule->started_at->timezone(get_timezone())->translatedFormat('d M') }}
+              <sup>{{ $schedule->started_at->timezone(get_timezone())->format('y') }}</sup>
             </td>
             <td>
               <a href="{{ route('schedule.view', $schedule->slug) }}">{{ $schedule->title }}</a>
