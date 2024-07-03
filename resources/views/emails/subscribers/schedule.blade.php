@@ -1,7 +1,7 @@
 <x-mail::message>
-  @lang('event.mail_subscriber_opening')
+  @lang('subscriber.mail_subscriber_opening')
 
-  ## @lang('event.schedule_for_this_month') ##
+  ## @lang('subscriber.schedule_for_this_month') ##
   <x-mail::table>
     |        |          |
     | ------------- |-------------|
@@ -10,7 +10,7 @@
     @endforeach
   </x-mail::table>
 
-  ## @lang('event.schedule_for_next_month') ##
+  ## @lang('subscriber.schedule_for_next_month') ##
   <x-mail::table>
     |        |          |
     | ------------- |-------------|
@@ -19,9 +19,13 @@
     @endforeach
   </x-mail::table>
 
-  @lang('event.mail_subscriber_closing')
+  @lang('subscriber.mail_subscriber_closing')
 
   <x-mail::button :url="route('index')">
-    @lang('event.btn_view_all')
+    @lang('subscriber.btn_view_all')
   </x-mail::button>
+
+  <x-mail::panel>
+    @lang('subscriber.mail_unsubscribe', ['url' => $unsubscribeUrl])
+  </x-mail::panel>
 </x-mail::message>

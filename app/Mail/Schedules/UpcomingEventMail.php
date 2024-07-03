@@ -2,6 +2,7 @@
 
 namespace App\Mail\Schedules;
 
+use App\Models\Subscriber;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
@@ -16,6 +17,7 @@ class UpcomingEventMail extends Mailable
      * Create a new message instance.
      */
     public function __construct(
+        private readonly Subscriber $subscriber,
         private readonly array $schedules,
         ?string $subject = null,
     ) {
@@ -38,9 +40,10 @@ class UpcomingEventMail extends Mailable
     public function content(): Content
     {
         return new Content(
-            markdown: 'emails.schedules.upcoming',
+            markdown: 'emails.subscribers.schedule',
             with: [
                 'schedules' => $this->schedules,
+                'unsubscribeUrl' => route('subscriber.unsubscribe', $this->subscriber->confirmation_key),
             ],
         );
     }

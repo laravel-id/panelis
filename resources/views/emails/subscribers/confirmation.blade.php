@@ -8,5 +8,7 @@
     @lang('subscriber.btn_confirm')
   </x-mail::button>
 
-  @lang('subscriber.mail_ignore_confirmation')
+  <x-mail::panel>
+    @lang('subscriber.mail_ignore_confirmation')
+  </x-mail::panel>
 </x-mail::message>

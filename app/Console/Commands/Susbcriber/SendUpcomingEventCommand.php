@@ -41,10 +41,16 @@ class SendUpcomingEventCommand extends Command
 
         Subscriber::getActiveSubscribers(SubscriberPeriod::Monthly)
             ->each(function (Subscriber $subscriber) use ($now, $next, $subject) {
-                Mail::to($subscriber->email)->send(new UpcomingEventMail([
+                $schedules = [
                     'current' => Schedule::getFilteredSchedules($now->year, $now->month),
                     'next' => Schedule::getFilteredSchedules($next->year, $next->month),
-                ], $subject));
+                ];
+
+                Mail::to($subscriber->email)->send(new UpcomingEventMail(
+                    $subscriber,
+                    $schedules,
+                    $subject,
+                ));
             });
     }
 }
