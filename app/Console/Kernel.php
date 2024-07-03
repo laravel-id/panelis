@@ -36,6 +36,8 @@ class Kernel extends ConsoleKernel
             });
 
         $schedule->command('telescope:prune --hours=48')->daily();
+
+        $schedule->command('subscriber:send-schedule')->monthly();
     }
 
     /**

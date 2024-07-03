@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Filament\Resources\SubscriberResource\Enums\SubscriberPeriod;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -36,7 +37,7 @@ class Subscriber extends Model
 
     public function getIsSubscribedAttribute(): bool
     {
-        return !empty($this->subscribed_at);
+        return ! empty($this->subscribed_at);
     }
 
     public function scopeSubscribed(Builder $builder, bool $status = true): Builder
@@ -71,5 +72,13 @@ class Subscriber extends Model
         ]);
 
         return $this->save();
+    }
+
+    public static function getActiveSubscribers(?SubscriberPeriod $period = null): Collection
+    {
+        return self::query()
+            ->when(! empty($period), fn (Builder $builder): Builder => $builder->where('period', $period))
+            ->whereNotNull('subscribed_at')
+            ->get();
     }
 }
