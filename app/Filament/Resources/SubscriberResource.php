@@ -11,13 +11,22 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class SubscriberResource extends Resource
 {
     protected static ?string $model = Subscriber::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
+
+    public static function getNavigationLabel(): string
+    {
+        return __('navigation.subscriber');
+    }
+
+    public static function getLabel(): ?string
+    {
+        return __('subscriber.title');
+    }
 
     public static function form(Form $form): Form
     {
@@ -44,7 +53,7 @@ class SubscriberResource extends Resource
                 TextColumn::make('period')
                     ->label(__('subscriber.period'))
                     ->sortable()
-                    ->formatStateUsing(fn(Subscriber $subscriber): string => $subscriber->period->label()),
+                    ->formatStateUsing(fn (Subscriber $subscriber): string => $subscriber->period->label()),
 
                 TextColumn::make('subscribed_at')
                     ->label(__('subscriber.subscribed_at'))
@@ -62,9 +71,9 @@ class SubscriberResource extends Resource
                     ->trueLabel(__('subscriber.subscribed'))
                     ->falseLabel(__('subscriber.unsubscribed'))
                     ->queries(
-                        true: fn(Builder $builder): Builder => $builder->subscribed(),
-                        false: fn(Builder $builder): Builder => $builder->subscribed(false),
-                        blank: fn(Builder $builder): Builder => $builder,
+                        true: fn (Builder $builder): Builder => $builder->subscribed(),
+                        false: fn (Builder $builder): Builder => $builder->subscribed(false),
+                        blank: fn (Builder $builder): Builder => $builder,
                     ),
             ])
             ->actions([

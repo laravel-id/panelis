@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\SubscriberResource\Pages;
 
 use App\Filament\Resources\SubscriberResource;
-use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
 class ListSubscribers extends ListRecords
@@ -13,6 +12,13 @@ class ListSubscribers extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
+        ];
+    }
+
+    protected function getHeaderWidgets(): array
+    {
+        return [
+            SubscriberResource\Widgets\SubscriberOverview::class,
         ];
     }
 }
