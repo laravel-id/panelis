@@ -23,8 +23,11 @@ use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail as Mailer;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Response;
 
 class Mail extends Page implements HasForms, Settings\HasUpdateableForm
 {
@@ -216,10 +219,16 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
         return __('navigation.setting_mail');
     }
 
+    public static function canAccess(): bool
+    {
+        return Auth::user()->can('ViewMailSetting');
+    }
+
     public function getHeaderActions(): array
     {
         return [
             Action::make('test_mail')
+                ->visible(Auth::user()->can('SendMailTest'))
                 ->label(__('setting.mail_button_test'))
                 ->modalWidth(MaxWidth::Medium)
                 ->modalSubmitActionLabel(__('setting.mail_test_button_send'))
@@ -316,7 +325,7 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
 
             'services' => config('services'),
 
-            'isButtonDisabled' => config('app.demo'),
+            'isButtonDisabled' => ! Auth::user()->can('UpdateMailSetting'),
         ]);
     }
 
@@ -330,16 +339,17 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
             $this->mailgunSection(),
             $this->postmarkSection(),
             $this->sesSection(),
-        ])->disabled(config('app.demo'));
+        ])->disabled(! Auth::user()->can('UpdateMailSetting'));
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function update(): void
     {
-        $this->validate();
+        abort_unless(Auth::user()->can('UpdateMailSetting'), Response::HTTP_FORBIDDEN);
 
-        if (config('app.demo')) {
-            return;
-        }
+        $this->validate();
 
         foreach (Arr::dot($this->form->getState()) as $key => $value) {
             if (empty($value)) {
