@@ -16,6 +16,7 @@ use Illuminate\Support\Str;
  * @property SubscriberPeriod $period
  * @property string $email
  * @property string $confirmation_key
+ * @property bool $is_subscribed
  */
 class Subscriber extends Model
 {

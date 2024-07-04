@@ -18,7 +18,7 @@ class SubscriberOverview extends BaseWidget
                 ->icon('heroicon-o-bookmark')
                 ->color('green'),
 
-            Stat::make(__('subscribed.widget_total_unsubscribed'), Subscriber::query()->subscribed(false)->count())
+            Stat::make(__('subscriber.widget_total_unsubscribed'), Subscriber::query()->subscribed(false)->count())
                 ->icon('heroicon-o-bookmark-slash')
                 ->color('gray'),
         ];
