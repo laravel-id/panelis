@@ -16,8 +16,10 @@ use Filament\Notifications\Actions\Action as NotificationAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Support\Enums\MaxWidth;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ListTranslations extends ListRecords
@@ -25,6 +27,11 @@ class ListTranslations extends ListRecords
     protected static string $resource = TranslationResource::class;
 
     private static string $disk = 'local';
+
+    protected function authorizeAccess(): void
+    {
+        abort_unless(Auth::user()->can('ViewTranslation'), Response::HTTP_FORBIDDEN);
+    }
 
     private function import(?array $lines, string $locale): void
     {
@@ -40,7 +47,7 @@ class ListTranslations extends ListRecords
             $newLine = [$locale => $line['text']];
 
             $trans->is_system = $line['is_system'];
-            if (!empty($trans->text)) {
+            if (! empty($trans->text)) {
                 $trans->text = array_merge($trans->text, $newLine);
             } else {
                 $trans->text = $newLine;
@@ -59,6 +66,7 @@ class ListTranslations extends ListRecords
 
         return [
             Action::make('import')
+                ->visible(Auth::user()->can('ImportTranslation'))
                 ->label(__('translation.import'))
                 ->modalWidth(MaxWidth::Medium)
                 ->modalSubmitActionLabel(__('translation.import_submit'))
@@ -121,6 +129,7 @@ class ListTranslations extends ListRecords
                 }),
 
             Action::make('export')
+                ->visible(Auth::user()->can('ExportTranslation'))
                 ->label(__('translation.export'))
                 ->modalWidth(MaxWidth::Medium)
                 ->modalDescription(__('translation.export_description'))
@@ -166,9 +175,11 @@ class ListTranslations extends ListRecords
                 }),
 
             ActionGroup::make([
-                Actions\CreateAction::make(),
+                Actions\CreateAction::make()
+                    ->visible(Auth::user()->can('CreateTranslation')),
 
                 Action::make('backup')
+                    ->visible(Auth::user()->can('BackupTranslation'))
                     ->label(__('translation.backup'))
                     ->icon('heroicon-o-arrow-down-on-square-stack')
                     ->requiresConfirmation()
@@ -197,6 +208,7 @@ class ListTranslations extends ListRecords
                     }),
 
                 Action::make('restore')
+                    ->visible(Auth::user()->can('RestoreTranslation'))
                     ->label(__('translation.restore'))
                     ->icon('heroicon-o-arrow-up-on-square-stack')
                     ->requiresConfirmation()

@@ -3,7 +3,6 @@
 namespace App\Filament\Clusters\Settings\Pages;
 
 use App\Filament\Clusters\Settings;
-use App\Filament\Resources\RoleResource\Forms\RoleForm;
 use App\Models\Role;
 use App\Models\Setting;
 use Exception;
@@ -17,7 +16,10 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Response;
 
 class User extends Page implements HasForms, Settings\HasUpdateableForm
 {
@@ -50,10 +52,15 @@ class User extends Page implements HasForms, Settings\HasUpdateableForm
         ]);
     }
 
+    public static function canAccess(): bool
+    {
+        return Auth::user()->can('ViewUserSetting');
+    }
+
     public function form(Form $form): Form
     {
         return $form
-            ->disabled(config('app.demo'))
+            ->disabled(! Auth::user()->can('UpdateUserSetting'))
             ->schema([
                 Section::make(__('setting.user'))
                     ->description(__('setting.user_section_description'))
@@ -73,8 +80,13 @@ class User extends Page implements HasForms, Settings\HasUpdateableForm
             ]);
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function update(): void
     {
+        abort_unless(Auth::user()->can('UpdateUserSetting'), Response::HTTP_FORBIDDEN);
+
         $this->validate();
 
         try {

@@ -16,6 +16,9 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Response;
 
 class Datetime extends Page
 {
@@ -29,6 +32,8 @@ class Datetime extends Page
 
     protected static ?string $cluster = Settings::class;
 
+    public array $app;
+
     public function getTitle(): string|Htmlable
     {
         return __('setting.datetime');
@@ -39,7 +44,10 @@ class Datetime extends Page
         return __('navigation.setting_datetime');
     }
 
-    public array $app;
+    public static function canAccess(): bool
+    {
+        return Auth::user()->can('ViewDatetimeSetting');
+    }
 
     public function mount()
     {
@@ -55,6 +63,7 @@ class Datetime extends Page
 
         return $form->schema([
             Section::make(__('setting.datetime'))
+                ->disabled(! Auth::user()->can('UpdateDatetimeSetting'))
                 ->description(__('setting.datetime_section_description'))
                 ->schema([
                     // do not override existing config from Laravel: "app.timezone"
@@ -88,8 +97,13 @@ class Datetime extends Page
         ]);
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function update(): void
     {
+        abort_unless(Auth::user()->can('UpdateDatetimeSetting'), Response::HTTP_FORBIDDEN);
+
         $this->validate();
 
         event(new SettingUpdated);

@@ -55,7 +55,7 @@ class PermissionResource extends Resource
                     ->required()
                     ->unique(ignorable: $form->getRecord())
                     ->minLength(3)
-                    ->maxLength(20),
+                    ->maxLength(30),
 
                 TextInput::make('guard_name')
                     ->label('user.permission_guard_name')

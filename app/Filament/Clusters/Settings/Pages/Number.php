@@ -18,6 +18,9 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Response;
 
 class Number extends Page
 {
@@ -43,6 +46,11 @@ class Number extends Page
         return __('navigation.setting_number');
     }
 
+    public static function canAccess(): bool
+    {
+        return Auth::user()->can('ViewNumberSetting');
+    }
+
     public function mount(): void
     {
 
@@ -59,6 +67,7 @@ class Number extends Page
     {
         return $form->schema([
             Section::make(__('setting.number'))
+                ->disabled(! Auth::user()->can('UpdateNumberSetting'))
                 ->description(__('setting.number_section_description'))
                 ->schema([
                     TextInput::make('app.currency_symbol')
@@ -103,8 +112,13 @@ class Number extends Page
         ]);
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function update(): void
     {
+        abort_unless(Auth::user()->can('UpdateNumberSetting'), Response::HTTP_FORBIDDEN);
+
         $this->validate();
 
         try {

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Clusters\Databases\Pages;
+namespace App\Filament\Clusters\Databases\Enums;
 
 enum DatabaseType: string
 {

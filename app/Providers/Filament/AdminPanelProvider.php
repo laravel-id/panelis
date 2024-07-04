@@ -37,21 +37,22 @@ class AdminPanelProvider extends PanelProvider
             ->tenant(Branch::class, slugAttribute: 'slug')
             ->tenantRegistration(RegisterBranch::class)
             ->tenantProfile(EditBranch::class)
-
             ->default()
             ->id('admin')
 
             // uncomment to set different path
             ->path('admin')
-
             ->plugins([
                 //TodoPlugin::make(),
             ])
-
             ->navigationGroups([
                 NavigationGroup::make(__('navigation.user'))
                     ->collapsed()
                     ->icon('heroicon-s-user-group'),
+
+                NavigationGroup::make(__('navigation.system'))
+                    ->collapsed()
+                    ->icon('heroicon-s-cog-6-tooth'),
             ])
 
             //->registration(Register::class)
