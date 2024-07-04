@@ -21,6 +21,9 @@ use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Response;
 
 class Log extends Page implements HasForms
 {
@@ -73,6 +76,11 @@ class Log extends Page implements HasForms
         return __('navigation.setting_log');
     }
 
+    public static function canAccess(): bool
+    {
+        return Auth::user()->can('ViewLogSetting');
+    }
+
     public function mount(): void
     {
         $logging = config('logging.channels.stack');
@@ -103,7 +111,7 @@ class Log extends Page implements HasForms
     public function form(Form $form): Form
     {
         return $form
-            ->disabled(config('app.demo'))
+            ->disabled(config('app.demo') || ! Auth::user()->can('UpdateLogSetting'))
             ->schema([
                 Section::make(__('setting.log'))
                     ->description(__('setting.log_section_description'))
@@ -169,8 +177,13 @@ class Log extends Page implements HasForms
             ]);
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function update(): void
     {
+        abort_unless(Auth::user()->can('UpdateLogSetting'), Response::HTTP_FORBIDDEN);
+
         $this->validate();
 
         try {

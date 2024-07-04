@@ -8,7 +8,6 @@ use App\Models\Setting;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
@@ -17,7 +16,10 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Response;
 
 class Cache extends Page implements HasForms, Settings\HasUpdateableForm
 {
@@ -36,6 +38,11 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
     public array $database;
 
     public bool $isButtonDisabled = false;
+
+    public static function canAccess(): bool
+    {
+        return Auth::user()->can('ViewCacheSetting');
+    }
 
     protected function getHeaderActions(): array
     {
@@ -66,7 +73,7 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
                 ->label(__('setting.cache_button_flush'))
                 ->requiresConfirmation()
                 ->color('warning')
-                ->disabled(config('app.demo'))
+                ->hidden(config('app.demo') || ! Auth::user()->can('FlushCache'))
                 ->action(function (): void {
                     try {
                         \Illuminate\Support\Facades\Cache::flush();
@@ -121,24 +128,29 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
 
             Section::make(__('setting.cache_memcached'))
                 ->description(__('setting.cache_memcached_description'))
-                ->visible(fn(Get $get): bool => $get('cache.default') === CacheDriver::Memcached->value)
+                ->visible(fn (Get $get): bool => $get('cache.default') === CacheDriver::Memcached->value)
                 ->schema(Settings\Forms\Cache\MemcachedForm::schema()),
 
             Section::make(__('setting.cache_redis'))
                 ->description(__('setting.cache_redis_section_description'))
-                ->visible(fn(Get $get): bool => $get('cache.default') === CacheDriver::Redis->value)
+                ->visible(fn (Get $get): bool => $get('cache.default') === CacheDriver::Redis->value)
                 ->schema(Settings\Forms\Cache\RedisForm::schema()),
 
             Section::make(__('setting.cache_dynamodb'))
                 ->description(__('setting.cache_dynamodb_section_description'))
-                ->visible(fn(Get $get): bool => $get('cache.default') === CacheDriver::DynamoDB->value)
+                ->visible(fn (Get $get): bool => $get('cache.default') === CacheDriver::DynamoDB->value)
                 ->schema(Settings\Forms\Cache\DynamoDBForm::schema()),
         ])
-            ->disabled(config('app.demo'));
+            ->disabled(config('app.demo') || ! Auth::user()->can('UpdateCacheSetting'));
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function update(): void
     {
+        abort_unless(Auth::user()->can('UpdateCacheSetting'), Response::HTTP_FORBIDDEN);
+
         $this->validate();
 
         try {

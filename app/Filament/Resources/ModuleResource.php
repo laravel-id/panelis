@@ -15,8 +15,6 @@ class ModuleResource extends Resource
 {
     protected static ?string $model = Module::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
-
     protected static ?int $navigationSort = 3;
 
     protected static bool $isScopedToTenant = false;
@@ -36,12 +34,7 @@ class ModuleResource extends Resource
         return __('navigation.system');
     }
 
-    public static function getNavigationIcon(): ?string
-    {
-        return 'heroicon-s-rectangle-stack';
-    }
-
-    public static function shouldRegisterNavigation(): bool
+    public static function canAccess(): bool
     {
         return Auth::user()->can('Manage module');
     }
