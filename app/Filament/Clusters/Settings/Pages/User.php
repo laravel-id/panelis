@@ -60,7 +60,7 @@ class User extends Page implements HasForms, Settings\HasUpdateableForm
     public function form(Form $form): Form
     {
         return $form
-            ->disabled(config('app.demo') || ! Auth::user()->can('UpdateUserSetting'))
+            ->disabled(! Auth::user()->can('UpdateUserSetting'))
             ->schema([
                 Section::make(__('setting.user'))
                     ->description(__('setting.user_section_description'))

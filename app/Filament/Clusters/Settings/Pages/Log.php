@@ -104,14 +104,14 @@ class Log extends Page implements HasForms
                 ],
             ],
 
-            'isButtonDisabled' => config('app.demo'),
+            'isButtonDisabled' => ! Auth::user()->can('ViewLogSetting'),
         ]);
     }
 
     public function form(Form $form): Form
     {
         return $form
-            ->disabled(config('app.demo') || ! Auth::user()->can('UpdateLogSetting'))
+            ->disabled(! Auth::user()->can('UpdateLogSetting'))
             ->schema([
                 Section::make(__('setting.log'))
                     ->description(__('setting.log_section_description'))

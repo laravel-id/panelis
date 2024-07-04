@@ -66,7 +66,7 @@ class General extends Page
                 'email_as_sender' => config('app.email_as_sender'),
             ],
 
-            'isButtonDisabled' => config('app.demo') || ! Auth::user()->can('UpdateGeneralSetting'),
+            'isButtonDisabled' => ! Auth::user()->can('UpdateGeneralSetting'),
         ]);
     }
 
@@ -154,7 +154,7 @@ class General extends Page
                         ->label(__('setting.app_debug'))
                         ->helperText(fn (): ?string => app()->isProduction() ? __('setting.helper_app_debug') : null),
                 ]),
-        ])->disabled(config('app.demo') || ! Auth::user()->can('UpdateGeneralSetting'));
+        ])->disabled(! Auth::user()->can('UpdateGeneralSetting'));
     }
 
     /**
@@ -165,10 +165,6 @@ class General extends Page
         abort_unless(Auth::user()->can('UpdateGeneralSetting'), Response::HTTP_FORBIDDEN);
 
         $this->validate();
-
-        if (config('app.demo')) {
-            return;
-        }
 
         $state = $this->form->getState();
         foreach ($state['app'] as $key => $value) {

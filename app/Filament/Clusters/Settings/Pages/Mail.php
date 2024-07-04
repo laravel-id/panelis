@@ -325,7 +325,7 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
 
             'services' => config('services'),
 
-            'isButtonDisabled' => config('app.demo') || ! Auth::user()->can('UpdateMailSetting'),
+            'isButtonDisabled' => ! Auth::user()->can('UpdateMailSetting'),
         ]);
     }
 
@@ -339,7 +339,7 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
             $this->mailgunSection(),
             $this->postmarkSection(),
             $this->sesSection(),
-        ])->disabled(config('app.demo') || ! Auth::user()->can('UpdateMailSetting'));
+        ])->disabled(! Auth::user()->can('UpdateMailSetting'));
     }
 
     /**
@@ -350,10 +350,6 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
         abort_unless(Auth::user()->can('UpdateMailSetting'), Response::HTTP_FORBIDDEN);
 
         $this->validate();
-
-        if (config('app.demo')) {
-            return;
-        }
 
         foreach (Arr::dot($this->form->getState()) as $key => $value) {
             if (empty($value)) {

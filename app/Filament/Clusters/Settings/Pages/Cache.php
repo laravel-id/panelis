@@ -73,7 +73,7 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
                 ->label(__('setting.cache_button_flush'))
                 ->requiresConfirmation()
                 ->color('warning')
-                ->hidden(config('app.demo') || ! Auth::user()->can('FlushCache'))
+                ->hidden(! Auth::user()->can('FlushCache'))
                 ->action(function (): void {
                     try {
                         \Illuminate\Support\Facades\Cache::flush();
@@ -107,7 +107,7 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
                 'redis' => config('database.redis'),
             ],
 
-            'isButtonDisabled' => config('app.demo'),
+            'isButtonDisabled' => ! Auth::user()->can('ViewCacheSetting'),
         ]);
     }
 
@@ -141,7 +141,7 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
                 ->visible(fn (Get $get): bool => $get('cache.default') === CacheDriver::DynamoDB->value)
                 ->schema(Settings\Forms\Cache\DynamoDBForm::schema()),
         ])
-            ->disabled(config('app.demo') || ! Auth::user()->can('UpdateCacheSetting'));
+            ->disabled(! Auth::user()->can('UpdateCacheSetting'));
     }
 
     /**

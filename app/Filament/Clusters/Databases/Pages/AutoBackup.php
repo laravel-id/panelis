@@ -75,7 +75,6 @@ class AutoBackup extends Page implements HasForms
             Action::make('backup')
                 ->visible(Auth::user()->can('BackupDb'))
                 ->label(__('database.button_backup_now'))
-                ->disabled(config('app.demo'))
                 ->requiresConfirmation()
                 ->action(function (): void {
                     try {
@@ -108,9 +107,7 @@ class AutoBackup extends Page implements HasForms
         }
 
         $this->form->fill([
-            'isButtonDisabled' => ! $this->databaseService?->isAvailable()
-                || ! Auth::user()->can('UpdateAutoBackupDb')
-                || config('app.demo'),
+            'isButtonDisabled' => ! $this->databaseService?->isAvailable() || ! Auth::user()->can('UpdateAutoBackupDb'),
             'database' => [
                 'auto_backup_enabled' => config('database.auto_backup_enabled', false),
                 'backup_period' => config('database.backup_period'),
@@ -186,7 +183,7 @@ class AutoBackup extends Page implements HasForms
                         ->disabled(fn (Get $get): bool => ! $get('database.auto_backup_enabled')),
                 ]),
         ])
-            ->disabled(config('app.demo') || ! Auth::user()->can('UpdateAutoBackupDb'));
+            ->disabled(! Auth::user()->can('UpdateAutoBackupDb'));
     }
 
     /**
