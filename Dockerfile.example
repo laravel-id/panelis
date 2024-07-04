@@ -22,6 +22,9 @@ RUN apt-get update && apt-get install -y \
     && apt-get install -y php${PHP_VERSION}-imagick \
     && apt-get clean
 
+# if we're using Filament v3 and above, run caching commands...
+RUN  php artisan icons:cache && php artisan filament:cache-components
+
 # prevent error by provide empty database
 RUN touch database/database.sqlite
 
