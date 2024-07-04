@@ -103,6 +103,12 @@
         @endforeach
       @endif
     @endif
+
+    <div>
+      <hr/>
+      @livewire('schedule.bookmark', ['schedule' => $schedule])
+      @livewire('schedule.report', ['schedule' => $schedule])
+    </div>
   </article>
 
   @if (!$schedule->packages->isEmpty())

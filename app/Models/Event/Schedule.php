@@ -3,7 +3,9 @@
 namespace App\Models\Event;
 
 use App\Filament\Clusters\Databases\Pages\DatabaseType;
+use App\Models\Calendar;
 use App\Models\Location\District;
+use App\Models\Report;
 use App\Models\Traits\HasLocalTime;
 use App\Models\URL\ShortURL;
 use App\Models\User;
@@ -17,6 +19,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
@@ -216,6 +219,16 @@ class Schedule extends Model implements Sitemapable
     public function district(): BelongsTo
     {
         return $this->belongsTo(District::class);
+    }
+
+    public function reports(): MorphMany
+    {
+        return $this->morphMany(Report::class, 'reportable');
+    }
+
+    public function calendars(): HasMany
+    {
+        return $this->hasMany(Calendar::class);
     }
 
     public static function getPublishedSchedules(?array $request = null): Collection
