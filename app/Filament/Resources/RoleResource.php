@@ -116,7 +116,7 @@ class RoleResource extends Resource
                     ->sortable(),
 
                 TextColumn::make('local_updated_at')
-                    ->label(__('user.role_updated_at'))
+                    ->label(__('ui.updated_at'))
                     ->sortable(),
             ])
             ->filters([
