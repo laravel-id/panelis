@@ -18,6 +18,7 @@ use Illuminate\Support\Str;
  *
  * @property string $key
  * @property mixed $value
+ * @property bool $is_custom
  */
 class Setting extends Model
 {
@@ -26,6 +27,11 @@ class Setting extends Model
     protected $fillable = [
         'key',
         'value',
+        'is_custom',
+    ];
+
+    protected $casts = [
+        'is_custom' => 'boolean',
     ];
 
     public function value(): Attribute
@@ -107,9 +113,12 @@ class Setting extends Model
         }
     }
 
-    public static function set(string $key, mixed $value): void
+    public static function set(string $key, mixed $value, bool $isCustom = false): void
     {
-        self::updateOrCreate(compact('key'), compact('value'));
+        self::updateOrCreate(compact('key'), [
+            'value' => $value,
+            'is_custom' => $isCustom,
+        ]);
     }
 
     public function user(): BelongsToMany
