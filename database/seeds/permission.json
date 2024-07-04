@@ -150,5 +150,145 @@
   "ManageModule": {
     "name": "ManageModule",
     "guard": "web"
+  },
+  "BackupPermission": {
+    "name": "BackupPermission",
+    "guard": "web"
+  },
+  "ViewTranslation": {
+    "name": "ViewTranslation",
+    "guard": "web"
+  },
+  "CreateTranslation": {
+    "name": "CreateTranslation",
+    "guard": "web"
+  },
+  "BackupTranslation": {
+    "name": "BackupTranslation",
+    "guard": "web"
+  },
+  "RestoreTranslation": {
+    "name": "RestoreTranslation",
+    "guard": "web"
+  },
+  "ExportTranslation": {
+    "name": "ExportTranslation",
+    "guard": "web"
+  },
+  "ImportTranslation": {
+    "name": "ImportTranslation",
+    "guard": "web"
+  },
+  "EditTranslation": {
+    "name": "EditTranslation",
+    "guard": "web"
+  },
+  "DeleteTranslation": {
+    "name": "DeleteTranslation",
+    "guard": "web"
+  },
+  "ViewDb": {
+    "name": "ViewDb",
+    "guard": "web"
+  },
+  "ViewAutoBackupDb": {
+    "name": "ViewAutoBackupDb",
+    "guard": "web"
+  },
+  "UpdateAutoBackupDb": {
+    "name": "UpdateAutoBackupDb",
+    "guard": "web"
+  },
+  "ViewDbBackup": {
+    "name": "ViewDbBackup",
+    "guard": "web"
+  },
+  "ViewSetting": {
+    "name": "ViewSetting",
+    "guard": "web"
+  },
+  "BackupDb": {
+    "name": "BackupDb",
+    "guard": "web"
+  },
+  "DownloadBackupDb": {
+    "name": "DownloadBackupDb",
+    "guard": "web"
+  },
+  "DeleteBackupDb": {
+    "name": "DeleteBackupDb",
+    "guard": "web"
+  },
+  "ViewGeneralSetting": {
+    "name": "ViewGeneralSetting",
+    "guard": "web"
+  },
+  "UpdateGeneralSetting": {
+    "name": "UpdateGeneralSetting",
+    "guard": "web"
+  },
+  "ViewUserSetting": {
+    "name": "ViewUserSetting",
+    "guard": "web"
+  },
+  "UpdateUserSetting": {
+    "name": "UpdateUserSetting",
+    "guard": "web"
+  },
+  "UpdateThemeSetting": {
+    "name": "UpdateThemeSetting",
+    "guard": "web"
+  },
+  "ViewThemeSetting": {
+    "name": "ViewThemeSetting",
+    "guard": "web"
+  },
+  "ViewMailSetting": {
+    "name": "ViewMailSetting",
+    "guard": "web"
+  },
+  "SendMailTest": {
+    "name": "SendMailTest",
+    "guard": "web"
+  },
+  "UpdateMailSetting": {
+    "name": "UpdateMailSetting",
+    "guard": "web"
+  },
+  "ViewDatetimeSetting": {
+    "name": "ViewDatetimeSetting",
+    "guard": "web"
+  },
+  "UpdateDatetimeSetting": {
+    "name": "UpdateDatetimeSetting",
+    "guard": "web"
+  },
+  "ViewLogSetting": {
+    "name": "ViewLogSetting",
+    "guard": "web"
+  },
+  "UpdateLogSetting": {
+    "name": "UpdateLogSetting",
+    "guard": "web"
+  },
+  "ViewNumberSetting": {
+    "name": "ViewNumberSetting",
+    "guard": "web"
+  },
+  "UpdateNumberSetting": {
+    "name": "UpdateNumberSetting",
+    "guard": "web"
+  },
+  "ViewCacheSetting": {
+    "name": "ViewCacheSetting",
+    "guard": "web"
+  },
+  "FlushCache": {
+    "name": "FlushCache",
+    "guard": "web"
+  },
+  "UpdateCacheSetting": {
+    "name": "UpdateCacheSetting",
+    "guard": "web"
   }
 }
