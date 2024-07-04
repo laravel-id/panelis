@@ -106,9 +106,10 @@ class TranslationResource extends Resource
             ->columns([
                 TextColumn::make('key')
                     ->label(__('translation.key'))
+                    ->copyable()
                     ->sortable()
                     ->grow(false)
-                    ->searchable(),
+                    ->searchable(['key', 'text']),
 
                 TextColumn::make(sprintf('text.%s', config('app.locale')))
                     ->label(__('translation.text')),
