@@ -24,25 +24,18 @@ class RoleResource extends Resource
 {
     protected static ?string $model = Role::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-user-group';
-
     protected static ?int $navigationSort = 2;
 
     protected static bool $isScopedToTenant = false;
 
     public static function getNavigationGroup(): ?string
     {
-        return __('navigation.user_management');
+        return __('navigation.user');
     }
 
     public static function getNavigationLabel(): string
     {
         return __('navigation.role');
-    }
-
-    public static function getActiveNavigationIcon(): ?string
-    {
-        return 'heroicon-s-user-group';
     }
 
     public static function getLabel(): ?string
@@ -62,7 +55,7 @@ class RoleResource extends Resource
             ->schema([
                 Section::make(__('user.role'))
                     ->description(__('user.role_section_description'))
-                    ->columnSpan(fn(?Model $record): int => empty($record) ? 3 : 2)
+                    ->columnSpan(fn (?Model $record): int => empty($record) ? 3 : 2)
                     ->schema(RoleForm::schema()),
 
                 Section::make()
@@ -71,11 +64,11 @@ class RoleResource extends Resource
                     ->schema([
                         Placeholder::make('created_at')
                             ->label(__('ui.created_at'))
-                            ->content(fn(Role $role): string => $role->local_created_at),
+                            ->content(fn (Role $role): string => $role->local_created_at),
 
                         Placeholder::make('local_updated_at')
                             ->label(__('ui.updated_at'))
-                            ->content(fn(Role $role): string => $role->local_updated_at),
+                            ->content(fn (Role $role): string => $role->local_updated_at),
                     ]),
 
                 Section::make(__('user.permission'))
@@ -111,7 +104,7 @@ class RoleResource extends Resource
                     ->label(__('user.role_name'))
                     ->searchable()
                     ->sortable()
-                    ->description(fn(Role $role): string => $role->description),
+                    ->description(fn (Role $role): string => $role->description),
 
                 TextColumn::make('users_count')
                     ->label(__('user.role_user_count'))

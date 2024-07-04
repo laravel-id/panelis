@@ -4,10 +4,14 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\PermissionResource\Pages;
 use App\Models\Permission;
-use Filament\Forms;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -15,8 +19,6 @@ use Illuminate\Support\Facades\Auth;
 class PermissionResource extends Resource
 {
     protected static ?string $model = Permission::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-key';
 
     protected static ?int $navigationSort = 1;
 
@@ -34,12 +36,7 @@ class PermissionResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('navigation.user_management');
-    }
-
-    public static function getActiveNavigationIcon(): ?string
-    {
-        return 'heroicon-s-key';
+        return __('navigation.user');
     }
 
     public static function shouldRegisterNavigation(): bool
@@ -52,7 +49,7 @@ class PermissionResource extends Resource
         return $form
             ->columns(1)
             ->schema([
-                Forms\Components\TextInput::make('name')
+                TextInput::make('name')
                     ->label(__('user.permission_name'))
                     ->disabledOn('edit')
                     ->required()
@@ -60,9 +57,21 @@ class PermissionResource extends Resource
                     ->minLength(3)
                     ->maxLength(20),
 
-                Forms\Components\Textarea::make('description')
-                    ->label(__('user.permission_description'))
-                    ->maxLength(250),
+                TextInput::make('guard_name')
+                    ->label('user.permission_guard_name')
+                    ->disabledOn('edit')
+                    ->default('web')
+                    ->required(),
+
+                Placeholder::make('label')
+                    ->label(__('user.permission_label'))
+                    ->visibleOn('edit')
+                    ->content(fn (Permission $permission): string => $permission->label),
+
+                Placeholder::make('description')
+                    ->label('user.permission_description')
+                    ->visibleOn('edit')
+                    ->content(fn (Permission $permission): string => $permission->description),
             ]);
     }
 
@@ -73,13 +82,13 @@ class PermissionResource extends Resource
 
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
-                    ->label(__('user.permission_name'))
-                    ->searchable()
+                TextColumn::make('label')
+                    ->label(__('user.permission_label'))
+                    ->searchable(['name', 'label', 'description'])
                     ->sortable()
                     ->description(fn (?Model $record): string => $record?->description ?? ''),
 
-                Tables\Columns\TextColumn::make('local_updated_at')
+                TextColumn::make('local_updated_at')
                     ->label(__('ui.updated_at'))
                     ->sortable(),
             ])
@@ -87,18 +96,17 @@ class PermissionResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make()
+                EditAction::make()
                     ->visible($canUpdate),
 
-                Tables\Actions\DeleteAction::make()
-                    ->visible($canDelete)
-                    ->disabled(fn (?Model $record): bool => $record->is_default),
+                ActionGroup::make([
+                    DeleteAction::make()
+                        ->visible($canDelete)
+                        ->disabled(fn (Permission $record): bool => $record->is_default),
+                ]),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make()
-                        ->visible($canDelete),
-                ]),
+
             ]);
     }
 
