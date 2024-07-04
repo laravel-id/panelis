@@ -24,25 +24,18 @@ class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-user';
-
     protected static ?int $navigationSort = 3;
 
     protected static ?string $tenantOwnershipRelationshipName = 'branches';
 
     public static function getNavigationGroup(): ?string
     {
-        return __('navigation.user_management');
+        return __('navigation.user');
     }
 
     public static function getNavigationLabel(): string
     {
         return __('navigation.user');
-    }
-
-    public static function getActiveNavigationIcon(): ?string
-    {
-        return 'heroicon-s-user';
     }
 
     public static function getLabel(): ?string
@@ -52,7 +45,7 @@ class UserResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()->can('View user');
+        return Auth::user()->can('ViewUser');
     }
 
     public static function form(Form $form): Form
@@ -119,7 +112,15 @@ class UserResource extends Resource
                             ->label(__('user.role_name'))
                             ->relationship('roles', 'name')
                             ->descriptions(Role::pluck('description', 'id'))
-                            ->required(fn(User $user): bool => !$user->isRoot()),
+                            ->getOptionLabelFromRecordUsing(function (Role $role): string {
+                                $label = $role->name;
+                                if ($role->is_admin) {
+                                    $label .= sprintf(' (%s)', __('user.role_admin_access'));
+                                }
+
+                                return $label;
+                            })
+                            ->required(fn (User $user): bool => ! $user->isRoot()),
                     ]),
 
                 Section::make(__('user.profile'))
@@ -182,7 +183,7 @@ class UserResource extends Resource
                     ->multiple(),
             ])
             ->actions([
-                EditAction::make()->visible(Auth::user()->can('Update user')),
+                EditAction::make()->visible(Auth::user()->can('UpdateUser')),
             ])
             ->bulkActions([
 

@@ -6,10 +6,16 @@ use App\Filament\Resources\RoleResource\Forms\RoleForm;
 use App\Filament\Resources\RoleResource\Pages;
 use App\Models\Permission;
 use App\Models\Role;
-use Filament\Forms;
+use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Tables\Actions\ActionGroup;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
@@ -18,25 +24,18 @@ class RoleResource extends Resource
 {
     protected static ?string $model = Role::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-user-group';
-
     protected static ?int $navigationSort = 2;
 
     protected static bool $isScopedToTenant = false;
 
     public static function getNavigationGroup(): ?string
     {
-        return __('navigation.user_management');
+        return __('navigation.user');
     }
 
     public static function getNavigationLabel(): string
     {
         return __('navigation.role');
-    }
-
-    public static function getActiveNavigationIcon(): ?string
-    {
-        return 'heroicon-s-user-group';
     }
 
     public static function getLabel(): ?string
@@ -46,7 +45,7 @@ class RoleResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()->can('View role');
+        return Auth::user()->can('ViewRole');
     }
 
     public static function form(Form $form): Form
@@ -54,34 +53,37 @@ class RoleResource extends Resource
         return $form
             ->columns(3)
             ->schema([
-                Forms\Components\Section::make(__('user.role'))
+                Section::make(__('user.role'))
                     ->description(__('user.role_section_description'))
                     ->columnSpan(fn (?Model $record): int => empty($record) ? 3 : 2)
                     ->schema(RoleForm::schema()),
 
-                Forms\Components\Section::make()
+                Section::make()
                     ->hiddenOn(Pages\CreateRole::class)
                     ->columnSpan(1)
                     ->schema([
-                        Forms\Components\Placeholder::make('created_at')
+                        Placeholder::make('created_at')
                             ->label(__('ui.created_at'))
                             ->content(fn (Role $role): string => $role->local_created_at),
 
-                        Forms\Components\Placeholder::make('local_updated_at')
+                        Placeholder::make('local_updated_at')
                             ->label(__('ui.updated_at'))
                             ->content(fn (Role $role): string => $role->local_updated_at),
                     ]),
 
-                Forms\Components\Section::make(__('user.permission'))
+                Section::make(__('user.permission'))
                     ->description(__('user.permission_section_description'))
                     ->schema([
-                        Forms\Components\CheckboxList::make('permission_id')
+                        CheckboxList::make('permission_id')
                             ->label(__('user.permission'))
                             ->columns(3)
                             ->gridDirection('row')
                             ->searchable()
                             ->bulkToggleable()
                             ->relationship('permissions', 'name')
+                            ->getOptionLabelFromRecordUsing(function (Model|Permission $record): ?string {
+                                return $record->label;
+                            })
                             ->descriptions(
                                 Permission::pluck('description', 'id'),
                             )
@@ -92,25 +94,28 @@ class RoleResource extends Resource
 
     public static function table(Table $table): Table
     {
-        $canUpdate = Auth::user()->can('Update role');
-        $canDelete = Auth::user()->can('Delete role');
+        $canUpdate = Auth::user()->can('UpdateRole');
+        $canDelete = Auth::user()->can('DeleteRole');
 
         return $table
             ->paginated(false)
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                ToggleColumn::make('is_admin')
+                    ->label(__('user.role_is_admin')),
+
+                TextColumn::make('name')
                     ->label(__('user.role_name'))
                     ->searchable()
                     ->sortable()
                     ->description(fn (Role $role): string => $role->description),
 
-                Tables\Columns\TextColumn::make('users_count')
+                TextColumn::make('users_count')
                     ->label(__('user.role_user_count'))
                     ->counts('users')
                     ->color('primary')
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('local_updated_at')
+                TextColumn::make('local_updated_at')
                     ->label(__('user.role_updated_at'))
                     ->sortable(),
             ])
@@ -118,12 +123,15 @@ class RoleResource extends Resource
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make()->visible($canUpdate),
-                Tables\Actions\DeleteAction::make()
-                    ->disabled(function (Role $role): bool {
-                        return $role->users_count >= 1;
-                    })
-                    ->visible($canDelete),
+                EditAction::make()->visible($canUpdate),
+
+                ActionGroup::make([
+                    DeleteAction::make()
+                        ->disabled(function (Role $role): bool {
+                            return $role->users_count >= 1;
+                        })
+                        ->visible($canDelete),
+                ]),
             ])
             ->bulkActions([
 

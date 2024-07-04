@@ -15,12 +15,12 @@ class ViewRole extends ViewRecord
     {
         return [
             Actions\EditAction::make()
-                ->visible(Auth::user()->can('Update role')),
+                ->visible(Auth::user()->can('UpdateRole')),
         ];
     }
 
     protected function authorizeAccess(): void
     {
-        abort_unless(Auth::user()->can('View role'), 403);
+        abort_unless(Auth::user()->can('ViewRole'), 403);
     }
 }

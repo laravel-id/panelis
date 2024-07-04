@@ -74,11 +74,12 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
 
     public function canAccessPanel(Panel $panel): bool
     {
-        if (! app()->isProduction()) {
+        // for root user without roles
+        if ($this->roles->isEmpty()) {
             return true;
         }
 
-        return false;
+        return $this->roles->contains('is_admin', true);
     }
 
     public function getFilamentAvatarUrl(): ?string
