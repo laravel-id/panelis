@@ -290,5 +290,13 @@
   "UpdateCacheSetting": {
     "name": "UpdateCacheSetting",
     "guard": "web"
+  },
+  "UpdateCustomSetting": {
+    "name": "UpdateCustomSetting",
+    "guard": "web"
+  },
+  "ViewCustomSetting": {
+    "name": "ViewCustomSetting",
+    "guard": "web"
   }
 }
