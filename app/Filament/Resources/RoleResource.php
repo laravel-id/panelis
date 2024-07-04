@@ -45,7 +45,7 @@ class RoleResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()->can('View role');
+        return Auth::user()->can('ViewRole');
     }
 
     public static function form(Form $form): Form
@@ -81,6 +81,9 @@ class RoleResource extends Resource
                             ->searchable()
                             ->bulkToggleable()
                             ->relationship('permissions', 'name')
+                            ->getOptionLabelFromRecordUsing(function (Model|Permission $record): ?string {
+                                return $record->label;
+                            })
                             ->descriptions(
                                 Permission::pluck('description', 'id'),
                             )
@@ -91,8 +94,8 @@ class RoleResource extends Resource
 
     public static function table(Table $table): Table
     {
-        $canUpdate = Auth::user()->can('Update role');
-        $canDelete = Auth::user()->can('Delete role');
+        $canUpdate = Auth::user()->can('UpdateRole');
+        $canDelete = Auth::user()->can('DeleteRole');
 
         return $table
             ->paginated(false)

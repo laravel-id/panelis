@@ -45,7 +45,7 @@ class UserResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()->can('View user');
+        return Auth::user()->can('ViewUser');
     }
 
     public static function form(Form $form): Form
@@ -183,7 +183,7 @@ class UserResource extends Resource
                     ->multiple(),
             ])
             ->actions([
-                EditAction::make()->visible(Auth::user()->can('Update user')),
+                EditAction::make()->visible(Auth::user()->can('UpdateUser')),
             ])
             ->bulkActions([
 

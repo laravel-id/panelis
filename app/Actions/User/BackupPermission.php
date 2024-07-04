@@ -3,8 +3,10 @@
 namespace App\Actions\User;
 
 use App\Models\Permission;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Lorisleiva\Actions\Concerns\AsAction;
+use Symfony\Component\HttpFoundation\Response;
 
 class BackupPermission
 {
@@ -12,6 +14,8 @@ class BackupPermission
 
     public function handle(): string
     {
+        abort_if(!Auth::user()->can('BackupPermission'), Response::HTTP_FORBIDDEN);
+
         $permissions = Permission::query()
             ->get()
             ->mapWithKeys(function (Permission $permission): array {

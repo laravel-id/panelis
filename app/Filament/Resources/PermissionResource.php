@@ -41,7 +41,7 @@ class PermissionResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()->can('View permission');
+        return Auth::user()->can('ViewPermission');
     }
 
     public static function form(Form $form): Form
@@ -77,8 +77,8 @@ class PermissionResource extends Resource
 
     public static function table(Table $table): Table
     {
-        $canUpdate = Auth::user()->can('Update permission');
-        $canDelete = Auth::user()->can('Delete permission');
+        $canUpdate = Auth::user()->can('UpdatePermission');
+        $canDelete = Auth::user()->can('DeletePermission');
 
         return $table
             ->columns([

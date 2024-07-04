@@ -14,8 +14,8 @@ class EditUser extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\ViewAction::make()->visible(Auth::user()->can('View user')),
-            Actions\DeleteAction::make()->visible(Auth::user()->can('Delete user')),
+            Actions\ViewAction::make()->visible(Auth::user()->can('ViewUser')),
+            Actions\DeleteAction::make()->visible(Auth::user()->can('DeleteUser')),
         ];
     }
 }

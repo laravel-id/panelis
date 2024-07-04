@@ -19,7 +19,7 @@ class ManagePermissions extends ManageRecords
     {
         return [
             CreateAction::make()
-                ->visible(Auth::user()->can('Create permission'))
+                ->visible(Auth::user()->can('CreatePermission'))
                 ->mutateFormDataUsing(function (array $data): array {
                     $key = Str::snake($data['name']);
 
@@ -30,6 +30,7 @@ class ManagePermissions extends ManageRecords
                 }),
 
             Action::make('backup_permission')
+                ->visible(Auth::user()->can('BackupPermission'))
                 ->label(__('user.btn_backup_permission'))
                 ->requiresConfirmation()
                 ->action(function (): void {
@@ -46,6 +47,6 @@ class ManagePermissions extends ManageRecords
 
     protected function authorizeAccess(): void
     {
-        abort_unless(Auth::user()->can('View user'), 403);
+        abort_unless(Auth::user()->can('ViewUser'), 403);
     }
 }

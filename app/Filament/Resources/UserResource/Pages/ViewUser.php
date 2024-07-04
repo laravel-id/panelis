@@ -15,12 +15,12 @@ class ViewUser extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make()->visible(Auth::user()->can('View user')),
+            Actions\EditAction::make()->visible(Auth::user()->can('ViewUser')),
         ];
     }
 
     protected function authorizeAccess(): void
     {
-        abort_unless(Auth::user()->can('View user'), Response::HTTP_FORBIDDEN);
+        abort_unless(Auth::user()->can('ViewUser'), Response::HTTP_FORBIDDEN);
     }
 }
