@@ -29,6 +29,7 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 class ScheduleResource extends Resource
@@ -36,6 +37,8 @@ class ScheduleResource extends Resource
     protected static ?string $model = Schedule::class;
 
     protected static ?int $navigationSort = 3;
+
+    protected static ?string $recordTitleAttribute = 'title';
 
     public static function getNavigationGroup(): ?string
     {
@@ -52,6 +55,23 @@ class ScheduleResource extends Resource
         return [
             ScheduleOverview::class,
         ];
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['title', 'description', 'location'];
+    }
+
+    public static function getGlobalSearchResultDetails(Model|Schedule $record): array
+    {
+        return [
+            Str::limit($record->description, 120),
+        ];
+    }
+
+    public static function getGlobalSearchResultUrl(Model|Schedule $record): ?string
+    {
+        return ViewSchedule::getUrl(['record' => $record]);
     }
 
     public static function form(Form $form): Form

@@ -15,6 +15,7 @@ use Filament\Tables\Columns\Layout\Stack;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Str;
 
 class OrganizerResource extends Resource
@@ -22,6 +23,8 @@ class OrganizerResource extends Resource
     protected static ?string $model = Organizer::class;
 
     protected static ?int $navigationSort = 1;
+
+    protected static ?string $recordTitleAttribute = 'name';
 
     public static function getNavigationGroup(): ?string
     {
@@ -31,6 +34,18 @@ class OrganizerResource extends Resource
     public static function getLabel(): ?string
     {
         return __('event.organizer');
+    }
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name', 'description'];
+    }
+
+    public static function getGlobalSearchResultDetails(Model|Organizer $record): array
+    {
+        return [
+            Str::limit($record->description, 120),
+        ];
     }
 
     public static function form(Form $form): Form
