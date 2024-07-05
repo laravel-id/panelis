@@ -37,11 +37,11 @@
     </ul>
   </nav>
 
-  <article>
-    <header>
-      {{ $schedule->title }}
-    </header>
+  <hgroup>
+    <h2 class="pico-color-{{ config('color.theme', 'zinc') }}-700">{{ $schedule->title }}</h2>
+  </hgroup>
 
+  <article>
     @if (!empty($schedule->description))
       {!! Str::markdown($schedule->description) !!}
       <hr/>
@@ -69,46 +69,50 @@
     @if(!$schedule->is_virtual)
       <hr/>
       <p><small>@lang('event.schedule_location'):</small></p>
-      <p><i class="ri-map-pin-line"></i> {!! $schedule->full_location !!}</p>
-    @endif
-
-    @if (!$schedule->is_past)
-      <hr/>
-      <p><small>@lang('event.schedule_info_registration'):</small></p>
-      <p>
-        <i class="ri-external-link-line"></i>
-        <a rel="nofollow" href="{{ $schedule->external_url }}">{{ $schedule->external_url }}</a>
+      <p><i class="ri-map-pin-line"></i>
+        @if (!empty($schedule->metadata['location_url']))
+          <a href="{{ $schedule->metadata['location_url'] }}">{{ $schedule->full_location }}</a>
+        @else
+          {!! $schedule->full_location !!}
+        @endif
       </p>
-
-      @if(!empty($schedule->contacts))
-        @foreach ($schedule->contacts as $contacts)
-          <div>
-            @if (!empty($contacts['is_wa']) && $contacts['is_wa'] === true)
-              <i class="ri-whatsapp-line"></i>
-            @else
-              <i class="ri-phone-line"></i>
-            @endif
-
-            <span>
-              @if (!empty($contacts['wa_url']))
-                <a href="{{ $contacts['wa_url'] }}" target="_blank">{{ $contacts['phone'] }}</a>
-              @else
-                {{ $contacts['phone'] }}
-              @endif
-            </span>
-            @if (!empty($contacts['name']))
-              - {{ $contacts['name'] }}
-            @endif
-          </div>
-        @endforeach
-      @endif
     @endif
 
-    <div>
-      <hr/>
-      @livewire('schedule.bookmark', ['schedule' => $schedule])
-      @livewire('schedule.report', ['schedule' => $schedule])
-    </div>
+    <hr/>
+    <p><small>@lang('event.schedule_info_registration'):</small></p>
+    <p>
+      <i class="ri-external-link-line"></i>
+      @if (!$schedule->is_past)
+        <a rel="nofollow" href="{{ $schedule->external_url }}">{{ $schedule->external_url }}</a>
+      @else
+        <del>{{ $schedule->external_url }}</del>
+      @endif
+    </p>
+
+    @if(!empty($schedule->contacts) AND !$schedule->is_past)
+      @foreach ($schedule->contacts as $contacts)
+        <div>
+          @if (!empty($contacts['is_wa']) && $contacts['is_wa'] === true)
+            <i class="ri-whatsapp-line"></i>
+          @else
+            <i class="ri-phone-line"></i>
+          @endif
+
+          <span>
+            @if (!empty($contacts['wa_url']))
+              <a href="{{ $contacts['wa_url'] }}" target="_blank">{{ $contacts['phone'] }}</a>
+            @else
+              {{ $contacts['phone'] }}
+            @endif
+          </span>
+          @if (!empty($contacts['name']))
+            - {{ $contacts['name'] }}
+          @endif
+        </div>
+      @endforeach
+    @endif
+
+    @livewire('schedule.toolbar', compact('schedule'))
   </article>
 
   @if (!$schedule->packages->isEmpty())
@@ -151,10 +155,4 @@
       </div>
     </article>
   @endif
-
-  @auth
-    <div>
-      <a href="{{ EditSchedule::getUrl(['record' => $schedule]) }}" role="button">@lang('event.schedule_button_edit')</a>
-    </div>
-  @endauth
 @endsection

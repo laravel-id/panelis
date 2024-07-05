@@ -3,9 +3,9 @@
 namespace App\Models\Event;
 
 use App\Filament\Clusters\Databases\Pages\DatabaseType;
-use App\Models\Calendar;
 use App\Models\Location\District;
 use App\Models\Report;
+use App\Models\Schedule\Bookmark;
 use App\Models\Traits\HasLocalTime;
 use App\Models\URL\ShortURL;
 use App\Models\User;
@@ -131,12 +131,6 @@ class Schedule extends Model implements Sitemapable
             $location = sprintf('%s, %s', $this->location, $this->district->name);
         }
 
-        if (! empty($this->metadata['location_url'])) {
-            return Str::of(sprintf('[%s](%s)', $location, $this->metadata['location_url']))
-                ->inlineMarkdown()
-                ->toHtmlString();
-        }
-
         return $location;
     }
 
@@ -226,21 +220,22 @@ class Schedule extends Model implements Sitemapable
         return $this->morphMany(Report::class, 'reportable');
     }
 
-    public function calendars(): HasMany
+    public function bookmarks(): HasMany
     {
-        return $this->hasMany(Calendar::class);
+        return $this->hasMany(Bookmark::class);
     }
 
-    public static function getPublishedSchedules(?array $request = null): Collection
+    public static function getPublishedSchedules(?array $filters = null): Collection
     {
+        Log::debug('Filters', $filters);
         $method = __METHOD__;
 
         $timezone = get_timezone();
 
         $date = null;
-        if (! empty($request['date'])) {
+        if (! empty($filters['date'])) {
             try {
-                $date = Carbon::parse($request['date'])->timezone($timezone);
+                $date = Carbon::parse($filters['date'])->timezone($timezone);
             } catch (InvalidFormatException) {
             }
         }
@@ -268,11 +263,12 @@ class Schedule extends Model implements Sitemapable
                     categories,
                     district_id,
                     started_at,
+                    is_virtual,
                     DATE(started_at, ?) AS local_started_at
                 SELECT, [$modifier]);
             })
-            ->when(! empty($request['keyword']), function (Builder $builder) use ($request): Builder {
-                $keyword = sprintf('%%%s%%', $request['keyword']);
+            ->when(! empty($filters['keyword']), function (Builder $builder) use ($filters): Builder {
+                $keyword = sprintf('%%%s%%', $filters['keyword']);
 
                 return $builder->where(function (Builder $builder) use ($keyword): Builder {
                     return $builder->whereAny(['title', 'description', 'location', 'categories'], 'LIKE', $keyword)
@@ -284,17 +280,17 @@ class Schedule extends Model implements Sitemapable
             })
 
             // do not include virtual event by default
-            ->when(empty($request['virtual']), fn (Builder $builder): Builder => $builder->where('is_virtual', false))
+            ->when(empty($filters['virtual']), fn (Builder $builder): Builder => $builder->where('is_virtual', false))
 
             // filter if 'date' exists
             ->when(! empty($date), fn (Builder $builder): Builder => $builder->where('local_started_at', $date->toDateString()))
 
             // filter by default date
-            ->when(empty($date), function (Builder $builder) use ($timezone, $request): Builder {
+            ->when(empty($date), function (Builder $builder) use ($timezone, $filters): Builder {
                 $now = now($timezone);
 
                 return $builder
-                    ->when(empty($request['past']), fn (Builder $builder): Builder => $builder->whereDate('local_started_at', '>=', $now))
+                    ->when(empty($filters['past']), fn (Builder $builder): Builder => $builder->whereDate('local_started_at', '>=', $now))
                     ->whereDate('local_started_at', '<=', $now->addYear());
             })
             ->orderBy('started_at')

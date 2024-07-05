@@ -9,6 +9,7 @@
   @stack('metadata')
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.{{ config('color.theme', 'zinc') }}.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.colors.min.css" />
 
   @vite(['resources/css/app.css', 'resources/js/app.js'])
   @stack('js')
@@ -19,7 +20,11 @@
 <main class="container">
   <nav>
     <ul>
-      <li><a href="{{ route('index') }}"><strong>{{ config('app.name') }}</strong></a> </li>
+      <li>
+        <h1 class="pico-color-{{ config('color.theme', 'zinc') }}-750">
+          <a href="{{ route('index') }}">{{ config('app.name') }}</a>
+        </h1>
+      </li>
     </ul>
     <ul>
       <li><a href="{{ route('schedule.archive') }}">@lang('event.schedule_archive')</a></li>

@@ -1,13 +1,13 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\Schedule;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Calendar>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Schedule\Bookmark>
  */
-class CalendarFactory extends Factory
+class BookmarkFactory extends Factory
 {
     /**
      * Define the model's default state.

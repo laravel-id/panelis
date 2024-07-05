@@ -60,11 +60,9 @@ class ScheduleController extends Controller
             ->with('title', sprintf('%s - %s', $schedule->title, $year));
     }
 
-    public function index(Request $request): View
+    public function index(): View
     {
-        return view('schedules.index')
-            ->with('schedules', Schedule::getPublishedSchedules($request->toArray()))
-            ->with('search', true);
+        return view('schedules.index');
     }
 
     public function filter(int $year, ?int $month = null): View
@@ -82,14 +80,14 @@ class ScheduleController extends Controller
             $title = $year;
         }
 
-        return view('schedules.index')
+        return view('schedules.filter')
             ->with('schedules', Schedule::getFilteredSchedules($year, $month))
             ->with('title', $title);
     }
 
     public function archive(): View
     {
-        return view('schedules.index')
+        return view('schedules.filter')
             ->with('schedules', Schedule::getArchivedSchedules())
             ->with('title', __('event.schedule_archive'));
     }

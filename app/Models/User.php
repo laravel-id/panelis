@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Filament\Clusters\Settings\Enums\AvatarProvider;
 use App\Models\Event\Schedule;
+use App\Models\Schedule\Bookmark;
 use App\Models\Traits\HasLocalTime;
 use Carbon\Carbon;
 use Filament\Models\Contracts\FilamentUser;
@@ -110,6 +111,11 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
     public function profile(): HasOne
     {
         return $this->hasOne(Profile::class);
+    }
+
+    public function bookmarks(): HasMany
+    {
+        return $this->hasMany(Bookmark::class);
     }
 
     public function getTenants(Panel $panel): array|Collection
