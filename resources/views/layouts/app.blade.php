@@ -21,9 +21,10 @@
   <nav>
     <ul>
       <li>
-        <h1 class="pico-color-{{ config('color.theme', 'zinc') }}-750">
-          <a href="{{ route('index') }}">{{ config('app.name') }}</a>
-        </h1>
+        <strong class="pico-color-{{ config('color.theme', 'zinc') }}">
+          <i class="ri-run-fill"></i>
+          {{ config('app.name') }}
+        </strong>
       </li>
     </ul>
     <ul>

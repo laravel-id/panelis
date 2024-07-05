@@ -15,7 +15,7 @@ class OrganizerController extends Controller
             ->orderByDesc('started_at')
             ->get();
 
-        return view('organizers.view', compact('organizer', 'schedules'))
+        return view('pages.organizers.view', compact('organizer', 'schedules'))
             ->with('title', $organizer->name);
     }
 }

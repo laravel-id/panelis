@@ -49,7 +49,7 @@ class ScheduleController extends Controller
         $format = config('app.datetime_format', 'Y-m-d H:i:s');
         $dateFormat = str_replace(['H', 'i', 'g', 'G', 'u', ':', 'Y', 'y'], '', $format);
 
-        return view('schedules.view')
+        return view('pages.schedules.view')
             ->with(compact(
                 'schedule',
                 'startedAt',
@@ -62,7 +62,7 @@ class ScheduleController extends Controller
 
     public function index(): View
     {
-        return view('schedules.index');
+        return view('pages.schedules.index');
     }
 
     public function filter(int $year, ?int $month = null): View
@@ -80,21 +80,21 @@ class ScheduleController extends Controller
             $title = $year;
         }
 
-        return view('schedules.filter')
+        return view('pages.schedules.filter')
             ->with('schedules', Schedule::getFilteredSchedules($year, $month))
             ->with('title', $title);
     }
 
     public function archive(): View
     {
-        return view('schedules.filter')
+        return view('pages.schedules.filter')
             ->with('schedules', Schedule::getArchivedSchedules())
             ->with('title', __('event.schedule_archive'));
     }
 
     public function calendar(): View
     {
-        return view('schedules.calendar')
+        return view('pages.schedules.calendar')
             ->with('title', __('event.schedule_calendar'));
     }
 

@@ -20,6 +20,13 @@
 @endpush
 
 @section('content')
+  <nav aria-label="breadcrumb">
+    <ul>
+      <li><a href="{{ route('index') }}">@lang('navigation.home')</a></li>
+      <li>@lang('event.organizer')</li>
+    </ul>
+  </nav>
+
   <article>
     <header>{{ $organizer->name }}</header>
 

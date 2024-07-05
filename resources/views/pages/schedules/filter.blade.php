@@ -21,30 +21,12 @@
 @endpush
 
 @section('content')
-  @if(!empty($search) AND $search)
-    <form action="{{ url()->current() }}">
-      <fieldset role="group">
-        <input name="keyword" value="{{ request('keyword') }}" id="search-input" type="text" placeholder="@lang('event.schedule_placeholder_search')" />
-        @if (!empty(request('keyword')))
-          <a href="{{ url()->current() }}" type="reset" class="outline secondary"><i class="ri-close-line"></i></a>
-        @endif
-        <button type="submit"><i class="ri-search-line"></i></button>
-      </fieldset>
-      <label>
-        <input name="virtual" type="checkbox" role="switch" @checked(request('virtual')) />
-        @lang('event.schedule_with_virtual')
-      </label>
-      <label>
-        <input name="past" type="checkbox" role="switch" @checked(request('past')) />
-        @lang('event.schedule_with_past')
-      </label>
-    </form>
-  @endif
-  <hr>
-
-  @if($schedules->isEmpty())
-    <article>@lang('event.schedule_not_found')</article>
-  @endif
+  <nav aria-label="breadcrumb">
+    <ul>
+      <li><a href="{{ route('index') }}">@lang('navigation.home')</a></li>
+      <li><a href="{{ url()->current() }}">{{ $title }}</a></li>
+    </ul>
+  </nav>
 
   @if (!$schedules->isEmpty())
     <div class="overflow-auto">
