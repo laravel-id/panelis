@@ -1,10 +1,10 @@
 <div>
   <form>
     <fieldset role="group">
-      <input name="keyword" wire:model.live.debounce.100ms="keyword" value="{{ request('keyword') }}" id="search-input" type="text" placeholder="@lang('event.schedule_placeholder_search')" />
-      @if (!empty($keyword))
-        <a href="#" x-on:click.prevent="$wire.keyword = ''; $wire.$refresh()" type="reset" class="outline secondary"><i class="ri-close-line"></i></a>
-      @endif
+      <input aria-busy="true" name="keyword" wire:model.live.debounce.100ms="keyword" value="{{ request('keyword') }}" id="search-input" type="text" placeholder="@lang('event.schedule_placeholder_search')" />
+      <a wire:loading.attr="aria-busy" x-show="$wire.keyword.length >= 1" href="#" x-on:click.prevent="$wire.keyword = ''; $wire.$refresh()" type="reset" class="outline secondary">
+        <i wire:loading.remove class="ri-close-line"></i>
+      </a>
     </fieldset>
 
     @if (empty($date))

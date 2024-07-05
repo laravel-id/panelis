@@ -227,7 +227,6 @@ class Schedule extends Model implements Sitemapable
 
     public static function getPublishedSchedules(?array $filters = null): Collection
     {
-        Log::debug('Filters', $filters);
         $method = __METHOD__;
 
         $timezone = get_timezone();
@@ -268,7 +267,7 @@ class Schedule extends Model implements Sitemapable
                 SELECT, [$modifier]);
             })
             ->when(! empty($filters['keyword']), function (Builder $builder) use ($filters): Builder {
-                $keyword = sprintf('%%%s%%', $filters['keyword']);
+                $keyword = sprintf('%%%s%%', trim($filters['keyword']));
 
                 return $builder->where(function (Builder $builder) use ($keyword): Builder {
                     return $builder->whereAny(['title', 'description', 'location', 'categories'], 'LIKE', $keyword)
