@@ -59,7 +59,7 @@ class SettingServiceProvider extends ServiceProvider
         }
 
         LanguageSwitch::configureUsing(function (LanguageSwitch $lang) {
-            $lang->locales(config('app.locales', [config('app.locale')]))
+            $lang->locales(config('app.locales', [config('app.locale', 'en')]))
                 ->circular();
         });
     }

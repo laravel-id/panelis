@@ -32,6 +32,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property BelongsToMany $branches
  * @property Role $roles
  * @property string $email
+ * @property bool $is_root
  */
 class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenants
 {
@@ -89,7 +90,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
             if ($provider !== AvatarProvider::UIAvatars->value) {
                 $avatar = AvatarProvider::tryFrom($provider);
 
-                if (!is_null($avatar)) {
+                if (! is_null($avatar)) {
                     return $avatar->getImageUrl($this);
                 }
             }
@@ -100,16 +101,6 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
         }
 
         return Storage::disk('public')->url($this->avatar);
-    }
-
-    public function roles(): MorphToMany
-    {
-        return $this->morphToMany(Role::class, 'model', 'model_has_roles');
-    }
-
-    public function profile(): HasOne
-    {
-        return $this->hasOne(Profile::class);
     }
 
     public function getTenants(Panel $panel): array|Collection
@@ -124,6 +115,21 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
             ->exists();
     }
 
+    public function getIsRootAccess(): bool
+    {
+        return $this->roles->isEmpty();
+    }
+
+    public function roles(): MorphToMany
+    {
+        return $this->morphToMany(Role::class, 'model', 'model_has_roles');
+    }
+
+    public function profile(): HasOne
+    {
+        return $this->hasOne(Profile::class);
+    }
+
     public function branches(): BelongsToMany
     {
         return $this->belongsToMany(Branch::class);
@@ -132,10 +138,5 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
     public function settings(): HasMany
     {
         return $this->hasMany(Setting::class);
-    }
-
-    public function isRoot(): bool
-    {
-        return $this->roles->count() === 0;
     }
 }

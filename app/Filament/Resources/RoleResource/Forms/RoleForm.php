@@ -24,17 +24,18 @@ class RoleForm
                     TextInput::make('guard_name')
                         ->label('user.role_guard_name')
                         ->default('web')
-                        ->required(),
+                        ->required()
+                        ->alphaDash(),
                 ]),
 
             Textarea::make('description')
                 ->label(__('user.role_description'))
-                ->required()
                 ->rows(3)
                 ->maxLength(250),
 
             Toggle::make('is_admin')
-                ->label(__('user.role_is_admin')),
+                ->label(__('user.role_is_admin'))
+                ->live(),
         ];
     }
 }
