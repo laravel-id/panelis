@@ -6,6 +6,7 @@ use App\Filament\Resources\Event\ScheduleResource;
 use App\Models\Event\Package;
 use App\Models\Event\Schedule;
 use Filament\Actions;
+use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\KeyValueEntry;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Section;
@@ -46,7 +47,7 @@ class ViewSchedule extends ViewRecord
 
     public function infolist(Infolist $infolist): Infolist
     {
-        $dateFormat = config('app.datetime_format', 'Y-m-d H:i');
+        $dateFormat = get_datetime_format();
         $timezone = get_timezone();
 
         return $infolist
@@ -75,32 +76,35 @@ class ViewSchedule extends ViewRecord
                             ->label(__('event.schedule_description'))
                             ->markdown(),
 
-                        TextEntry::make('started_at')
-                            ->label(__('event.schedule_started_at'))
-                            ->icon('heroicon-s-calendar')
-                            ->size(TextEntry\TextEntrySize::Medium)
-                            ->dateTime($dateFormat, $timezone),
+                        Grid::make()
+                            ->schema([
+                                TextEntry::make('started_at')
+                                    ->label(__('event.schedule_started_at'))
+                                    ->icon('heroicon-s-calendar')
+                                    ->size(TextEntry\TextEntrySize::Medium)
+                                    ->dateTime($dateFormat, $timezone),
 
-                        TextEntry::make('finished_at')
-                            ->label(__('event.schedule_finished_at'))
-                            ->icon('heroicon-s-calendar')
-                            ->size(TextEntry\TextEntrySize::Medium)
-                            ->visible(fn (Schedule $schedule): bool => ! empty($schedule->finished_at))
-                            ->dateTime($dateFormat, $timezone),
+                                TextEntry::make('finished_at')
+                                    ->label(__('event.schedule_finished_at'))
+                                    ->icon('heroicon-s-calendar')
+                                    ->size(TextEntry\TextEntrySize::Medium)
+                                    ->visible(fn (Schedule $schedule): bool => ! empty($schedule->finished_at))
+                                    ->dateTime($dateFormat, $timezone),
 
-                        TextEntry::make('full_location')
-                            ->html()
-                            ->openUrlInNewTab()
-                            ->label(__('event.schedule_location'))
-                            ->size(TextEntry\TextEntrySize::Medium)
-                            ->icon(fn (Schedule $schedule): string => $schedule->is_virtual ? 'heroicon-s-globe-alt' : 'heroicon-s-map-pin')
-                            ->formatStateUsing(function (Schedule $schedule): string {
-                                if ($schedule->is_virtual) {
-                                    return __('event.schedule_is_virtual');
-                                }
+                                TextEntry::make('full_location')
+                                    ->html()
+                                    ->openUrlInNewTab()
+                                    ->label(__('event.schedule_location'))
+                                    ->size(TextEntry\TextEntrySize::Medium)
+                                    ->icon(fn (Schedule $schedule): string => $schedule->is_virtual ? 'heroicon-s-globe-alt' : 'heroicon-s-map-pin')
+                                    ->formatStateUsing(function (Schedule $schedule): string {
+                                        if ($schedule->is_virtual) {
+                                            return __('event.schedule_is_virtual');
+                                        }
 
-                                return $schedule->full_location;
-                            }),
+                                        return $schedule->full_location;
+                                    }),
+                            ]),
 
                         RepeatableEntry::make('contacts')
                             ->label(__('event.schedule_contact'))
@@ -127,8 +131,8 @@ class ViewSchedule extends ViewRecord
 
                 Section::make()
                     ->columnSpan(1)
+                    ->collapsible()
                     ->schema([
-
                         TextEntry::make('organizers.name')
                             ->label(__('event.organizer'))
                             ->bulleted(),
@@ -158,7 +162,7 @@ class ViewSchedule extends ViewRecord
                 Section::make(__('event.package'))
                     ->schema([
                         RepeatableEntry::make('packages')
-                            ->columns(2)
+                            ->columns()
                             ->schema([
                                 TextEntry::make('title')
                                     ->label(__('event.package_title')),
