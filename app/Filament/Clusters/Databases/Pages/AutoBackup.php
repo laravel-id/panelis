@@ -142,7 +142,14 @@ class AutoBackup extends Page implements HasForms
                     Placeholder::make('database.url')
                         ->label(__('database.path'))
                         ->visible(fn (): bool => config('database.default') === DatabaseType::SQLite->value)
-                        ->content($database['database'] ?? null),
+                        ->helperText(function (): ?string {
+                            if (config('app.demo')) {
+                                return __('database.hidden_in_demo');
+                            }
+
+                            return null;
+                        })
+                        ->content(config('app.demo') ? '***' : $database['database'] ?? null),
 
                     Toggle::make('database.auto_backup_enabled')
                         ->label(__('database.backup_enabled'))

@@ -3,6 +3,7 @@
 namespace App\Services\Database\Vendors;
 
 use App\Services\Database\Database;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Storage;
 
@@ -30,20 +31,32 @@ class SQLite implements Database
     {
         $command = Process::run('sqlite3 -version');
 
-        return $command->output() ?? '';
+        $versions = explode(' ', $command->output());
+        if (count($versions) >= 2) {
+            return sprintf('%s %s', $versions[0], $versions[1]);
+        }
+
+        return null;
+
     }
 
     public function backup(): void
     {
         $database = config('database.connections.sqlite.database');
-        $filename = sprintf('%s.sqlite', time());
+        $filename = sprintf('%s.sql', time());
 
         if (! Storage::disk('local')->directoryExists('database')) {
             Storage::makeDirectory('database');
         }
         $destination = sprintf('%s/%s', storage_path('app/database'), $filename);
 
-        Process::path(database_path())
-            ->run(sprintf('sqlite3 %s ".backup %s"', basename($database), $destination));
+        $command = Process::path(database_path())
+            ->run(sprintf('sqlite3 %s .dump > %s', $database, $destination));
+
+        if (!$command->successful()) {
+            Log::error(__('Failed to run SQLite backup command.'), [
+                'message' => $command->errorOutput(),
+            ]);
+        }
     }
 }
