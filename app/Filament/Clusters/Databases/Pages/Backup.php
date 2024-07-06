@@ -12,6 +12,7 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Number;
@@ -38,6 +39,11 @@ class Backup extends Page implements HasTable
         return __('database.backup');
     }
 
+    public static function canAccess(): bool
+    {
+        return Auth::user()->can('ViewDbBackup');
+    }
+
     public function table(Table $table): Table
     {
         $query = Database::query()
@@ -60,10 +66,10 @@ class Backup extends Page implements HasTable
             ])
             ->actions([
                 Action::make('download')
+                    ->visible(Auth::user()->can('DownloadBackupDb'))
                     ->label(__('database.button_download'))
                     ->button()
                     ->color('primary')
-                    ->disabled(config('app.demo'))
                     ->action(function (Database $db) {
                         $storage = Storage::disk('local');
 
@@ -85,11 +91,11 @@ class Backup extends Page implements HasTable
                     }),
 
                 Action::make('delete')
+                    ->visible(Auth::user()->can('DeleteBackupDb'))
                     ->label(__('database.button_delete'))
                     ->button()
                     ->color('warning')
                     ->requiresConfirmation()
-                    ->disabled(config('app.demo'))
                     ->action(function (Database $db): void {
                         try {
                             $storage = Storage::disk('local');

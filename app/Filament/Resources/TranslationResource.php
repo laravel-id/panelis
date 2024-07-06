@@ -14,13 +14,12 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
 use Spatie\TranslationLoader\LanguageLine;
 
 class TranslationResource extends Resource
 {
     protected static ?string $model = Translation::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-flag';
 
     protected static bool $isScopedToTenant = false;
 
@@ -39,6 +38,11 @@ class TranslationResource extends Resource
     public static function getNavigationGroup(): ?string
     {
         return __('navigation.system');
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return Auth::user()->can('ViewTranslation');
     }
 
     public static function form(Form $form): Form
@@ -102,9 +106,10 @@ class TranslationResource extends Resource
             ->columns([
                 TextColumn::make('key')
                     ->label(__('translation.key'))
+                    ->copyable()
                     ->sortable()
                     ->grow(false)
-                    ->searchable(),
+                    ->searchable(['key', 'text']),
 
                 TextColumn::make(sprintf('text.%s', config('app.locale')))
                     ->label(__('translation.text')),
@@ -128,7 +133,8 @@ class TranslationResource extends Resource
                     ->label(__('translation.is_system')),
             ])
             ->actions([
-                EditAction::make(),
+                EditAction::make()
+                    ->visible(Auth::user()->can('EditTranslation')),
             ])
             ->bulkActions([
 

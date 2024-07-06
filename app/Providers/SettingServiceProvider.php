@@ -25,31 +25,26 @@ class SettingServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if (! $this->app->runningInConsole()) {
-            // sometimes, when in CLI, this feature not really works
-            // for example, when deploying using Docker
+        $hasSetting = Cache::remember('has_setting', now()->addDay(), function (): bool {
+            return Schema::hasTable('settings');
+        });
 
-            $hasSetting = Cache::remember('has_setting', now()->addDay(), function (): bool {
-                return Schema::hasTable('settings');
+        if ($hasSetting) {
+            Setting::getAll()->each(function (Setting $setting): void {
+                Config::set($setting->key, $setting->value);
             });
 
-            if ($hasSetting) {
-                Setting::getAll()->each(function (Setting $setting): void {
+            if (Auth::check()) {
+                Setting::getByUser(Auth::id())->each(function (Setting $setting): void {
+                    // override config from db with user's
                     Config::set($setting->key, $setting->value);
                 });
-
-                if (Auth::check()) {
-                    Setting::getByUser(Auth::id())->each(function (Setting $setting): void {
-                        // override config from db with user's
-                        Config::set($setting->key, $setting->value);
-                    });
-                }
             }
-
-            LanguageSwitch::configureUsing(function (LanguageSwitch $lang) {
-                $lang->locales(config('app.locales', [config('app.locale', 'en')]))
-                    ->circular();
-            });
         }
+
+        LanguageSwitch::configureUsing(function (LanguageSwitch $lang) {
+            $lang->locales(config('app.locales', [config('app.locale', 'en')]))
+                ->circular();
+        });
     }
 }
