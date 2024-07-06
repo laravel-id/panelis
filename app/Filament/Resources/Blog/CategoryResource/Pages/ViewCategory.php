@@ -3,13 +3,18 @@
 namespace App\Filament\Resources\Blog\CategoryResource\Pages;
 
 use App\Filament\Resources\Blog\CategoryResource;
-use Filament\Actions;
-use Filament\Infolists\Components;
+use App\Models\Blog\Category;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Infolists\Components\Section;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Infolists\Components\TextEntry\TextEntrySize;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class ViewCategory extends ViewRecord
 {
@@ -18,14 +23,24 @@ class ViewCategory extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make()->visible(Auth::user()->can('View blog category')),
+            EditAction::make()->visible(Auth::user()
+                ->can('ViewBlogCategory')),
+
+            ActionGroup::make([
+                DeleteAction::make()
+                    ->visible(Auth::user()->can('DeleteBlogCategory')),
+
+                ForceDeleteAction::make()
+                    ->visible(Auth::user()->can('DeleteBlogCategory')),
+            ]),
         ];
     }
 
     protected function authorizeAccess(): void
     {
-        abort_unless(config('modules.blog'), Response::HTTP_NOT_FOUND);
-        abort_unless(Auth::user()->can('View blog category'), Response::HTTP_FORBIDDEN);
+        abort_unless(config('module.blog'), Response::HTTP_NOT_FOUND);
+
+        abort_unless(Auth::user()->can('ViewBlogCategory'), Response::HTTP_FORBIDDEN);
     }
 
     public function infolist(Infolist $infolist): Infolist
@@ -33,33 +48,36 @@ class ViewCategory extends ViewRecord
         return $infolist
             ->columns(3)
             ->schema([
-                Components\Section::make()
+                Section::make()
                     ->columnSpan(2)
                     ->columns(2)
                     ->schema([
-                        Components\TextEntry::make('name')
-                            ->size(Components\TextEntry\TextEntrySize::Large),
+                        TextEntry::make('name')
+                            ->label(__('blog.category_name'))
+                            ->size(TextEntrySize::Large),
 
-                        Components\TextEntry::make('slug')
-                            ->size(Components\TextEntry\TextEntrySize::Large),
+                        TextEntry::make('slug')
+                            ->label(__('blog.category_slug'))
+                            ->size(TextEntrySize::Large),
 
-                        Components\TextEntry::make('description')
+                        TextEntry::make('description')
+                            ->label(__('blog.category_description'))
                             ->columnSpanFull()
                             ->markdown(),
                     ]),
 
-                Components\Section::make()
+                Section::make()
                     ->columnSpan(1)
                     ->schema([
-                        Components\TextEntry::make('created_at')
-                            ->translateLabel(),
+                        TextEntry::make('local_created_at')
+                            ->label(__('ui.created_at')),
 
-                        Components\TextEntry::make('updated_at')
-                            ->translateLabel(),
+                        TextEntry::make('local_updated_at')
+                            ->label(__('ui.updated_at')),
 
-                        Components\TextEntry::make('deleted_at')
-                            ->hidden(fn (?Model $record): bool => empty($record->deleted_at))
-                            ->translateLabel(),
+                        TextEntry::make('local_deleted_at')
+                            ->label(__('ui.deleted_at'))
+                            ->hidden(fn (Category $category): bool => empty($category->local_deleted_at)),
                     ]),
             ]);
     }

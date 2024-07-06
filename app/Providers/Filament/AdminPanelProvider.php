@@ -46,6 +46,10 @@ class AdminPanelProvider extends PanelProvider
                 //TodoPlugin::make(),
             ])
             ->navigationGroups([
+                NavigationGroup::make(__('navigation.blog'))
+                    ->collapsed()
+                    ->icon('heroicon-o-document-text'),
+
                 NavigationGroup::make(__('navigation.user'))
                     ->collapsed()
                     ->icon('heroicon-s-user-group'),

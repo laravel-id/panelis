@@ -2,16 +2,25 @@
 
 namespace App\Filament\Resources\Blog;
 
+use App\Filament\Resources\Blog\CategoryResource\Forms\CategoryForm;
 use App\Filament\Resources\Blog\CategoryResource\Pages;
 use App\Models\Blog\Category;
-use Filament\Forms;
+use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\ForceDeleteBulkAction;
+use Filament\Tables\Actions\RestoreBulkAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Filters\TernaryFilter;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
@@ -19,7 +28,7 @@ class CategoryResource extends Resource
 {
     protected static ?string $model = Category::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-list-bullet';
+    protected static bool $isScopedToTenant = false;
 
     public static function getLabel(): ?string
     {
@@ -28,22 +37,17 @@ class CategoryResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('blog.navigation');
-    }
-
-    public static function getActiveNavigationIcon(): ?string
-    {
-        return 'heroicon-s-list-bullet';
+        return __('navigation.blog');
     }
 
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()->can('View blog category') && config('modules.blog');
+        return config('module.blog');
     }
 
-    public static function getNavigationParentItem(): ?string
+    public static function canAccess(): bool
     {
-        return __('blog.posts');
+        return Auth::user()->can('ViewBlogCategory');
     }
 
     public static function form(Form $form): Form
@@ -51,55 +55,27 @@ class CategoryResource extends Resource
         return $form
             ->columns(3)
             ->schema([
-                Forms\Components\Section::make()
+                Section::make()
                     ->columnSpan(function (?Model $record): int {
                         return empty($record) ? 3 : 2;
                     })
-                    ->columns(2)
-                    ->schema([
-                        Forms\Components\TextInput::make('name')
-                            ->label(__('blog.fields.title'))
-                            ->required()
-                            ->autofocus()
-                            ->live(true)
-                            ->afterStateUpdated(
-                                fn (Forms\Set $set, ?string $state) => $set('slug', Str::slug($state))
-                            )
-                            ->minLength(3)
-                            ->maxLength(100),
+                    ->columns()
+                    ->schema(CategoryForm::make()),
 
-                        Forms\Components\TextInput::make('slug')
-                            ->label(__('blog.fields.slug'))
-                            ->required()
-                            ->unique(ignorable: $form->getRecord())
-                            ->minLength(3)
-                            ->maxLength(150),
-
-                        Forms\Components\Textarea::make('description')
-                            ->label(__('blog.fields.description'))
-                            ->columnSpanFull()
-                            ->rows(5)
-                            ->maxLength(250),
-
-                        Forms\Components\Toggle::make('is_visible')
-                            ->label(__('blog.fields.is_visible'))
-                            ->default(true),
-                    ]),
-
-                Forms\Components\Section::make()
+                Section::make()
                     ->columnSpan(1)
                     ->hiddenOn(Pages\CreateCategory::class)
                     ->schema([
-                        Forms\Components\Placeholder::make('created_at')
-                            ->label('common.fields.created_at')
-                            ->content(fn (?Model $record): string => $record->created_at),
+                        Placeholder::make('created_at')
+                            ->label('ui.created_at')
+                            ->content(fn (Category $category): string => $category->created_at),
 
-                        Forms\Components\Placeholder::make('updated_at')
-                            ->label('common.fields.updated_at')
-                            ->content(fn (?Model $record): string => $record->updated_at),
+                        Placeholder::make('updated_at')
+                            ->label('ui.updated_at')
+                            ->content(fn (Category $category): string => $category->updated_at),
 
-                        Forms\Components\Placeholder::make('deleted_at')
-                            ->label(__('common.fields.deleted_at'))
+                        Placeholder::make('deleted_at')
+                            ->label(__('ui.deleted_at'))
                             ->hidden(fn (?Model $record): bool => empty($record->deleted_at))
                             ->content(fn (?Model $record): string => $record->deleted_at ?? ''),
                     ]),
@@ -108,57 +84,56 @@ class CategoryResource extends Resource
 
     public static function table(Table $table): Table
     {
-        $canEdit = Auth::user()->can('blog_category_edit');
-        $canDelete = Auth::user()->can('blog_category_delete');
+        $canEdit = Auth::user()->can('EditBlogCategory');
+        $canDelete = Auth::user()->can('DeleteBlogCategory');
 
         return $table
-            ->recordUrl(function (?Model $record): string {
-                return route('filament.admin.resources.blog.categories.view', $record);
+            ->recordUrl(function (Category $category): string {
+                return Pages\ViewCategory::getUrl(['record' => $category]);
             })
             ->columns([
-                Tables\Columns\ToggleColumn::make('is_visible')
-                    ->label(__('blog.fields.is_visible'))
+                ToggleColumn::make('is_visible')
+                    ->label(__('blog.category_is_visible'))
                     ->visible($canEdit),
 
-                Tables\Columns\TextColumn::make('slug')
-                    ->label(__('blog.fields.slug'))
+                TextColumn::make('slug')
+                    ->label(__('blog.category_slug'))
                     ->searchable()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('name')
-                    ->label(__('blog.fields.title'))
+                TextColumn::make('name')
+                    ->label(__('blog.category_title'))
+                    ->description(fn (Category $category): ?string => Str::words($category->description, 8))
                     ->searchable()
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('description')
-                    ->label(__('blog.fields.description'))
-                    ->words(8)
-                    ->searchable(),
-
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->label(__('common.fields.updated_at'))
-                    ->sortable()
-                    ->tooltip(fn (?Model $record): string => $record->updated_at)
-                    ->since(),
+                TextColumn::make('local_updated_at')
+                    ->label(__('ui.updated_at'))
+                    ->sortable(),
             ])
             ->filters([
-                Tables\Filters\TernaryFilter::make('is_visible')
-                    ->label('blog.fields.is_visible'),
-                Tables\Filters\TrashedFilter::make(),
+                TernaryFilter::make('is_visible')
+                    ->label('blog.category_is_visible'),
+
+                TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make()
+                EditAction::make()
                     ->visible($canEdit),
-                Tables\Actions\DeleteAction::make()
+
+                DeleteAction::make()
                     ->visible($canDelete),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make()
+                BulkActionGroup::make([
+                    DeleteBulkAction::make()
                         ->visible($canDelete),
-                    Tables\Actions\ForceDeleteBulkAction::make()
+
+                    ForceDeleteBulkAction::make()
                         ->visible($canDelete),
-                    Tables\Actions\RestoreBulkAction::make(),
+
+                    RestoreBulkAction::make()
+                        ->visible(Auth::user()->can('RestoreBlogCategory')),
                 ]),
             ]);
     }
@@ -175,16 +150,8 @@ class CategoryResource extends Resource
         return [
             'index' => Pages\ListCategories::route('/'),
             'create' => Pages\CreateCategory::route('/create'),
-            'view' => Pages\ViewCategory::route('/{record}'),
             'edit' => Pages\EditCategory::route('/{record}/edit'),
+            'view' => Pages\ViewCategory::route('/{record}'),
         ];
-    }
-
-    public static function getEloquentQuery(): Builder
-    {
-        return parent::getEloquentQuery()
-            ->withoutGlobalScopes([
-                SoftDeletingScope::class,
-            ]);
     }
 }

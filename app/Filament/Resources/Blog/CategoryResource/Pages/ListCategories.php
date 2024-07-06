@@ -3,10 +3,10 @@
 namespace App\Filament\Resources\Blog\CategoryResource\Pages;
 
 use App\Filament\Resources\Blog\CategoryResource;
-use Filament\Actions;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class ListCategories extends ListRecords
 {
@@ -15,13 +15,15 @@ class ListCategories extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()->visible(Auth::user()->can('Create blog category')),
+            CreateAction::make()
+                ->visible(Auth::user()->can('CreateBlogCategory')),
         ];
     }
 
     protected function authorizeAccess(): void
     {
-        abort_unless(config('modules.blog'), Response::HTTP_NOT_FOUND);
-        abort_unless(Auth::user()->can('View blog category'), Response::HTTP_FORBIDDEN);
+        abort_unless(config('module.blog'), Response::HTTP_NOT_FOUND);
+
+        abort_unless(Auth::user()->can('ViewBlogCategory'), Response::HTTP_FORBIDDEN);
     }
 }
