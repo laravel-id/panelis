@@ -10,6 +10,7 @@ use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
+use Filament\Forms\Get;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\DeleteAction;
@@ -87,7 +88,7 @@ class RoleResource extends Resource
                             ->descriptions(
                                 Permission::pluck('description', 'id'),
                             )
-                            ->required(),
+                            ->required(fn (Get $get): bool => (bool) $get('is_admin')),
                     ]),
             ]);
     }
@@ -107,7 +108,7 @@ class RoleResource extends Resource
                     ->label(__('user.role_name'))
                     ->searchable()
                     ->sortable()
-                    ->description(fn (Role $role): string => $role->description),
+                    ->description(fn (Role $role): ?string => $role->description),
 
                 TextColumn::make('users_count')
                     ->label(__('user.role_user_count'))

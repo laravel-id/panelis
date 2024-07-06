@@ -120,7 +120,7 @@ class UserResource extends Resource
 
                                 return $label;
                             })
-                            ->required(fn (User $user): bool => ! $user->isRoot()),
+                            ->required(fn (User $user): bool => ! $user->is_root),
                     ]),
 
                 Section::make(__('user.profile'))
