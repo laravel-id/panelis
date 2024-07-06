@@ -6,6 +6,7 @@ use App\Filament\Resources\UserResource\Pages;
 use App\Models\Branch;
 use App\Models\Role;
 use App\Models\User;
+use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
@@ -93,6 +94,7 @@ class UserResource extends Resource
 
                 Section::make(__('user.branch'))
                     ->description(__('user.branch_section_description'))
+                    ->visible(fn(): bool => !empty(Filament::getTenant()))
                     ->schema([
                         CheckboxList::make('branches')
                             ->label(__('user.branch'))
@@ -147,7 +149,8 @@ class UserResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('branches.name')
-                    ->label(__('user.branch')),
+                    ->label(__('user.branch'))
+                    ->visible(fn(): bool => !empty(Filament::getTenant())),
 
                 TextColumn::make('roles.name')
                     ->label(__('user.role'))
