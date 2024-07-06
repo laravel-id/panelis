@@ -22,7 +22,7 @@ class RoleForm
                         ->maxLength(50),
 
                     TextInput::make('guard_name')
-                        ->label('user.role_guard_name')
+                        ->label(__('user.role_guard_name'))
                         ->default('web')
                         ->required()
                         ->alphaDash(),
