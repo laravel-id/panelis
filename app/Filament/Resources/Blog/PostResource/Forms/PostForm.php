@@ -39,7 +39,7 @@ class PostForm
                         ->maxLength(250),
 
                     MarkdownEditor::make('content')
-                        ->label(__('blog.post_content'))
+                        ->hiddenLabel()
                         ->columnSpanFull()
                         ->default(''),
                 ]),
@@ -77,13 +77,13 @@ class PostForm
                 ]),
 
             Section::make(__('blog.additional_data'))
-                ->description(__('blog.post_set_custom_metadata'))
+                ->description(__('blog.post_metadata_section_description'))
                 ->collapsed()
                 ->columnSpan(2)
                 ->reactive()
                 ->schema([
                     KeyValue::make('metadata')
-                        ->addActionLabel(__('blog.post_label.add_property'))
+                        ->addActionLabel(__('blog.btn_add_metadata'))
                         ->default([
                             'title' => '',
                             'description' => '',
