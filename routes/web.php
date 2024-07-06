@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\OrganizerController;
 use App\Http\Controllers\ScheduleController;
@@ -19,6 +21,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 Route::get('/', [ScheduleController::class, 'index'])->name('index');
+
+Route::middleware('guest')->group(function (): void {
+    Route::get('/login', [LoginController::class, 'form'])->name('login');
+    Route::post('/login', [LoginController::class, 'authenticate']);
+
+    Route::get('/register', [RegisterController::class, 'form'])->name('register');
+    Route::post('/register', [RegisterController::class, 'register']);
+});
+
 Route::post('/schedules.json', [ScheduleController::class, 'json']);
 
 Route::get('/subscribe', [SubscriberController::class, 'form'])->name('subscriber.form');

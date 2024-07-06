@@ -103,6 +103,18 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
         return Storage::disk('public')->url($this->avatar);
     }
 
+    public function canAccessTenant(Model $tenant): bool
+    {
+        return $this->branches()
+            ->wherePivot('branch_id', $tenant->id)
+            ->exists();
+    }
+
+    public function getIsRootAttribute(): bool
+    {
+        return $this->roles()->count() === 0;
+    }
+
     public function roles(): MorphToMany
     {
         return $this->morphToMany(Role::class, 'model', 'model_has_roles');
@@ -121,13 +133,6 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
     public function getTenants(Panel $panel): array|Collection
     {
         return $this->branches;
-    }
-
-    public function canAccessTenant(Model $tenant): bool
-    {
-        return $this->branches()
-            ->wherePivot('branch_id', $tenant->id)
-            ->exists();
     }
 
     public function branches(): BelongsToMany

@@ -111,7 +111,6 @@
         </div>
       @endforeach
     @endif
-
     @livewire('schedule.toolbar', compact('schedule'))
   </article>
 
