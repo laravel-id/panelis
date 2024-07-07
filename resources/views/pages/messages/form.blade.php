@@ -1,11 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
-  @if(session('success'))
-    <article>
-      {{ session('success') }}
-    </article>
-  @endif
+  <nav aria-label="breadcrumb">
+    <ul>
+      <li><a href="{{ route('index') }}">@lang('navigation.home')</a></li>
+      <li>{{ $title }}</li>
+    </ul>
+  </nav>
+
+  <x-alert :message="session('success')" />
 
   <article>
     <header>{{ $title }}</header>
@@ -15,29 +18,18 @@
 
       <fieldset>
         <div class="grid">
-          <label>
-            @lang('message.name')*
-            <input type="text" name="name" value="{{ old('value') }}" placeholder="@lang('message.placeholder_name')" @error('name') aria-invalid="true" @enderror>
-          </label>
+          <x-form.input label="message.name" name="name" placeholder="message.placeholder_name" required />
 
-          <label>
-            @lang('message.email')
-            <input type="text" name="email" value="{{ old('email') }}" placeholder="@lang('message.placeholder_email')" @error('email') aria-invalid="true" @enderror>
-            <small>@lang('message.provide_email_if_want_reply')</small>
-          </label>
+          <x-form.input label="message.email" name="email" type="email" placeholder="message.placeholder_email" helper-text="message.provide_email_if_want_reply" />
         </div>
 
-        <label>
-          @lang('message.subject')
-          <input type="text" name="subject" value="{{ old('subject') }}" @error('subject') aria-invalid="true" @enderror>
-        </label>
+        <x-form.input label="message.subject" name="subject" />
 
-        <label>
-          @lang('message.body')*
-          <textarea name="body" rows="5" @error('body') aria-invalid="true" @enderror>{{ old('body') }}</textarea>
-        </label>
+        <x-form.textarea label="message.body" name="body" />
 
-        <button type="submit">@lang('message.button_submit')</button>
+        <footer>
+          <x-form.button label="message.button_submit" />
+        </footer>
       </fieldset>
     </form>
   </article>

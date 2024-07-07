@@ -8,7 +8,7 @@
 
   @stack('metadata')
 
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.{{ config('color.theme', 'zinc') }}.min.css"/>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.{{ get_color_theme() }}.min.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.colors.min.css" />
 
   @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -21,7 +21,7 @@
   <nav>
     <ul>
       <li>
-        <strong class="pico-color-{{ config('color.theme', 'zinc') }}">
+        <strong class="pico-color-{{ get_color_theme() }}">
           <i class="ri-run-fill"></i>
           {{ config('app.name') }}
         </strong>
