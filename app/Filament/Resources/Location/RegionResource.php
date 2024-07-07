@@ -73,7 +73,7 @@ class RegionResource extends Resource
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('country.name')
-                    ->label(__('location.country_name'))
+                    ->label(__('location.country'))
                     ->sortable()
                     ->searchable(),
 

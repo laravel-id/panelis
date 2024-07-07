@@ -20,7 +20,7 @@ class DistrictForm
                 ->required(),
 
             TextInput::make('name')
-                ->label('location.district_name')
+                ->label(__('location.district_name'))
                 ->required()
                 ->minLength(3)
                 ->maxLength(150),

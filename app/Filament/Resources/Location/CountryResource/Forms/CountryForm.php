@@ -10,20 +10,20 @@ class CountryForm
     {
         return [
             TextInput::make('alpha2')
-                ->label(__('location.alpha2'))
+                ->label(__('location.country_alpha2'))
                 ->length(2),
 
             TextInput::make('alpha3')
                 ->length(3)
-                ->label(__('location.alpha3')),
+                ->label(__('location.country_alpha3')),
 
             TextInput::make('un_code')
-                ->label(__('location.un_code'))
+                ->label(__('location.country_un_code'))
                 ->numeric()
                 ->length(3),
 
             TextInput::make('name')
-                ->label(__('location.name'))
+                ->label(__('location.country_name'))
                 ->required()
                 ->maxLength(100)
                 ->columnSpanFull(),
