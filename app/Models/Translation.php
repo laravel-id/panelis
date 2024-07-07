@@ -37,10 +37,11 @@ class Translation extends LanguageLine
         );
     }
 
-    public static function getFormattedTranslation(string $locale, bool $isSystem = false): ?array
+    public static function getFormattedTranslation(string $locale, ?array $groups = null, bool $isSystem = false): ?array
     {
         return Translation::orderBy('group')
             ->orderBy('key')
+            ->when(!empty($groups), fn(Builder $builder): Builder => $builder->whereIn('group', $groups))
             ->when($isSystem, fn (Builder $builder): Builder => $builder->where('is_system', true))
             ->get()
             ->mapWithKeys(function ($line) use ($locale): array {

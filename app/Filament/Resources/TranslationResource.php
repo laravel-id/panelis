@@ -2,11 +2,10 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\TranslationResource\Forms\TranslationForm;
 use App\Filament\Resources\TranslationResource\Pages;
 use App\Models\Translation;
-use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables\Actions\EditAction;
@@ -47,59 +46,10 @@ class TranslationResource extends Resource
 
     public static function form(Form $form): Form
     {
-        $groups = Translation::orderBy('group')
-            ->groupBy('group')
-            ->pluck('group')
-            ->toArray();
-
         return $form
             ->schema([
                 Section::make()
-                    ->schema([
-                        TextInput::make('group')
-                            ->label(__('translation.group'))
-                            ->autocomplete(false)
-                            ->datalist($groups)
-                            ->helperText(function (?string $operation, ?Translation $line): ?string {
-                                if ($operation === 'edit' && ! $line->is_system) {
-                                    return __('translation.group_change_warning');
-                                }
-
-                                return null;
-                            })
-                            ->disabled(fn (?Translation $line): bool => $line?->is_system ?? false)
-                            ->required()
-                            ->alphaDash(),
-
-                        TextInput::make('key')
-                            ->label(__('translation.key'))
-                            ->helperText(function (?string $operation, ?Translation $line): ?string {
-                                if ($operation === 'edit' && ! $line->is_system) {
-                                    return __('translation.key_change_warning');
-                                }
-
-                                return null;
-                            })
-                            ->autocomplete(false)
-                            ->disabled(fn (?Translation $line): bool => $line?->is_system ?? false)
-                            ->alphaDash()
-                            ->required(),
-
-                        KeyValue::make('text')
-                            ->label(__('translation.text'))
-                            ->addActionLabel(__('translation.add_line'))
-                            ->keyLabel(__('translation.lang'))
-                            ->valueLabel(__('translation.line'))
-                            ->default(function (): array {
-                                if (! empty(config('app.locales'))) {
-                                    return array_fill_keys(config('app.locales'), '');
-                                }
-
-                                return [config('app.locale') => ''];
-                            })
-                            ->helperText(__('translation.helper_locales_generated_setting'))
-                            ->required(),
-                    ]),
+                    ->schema(TranslationForm::make()),
             ]);
     }
 
@@ -117,7 +67,7 @@ class TranslationResource extends Resource
                     ->copyable()
                     ->sortable()
                     ->grow(false)
-                    ->searchable(['key', 'text']),
+                    ->searchable(['key', 'text', 'group']),
 
                 TextColumn::make(sprintf('text.%s', config('app.locale')))
                     ->label(__('translation.text')),
