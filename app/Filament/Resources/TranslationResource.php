@@ -90,6 +90,14 @@ class TranslationResource extends Resource
                             ->addActionLabel(__('translation.add_line'))
                             ->keyLabel(__('translation.lang'))
                             ->valueLabel(__('translation.line'))
+                            ->default(function (): array {
+                                if (! empty(config('app.locales'))) {
+                                    return array_fill_keys(config('app.locales'), '');
+                                }
+
+                                return [config('app.locale') => ''];
+                            })
+                            ->helperText(__('translation.helper_locales_generated_setting'))
                             ->required(),
                     ]),
             ]);
