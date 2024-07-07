@@ -1,6 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
+  <nav aria-label="breadcrumb">
+    <ul>
+      <li><a href="{{ route('index') }}">@lang('navigation.home')</a></li>
+      <li>{{ $title }}</li>
+    </ul>
+  </nav>
+
   <form method="post" action="{{ route('register') }}">
     @csrf
 
@@ -9,37 +16,13 @@
         @lang('user.register')
       </header>
 
-      <label>
-        @lang('user.name')
-        <input type="text" name="name" value="{{ old('name') }}" @error('name') aria-invalid="true" @enderror>
-        @error('name')
-          <small>{{ $message }}</small>
-        @enderror
-      </label>
+      <x-form.input label="user.name" name="name" required/>
 
-      <label>
-        @lang('user.email')
-        <input name="email" type="email" value="{{ old('email') }}" @error('password') aria-invalid="true" @enderror>
-        @error('email')
-          <small>{{ $message }}</small>
-        @enderror
-      </label>
+      <x-form.input label="user.email" name="email" type="email" required/>
 
-      <label>
-        @lang('user.password')
-        <input type="password" name="password" @error('password') aria-invalid="true" @enderror>
-        @error('password')
-          <small>{{ $message }}</small>
-        @enderror
-      </label>
+      <x-form.input label="user.password" name="password" type="password" required/>
 
-      <label>
-        @lang('user.password_confirmation')
-        <input type="password" name="password_confirmation">
-        @error('password_confirmation')
-          <small>{{ $message }}</small>
-        @enderror
-      </label>
+      <x-form.input label="user.password_confirmation" name="password_confirmation" type="password" required/>
 
       <p>
         <i class="ri-lock-2-fill"></i>
@@ -49,7 +32,7 @@
       </p>
 
       <footer>
-        <button type="submit">@lang('user.btn_login')</button>
+        <x-form.button label="user.btn_register" />
       </footer>
     </article>
   </form>

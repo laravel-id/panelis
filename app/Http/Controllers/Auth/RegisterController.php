@@ -29,7 +29,8 @@ class RegisterController extends Controller
     {
         $this->checkDefaultRole();
 
-        return view('pages.auth.register');
+        return view('pages.auth.register')
+            ->with('title', __('user.register'));
     }
 
     public function register(RegisterRequest $request): RedirectResponse

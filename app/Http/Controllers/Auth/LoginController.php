@@ -13,7 +13,8 @@ class LoginController extends Controller
 {
     public function form(): View
     {
-        return view('pages.auth.login');
+        return view('pages.auth.login')
+            ->with('title', __('user.login'));
     }
 
     public function authenticate(LoginRequest $request): RedirectResponse

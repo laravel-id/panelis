@@ -1,6 +1,13 @@
 @extends('layouts.app')
 
 @section('content')
+  <nav aria-label="breadcrumb">
+    <ul>
+      <li><a href="{{ route('index') }}">@lang('navigation.home')</a></li>
+      <li>{{ $title }}</li>
+    </ul>
+  </nav>
+
   <form method="post" action="{{ route('login') }}">
     @csrf
 
@@ -9,33 +16,18 @@
         @lang('user.login')
       </header>
 
-      <label>
-        @lang('user.email')
-        <input name="email" value="{{ old('email') }}" @error('password') aria-invalid="true" @enderror>
-        @error('email')
-          <small>{{ $message }}</small>
-        @enderror
-      </label>
+      <x-form.input label="user.email" name="email" type="email" required />
 
-      <label>
-        @lang('user.password')
-        <input type="password" name="password" @error('password') aria-invalid="true" @enderror>
-        @error('password')
-          <small>{{ $message }}</small>
-        @enderror
-      </label>
+      <x-form.input label="user.password" name="password" type="password" required />
 
-      <label>
-        <input type="checkbox" name="remember" value="1" @checked('remember') />
-        @lang('user.remember_login')
-      </label>
+      <x-form.checkbox label="user.remember_login" name="remember" />
 
       <p>
         <a href="">@lang('user.forgot_password')</a>
       </p>
 
       <footer>
-        <button type="submit">@lang('user.btn_login')</button>
+        <x-form.button label="user.btn_login" />
       </footer>
     </article>
   </form>
