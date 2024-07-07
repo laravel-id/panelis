@@ -1,11 +1,14 @@
 @extends('layouts.app')
 
 @section('content')
-  @if(session('success'))
-    <article>
-      {{ session('success') }}
-    </article>
-  @endif
+  <nav aria-label="breadcrumb">
+    <ul>
+      <li><a href="{{ route('index') }}">@lang('navigation.home')</a></li>
+      <li>{{ $title }}</li>
+    </ul>
+  </nav>
+
+  <x-alert :message="session('success')" />
 
   <article>
     <header>{{ $title }}</header>

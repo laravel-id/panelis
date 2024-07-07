@@ -1,17 +1,21 @@
 @extends('layouts.app')
 
 @section('content')
+  <nav aria-label="breadcrumb">
+    <ul>
+      <li><a href="{{ route('index') }}">@lang('navigation.home')</a></li>
+      <li>{{ $title }}</li>
+    </ul>
+  </nav>
+
   @if(session('success'))
     <article>
       {{ session('success') }}
     </article>
   @endif
 
-  @if(session('error'))
-    <article>
-      {{ session('error') }}
-    </article>
-  @endif
+  <x-alert :message="session('success')" />
+  <x-alert :message="session('error')" type="error" />
 
   <form method="post" action="{{ route('subscriber.submit') }}">
     @csrf
