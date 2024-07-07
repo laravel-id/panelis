@@ -38,7 +38,7 @@
   </nav>
 
   <hgroup>
-    <h2 class="pico-color-{{ config('color.theme', 'zinc') }}-700">{{ $schedule->title }}</h2>
+    <h2 class="pico-color-{{ get_color_theme() }}-700">{{ $schedule->title }}</h2>
   </hgroup>
 
   <article>

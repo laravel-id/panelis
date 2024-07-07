@@ -24,7 +24,7 @@
   <nav aria-label="breadcrumb">
     <ul>
       <li><a href="{{ route('index') }}">@lang('navigation.home')</a></li>
-      <li><a href="{{ url()->current() }}">{{ $title }}</a></li>
+      <li>{{ $title }}</li>
     </ul>
   </nav>
 
@@ -42,7 +42,7 @@
         @foreach($schedules as $schedule)
           <tr>
             <td>
-              <div class="pico-color-{{ config('color.theme', 'zinc') }}-600">{{ $schedule->started_at->timezone($timezone)->translatedFormat('d') }}</div>
+              <div class="pico-color-{{ get_color_theme() }}-600">{{ $schedule->started_at->timezone($timezone)->translatedFormat('d') }}</div>
               {{ $schedule->started_at->timezone($timezone)->format('M') }}<sup>{{ $schedule->started_at->timezone($timezone)->format('y') }}</sup>
             </td>
             <td>
