@@ -23,23 +23,12 @@
     <article>
       <header>@lang('subscriber.subscribe')</header>
 
-      <label>
-        @lang('subscriber.email')
-        <input type="email" name="email" value="{{ old('email') }}" @error('email') aria-invalid="true" @enderror required>
-      </label>
+      <x-form.input label="subscriber.email" name="email" type="email" required />
 
-      <fieldset>
-        <legend>@lang('subscriber.period')</legend>
-        @foreach ($periods as $value => $label)
-          <label>
-            <input type="radio" name="period" value="{{ $value }}" @checked('period')/>
-            {{ $label }}
-          </label>
-        @endforeach
-      </fieldset>
+      <x-form.radio label="subscriber.period" name="period" :options="$periods" required />
 
       <footer>
-        <button type="submit">@lang('subscriber.btn_subscribe')</button>
+        <x-form.button label="subscriber.btn_subscribe" />
       </footer>
     </article>
   </form>
