@@ -34,7 +34,7 @@ class ModuleResource extends Resource
         return __('navigation.system');
     }
 
-    public static function shouldRegisterNavigation(): bool
+    public static function canAccess(): bool
     {
         return Auth::user()->can('Manage module');
     }

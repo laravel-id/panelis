@@ -4,8 +4,6 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Filament\Clusters\Settings\Enums\AvatarProvider;
-use App\Models\Event\Schedule;
-use App\Models\Schedule\Bookmark;
 use App\Models\Traits\HasLocalTime;
 use Carbon\Carbon;
 use Filament\Models\Contracts\FilamentUser;
@@ -34,6 +32,8 @@ use Spatie\Permission\Traits\HasRoles;
  * @property BelongsToMany $branches
  * @property Role $roles
  * @property string $email
+ * @property bool $is_root
+ * @property int $id
  */
 class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenants
 {
@@ -76,11 +76,12 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
 
     public function canAccessPanel(Panel $panel): bool
     {
-        if (! app()->isProduction()) {
+        // for root user without roles
+        if ($this->roles->isEmpty()) {
             return true;
         }
 
-        return true;
+        return $this->roles->contains('is_admin', true);
     }
 
     public function getFilamentAvatarUrl(): ?string
@@ -103,6 +104,11 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
         return Storage::disk('public')->url($this->avatar);
     }
 
+    public function getTenants(Panel $panel): array|Collection
+    {
+        return $this->branches;
+    }
+
     public function canAccessTenant(Model $tenant): bool
     {
         return $this->branches()
@@ -110,9 +116,9 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
             ->exists();
     }
 
-    public function getIsRootAttribute(): bool
+    public function getIsRootAccess(): bool
     {
-        return $this->roles()->count() === 0;
+        return $this->roles->isEmpty();
     }
 
     public function roles(): MorphToMany
@@ -125,16 +131,6 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
         return $this->hasOne(Profile::class);
     }
 
-    public function bookmarks(): HasMany
-    {
-        return $this->hasMany(Bookmark::class);
-    }
-
-    public function getTenants(Panel $panel): array|Collection
-    {
-        return $this->branches;
-    }
-
     public function branches(): BelongsToMany
     {
         return $this->belongsToMany(Branch::class);
@@ -143,15 +139,5 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
     public function settings(): HasMany
     {
         return $this->hasMany(Setting::class);
-    }
-
-    public function isRoot(): bool
-    {
-        return $this->roles->count() === 0;
-    }
-
-    public function schedules(): HasMany
-    {
-        return $this->hasMany(Schedule::class);
     }
 }

@@ -27,13 +27,13 @@ class RegisterModules
             return $next($request);
         }
 
-        $modules = Cache::remember('modules', now()->addHour(), function () {
+        $modules = Cache::remember('module', now()->addHour(), function () {
             return Module::query()->select('name', 'is_enabled')
                 ->get();
         });
 
         $modules->each(function (Module $module) {
-            Config::set(sprintf('modules.%s', strtolower($module->name)), $module->is_enabled);
+            Config::set(sprintf('module.%s', strtolower($module->name)), $module->is_enabled);
         });
 
         return $next($request);

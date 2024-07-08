@@ -4,6 +4,7 @@ namespace App\Filament\Clusters\Databases\Pages;
 
 use App\Filament\Clusters\Databases;
 use App\Filament\Clusters\Databases\Enums\DatabasePeriod;
+use App\Filament\Clusters\Databases\Enums\DatabaseType;
 use App\Models\Setting;
 use App\Services\Database\Database;
 use Exception;
@@ -22,10 +23,13 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Number;
+use Illuminate\Validation\ValidationException;
 use KoalaFacade\FilamentAlertBox\Forms\Components\AlertBox;
+use Symfony\Component\HttpFoundation\Response;
 
 class AutoBackup extends Page implements HasForms
 {
@@ -39,6 +43,12 @@ class AutoBackup extends Page implements HasForms
 
     protected static ?int $navigationSort = 2;
 
+    public array $database;
+
+    public bool $isButtonDisabled = true;
+
+    private ?Database $databaseService;
+
     public static function getNavigationLabel(): string
     {
         return __('navigation.auto_backup');
@@ -49,11 +59,10 @@ class AutoBackup extends Page implements HasForms
         return __('database.auto_backup');
     }
 
-    public array $database;
-
-    public bool $isButtonDisabled = true;
-
-    private ?Database $databaseService;
+    public static function canAccess(): bool
+    {
+        return Auth::user()->can('ViewAutoBackupDb');
+    }
 
     public function boot(?Database $database): void
     {
@@ -64,8 +73,8 @@ class AutoBackup extends Page implements HasForms
     {
         return [
             Action::make('backup')
+                ->visible(Auth::user()->can('BackupDb'))
                 ->label(__('database.button_backup_now'))
-                ->disabled(config('app.demo'))
                 ->requiresConfirmation()
                 ->action(function (): void {
                     try {
@@ -98,7 +107,7 @@ class AutoBackup extends Page implements HasForms
         }
 
         $this->form->fill([
-            'isButtonDisabled' => ! $this->databaseService?->isAvailable() || config('app.demo'),
+            'isButtonDisabled' => ! $this->databaseService?->isAvailable() || ! Auth::user()->can('UpdateAutoBackupDb'),
             'database' => [
                 'auto_backup_enabled' => config('database.auto_backup_enabled', false),
                 'backup_period' => config('database.backup_period'),
@@ -133,7 +142,14 @@ class AutoBackup extends Page implements HasForms
                     Placeholder::make('database.url')
                         ->label(__('database.path'))
                         ->visible(fn (): bool => config('database.default') === DatabaseType::SQLite->value)
-                        ->content($database['database'] ?? null),
+                        ->helperText(function (): ?string {
+                            if (config('app.demo')) {
+                                return __('database.hidden_in_demo');
+                            }
+
+                            return null;
+                        })
+                        ->content(config('app.demo') ? '***' : $database['database'] ?? null),
 
                     Toggle::make('database.auto_backup_enabled')
                         ->label(__('database.backup_enabled'))
@@ -174,11 +190,16 @@ class AutoBackup extends Page implements HasForms
                         ->disabled(fn (Get $get): bool => ! $get('database.auto_backup_enabled')),
                 ]),
         ])
-            ->disabled(config('app.demo'));
+            ->disabled(! Auth::user()->can('UpdateAutoBackupDb'));
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function update(): void
     {
+        abort_unless(Auth::user()->can('UpdateAutoBackupDb'), Response::HTTP_FORBIDDEN);
+
         $this->validate();
 
         try {

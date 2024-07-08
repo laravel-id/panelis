@@ -57,17 +57,17 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->navigationGroups([
                 NavigationGroup::make(__('navigation.event'))
-                    ->icon('heroicon-s-calendar-days'),
+                    ->icon('heroicon-o-calendar-days'),
 
                 NavigationGroup::make(__('navigation.location'))
-                    ->icon('heroicon-s-map')
+                    ->icon('heroicon-o-map')
                     ->collapsed(),
 
                 NavigationGroup::make(__('navigation.user'))
-                    ->icon('heroicon-s-user-group'),
+                    ->icon('heroicon-o-user-group'),
 
                 NavigationGroup::make(__('navigation.system'))
-                    ->icon('heroicon-s-cog-6-tooth')
+                    ->icon('heroicon-o-cog-6-tooth')
                     ->collapsed(),
             ])
 

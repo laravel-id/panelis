@@ -2,7 +2,7 @@
 
 namespace App\Services\Database;
 
-use App\Filament\Clusters\Databases\Pages\DatabaseType;
+use App\Filament\Clusters\Databases\Enums\DatabaseType;
 use App\Services\Database\Vendors\MySQL;
 use App\Services\Database\Vendors\SQLite;
 

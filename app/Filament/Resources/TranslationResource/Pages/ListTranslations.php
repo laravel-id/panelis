@@ -2,22 +2,22 @@
 
 namespace App\Filament\Resources\TranslationResource\Pages;
 
+use App\Actions\Translation\Backup;
+use App\Actions\Translation\Import;
+use App\Actions\Translation\Restore;
 use App\Filament\Resources\TranslationResource;
 use App\Models\Translation;
-use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
 use Exception;
 use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
-use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Toggle;
 use Filament\Notifications\Actions\Action as NotificationAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Support\Enums\MaxWidth;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Storage;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class ListTranslations extends ListRecords
@@ -26,161 +26,112 @@ class ListTranslations extends ListRecords
 
     private static string $disk = 'local';
 
-    private function import(?array $lines, string $locale): void
+    protected function authorizeAccess(): void
     {
-        foreach ($lines as $index => $line) {
-            [$group, $key] = explode('.', $index, 2);
-
-            $trans = Translation::query()
-                ->firstOrNew([
-                    'group' => $group,
-                    'key' => $key,
-                ]);
-
-            $newLine = [$locale => $line['text']];
-
-            $trans->is_system = $line['is_system'];
-            if (! empty($trans->text)) {
-                $trans->text = array_merge($trans->text, $newLine);
-            } else {
-                $trans->text = $newLine;
-            }
-            $trans->save();
-        }
+        abort_unless(Auth::user()->can('ViewTranslation'), Response::HTTP_FORBIDDEN);
     }
 
     protected function getHeaderActions(): array
     {
-        $locales = collect(config('app.locales'))
-            ->mapWithKeys(function ($locale): array {
-                return [$locale => LanguageSwitch::make()->getLabel($locale)];
-            })
-            ->toArray();
-
         return [
-            Action::make('import')
-                ->label(__('translation.import'))
-                ->modalWidth(MaxWidth::Medium)
-                ->modalSubmitActionLabel(__('translation.import_submit'))
-                ->modalDescription(__('translation.import_description'))
-                ->modalIcon('heroicon-o-arrow-up-on-square')
-                ->color('warning')
-                ->form([
-                    Radio::make('locale')
-                        ->required()
-                        ->label(__('translation.locale'))
-                        ->live()
-                        ->options($locales),
-
-                    FileUpload::make('trans')
-                        ->previewable(false)
-                        ->storeFiles(false)
-                        ->fetchFileInformation(false)
-                        ->disk(self::$disk)
-                        ->visibility('private')
-                        ->acceptedFileTypes([
-                            'application/json',
-                        ])
-                        ->required(),
-                ])
-                ->action(function (array $data): void {
-                    $lines = json_decode($data['trans']->getContent(), associative: true);
-                    try {
-                        $this->import($lines, $data['locale']);
-
-                        Notification::make()
-                            ->success()
-                            ->title(__('translation.file_imported'))
-                            ->send();
-                    } catch (Exception $e) {
-                        Log::error($e);
-
-                        Notification::make()
-                            ->danger()
-                            ->title(__('translation.import_failed'))
-                            ->body(__('translation.import_file_invalid'))
-                            ->persistent()
-                            ->actions([
-                                NotificationAction::make('view')
-                                    ->label(__('translation.view_template'))
-                                    ->action(function (): ?StreamedResponse {
-                                        return response()->streamDownload(function () {
-                                            $format = [
-                                                'group.key' => [
-                                                    'text' => 'Sample text',
-                                                    'is_system' => false,
-                                                ],
-                                            ];
-
-                                            echo json_encode($format);
-                                        }, 'localization-example.json');
-                                    }),
-                            ])
-                            ->send();
-                    }
-                }),
-
-            Action::make('export')
-                ->label(__('translation.export'))
-                ->modalWidth(MaxWidth::Medium)
-                ->modalDescription(__('translation.export_description'))
-                ->modalIcon('heroicon-o-arrow-down-on-square')
-                ->modalSubmitActionLabel(__('translation.export_submit'))
-                ->form([
-                    Radio::make('locale')
-                        ->label(__('translation.locale'))
-                        ->required()
-                        ->options($locales),
-
-                    Toggle::make('is_system')
-                        ->inline(false)
-                        ->label(__('translation.system_only')),
-                ])
-                ->action(function (array $data): ?StreamedResponse {
-                    try {
-                        $locale = $data['locale'];
-                        $isSystem = $data['is_system'] ?? false;
-
-                        if (empty($locale)) {
-                            return null;
-                        }
-
-                        Notification::make()
-                            ->success()
-                            ->title(__('translation.export_success'))
-                            ->send();
-
-                        return response()->streamDownload(function () use ($locale, $isSystem): void {
-                            echo json_encode(Translation::getFormattedTranslation($locale, $isSystem));
-                        }, sprintf('%s.json', $locale));
-                    } catch (Exception $e) {
-                        Log::error($e);
-
-                        Notification::make()
-                            ->danger()
-                            ->title(__('translation.export_failed'))
-                            ->send();
-                    }
-
-                    return null;
-                }),
+            Actions\CreateAction::make()
+                ->visible(Auth::user()->can('CreateTranslation')),
 
             ActionGroup::make([
-                Actions\CreateAction::make(),
+                Action::make('import')
+                    ->visible(Auth::user()->can('ImportTranslation'))
+                    ->label(__('translation.import'))
+                    ->icon('heroicon-s-arrow-down-tray')
+                    ->modalWidth(MaxWidth::Medium)
+                    ->modalSubmitActionLabel(__('translation.import_submit'))
+                    ->modalDescription(__('translation.import_description'))
+                    ->modalIcon('heroicon-o-arrow-up-on-square')
+                    ->form(TranslationResource\Forms\ImportForm::make())
+                    ->action(function (array $data): void {
+                        $lines = json_decode($data['trans']->getContent(), associative: true);
+                        try {
+                            Import::run($lines, $data['locale']);
+
+                            Notification::make()
+                                ->success()
+                                ->title(__('translation.file_imported'))
+                                ->send();
+                        } catch (Exception $e) {
+                            Log::error($e);
+
+                            Notification::make()
+                                ->danger()
+                                ->title(__('translation.import_failed'))
+                                ->body(__('translation.import_file_invalid'))
+                                ->persistent()
+                                ->actions([
+                                    NotificationAction::make('view')
+                                        ->label(__('translation.view_template'))
+                                        ->action(function (): ?StreamedResponse {
+                                            return response()->streamDownload(function () {
+                                                $format = [
+                                                    'group.key' => [
+                                                        'text' => 'Sample text',
+                                                        'is_system' => false,
+                                                    ],
+                                                ];
+
+                                                echo json_encode($format);
+                                            }, 'localization-example.json');
+                                        }),
+                                ])
+                                ->send();
+                        }
+                    }),
+
+                Action::make('export')
+                    ->visible(Auth::user()->can('ExportTranslation'))
+                    ->label(__('translation.export'))
+                    ->icon('heroicon-s-arrow-up-tray')
+                    ->modalWidth(MaxWidth::Medium)
+                    ->modalDescription(__('translation.export_description'))
+                    ->modalIcon('heroicon-o-arrow-down-on-square')
+                    ->modalSubmitActionLabel(__('translation.export_submit'))
+                    ->form(TranslationResource\Forms\ExportForm::make())
+                    ->action(function (array $data): ?StreamedResponse {
+                        try {
+                            $locale = $data['locale'];
+                            $isSystem = $data['is_system'] ?? false;
+                            $groups = $data['groups'];
+
+                            if (empty($locale)) {
+                                return null;
+                            }
+
+                            Notification::make()
+                                ->success()
+                                ->title(__('translation.export_success'))
+                                ->send();
+
+                            return response()->streamDownload(function () use ($locale, $groups, $isSystem): void {
+                                echo json_encode(Translation::getFormattedTranslation($locale, $groups, $isSystem));
+                            }, sprintf('%s.json', $locale));
+                        } catch (Exception $e) {
+                            Log::error($e);
+
+                            Notification::make()
+                                ->danger()
+                                ->title(__('translation.export_failed'))
+                                ->send();
+                        }
+
+                        return null;
+                    }),
 
                 Action::make('backup')
+                    ->visible(Auth::user()->can('BackupTranslation'))
                     ->label(__('translation.backup'))
                     ->icon('heroicon-o-arrow-down-on-square-stack')
                     ->requiresConfirmation()
                     ->modalDescription(__('translation.backup_confirmation'))
                     ->action(function (): void {
                         try {
-                            foreach (LanguageSwitch::make()->getLocales() as $locale) {
-                                $content = Translation::getFormattedTranslation($locale);
-
-                                Storage::disk(self::$disk)
-                                    ->put(sprintf('locales/%s.json', $locale), json_encode($content));
-                            }
+                            Backup::run();
 
                             Notification::make('backup_success')
                                 ->title(__('translation.backup_success'))
@@ -197,19 +148,13 @@ class ListTranslations extends ListRecords
                     }),
 
                 Action::make('restore')
+                    ->visible(Auth::user()->can('RestoreTranslation'))
                     ->label(__('translation.restore'))
                     ->icon('heroicon-o-arrow-up-on-square-stack')
                     ->requiresConfirmation()
                     ->action(function (): void {
                         try {
-                            $files = Storage::disk(self::$disk)->allFiles('locales');
-                            foreach ($files as $file) {
-                                [$locale, $ext] = explode('.', basename($file), 2);
-                                unset($ext);
-
-                                $content = Storage::disk(self::$disk)->get($file);
-                                $this->import(json_decode($content, associative: true), $locale);
-                            }
+                            Restore::run();
 
                             Notification::make('restore_success')
                                 ->title(__('translation.restore_success'))

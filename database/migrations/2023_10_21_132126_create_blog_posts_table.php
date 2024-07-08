@@ -17,13 +17,12 @@ return new class extends Migration
                 ->constrained();
             $table->string('slug')->unique();
             $table->string('title');
-            $table->string('image_location')->default('public');
+            $table->string('storage')->default('public');
             $table->string('image')->nullable();
             $table->mediumText('content');
             $table->boolean('is_visible')->default(true);
             $table->dateTime('published_at');
             $table->json('metadata');
-            $table->json('options');
             $table->timestamps();
             $table->softDeletes();
         });

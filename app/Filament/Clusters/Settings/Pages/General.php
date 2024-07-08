@@ -18,7 +18,10 @@ use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\HtmlString;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Response;
 
 class General extends Page
 {
@@ -44,6 +47,11 @@ class General extends Page
         return __('navigation.setting_general');
     }
 
+    public static function canAccess(): bool
+    {
+        return Auth::user()->can('ViewGeneralSetting');
+    }
+
     public function mount(): void
     {
         $this->form->fill([
@@ -58,7 +66,7 @@ class General extends Page
                 'email_as_sender' => config('app.email_as_sender'),
             ],
 
-            'isButtonDisabled' => config('app.demo'),
+            'isButtonDisabled' => ! Auth::user()->can('UpdateGeneralSetting'),
         ]);
     }
 
@@ -146,16 +154,17 @@ class General extends Page
                         ->label(__('setting.app_debug'))
                         ->helperText(fn (): ?string => app()->isProduction() ? __('setting.helper_app_debug') : null),
                 ]),
-        ])->disabled(config('app.demo'));
+        ])->disabled(! Auth::user()->can('UpdateGeneralSetting'));
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function update(): void
     {
-        $this->validate();
+        abort_unless(Auth::user()->can('UpdateGeneralSetting'), Response::HTTP_FORBIDDEN);
 
-        if (config('app.demo')) {
-            return;
-        }
+        $this->validate();
 
         $state = $this->form->getState();
         foreach ($state['app'] as $key => $value) {

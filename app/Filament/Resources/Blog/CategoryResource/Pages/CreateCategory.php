@@ -4,8 +4,8 @@ namespace App\Filament\Resources\Blog\CategoryResource\Pages;
 
 use App\Filament\Resources\Blog\CategoryResource;
 use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class CreateCategory extends CreateRecord
 {
@@ -13,7 +13,8 @@ class CreateCategory extends CreateRecord
 
     protected function authorizeAccess(): void
     {
-        abort_unless(config('modules.blog'), Response::HTTP_NOT_FOUND);
-        abort_unless(Auth::user()->can('Create blog category'), Response::HTTP_FORBIDDEN);
+        abort_unless(config('module.blog', false), Response::HTTP_NOT_FOUND);
+
+        abort_unless(Auth::user()->can('CreateBlogCategory'), Response::HTTP_FORBIDDEN);
     }
 }
