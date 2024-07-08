@@ -42,7 +42,7 @@ class CategoryResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return config('module.blog');
+        return config('module.blog', false);
     }
 
     public static function canAccess(): bool

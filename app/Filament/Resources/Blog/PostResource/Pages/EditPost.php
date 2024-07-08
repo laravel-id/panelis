@@ -19,7 +19,7 @@ class EditPost extends EditRecord
 
     protected function authorizeAccess(): void
     {
-        abort_unless(config('module.blog'), Response::HTTP_NOT_FOUND);
+        abort_unless(config('module.blog', false), Response::HTTP_NOT_FOUND);
 
         abort_unless(Auth::user()->can('UpdateBlogPost'), Response::HTTP_FORBIDDEN);
     }

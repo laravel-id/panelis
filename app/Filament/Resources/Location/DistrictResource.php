@@ -50,7 +50,7 @@ class DistrictResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return config('module.location');
+        return config('module.location', false);
     }
 
     public static function form(Form $form): Form
