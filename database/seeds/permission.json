@@ -346,5 +346,9 @@
   "CreateRegionLocation": {
     "name": "CreateRegionLocation",
     "guard": "web"
+  },
+  "ResetUserPassword": {
+    "name": "ResetUserPassword",
+    "guard": "web"
   }
 }

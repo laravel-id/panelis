@@ -2,24 +2,22 @@
 
 namespace App\Filament\Resources;
 
+use App\Actions\User\SendResetPasswordLink;
+use App\Filament\Resources\UserResource\Forms\UserForm;
 use App\Filament\Resources\UserResource\Pages;
-use App\Models\Branch;
-use App\Models\Role;
 use App\Models\User;
 use Filament\Facades\Filament;
-use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
+use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
+use Filament\Tables\Actions\Action;
+use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class UserResource extends Resource
 {
@@ -51,97 +49,11 @@ class UserResource extends Resource
 
     public static function form(Form $form): Form
     {
+        $operation = $form->getOperation();
+
         return $form
             ->columns(3)
-            ->schema([
-                Section::make()
-                    ->columnSpan(fn (?Model $record): int => empty($record) ? 3 : 2)
-                    ->translateLabel()
-                    ->schema([
-                        TextInput::make('email')
-                            ->label(__('user.email'))
-                            ->required()
-                            ->unique(ignorable: $form->getRecord())
-                            ->email(),
-
-                        TextInput::make('name')
-                            ->label('user.name')
-                            ->required()
-                            ->minLength(3)
-                            ->maxLength(150),
-                    ]),
-
-                Section::make()
-                    ->hiddenOn(Pages\CreateUser::class)
-                    ->columnSpan(1)
-                    ->schema([
-                        Placeholder::make('created_at')
-                            ->label(__('ui.created_at'))
-                            ->visibleOn([
-                                Pages\ViewUser::class,
-                                Pages\EditUser::class,
-                            ])
-                            ->content(fn (User $user): string => $user->local_created_at),
-
-                        Placeholder::make('updated_at')
-                            ->label(__('ui.updated_at'))
-                            ->visibleOn([
-                                Pages\ViewUser::class,
-                                Pages\EditUser::class,
-                            ])
-                            ->content(fn (User $user): string => $user->local_updated_at),
-                    ]),
-
-                Section::make(__('user.branch'))
-                    ->description(__('user.branch_section_description'))
-                    ->visible(fn(): bool => !empty(Filament::getTenant()))
-                    ->schema([
-                        CheckboxList::make('branches')
-                            ->label(__('user.branch'))
-                            ->relationship('branches')
-                            ->bulkToggleable()
-                            ->options(
-                                Branch::orderBy('name')
-                                    ->pluck('name', 'id'),
-                            )
-                            ->required(),
-                    ]),
-
-                Section::make(__('user.role'))
-                    ->description(__('user.role_section_description'))
-                    ->schema([
-                        CheckboxList::make('role_id')
-                            ->label(__('user.role_name'))
-                            ->relationship('roles', 'name')
-                            ->descriptions(Role::pluck('description', 'id'))
-                            ->getOptionLabelFromRecordUsing(function (Role $role): string {
-                                $label = $role->name;
-                                if ($role->is_admin) {
-                                    $label .= sprintf(' (%s)', __('user.role_admin_access'));
-                                }
-
-                                return $label;
-                            })
-                            ->required(fn (User $user): bool => ! $user->is_root),
-                    ]),
-
-                Section::make(__('user.profile'))
-                    ->description(__('user.profile_section_description'))
-                    ->collapsed()
-                    ->relationship('profile')
-                    ->schema([
-                        TextInput::make('phone')
-                            ->label(__('user.phone'))
-                            ->tel()
-                            ->maxLength(20),
-
-                        Textarea::make('address')
-                            ->label(__('user.address'))
-                            ->rows(4)
-                            ->minLength(3)
-                            ->maxLength(150),
-                    ]),
-            ]);
+            ->schema(UserForm::make($operation));
     }
 
     public static function table(Table $table): Table
@@ -150,7 +62,7 @@ class UserResource extends Resource
             ->columns([
                 TextColumn::make('branches.name')
                     ->label(__('user.branch'))
-                    ->visible(fn(): bool => !empty(Filament::getTenant())),
+                    ->visible(fn (): bool => ! empty(Filament::getTenant())),
 
                 TextColumn::make('roles.name')
                     ->label(__('user.role'))
@@ -187,6 +99,32 @@ class UserResource extends Resource
             ])
             ->actions([
                 EditAction::make()->visible(Auth::user()->can('UpdateUser')),
+
+                ActionGroup::make([
+                    Action::make('send_reset_password_link')
+                        ->label(__('user.btn_send_reset_password_link'))
+                        ->icon(__('heroicon-o-lock-open'))
+                        ->visible(Auth::user()->can('ResetUserPassword'))
+                        ->disabled(fn (User $user): bool => Auth::id() === $user->id)
+                        ->requiresConfirmation()
+                        ->action(function (User $user): void {
+                            try {
+                                SendResetPasswordLink::run($user);
+
+                                Notification::make('link_sent')
+                                    ->title(__('user.reset_password_link_sent'))
+                                    ->success()
+                                    ->send();
+                            } catch (\Exception $e) {
+                                Log::error($e);
+
+                                Notification::make('link_not_sent')
+                                    ->title(__('user.reset_password_link_not_sent'))
+                                    ->danger()
+                                    ->send();
+                            }
+                        }),
+                ]),
             ])
             ->bulkActions([
 
