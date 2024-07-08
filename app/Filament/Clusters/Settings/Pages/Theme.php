@@ -14,7 +14,9 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Symfony\Component\HttpFoundation\Response;
 
 class Theme extends Page implements HasForms
 {
@@ -36,6 +38,11 @@ class Theme extends Page implements HasForms
     public function getTitle(): string|Htmlable
     {
         return __('setting.theme');
+    }
+
+    public static function canAccess(): bool
+    {
+        return Auth::user()->can('ViewThemeSetting');
     }
 
     public array $colors = ['primary', 'gray', 'success', 'info', 'warning', 'danger'];
@@ -82,6 +89,8 @@ class Theme extends Page implements HasForms
 
     public function update(): void
     {
+        abort_unless(Auth::user()->can('UpdateThemeSetting'), Response::HTTP_FORBIDDEN);
+
         try {
             $this->validate();
 

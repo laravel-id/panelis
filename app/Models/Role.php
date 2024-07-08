@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property string $local_updated_at
  * @property string $description
  * @property int $users_count
+ * @property bool $is_admin
  */
 class Role extends \Spatie\Permission\Models\Role
 {
@@ -23,7 +24,16 @@ class Role extends \Spatie\Permission\Models\Role
     {
         return self::query()
             ->orderBy('name')
-            ->pluck('name', 'id')
+            ->get()
+            ->mapWithKeys(function (Role $role): array {
+                $label = $role->name;
+
+                if ($role->is_admin) {
+                    $label .= sprintf(' (%s)', __('user.role_admin_access'));
+                }
+
+                return [$role->id => $label];
+            })
             ->toArray();
     }
 }

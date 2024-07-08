@@ -6,6 +6,8 @@ use App\Filament\Resources\TranslationResource;
 use App\Models\Translation;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Support\Facades\Auth;
+use Symfony\Component\HttpFoundation\Response;
 
 class EditTranslation extends EditRecord
 {
@@ -15,7 +17,12 @@ class EditTranslation extends EditRecord
     {
         return [
             Actions\DeleteAction::make()
-                ->visible(fn (?Translation $line): bool => ! $line->is_system),
+                ->visible(fn (?Translation $line): bool => ! $line->is_system && Auth::user()->can('DeleteTranslation')),
         ];
+    }
+
+    protected function authorizeAccess(): void
+    {
+        abort_unless(Auth::user()->can('EditTranslation'), Response::HTTP_FORBIDDEN);
     }
 }

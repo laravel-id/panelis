@@ -1,0 +1,354 @@
+{
+  "CreateUser": {
+    "name": "CreateUser",
+    "guard": "web"
+  },
+  "UpdateUser": {
+    "name": "UpdateUser",
+    "guard": "web"
+  },
+  "DeleteUser": {
+    "name": "DeleteUser",
+    "guard": "web"
+  },
+  "ViewUser": {
+    "name": "ViewUser",
+    "guard": "web"
+  },
+  "CreateRole": {
+    "name": "CreateRole",
+    "guard": "web"
+  },
+  "UpdateRole": {
+    "name": "UpdateRole",
+    "guard": "web"
+  },
+  "DeleteRole": {
+    "name": "DeleteRole",
+    "guard": "web"
+  },
+  "ViewRole": {
+    "name": "ViewRole",
+    "guard": "web"
+  },
+  "CreatePermission": {
+    "name": "CreatePermission",
+    "guard": "web"
+  },
+  "UpdatePermission": {
+    "name": "UpdatePermission",
+    "guard": "web"
+  },
+  "DeletePermission": {
+    "name": "DeletePermission",
+    "guard": "web"
+  },
+  "ViewPermission": {
+    "name": "ViewPermission",
+    "guard": "web"
+  },
+  "CreateCountry": {
+    "name": "CreateCountry",
+    "guard": "web"
+  },
+  "UpdateCountry": {
+    "name": "UpdateCountry",
+    "guard": "web"
+  },
+  "DeleteCountry": {
+    "name": "DeleteCountry",
+    "guard": "web"
+  },
+  "ViewCountry": {
+    "name": "ViewCountry",
+    "guard": "web"
+  },
+  "CreateRegion": {
+    "name": "CreateRegion",
+    "guard": "web"
+  },
+  "UpdateRegion": {
+    "name": "UpdateRegion",
+    "guard": "web"
+  },
+  "DeleteRegion": {
+    "name": "DeleteRegion",
+    "guard": "web"
+  },
+  "ViewRegion": {
+    "name": "ViewRegion",
+    "guard": "web"
+  },
+  "CreateDistrict": {
+    "name": "CreateDistrict",
+    "guard": "web"
+  },
+  "UpdateDistrict": {
+    "name": "UpdateDistrict",
+    "guard": "web"
+  },
+  "DeleteDistrict": {
+    "name": "DeleteDistrict",
+    "guard": "web"
+  },
+  "ViewDistrict": {
+    "name": "ViewDistrict",
+    "guard": "web"
+  },
+  "ViewTodo": {
+    "name": "ViewTodo",
+    "guard": "web"
+  },
+  "ViewAllTodos": {
+    "name": "ViewAllTodos",
+    "guard": "web"
+  },
+  "CreateTodo": {
+    "name": "CreateTodo",
+    "guard": "web"
+  },
+  "UpdateTodo": {
+    "name": "UpdateTodo",
+    "guard": "web"
+  },
+  "DeleteTodo": {
+    "name": "DeleteTodo",
+    "guard": "web"
+  },
+  "ViewBlogCategory": {
+    "name": "ViewBlogCategory",
+    "guard": "web"
+  },
+  "CreateBlogCategory": {
+    "name": "CreateBlogCategory",
+    "guard": "web"
+  },
+  "UpdateBlogCategory": {
+    "name": "UpdateBlogCategory",
+    "guard": "web"
+  },
+  "DeleteBlogCategory": {
+    "name": "DeleteBlogCategory",
+    "guard": "web"
+  },
+  "ViewBlogPost": {
+    "name": "ViewBlogPost",
+    "guard": "web"
+  },
+  "CreateBlogPost": {
+    "name": "CreateBlogPost",
+    "guard": "web"
+  },
+  "UpdateBlogPost": {
+    "name": "UpdateBlogPost",
+    "guard": "web"
+  },
+  "DeleteBlogPost": {
+    "name": "DeleteBlogPost",
+    "guard": "web"
+  },
+  "ManageModule": {
+    "name": "ManageModule",
+    "guard": "web"
+  },
+  "BackupPermission": {
+    "name": "BackupPermission",
+    "guard": "web"
+  },
+  "ViewTranslation": {
+    "name": "ViewTranslation",
+    "guard": "web"
+  },
+  "CreateTranslation": {
+    "name": "CreateTranslation",
+    "guard": "web"
+  },
+  "BackupTranslation": {
+    "name": "BackupTranslation",
+    "guard": "web"
+  },
+  "RestoreTranslation": {
+    "name": "RestoreTranslation",
+    "guard": "web"
+  },
+  "ExportTranslation": {
+    "name": "ExportTranslation",
+    "guard": "web"
+  },
+  "ImportTranslation": {
+    "name": "ImportTranslation",
+    "guard": "web"
+  },
+  "EditTranslation": {
+    "name": "EditTranslation",
+    "guard": "web"
+  },
+  "DeleteTranslation": {
+    "name": "DeleteTranslation",
+    "guard": "web"
+  },
+  "ViewDb": {
+    "name": "ViewDb",
+    "guard": "web"
+  },
+  "ViewAutoBackupDb": {
+    "name": "ViewAutoBackupDb",
+    "guard": "web"
+  },
+  "UpdateAutoBackupDb": {
+    "name": "UpdateAutoBackupDb",
+    "guard": "web"
+  },
+  "ViewDbBackup": {
+    "name": "ViewDbBackup",
+    "guard": "web"
+  },
+  "ViewSetting": {
+    "name": "ViewSetting",
+    "guard": "web"
+  },
+  "BackupDb": {
+    "name": "BackupDb",
+    "guard": "web"
+  },
+  "DownloadBackupDb": {
+    "name": "DownloadBackupDb",
+    "guard": "web"
+  },
+  "DeleteBackupDb": {
+    "name": "DeleteBackupDb",
+    "guard": "web"
+  },
+  "ViewGeneralSetting": {
+    "name": "ViewGeneralSetting",
+    "guard": "web"
+  },
+  "UpdateGeneralSetting": {
+    "name": "UpdateGeneralSetting",
+    "guard": "web"
+  },
+  "ViewUserSetting": {
+    "name": "ViewUserSetting",
+    "guard": "web"
+  },
+  "UpdateUserSetting": {
+    "name": "UpdateUserSetting",
+    "guard": "web"
+  },
+  "UpdateThemeSetting": {
+    "name": "UpdateThemeSetting",
+    "guard": "web"
+  },
+  "ViewThemeSetting": {
+    "name": "ViewThemeSetting",
+    "guard": "web"
+  },
+  "ViewMailSetting": {
+    "name": "ViewMailSetting",
+    "guard": "web"
+  },
+  "SendMailTest": {
+    "name": "SendMailTest",
+    "guard": "web"
+  },
+  "UpdateMailSetting": {
+    "name": "UpdateMailSetting",
+    "guard": "web"
+  },
+  "ViewDatetimeSetting": {
+    "name": "ViewDatetimeSetting",
+    "guard": "web"
+  },
+  "UpdateDatetimeSetting": {
+    "name": "UpdateDatetimeSetting",
+    "guard": "web"
+  },
+  "ViewLogSetting": {
+    "name": "ViewLogSetting",
+    "guard": "web"
+  },
+  "UpdateLogSetting": {
+    "name": "UpdateLogSetting",
+    "guard": "web"
+  },
+  "ViewNumberSetting": {
+    "name": "ViewNumberSetting",
+    "guard": "web"
+  },
+  "UpdateNumberSetting": {
+    "name": "UpdateNumberSetting",
+    "guard": "web"
+  },
+  "ViewCacheSetting": {
+    "name": "ViewCacheSetting",
+    "guard": "web"
+  },
+  "FlushCache": {
+    "name": "FlushCache",
+    "guard": "web"
+  },
+  "UpdateCacheSetting": {
+    "name": "UpdateCacheSetting",
+    "guard": "web"
+  },
+  "UpdateCustomSetting": {
+    "name": "UpdateCustomSetting",
+    "guard": "web"
+  },
+  "ViewCustomSetting": {
+    "name": "ViewCustomSetting",
+    "guard": "web"
+  },
+  "EditBlogCategory": {
+    "name": "EditBlogCategory",
+    "guard": "web"
+  },
+  "ViewCountryLocation": {
+    "name": "ViewCountryLocation",
+    "guard": "web"
+  },
+  "UpdateCountryLocation": {
+    "name": "UpdateCountryLocation",
+    "guard": "web"
+  },
+  "DeleteCountryLocation": {
+    "name": "DeleteCountryLocation",
+    "guard": "web"
+  },
+  "ViewRegionLocation": {
+    "name": "ViewRegionLocation",
+    "guard": "web"
+  },
+  "CreateCountryLocation": {
+    "name": "CreateCountryLocation",
+    "guard": "web"
+  },
+  "UpdateRegionLocation": {
+    "name": "UpdateRegionLocation",
+    "guard": "web"
+  },
+  "DeleteRegionLocation": {
+    "name": "DeleteRegionLocation",
+    "guard": "web"
+  },
+  "ViewDistrictLocation": {
+    "name": "ViewDistrictLocation",
+    "guard": "web"
+  },
+  "UpdateDistrictLocation": {
+    "name": "UpdateDistrictLocation",
+    "guard": "web"
+  },
+  "DeleteDistrictLocation": {
+    "name": "DeleteDistrictLocation",
+    "guard": "web"
+  },
+  "CreateRegionLocation": {
+    "name": "CreateRegionLocation",
+    "guard": "web"
+  },
+  "ResetUserPassword": {
+    "name": "ResetUserPassword",
+    "guard": "web"
+  }
+}

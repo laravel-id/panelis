@@ -14,8 +14,8 @@ class EditRole extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\ViewAction::make()->visible(Auth::user()->can('View role')),
-            Actions\DeleteAction::make()->visible(Auth::user()->can('Delete role')),
+            Actions\ViewAction::make()->visible(Auth::user()->can('ViewRole')),
+            Actions\DeleteAction::make()->visible(Auth::user()->can('DeleteRole')),
         ];
     }
 }

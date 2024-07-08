@@ -14,12 +14,12 @@ class ListUsers extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()->visible(Auth::user()->can('Create user')),
+            Actions\CreateAction::make()->visible(Auth::user()->can('CreateUser')),
         ];
     }
 
     public function mount(): void
     {
-        abort_unless(Auth::user()->can('View role'), 403);
+        abort_unless(Auth::user()->can('ViewRole'), 403);
     }
 }

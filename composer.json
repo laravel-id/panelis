@@ -5,8 +5,8 @@
     "keywords": ["laravel", "framework"],
     "license": "MIT",
     "require": {
-        "php": "^8.1",
-        "ashallendesign/short-url": "^8.0",
+        "php": "^8.2",
+        "ashallendesign/short-url": "^8.1",
         "bezhansalleh/filament-language-switch": "^3.1",
         "calebporzio/sushi": "^2.5",
         "filament/filament": "^3.2",
@@ -17,6 +17,7 @@
         "laravel/telescope": "^5.0",
         "laravel/tinker": "^2.8",
         "livewire/livewire": "^3.5",
+        "lorisleiva/laravel-actions": "^2.8",
         "pxlrbt/filament-environment-indicator": "^2.0",
         "simonhamp/the-og": "^0.5.5",
         "spatie/laravel-permission": "^5.11",

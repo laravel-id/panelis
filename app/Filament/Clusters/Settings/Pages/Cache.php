@@ -16,7 +16,10 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpFoundation\Response;
 
 class Cache extends Page implements HasForms, Settings\HasUpdateableForm
 {
@@ -35,6 +38,11 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
     public array $database;
 
     public bool $isButtonDisabled = false;
+
+    public static function canAccess(): bool
+    {
+        return Auth::user()->can('ViewCacheSetting');
+    }
 
     protected function getHeaderActions(): array
     {
@@ -65,7 +73,7 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
                 ->label(__('setting.cache_button_flush'))
                 ->requiresConfirmation()
                 ->color('warning')
-                ->disabled(config('app.demo'))
+                ->hidden(! Auth::user()->can('FlushCache'))
                 ->action(function (): void {
                     try {
                         \Illuminate\Support\Facades\Cache::flush();
@@ -99,7 +107,7 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
                 'redis' => config('database.redis'),
             ],
 
-            'isButtonDisabled' => config('app.demo'),
+            'isButtonDisabled' => ! Auth::user()->can('ViewCacheSetting'),
         ]);
     }
 
@@ -133,11 +141,16 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
                 ->visible(fn (Get $get): bool => $get('cache.default') === CacheDriver::DynamoDB->value)
                 ->schema(Settings\Forms\Cache\DynamoDBForm::schema()),
         ])
-            ->disabled(config('app.demo'));
+            ->disabled(! Auth::user()->can('UpdateCacheSetting'));
     }
 
+    /**
+     * @throws ValidationException
+     */
     public function update(): void
     {
+        abort_unless(Auth::user()->can('UpdateCacheSetting'), Response::HTTP_FORBIDDEN);
+
         $this->validate();
 
         try {

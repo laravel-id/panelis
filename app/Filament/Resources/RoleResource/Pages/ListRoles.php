@@ -15,12 +15,12 @@ class ListRoles extends ListRecords
     {
         return [
             Actions\CreateAction::make()
-                ->visible(Auth::user()->can('Create role')),
+                ->visible(Auth::user()->can('CreateRole')),
         ];
     }
 
     public function mount(): void
     {
-        abort_unless(Auth::user()->can('View role'), 403);
+        abort_unless(Auth::user()->can('ViewRole'), 403);
     }
 }

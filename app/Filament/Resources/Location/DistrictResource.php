@@ -4,10 +4,17 @@ namespace App\Filament\Resources\Location;
 
 use App\Filament\Resources\Location;
 use App\Models\Location\District;
-use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Tables\Actions\BulkAction;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
@@ -16,6 +23,8 @@ use Illuminate\Support\Facades\Auth;
 class DistrictResource extends Resource
 {
     protected static ?string $model = District::class;
+
+    protected static bool $isScopedToTenant = false;
 
     protected static ?int $navigationSort = 3;
 
@@ -26,7 +35,7 @@ class DistrictResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return __('location.district');
+        return __('navigation.district');
     }
 
     public static function getLabel(): ?string
@@ -34,96 +43,66 @@ class DistrictResource extends Resource
         return __('location.district');
     }
 
+    public static function canAccess(): bool
+    {
+        return Auth::user()->can('ViewDistrictLocation');
+    }
+
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()->can('View district') && config('modules.location');
+        return config('module.location', false);
     }
 
     public static function form(Form $form): Form
     {
         return $form
-            ->schema([
-                Forms\Components\Select::make('region_id')
-                    ->label(__('location.region'))
-                    ->relationship('region', 'name')
-                    ->createOptionForm([
-                        Forms\Components\Select::make('country_id')
-                            ->label(__('location.country'))
-                            ->disabled(! Auth::user()->can('Create region'))
-                            ->relationship('country', 'name')
-                            ->createOptionForm([
-                                Forms\Components\TextInput::make('name')
-                                    ->label(__('location.fields.name'
-                                    ))
-                                    ->disabled(! Auth::user()->can('Create country'))
-                                    ->required()
-                                    ->minLength(5)
-                                    ->maxLength(150),
-                            ])
-                            ->searchable()
-                            ->preload()
-                            ->required(),
-
-                        Forms\Components\TextInput::make('name')
-                            ->label('location.fields.name')
-                            ->disabled(! Auth::user()->can('Create region'))
-                            ->required(),
-                    ])
-                    ->preload()
-                    ->searchable()
-                    ->required(),
-
-                Forms\Components\TextInput::make('name')
-                    ->label('location.fields.name')
-                    ->required()
-                    ->minLength(3)
-                    ->maxLength(150),
-            ]);
+            ->schema(Location\DistrictResource\Forms\DistrictForm::make());
     }
 
     public static function table(Table $table): Table
     {
-        $canUpdate = Auth::user()->can('Update district');
-        $canDelete = Auth::user()->can('Delete district');
+        $canUpdate = Auth::user()->can('UpdateDistrictLocation');
+        $canDelete = Auth::user()->can('DeleteDistrictLocation');
 
         return $table
+            ->defaultSort('name')
             ->columns([
-                Tables\Columns\ToggleColumn::make('is_active')
-                    ->label(__('location.fields.is_active'))
+                ToggleColumn::make('is_active')
+                    ->label(__('location.district_is_active'))
                     ->visible($canUpdate),
 
-                Tables\Columns\TextColumn::make('name')
-                    ->label(__('location.fields.name'))
+                TextColumn::make('name')
+                    ->label(__('location.district_name'))
                     ->sortable()
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('region.name')
+                TextColumn::make('region.name')
                     ->label(__('location.region'))
                     ->sortable()
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('region.country.name')
+                TextColumn::make('region.country.name')
                     ->label(__('location.country'))
                     ->sortable(),
 
-                Tables\Columns\TextColumn::make('created_at')
-                    ->label(__('common.fields.created_at'))
+                TextColumn::make('local_updated_at')
+                    ->label(__('ui.updated_at'))
                     ->sortable()
                     ->tooltip(fn (?Model $record): string => $record->updated_at ?? '')
                     ->since(),
             ])
             ->filters([
-                Tables\Filters\TernaryFilter::make('is_active')
-                    ->label(__('location.fields.is_active')),
+                TernaryFilter::make('is_active')
+                    ->label(__('location.district_is_active')),
 
-                Tables\Filters\SelectFilter::make('country_id')
+                SelectFilter::make('country_id')
                     ->label(__('location.country'))
                     ->relationship('region.country', 'name')
                     ->searchable()
                     ->multiple()
                     ->preload(),
 
-                Tables\Filters\SelectFilter::make('region_id')
+                SelectFilter::make('region_id')
                     ->label(__('location.region'))
                     ->relationship('region', 'name')
                     ->searchable()
@@ -131,14 +110,14 @@ class DistrictResource extends Resource
                     ->preload(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make()
+                EditAction::make()
                     ->visible($canUpdate),
 
-                Tables\Actions\DeleteAction::make()
+                DeleteAction::make()
                     ->visible($canDelete),
             ])
             ->bulkActions([
-                Tables\Actions\BulkAction::make('toggle')
+                BulkAction::make('toggle')
                     ->label(__('location.toggle_status'))
                     ->color('primary')
                     ->icon('heroicon-m-check-circle')
@@ -150,8 +129,8 @@ class DistrictResource extends Resource
                         }
                     }),
 
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make()
+                BulkActionGroup::make([
+                    DeleteBulkAction::make()
                         ->visible($canDelete),
                 ]),
             ]);

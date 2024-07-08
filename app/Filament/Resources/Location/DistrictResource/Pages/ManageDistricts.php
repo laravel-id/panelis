@@ -16,13 +16,13 @@ class ManageDistricts extends ManageRecords
     {
         return [
             Actions\CreateAction::make()
-                ->visible(Auth::user()->can('Create district')),
+                ->visible(Auth::user()->can('CreateDistrictLocation')),
         ];
     }
 
     public function mount(): void
     {
-        abort_unless(config('modules.location'), Response::HTTP_NOT_FOUND);
-        abort_unless(Auth::user()->can('View district'), Response::HTTP_FORBIDDEN);
+        abort_unless(config('module.location', false), Response::HTTP_NOT_FOUND);
+        abort_unless(Auth::user()->can('ViewDistrictLocation'), Response::HTTP_FORBIDDEN);
     }
 }

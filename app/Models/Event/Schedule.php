@@ -2,7 +2,7 @@
 
 namespace App\Models\Event;
 
-use App\Filament\Clusters\Databases\Pages\DatabaseType;
+use App\Filament\Clusters\Databases\Enums\DatabaseType;
 use App\Models\Location\District;
 use App\Models\Report;
 use App\Models\Schedule\Bookmark;
@@ -22,7 +22,6 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Str;
 use Spatie\Sitemap\Contracts\Sitemapable;
 use Spatie\Sitemap\Tags\Url;
 
@@ -178,7 +177,7 @@ class Schedule extends Model implements Sitemapable
     {
         $now = now(get_timezone());
 
-        if (!empty($this->finished_at)) {
+        if (! empty($this->finished_at)) {
             return $this->finished_at
                 ->timezone(get_timezone())
                 ->lt($now);

@@ -3,6 +3,7 @@
 namespace App\Filament\Clusters;
 
 use Filament\Clusters\Cluster;
+use Illuminate\Support\Facades\Auth;
 
 class Settings extends Cluster
 {
@@ -16,5 +17,10 @@ class Settings extends Cluster
     public static function getNavigationLabel(): string
     {
         return __('navigation.setting');
+    }
+
+    public static function canAccess(): bool
+    {
+        return Auth::user()->can('ViewSetting');
     }
 }
