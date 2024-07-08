@@ -69,7 +69,7 @@ class PermissionResource extends Resource
                     ->content(fn (Permission $permission): string => $permission->label),
 
                 Placeholder::make('description')
-                    ->label('user.permission_description')
+                    ->label(__('user.permission_description'))
                     ->visibleOn('edit')
                     ->content(fn (Permission $permission): string => $permission->description),
             ]);

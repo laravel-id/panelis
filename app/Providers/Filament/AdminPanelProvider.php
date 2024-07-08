@@ -49,13 +49,17 @@ class AdminPanelProvider extends PanelProvider
                     ->collapsed()
                     ->icon('heroicon-o-document-text'),
 
+                NavigationGroup::make(__('navigation.location'))
+                    ->icon('heroicon-o-map')
+                    ->collapsed(),
+
                 NavigationGroup::make(__('navigation.user'))
                     ->collapsed()
-                    ->icon('heroicon-s-user-group'),
+                    ->icon('heroicon-o-user-group'),
 
                 NavigationGroup::make(__('navigation.system'))
                     ->collapsed()
-                    ->icon('heroicon-s-cog-6-tooth'),
+                    ->icon('heroicon-o-cog-6-tooth'),
             ])
 
             //->registration(Register::class)
