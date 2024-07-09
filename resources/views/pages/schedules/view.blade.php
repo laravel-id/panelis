@@ -115,43 +115,26 @@
   </article>
 
   @if (!$schedule->packages->isEmpty())
-    <article>
-      <header>@lang('event.package')</header>
+{{--    <hr />--}}
+    <h3>@lang('event.schedule_packages')</h3>
+    @foreach($schedule->packages->chunk(3) as $chunk)
+      <div class="grid" id="#packages">
+        @foreach($chunk as $package)
+          <article>
+            <header class="pico-color-{{ get_color_theme() }}-700">
+              <strong>{{ $package->title }}</strong><br/>
+            </header>
 
-      <div class="overflow-auto">
-        <table>
-          <thead>
-          <tr>
-            <th scope="col">@lang('event.package_title')</th>
-            <th scope="col">@lang('event.package_time')</th>
-            <th scope="col">@lang('event.package_price')</th>
-            <th scope="col">@lang('event.package_description')</th>
-          </tr>
-          </thead>
-
-          <tbody>
-          @foreach($schedule->packages as $package)
-            <tr>
-              <td>{{ $package->title }}</td>
-              <td>
-                @if (!empty($package->started_at) AND !empty($package->ended_at))
-                  {{
-                      vsprintf('%s - %s', [
-                          $package->started_at->translatedFormat($dateFormat),
-                          $package->ended_at->translatedFormat($dateFormat),
-                      ])
-                  }}
-                @else
-                  -
-                @endif
-              </td>
-              <td>{{ $package->price > 0 ? Number::money($package->price) : '-' }}</td>
-              <td>{{ $package->description ?? '-' }}</td>
-            </tr>
-          @endforeach
-          </tbody>
-        </table>
+            <div>
+              <p><i class="ri-currency-fill"></i> {{ Number::money($package->price) }}</p>
+              @if (!empty($package->period))
+                <p><i class="ri-calendar-2-fill"></i> {{ $package->period }}</p>
+              @endif
+              <p>{{ $package->description }}</p>
+            </div>
+          </article>
+        @endforeach
       </div>
-    </article>
+    @endforeach
   @endif
 @endsection

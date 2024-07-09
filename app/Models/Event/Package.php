@@ -38,6 +38,31 @@ class Package extends Model
         return $this->belongsTo(Schedule::class);
     }
 
+    public function period(): Attribute
+    {
+        return Attribute::make(
+            get: function (): ?string {
+                if (! empty($this->started_at)) {
+                    $started = $this->started_at
+                        ->timezone(get_timezone())
+                        ->translatedFormat('D, d F Y');
+                }
+
+                if (! empty($this->ended_at)) {
+                    $ended = $this->ended_at
+                        ->timezone(get_timezone())
+                        ->translatedFormat('D, d F Y');
+                }
+
+                if (! empty($started) && ! empty($ended)) {
+                    return sprintf('%s – %s', $started, $ended);
+                }
+
+                return $started ?? null;
+            },
+        );
+    }
+
     public function startedAt(): Attribute
     {
         return Attribute::make(
