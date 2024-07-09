@@ -2,6 +2,7 @@
 
 namespace App\Console;
 
+use App\Actions\Ping;
 use App\Filament\Clusters\Databases\Enums\DatabasePeriod;
 use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
@@ -14,10 +15,15 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule): void
     {
+        $schedule->command('app:ping')->hourly();
+
         $schedule->command('app:backup-database')
             ->withoutOverlapping()
             ->runInBackground()
             ->when(function (): bool {
+                // ping first and then check the schedule
+                Ping::run(config('healthcheck.database'));
+
                 if (! config('database.auto_backup_enabled')) {
                     return false;
                 }
