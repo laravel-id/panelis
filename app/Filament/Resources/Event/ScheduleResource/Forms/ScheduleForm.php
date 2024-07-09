@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Event\ScheduleResource\Forms;
 
+use App\Filament\Resources\Location\DistrictResource\Forms\DistrictForm;
 use App\Models\Location\District;
 use Filament\Forms\Components\Checkbox;
 use Filament\Forms\Components\DateTimePicker;
@@ -124,10 +125,22 @@ class ScheduleForm
 
                             Select::make('district_id')
                                 ->label(__('event.schedule_district'))
+                                ->relationship('district', 'name')
                                 ->hidden(fn (Get $get): bool => $get('is_virtual') ?? false)
                                 ->searchable()
                                 ->preload()
-                                ->options(District::query()->pluck('name', 'id')),
+                                ->createOptionForm(DistrictForm::make())
+                                ->options(function (): array {
+                                    return District::query()
+                                        ->orderBy('name')
+                                        ->pluck('name', 'id')
+                                        ->toArray();
+                                }),
+
+                            TextInput::make('metadata.location_url')
+                                ->label(__('event.schedule_location_url'))
+                                ->nullable()
+                                ->url(),
                         ]),
 
                     Section::make(__('event.schedule_who'))

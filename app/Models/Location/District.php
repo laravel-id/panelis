@@ -2,6 +2,7 @@
 
 namespace App\Models\Location;
 
+use App\Models\Event\Schedule;
 use App\Models\Profile;
 use App\Models\Traits\HasLocalTime;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -9,6 +10,11 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
+/**
+ * @property int $id
+ * @property string $name
+ * @property Region $region
+ */
 class District extends Model
 {
     use HasFactory;
@@ -36,5 +42,10 @@ class District extends Model
     public function profiles(): HasMany
     {
         return $this->hasMany(Profile::class);
+    }
+
+    public function schedules(): HasMany
+    {
+        return $this->hasMany(Schedule::class);
     }
 }
