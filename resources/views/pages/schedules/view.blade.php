@@ -115,7 +115,6 @@
   </article>
 
   @if (!$schedule->packages->isEmpty())
-{{--    <hr />--}}
     <h3>@lang('event.schedule_packages')</h3>
     @foreach($schedule->packages->chunk(3) as $chunk)
       <div class="grid" id="#packages">
@@ -130,7 +129,7 @@
               @if (!empty($package->period))
                 <p><i class="ri-calendar-2-fill"></i> {{ $package->period }}</p>
               @endif
-              <p>{{ $package->description }}</p>
+              <p>{!! nl2br($package->description) !!}</p>
             </div>
           </article>
         @endforeach
