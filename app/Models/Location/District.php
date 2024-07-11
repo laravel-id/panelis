@@ -27,7 +27,7 @@ class District extends Model
     ];
 
     protected $casts = [
-        'is_active' => true,
+        'is_active' => 'bool',
     ];
 
     protected $guarded = [
