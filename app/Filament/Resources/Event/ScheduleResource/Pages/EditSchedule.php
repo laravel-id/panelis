@@ -7,6 +7,7 @@ use App\Models\URL\ShortURL;
 use AshAllenDesign\ShortURL\Facades\ShortURL as URLShortener;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Support\Str;
 
 class EditSchedule extends EditRecord
 {
@@ -25,6 +26,8 @@ class EditSchedule extends EditRecord
         if (empty($data['description'])) {
             $data['description'] = '';
         }
+
+        $data['alias'] = Str::ascii($data['title']);
 
         return $data;
     }
