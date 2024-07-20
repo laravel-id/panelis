@@ -129,7 +129,7 @@
               @if (!empty($package->period))
                 <p><i class="ri-calendar-2-fill"></i> {{ $package->period }}</p>
               @endif
-              <p>{!! nl2br($package->description) !!}</p>
+              <p>{!! Str::markdown($package->description, ['html_input' => 'strip']) !!}</p>
             </div>
           </article>
         @endforeach

@@ -4,8 +4,8 @@ namespace App\Filament\Resources\Event\ScheduleResource\Forms;
 
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Grid;
+use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Repeater;
-use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Get;
 
@@ -57,13 +57,12 @@ class PackageForm
                                 ->minutesStep(30)
                                 ->closeOnDateSelection()
                                 ->timezone(get_timezone())
-                                ->minDate(fn (Get $get): ?string => $get('started_at'))
+                                ->minDate(fn(Get $get): ?string => $get('started_at'))
                                 ->nullable(),
                         ]),
 
-                    Textarea::make('description')
+                    MarkdownEditor::make('description')
                         ->label(__('event.package_description'))
-                        ->rows(5)
                         ->columnSpan(2),
                 ])
                 ->orderColumn('sort')
