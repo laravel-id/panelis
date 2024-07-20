@@ -17,7 +17,9 @@ class CreateSchedule extends CreateRecord
             $data['description'] = '';
         }
 
-        $data['alias'] = Str::ascii($data['title']);
+        if (!Str::isAscii($data['title'])) {
+            $data['alias'] = Str::ascii($data['title']);
+        }
 
         return $data;
     }
