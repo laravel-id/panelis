@@ -24,7 +24,6 @@ class ScheduleController extends Controller
     public function view(string $slug): View
     {
         $schedule = Schedule::getScheduleBySlug($slug);
-
         if (empty($schedule->external_link) && ! $schedule->is_past) {
             Log::warning('Missing external link for event.', [
                 'title' => $schedule->title,
@@ -49,6 +48,21 @@ class ScheduleController extends Controller
         $format = config('app.datetime_format', 'Y-m-d H:i:s');
         $dateFormat = str_replace(['H', 'i', 'g', 'G', 'u', ':', 'Y', 'y'], '', $format);
 
+        // find schedules with same date
+        $relatedSchedules = Schedule::getPublishedSchedules([
+            'date' => $schedule->started_at->timezone(get_timezone())->format('Y-m-d'),
+            $excludes = 'excludes' => [
+                // do not include the schedule itself
+                'id' => [$schedule->id],
+            ],
+        ]);
+
+        // find schedule for next week
+        $nextWeekSchedules = Schedule::getPublishedSchedules([
+            'date' => $schedule->started_at->timezone(get_timezone())->addWeek()->format('Y-m-d'),
+            $excludes,
+        ]);
+
         return view('pages.schedules.view')
             ->with(compact(
                 'schedule',
@@ -56,6 +70,8 @@ class ScheduleController extends Controller
                 'organizers',
                 'format',
                 'dateFormat',
+                'relatedSchedules',
+                'nextWeekSchedules',
             ))
             ->with('title', sprintf('%s - %s', $schedule->title, $year));
     }

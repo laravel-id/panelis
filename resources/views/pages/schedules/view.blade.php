@@ -48,28 +48,35 @@
     @endif
 
     @if(!empty($organizers))
-      <p><small>@lang('event.organizer'):</small></p>
-      <p><i class="ri-community-line"></i> {!! $organizers !!}</p>
+      <div><small><i class="ri-community-line"></i> @lang('event.organizer'):</small></div>
+      <p>{!! $organizers !!}</p>
       <hr/>
     @endif
 
     @if(!empty($schedule->types))
-      <p><small>@lang('event.type')</small></p>
-      <p><i class="ri-run-line"></i> {{ $schedule->types->implode('title', ', ') }}</p>
+      <div><small><i class="ri-run-line"></i> @lang('event.type'):</small></div>
+      <p>{{ $schedule->types->implode('title', ', ') }}</p>
       <hr/>
     @endif
 
-    <p><small>@lang('event.category')</small></p>
-    <p><i class="ri-node-tree"></i> {{ implode(', ', $schedule->categories) }}</p>
+    <div><small><i class="ri-node-tree"></i> @lang('event.categories'):</small></div>
+    <small>
+      @foreach($schedule->categories as $category)
+        <mark>{{ $category }}</mark>
+      @endforeach
+    </small>
     <hr/>
 
-    <p><small>@lang('event.schedule_datetime'):</small></p>
-    <p><i class="ri-calendar-2-line"></i> {{ $startedAt->translatedFormat('D') }}, {{ $schedule->held_at }}</p>
+    <div><small><i class="ri-calendar-2-line"></i> @lang('event.schedule_datetime'):</small></div>
+    <p>{{ $startedAt->translatedFormat('D') }}, {{ $schedule->held_at }}</p>
+    <div class="overflow-auto">
+      @include('pages.schedules.related', compact('relatedSchedules', 'nextWeekSchedules'))
+    </div>
 
     @if(!$schedule->is_virtual)
       <hr/>
-      <p><small>@lang('event.schedule_location'):</small></p>
-      <p><i class="ri-map-pin-line"></i>
+      <div><small><i class="ri-map-pin-line"></i> @lang('event.schedule_location'):</small></div>
+      <p>
         @if (!empty($schedule->metadata['location_url']))
           <a href="{{ $schedule->metadata['location_url'] }}">{{ $schedule->full_location }}</a>
         @else
@@ -79,7 +86,7 @@
     @endif
 
     <hr/>
-    <p><small>@lang('event.schedule_info_registration'):</small></p>
+    <div><small><i class="ri-questionnaire-line"></i> @lang('event.schedule_info_registration'):</small></div>
     <p>
       <i class="ri-external-link-line"></i>
       @if (!$schedule->is_past)
