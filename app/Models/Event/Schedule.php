@@ -234,7 +234,7 @@ class Schedule extends Model implements Sitemapable
         $date = null;
         if (! empty($filters['date'])) {
             try {
-                $date = Carbon::parse($filters['date'])->timezone($timezone);
+                $date = Carbon::parse($filters['date']);
             } catch (InvalidFormatException) {
             }
         }
@@ -276,6 +276,15 @@ class Schedule extends Model implements Sitemapable
                         ->orWhereRelation('organizers', 'slug', 'LIKE', $keyword)
                         ->orWhereRelation('district', 'name', 'LIKE', $keyword);
                 });
+            })
+
+            // exclude from filters
+            ->when(! empty($filters['excludes']), function (Builder $builder) use ($filters): Builder {
+                foreach ($filters['excludes'] as $column => $values) {
+                    $builder->whereNotIn($column, $values);
+                }
+
+                return $builder;
             })
 
             // do not include virtual event by default
