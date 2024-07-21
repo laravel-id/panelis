@@ -270,7 +270,7 @@ class Schedule extends Model implements Sitemapable
                 $keyword = sprintf('%%%s%%', trim($filters['keyword']));
 
                 return $builder->where(function (Builder $builder) use ($keyword): Builder {
-                    return $builder->whereAny(['title', 'alias', 'description', 'location', 'categories'], 'LIKE', $keyword)
+                    return $builder->whereAny(['slug', 'title', 'alias', 'description', 'location', 'categories'], 'LIKE', $keyword)
                         ->orWhereRelation('types', 'title', 'LIKE', $keyword)
                         ->orWhereRelation('organizers', 'name', 'LIKE', $keyword)
                         ->orWhereRelation('organizers', 'slug', 'LIKE', $keyword)
