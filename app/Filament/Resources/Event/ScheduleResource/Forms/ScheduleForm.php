@@ -63,7 +63,7 @@ class ScheduleForm
 
                             MarkdownEditor::make('description')
                                 ->label(__('event.schedule_description'))
-                                ->maxLength(1000),
+                                ->maxLength(5000),
 
                             TagsInput::make('categories')
                                 ->label(__('event.schedule_category'))
@@ -139,6 +139,7 @@ class ScheduleForm
 
                             TextInput::make('metadata.location_url')
                                 ->label(__('event.schedule_location_url'))
+                                ->hidden(fn (Get $get): bool => $get('is_virtual'))
                                 ->nullable()
                                 ->url(),
                         ]),
