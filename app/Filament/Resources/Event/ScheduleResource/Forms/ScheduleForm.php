@@ -46,8 +46,8 @@ class ScheduleForm
                                 ->minLength(3)
                                 ->maxLength(250)
                                 ->live(onBlur: true)
-                                ->afterStateUpdated(function (Set $set, ?string $state): void {
-                                    if (! empty($state)) {
+                                ->afterStateUpdated(function (Set $set, ?string $state, string $operation): void {
+                                    if (! empty($state) && $operation === 'create') {
                                         $set('slug', Str::slug($state));
                                     }
                                 })
