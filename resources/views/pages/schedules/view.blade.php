@@ -6,6 +6,8 @@
     $description = Str::limit($schedule->description, 160);
   @endphp
 
+  <link rel="canonical" href="{{ url()->current() }}" />
+
   <meta name="description" content="{{ $description }}">
 
   <meta property="og:url" content="{{ url()->current() }}">
