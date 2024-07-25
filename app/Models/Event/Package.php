@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property float $price
  * @property Carbon $started_at
  * @property Carbon $ended_at
+ * @property string $description
+ * @property string $url
  */
 class Package extends Model
 {
@@ -31,6 +33,7 @@ class Package extends Model
         'started_at',
         'ended_at',
         'description',
+        'url',
     ];
 
     public function schedule(): BelongsTo

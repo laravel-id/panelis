@@ -57,9 +57,16 @@ class PackageForm
                                 ->minutesStep(30)
                                 ->closeOnDateSelection()
                                 ->timezone(get_timezone())
-                                ->minDate(fn(Get $get): ?string => $get('started_at'))
+                                ->minDate(fn (Get $get): ?string => $get('started_at'))
                                 ->nullable(),
                         ]),
+
+                    TextInput::make('url')
+                        ->label(__('event.package_url'))
+                        ->columnSpan(2)
+                        ->prefixIcon('heroicon-o-link')
+                        ->url()
+                        ->nullable(),
 
                     MarkdownEditor::make('description')
                         ->label(__('event.package_description'))

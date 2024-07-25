@@ -183,6 +183,7 @@ class ViewSchedule extends ViewRecord
 
                                 TextEntry::make('description')
                                     ->label(__('event.package_description'))
+                                    ->markdown()
                                     ->default('-'),
                             ]),
                     ]),

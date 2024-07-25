@@ -138,6 +138,11 @@
               @if (!empty($package->period))
                 <p><i class="ri-calendar-2-fill"></i> {{ $package->period }}</p>
               @endif
+
+              @if(!empty($package->url))
+                <p><i class="ri-links-line"></i> <a href="{{ $package->url }}">@lang('event.link_package_register')</a> </p>
+              @endif
+
               <p>{!! Str::markdown($package->description ?? '', ['html_input' => 'strip']) !!}</p>
             </div>
           </article>
