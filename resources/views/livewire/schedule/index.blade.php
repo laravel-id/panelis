@@ -31,7 +31,7 @@
         <tr>
           <th scope="col">@lang('event.schedule_date')</th>
           <th scope="col">@lang('event.schedule_title')</th>
-          <th scope="col" class="large-screen">@lang('event.schedule_category')</th>
+          <th scope="col" class="large-screen">@lang('event.schedule_categories')</th>
         </tr>
         </thead>
         <tbody>
