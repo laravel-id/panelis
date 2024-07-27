@@ -107,6 +107,10 @@ class ScheduleForm
                                 ->native(false)
                                 ->minDate(fn (Get $get) => $get('started_at'))
                                 ->nullable(),
+
+                            Toggle::make('metadata.hide_time')
+                                ->label(__('event.schedule_hide_time'))
+                                ->default(false),
                         ]),
 
                     Section::make(__('event.schedule_where'))

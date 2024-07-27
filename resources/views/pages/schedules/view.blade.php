@@ -70,7 +70,7 @@
     <hr/>
 
     <div><small><i class="ri-calendar-2-line"></i> @lang('event.schedule_datetime'):</small></div>
-    <p>{{ $startedAt->translatedFormat('D') }}, {{ $schedule->held_at }}</p>
+    <p>{{ $schedule->held_at }}</p>
     <div class="overflow-auto">
       @include('pages.schedules.related', compact('relatedSchedules', 'nextWeekSchedules'))
     </div>

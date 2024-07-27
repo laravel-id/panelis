@@ -147,31 +147,55 @@ class Schedule extends Model implements Sitemapable
         return null;
     }
 
-    public function getHeldAtAttribute(): string
+    public function heldAt(): Attribute
     {
-        $format = config('app.datetime_format', 'd M Y H:i');
-        $timezone = get_timezone();
+        return new Attribute(
+            get: function (): string {
+                $dateFormat = get_date_format();
+                $timeFormat = get_time_format();
+                $timezone = get_timezone();
+                $displayTime = ! boolval($this->metadata['hide_time'] ?? false);
 
-        $this->started_at = $this->started_at->timezone($timezone);
-        if (! empty($this->finished_at)) {
-            $this->finished_at = $this->finished_at->timezone($timezone);
-        }
+                $this->started_at = $this->started_at->timezone($timezone);
+                $dateStartedAt = $this->started_at->translatedFormat($dateFormat);
+                $timeStartedAt = $this->started_at->translatedFormat($timeFormat);
 
-        if (! empty($this->finished_at)) {
-            if ($this->started_at->isSameDay($this->finished_at)) {
-                return vsprintf('%s - %s', [
-                    $this->started_at->translatedFormat($format),
-                    $this->finished_at->translatedFormat('H:i'),
-                ]);
-            }
+                if (! empty($this->finished_at)) {
+                    $this->finished_at = $this->finished_at->timezone($timezone);
+                    $dateFinishedAt = $this->finished_at->translatedFormat($dateFormat);
+                    $timeFinishedAt = $this->finished_at->translatedFormat($timeFormat);
 
-            return vsprintf('%s - %s', [
-                $this->started_at->translatedFormat($format),
-                $this->finished_at->translatedFormat($format),
-            ]);
-        }
+                    if ($this->started_at->isSameDay($this->finished_at)) {
+                        if (! $displayTime) {
+                            return $dateStartedAt;
+                        }
 
-        return $this->started_at->translatedFormat($format);
+                        return vsprintf('%s %s - %s', [
+                            $dateStartedAt,
+                            $timeStartedAt,
+                            $timeFinishedAt,
+                        ]);
+                    }
+
+                    if (! $displayTime) {
+                        return sprintf('%s - %s', $dateStartedAt, $dateFinishedAt);
+                    }
+
+                    return vsprintf('%s %s - %s %s', [
+                        $dateStartedAt,
+                        $timeStartedAt,
+                        $dateFinishedAt,
+                        $timeFinishedAt,
+                    ]);
+                }
+
+                if ($displayTime) {
+                    return sprintf('%s %s', $dateStartedAt, $timeStartedAt);
+                }
+
+                return $dateStartedAt;
+            },
+        );
     }
 
     public function getIsPastAttribute(): bool
