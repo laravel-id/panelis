@@ -31,7 +31,7 @@
         <tr>
           <th scope="col">@lang('event.schedule_date')</th>
           <th scope="col">@lang('event.schedule_title')</th>
-          <th scope="col">@lang('event.schedule_category')</th>
+          <th scope="col" class="large-screen">@lang('event.schedule_category')</th>
         </tr>
         </thead>
         <tbody>
@@ -53,8 +53,18 @@
                   {!! $schedule->full_location !!}
                 @endif
               </small>
+              <br/>
+              <small class="small-screen">
+                @foreach($schedule->categories as $category)
+                  <mark>{{ $category }}</mark>
+                @endforeach
+              </small>
             </td>
-            <td>{{ implode(', ', $schedule->categories) }}</td>
+            <td class="large-screen">
+              @foreach($schedule->categories as $category)
+                <mark>{{ $category }}</mark>
+              @endforeach
+            </td>
           </tr>
         @endforeach
         </tbody>
