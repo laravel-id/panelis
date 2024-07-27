@@ -24,8 +24,8 @@ class ScheduleController extends Controller
     public function view(string $slug): View
     {
         $schedule = Schedule::getScheduleBySlug($slug);
-        if (empty($schedule->external_link) && ! $schedule->is_past) {
-            Log::warning('Missing external link for event.', [
+        if (empty($schedule->external_url) && ! $schedule->is_past) {
+            Log::warning('Missing external URL for event.', [
                 'title' => $schedule->title,
             ]);
         }

@@ -134,17 +134,21 @@ class Schedule extends Model implements Sitemapable
         return $location;
     }
 
-    public function getExternalUrlAttribute(): ?string
+    public function externalUrl(): Attribute
     {
-        $url = ShortURL::query()
-            ->where('destination_url', $this->url)
-            ->first();
+        return new Attribute(
+            get: function (): ?string {
+                $url = ShortURL::query()
+                    ->where('destination_url', $this->url)
+                    ->first();
 
-        if (! empty($url)) {
-            return $url->default_short_url;
-        }
+                if (! empty($url)) {
+                    return $url->default_short_url;
+                }
 
-        return null;
+                return null;
+            },
+        );
     }
 
     public function heldAt(): Attribute
