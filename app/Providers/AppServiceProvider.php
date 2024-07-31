@@ -31,7 +31,7 @@ class AppServiceProvider extends ServiceProvider
             ?bool $isSymbolSuffix = null,
         ): string {
             $format = $format ?? config('app.number_format', '');
-            $isSymbolSuffix = $isSymbolSuffix ?? config('app.symbol_suffix', false);
+            $isSymbolSuffix = $isSymbolSuffix ?? config('app.number_symbol_suffix', false);
 
             if (empty($format)) {
                 if ($isSymbolSuffix) {
