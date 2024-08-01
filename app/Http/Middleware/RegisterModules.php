@@ -23,17 +23,17 @@ class RegisterModules
             return Schema::hasTable((new Module)->getTable());
         });
 
-        if (!$hasModule) {
+        if (! $hasModule) {
             return $next($request);
         }
 
-            $modules = Cache::remember('modules', now()->addHour(), function () {
-                return Module::query()->select('name', 'is_enabled')
-                    ->get();
-            });
+        $modules = Cache::remember('modules', now()->addHour(), function () {
+            return Module::query()->select('name', 'is_enabled')
+                ->get();
+        });
 
-        $modules->each(function (Module $module) use ($hasModule) {
-           Config::set(sprintf('modules.%s', strtolower($module->name)), $module->is_enabled);
+        $modules->each(function (Module $module) {
+            Config::set(sprintf('modules.%s', strtolower($module->name)), $module->is_enabled);
         });
 
         return $next($request);

@@ -53,7 +53,7 @@ class SQLite implements Database
         $command = Process::path(database_path())
             ->run(sprintf('sqlite3 %s .dump > %s', $database, $destination));
 
-        if (!$command->successful()) {
+        if (! $command->successful()) {
             Log::error(__('Failed to run SQLite backup command.'), [
                 'message' => $command->errorOutput(),
             ]);
