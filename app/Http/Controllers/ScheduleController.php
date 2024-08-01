@@ -6,7 +6,6 @@ use App\Models\Event\Organizer;
 use App\Models\Event\Schedule;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -24,11 +23,6 @@ class ScheduleController extends Controller
     public function view(string $slug): View
     {
         $schedule = Schedule::getScheduleBySlug($slug);
-        if (empty($schedule->external_url) && ! $schedule->is_past) {
-            Log::warning('Missing external URL for event.', [
-                'title' => $schedule->title,
-            ]);
-        }
 
         $organizers = $schedule->organizers
             ->map(function (Organizer $organizer): string {
@@ -73,6 +67,7 @@ class ScheduleController extends Controller
                 'relatedSchedules',
                 'nextWeekSchedules',
             ))
+            ->with('externalUrl', $schedule->external_url)
             ->with('title', sprintf('%s - %s', $schedule->title, $year));
     }
 

@@ -143,6 +143,10 @@ class Schedule extends Model implements Sitemapable
                     ->first();
 
                 if (! empty($url)) {
+                    Log::warning('Missing external URL for event.', [
+                        'title' => $this->title,
+                    ]);
+
                     return $url->default_short_url;
                 }
 
@@ -333,7 +337,7 @@ class Schedule extends Model implements Sitemapable
             ->get();
     }
 
-    public static function getScheduleBySlug(string $slug): Model
+    public static function getScheduleBySlug(string $slug): self|Model
     {
         return self::query()
             ->where('slug', $slug)

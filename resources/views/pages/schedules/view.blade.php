@@ -92,9 +92,9 @@
     <p>
       <i class="ri-external-link-line"></i>
       @if (!$schedule->is_past)
-        <a rel="nofollow" href="{{ $schedule->external_url }}">{{ $schedule->external_url }}</a>
+        <a rel="nofollow" href="{{ $externalUrl }}">{{ $externalUrl }}</a>
       @else
-        <del>{{ $schedule->external_url }}</del>
+        <del>{{ $externalUrl }}</del>
       @endif
     </p>
 
