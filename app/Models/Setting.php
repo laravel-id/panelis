@@ -54,7 +54,7 @@ class Setting extends Model
                     Log::error($e);
                 }
 
-                return unserialize($value);
+                return $value;
             },
 
             set: function (mixed $value): string {
