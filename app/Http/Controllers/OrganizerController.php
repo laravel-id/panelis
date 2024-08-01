@@ -16,6 +16,7 @@ class OrganizerController extends Controller
             ->get();
 
         return view('pages.organizers.view', compact('organizer', 'schedules'))
+            ->with('timezone', get_timezone())
             ->with('title', $organizer->name);
     }
 }
