@@ -11,7 +11,12 @@ class TranslationForm
 {
     public static function getLocales(): array
     {
-        return collect(config('app.locales'))
+        $key = 'app.locales';
+        if (empty(config($key))) {
+            config()->set($key, [config('app.locale', default: 'en')]);
+        }
+
+        return collect(config($key))
             ->mapWithKeys(function ($locale): array {
                 return [$locale => LanguageSwitch::make()->getLabel($locale)];
             })
