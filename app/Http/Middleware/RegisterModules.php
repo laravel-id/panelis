@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Str;
 use Symfony\Component\HttpFoundation\Response;
 
 class RegisterModules
@@ -23,18 +24,15 @@ class RegisterModules
             return Schema::hasTable((new Module)->getTable());
         });
 
-        if (! $hasModule) {
-            return $next($request);
+        if ($hasModule) {
+            Module::query()
+                ->get()
+                ->each(function (Module $module): void {
+                    $name = sprintf('module.%s', Str::snake($module->name));
+
+                    Config::set($name, (bool) $module->is_enabled);
+                });
         }
-
-        $modules = Cache::remember('modules', now()->addHour(), function () {
-            return Module::query()->select('name', 'is_enabled')
-                ->get();
-        });
-
-        $modules->each(function (Module $module) {
-            Config::set(sprintf('modules.%s', strtolower($module->name)), $module->is_enabled);
-        });
 
         return $next($request);
     }
