@@ -20,8 +20,8 @@ class RegisterModules
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $hasModule = Cache::remember('has_module', now()->addDay(), function (): bool {
-            return Schema::hasTable('modules');
+        $hasModule = Cache::rememberForever('has_module', function (): bool {
+            return Schema::hasTable((new Module)->getTable());
         });
 
         if ($hasModule) {

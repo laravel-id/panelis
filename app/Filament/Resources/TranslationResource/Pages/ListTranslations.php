@@ -7,7 +7,6 @@ use App\Actions\Translation\Import;
 use App\Actions\Translation\Restore;
 use App\Filament\Resources\TranslationResource;
 use App\Models\Translation;
-use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
 use Exception;
 use Filament\Actions;
 use Filament\Actions\Action;

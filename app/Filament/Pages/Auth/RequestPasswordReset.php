@@ -2,6 +2,4 @@
 
 namespace App\Filament\Pages\Auth;
 
-class RequestPasswordReset extends \Filament\Pages\Auth\PasswordReset\RequestPasswordReset
-{
-}
+class RequestPasswordReset extends \Filament\Pages\Auth\PasswordReset\RequestPasswordReset {}

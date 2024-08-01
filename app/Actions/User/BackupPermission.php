@@ -14,7 +14,7 @@ class BackupPermission
 
     public function handle(): string
     {
-        abort_if(!Auth::user()->can('BackupPermission'), Response::HTTP_FORBIDDEN);
+        abort_if(! Auth::user()->can('BackupPermission'), Response::HTTP_FORBIDDEN);
 
         $permissions = Permission::query()
             ->get()

@@ -41,7 +41,7 @@ class Translation extends LanguageLine
     {
         return Translation::orderBy('group')
             ->orderBy('key')
-            ->when(!empty($groups), fn(Builder $builder): Builder => $builder->whereIn('group', $groups))
+            ->when(! empty($groups), fn (Builder $builder): Builder => $builder->whereIn('group', $groups))
             ->when($isSystem, fn (Builder $builder): Builder => $builder->where('is_system', true))
             ->get()
             ->mapWithKeys(function ($line) use ($locale): array {

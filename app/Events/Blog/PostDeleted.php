@@ -15,10 +15,7 @@ class PostDeleted
     /**
      * Create a new event instance.
      */
-    public function __construct(public ?Post $post)
-    {
-
-    }
+    public function __construct(public ?Post $post) {}
 
     /**
      * Get the channels the event should broadcast on.
