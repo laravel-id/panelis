@@ -16,7 +16,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(Database::class, function ($app): ?object {
+        $this->app->bind(Database::class, function (): ?object {
             return DatabaseFactory::make();
         });
 

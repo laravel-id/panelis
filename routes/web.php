@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\DatabaseController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\OrganizerController;
 use App\Http\Controllers\ScheduleController;
@@ -50,5 +51,9 @@ Route::get('/event/{slug}', [ScheduleController::class, 'view'])->name('schedule
 Route::get('/{year}/{month?}', [ScheduleController::class, 'filter'])
     ->where(['year' => '[0-9]+', 'month' => '[0-9]+'])
     ->name('schedule.filter');
+
+Route::post('/database/backup', [DatabaseController::class, 'backup'])
+    ->middleware('auth.basic')
+    ->name('database.backup');
 
 ShortURL::routes();
