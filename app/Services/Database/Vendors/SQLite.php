@@ -40,7 +40,7 @@ class SQLite implements Database
 
     }
 
-    public function backup(): void
+    public function backup(): ?string
     {
         $database = config('database.connections.sqlite.database');
         $filename = sprintf('%s.sql', time());
@@ -57,6 +57,10 @@ class SQLite implements Database
             Log::error(__('Failed to run SQLite backup command.'), [
                 'message' => $command->errorOutput(),
             ]);
+
+            return null;
         }
+
+        return $destination;
     }
 }

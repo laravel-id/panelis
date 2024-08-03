@@ -94,6 +94,7 @@ class ScheduleForm
                                 ->closeOnDateSelection()
                                 ->seconds(false)
                                 ->native(false)
+                                ->maxDate(fn (Get $get): ?string => $get('finished_at'))
                                 ->live(onBlur: true)
                                 ->required(),
 
@@ -105,7 +106,8 @@ class ScheduleForm
                                 ->closeOnDateSelection()
                                 ->seconds(false)
                                 ->native(false)
-                                ->minDate(fn (Get $get) => $get('started_at'))
+                                ->live(onBlur: true)
+                                ->minDate(fn (Get $get): ?string => $get('started_at'))
                                 ->nullable(),
 
                             Toggle::make('metadata.hide_time')

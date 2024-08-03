@@ -33,7 +33,7 @@ class MySQL implements Database
         return $command->output();
     }
 
-    public function backup(): void
+    public function backup(): ?string
     {
         $db = config('database.connections.mysql');
         $command = vsprintf('mysqldump --skip-comments -h%s -P%s -u%s -p%s %s > %s', [
@@ -42,7 +42,7 @@ class MySQL implements Database
             $db['username'],
             $db['password'],
             $db['database'],
-            sprintf('%s.sql', time()),
+            $destination = sprintf('%s.sql', time()),
         ]);
 
         $output = Process::path(storage_path('app/database'))
@@ -52,7 +52,9 @@ class MySQL implements Database
             $this->errorMessage = $output->errorOutput();
             Log::error($this->errorMessage);
 
-            return;
+            return null;
         }
+
+        return $destination;
     }
 }

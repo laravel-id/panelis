@@ -48,6 +48,7 @@ class PackageForm
                                 ->closeOnDateSelection()
                                 ->timezone(get_timezone())
                                 ->live(onBlur: true)
+                                ->maxDate(fn (Get $get): ?string => $get('ended_at'))
                                 ->nullable(),
 
                             DatetimePicker::make('ended_at')
@@ -57,6 +58,7 @@ class PackageForm
                                 ->minutesStep(30)
                                 ->closeOnDateSelection()
                                 ->timezone(get_timezone())
+                                ->live(onBlur: true)
                                 ->minDate(fn (Get $get): ?string => $get('started_at'))
                                 ->nullable(),
                         ]),
