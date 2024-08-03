@@ -42,7 +42,7 @@ class MySQL implements Database
             $db['username'],
             $db['password'],
             $db['database'],
-            $destination = sprintf('%s.sql', time()),
+            $path = sprintf('%s.sql', time()),
         ]);
 
         $output = Process::path(storage_path('app/database'))
@@ -55,6 +55,6 @@ class MySQL implements Database
             return null;
         }
 
-        return $destination;
+        return $path;
     }
 }
