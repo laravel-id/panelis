@@ -78,7 +78,7 @@ class AutoBackup extends Page implements HasForms
                         ->warning(),
 
                     Section::make()
-                        ->visible(config('database.cloud_backup_enabled'))
+                        ->visible(config('database.cloud_backup_enabled', false))
                         ->schema([
                             Toggle::make('upload_to_cloud')
                                 ->label(__('database.upload_to_cloud', [
