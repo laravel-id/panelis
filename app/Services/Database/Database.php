@@ -10,5 +10,5 @@ interface Database
 
     public function getErrorMessage(): string;
 
-    public function backup(): void;
+    public function backup(): ?string;
 }
