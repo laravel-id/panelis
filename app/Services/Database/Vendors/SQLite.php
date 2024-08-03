@@ -48,10 +48,10 @@ class SQLite implements Database
         if (! Storage::disk('local')->directoryExists('database')) {
             Storage::makeDirectory('database');
         }
-        $destination = sprintf('%s/%s', storage_path('app/database'), $filename);
+        $path = sprintf('%s/%s', storage_path('app/database'), $filename);
 
         $command = Process::path(database_path())
-            ->run(sprintf('sqlite3 %s .dump > %s', $database, $destination));
+            ->run(sprintf('sqlite3 %s .dump > %s', $database, $path));
 
         if (! $command->successful()) {
             Log::error(__('Failed to run SQLite backup command.'), [
@@ -61,6 +61,6 @@ class SQLite implements Database
             return null;
         }
 
-        return $destination;
+        return $path;
     }
 }
