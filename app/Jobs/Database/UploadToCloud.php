@@ -33,6 +33,6 @@ class UploadToCloud implements ShouldQueue
             ->format('Y-m-d_H-i');
         $name = sprintf('%s-%s.%s', app()->environment(), $name, $ext);
 
-        Storage::disk(config('database.cloud_storage'))->put($name, file_get_contents($this->path));
+        Storage::disk(config('database.cloud_storage', 'dropbox'))->put($name, file_get_contents($this->path));
     }
 }
