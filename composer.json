@@ -7,6 +7,7 @@
     "require": {
         "php": "^8.2",
         "ashallendesign/short-url": "^8.1",
+        "benjamincrozat/laravel-dropbox-driver": "^4.0",
         "bezhansalleh/filament-language-switch": "^3.1",
         "calebporzio/sushi": "^2.5",
         "filament/filament": "^3.2",
