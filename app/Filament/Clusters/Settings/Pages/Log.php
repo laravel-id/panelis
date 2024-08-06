@@ -2,6 +2,7 @@
 
 namespace App\Filament\Clusters\Settings\Pages;
 
+use App\Events\SettingUpdated;
 use App\Filament\Clusters\Settings;
 use App\Filament\Clusters\Settings\Enums\LogChannel;
 use App\Filament\Clusters\Settings\Enums\LogLevel;
@@ -200,6 +201,8 @@ class Log extends Page implements HasForms
 
             // store array channels
             Setting::updateOrCreate(['key' => 'logging.channels.stack.channels'], ['value' => $stacks]);
+
+            event(new SettingUpdated);
 
             Notification::make('log_updated')
                 ->title(__('setting.log_updated'))

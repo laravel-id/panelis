@@ -2,6 +2,7 @@
 
 namespace App\Filament\Clusters\Databases\Pages;
 
+use App\Events\SettingUpdated;
 use App\Filament\Clusters\Databases;
 use App\Jobs\Database\UploadToCloud;
 use App\Models\Setting;
@@ -180,6 +181,8 @@ class AutoBackup extends Page implements HasForms
             foreach (Arr::dot($this->form->getState()) as $key => $value) {
                 Setting::updateOrCreate(compact('key'), compact('value'));
             }
+
+            event(new SettingUpdated);
 
             Notification::make('backup_updated')
                 ->title(__('database.backup_updated'))
