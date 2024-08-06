@@ -10,6 +10,7 @@ use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -87,7 +88,8 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
     public function getFilamentAvatarUrl(): ?string
     {
         if (empty($this->avatar)) {
-            $provider = config('user.avatar_provider');
+            $provider = config('user.avatar_provider', AvatarProvider::UIAvatars->value);
+
             if ($provider !== AvatarProvider::UIAvatars->value) {
                 $avatar = AvatarProvider::tryFrom($provider);
 
@@ -116,9 +118,11 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
             ->exists();
     }
 
-    public function getIsRootAccess(): bool
+    public function isRoot(): Attribute
     {
-        return $this->roles->isEmpty();
+        return new Attribute(
+            get: fn (): bool => $this->roles->isEmpty(),
+        );
     }
 
     public function roles(): MorphToMany
