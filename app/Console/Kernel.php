@@ -21,9 +21,6 @@ class Kernel extends ConsoleKernel
             ->withoutOverlapping()
             ->runInBackground()
             ->when(function (): bool {
-                // ping first and then check the schedule
-                Ping::run(config('healthcheck.database'));
-
                 if (! config('database.auto_backup_enabled')) {
                     return false;
                 }
