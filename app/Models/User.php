@@ -121,7 +121,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
     public function isRoot(): Attribute
     {
         return new Attribute(
-            get: fn(): bool => $this->roles->isEmpty(),
+            get: fn (): bool => $this->roles->isEmpty(),
         );
     }
 
