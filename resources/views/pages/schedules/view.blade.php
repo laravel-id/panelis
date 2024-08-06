@@ -134,7 +134,14 @@
             </header>
 
             <div>
-              <p><i class="ri-currency-fill"></i> {{ Number::money($package->price) }}</p>
+              <p>
+                <i class="ri-currency-fill"></i>
+                @if ($package->price <= 0)
+                  <del>{{ config('app.currency_symbol') }}</del> @lang('event.package_free')
+                @else
+                  {{ Number::money($package->price) }}
+                @endif
+              </p>
               @if (!empty($package->period))
                 <p><i class="ri-calendar-2-fill"></i> {{ $package->period }}</p>
               @endif
