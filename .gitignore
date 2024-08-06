@@ -11,6 +11,7 @@
 .env.backup
 .env.production
 .phpunit.result.cache
+deploy.php
 Dockerfile
 fly.toml
 Homestead.json
