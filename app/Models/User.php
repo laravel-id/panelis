@@ -87,7 +87,8 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
     public function getFilamentAvatarUrl(): ?string
     {
         if (empty($this->avatar)) {
-            $provider = config('user.avatar_provider');
+            $provider = config('user.avatar_provider', AvatarProvider::UIAvatars->value);
+
             if ($provider !== AvatarProvider::UIAvatars->value) {
                 $avatar = AvatarProvider::tryFrom($provider);
 
