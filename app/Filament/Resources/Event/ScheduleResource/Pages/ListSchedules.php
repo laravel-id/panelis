@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\Event\ScheduleResource\Pages;
 
 use App\Filament\Resources\Event\ScheduleResource;
-use app\Filament\Resources\Event\ScheduleResource\Widgets\ScheduleOverview;
+use App\Filament\Resources\Event\ScheduleResource\Widgets\ScheduleOverview;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 

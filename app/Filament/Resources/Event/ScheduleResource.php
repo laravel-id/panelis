@@ -8,7 +8,7 @@ use App\Filament\Resources\Event\ScheduleResource\Forms\ReplicateForm;
 use App\Filament\Resources\Event\ScheduleResource\Forms\ScheduleForm;
 use App\Filament\Resources\Event\ScheduleResource\Pages;
 use App\Filament\Resources\Event\ScheduleResource\Pages\ViewSchedule;
-use app\Filament\Resources\Event\ScheduleResource\Widgets\ScheduleOverview;
+use App\Filament\Resources\Event\ScheduleResource\Widgets\ScheduleOverview;
 use App\Filament\Resources\Event\TypeResource\Forms\TypeForm;
 use App\Models\Event\Organizer;
 use App\Models\Event\Schedule;
