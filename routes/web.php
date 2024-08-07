@@ -8,6 +8,7 @@ use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SubscriberController;
 use AshAllenDesign\ShortURL\Facades\ShortURL;
+use App\Http\Controllers\OAuth\DropboxController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -50,5 +51,7 @@ Route::get('/event/{slug}', [ScheduleController::class, 'view'])->name('schedule
 Route::get('/{year}/{month?}', [ScheduleController::class, 'filter'])
     ->where(['year' => '[0-9]+', 'month' => '[0-9]+'])
     ->name('schedule.filter');
+
+Route::get('/dropbox', DropboxController::class)->name('callback.dropbox');
 
 ShortURL::routes();
