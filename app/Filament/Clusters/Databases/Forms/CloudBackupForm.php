@@ -31,6 +31,7 @@ class CloudBackupForm
                 ->afterStateUpdated(function (Set $set, ?bool $state): void {
                     $set('database.cloud_storage', null);
                     Setting::set('database.cloud_backup_enabled', $state);
+                    event(new SettingUpdated);
                 })
                 ->live(),
 
@@ -40,6 +41,7 @@ class CloudBackupForm
                 ->afterStateUpdated(function (?string $state): void {
                     if (! empty($state)) {
                         Setting::set('database.cloud_storage', $state);
+                        event(new SettingUpdated);
 
                         Config::set('oauth.provider', $state);
                         self::$oauth = app(OAuth::class);
@@ -57,6 +59,7 @@ class CloudBackupForm
                 ->afterStateUpdated(function (?string $state): void {
                     if (! empty($state)) {
                         Setting::set('dropbox.client_id', $state);
+                        event(new SettingUpdated);
                     }
                 })
                 ->live(onBlur: true)
@@ -69,6 +72,7 @@ class CloudBackupForm
                 ->afterStateUpdated(function (?string $state): void {
                     if (! empty($state)) {
                         Setting::set('dropbox.client_secret', $state);
+                        event(new SettingUpdated);
                     }
                 })
                 ->live(onBlur: true)
