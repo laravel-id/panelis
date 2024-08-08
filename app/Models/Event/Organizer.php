@@ -15,6 +15,7 @@ use Spatie\Sitemap\Tags\Url;
  * @property string $logo
  * @property string $name
  * @property string $slug
+ * @property int $id
  */
 class Organizer extends Model implements Sitemapable
 {

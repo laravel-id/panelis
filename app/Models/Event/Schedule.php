@@ -346,11 +346,24 @@ class Schedule extends Model implements Sitemapable
             ->where('slug', $slug)
             ->with([
                 'packages',
-                'district' => fn(BelongsTo $builder): BelongsTo => $builder->select('id', 'name'),
-                'organizers' => fn(BelongsToMany $builder): BelongsToMany => $builder->select('id', 'slug', 'name'),
-                'types' => fn(BelongsToMany $builder): BelongsToMany => $builder->select('id', 'title'),
+                'district' => fn (BelongsTo $builder): BelongsTo => $builder->select('id', 'name'),
+                'organizers' => fn (BelongsToMany $builder): BelongsToMany => $builder->select('id', 'slug', 'name'),
+                'types' => fn (BelongsToMany $builder): BelongsToMany => $builder->select('id', 'title'),
             ])
             ->firstOrFail();
+    }
+
+    public static function getByOrganizer(int $orgId): Collection
+    {
+        return self::query()
+            ->select('id', 'slug', 'title', 'started_at', 'categories', 'location', 'district_id')
+            ->whereRelation('organizers', 'id', $orgId)
+            ->orderByDesc('started_at')
+            ->with([
+                'district' => fn (BelongsTo $builder): BelongsTo => $builder->select('id', 'name'),
+                'types' => fn (BelongsToMany $builder): BelongsToMany => $builder->select('id', 'title'),
+            ])
+            ->get();
     }
 
     public static function getFilteredSchedules(int $year, ?int $month = null): Collection
