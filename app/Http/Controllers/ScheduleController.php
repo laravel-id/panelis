@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Schedule\GenerateCalendarUrl;
 use App\Models\Event\Organizer;
 use App\Models\Event\Schedule;
 use Illuminate\Http\JsonResponse;
@@ -56,10 +57,9 @@ class ScheduleController extends Controller
                 'schedule',
                 'startedAt',
                 'organizers',
-                'format',
-                'dateFormat',
                 'relatedSchedules',
             ))
+            ->with('calendar', GenerateCalendarUrl::run($schedule))
             ->with('externalUrl', $schedule->external_url)
             ->with('title', sprintf('%s - %s', $schedule->title, $year));
     }

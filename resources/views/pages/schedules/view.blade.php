@@ -121,6 +121,18 @@
       @endforeach
     @endif
     @livewire('schedule.toolbar', compact('schedule'))
+
+    <details class="dropdown">
+      <summary role="button">
+        @lang('event.add_to_calendar')
+      </summary>
+      <ul>
+        <li><a href="{{ $calendar->google() }}">@lang('event.calendar_google')</a></li>
+        <li><a href="{{ $calendar->yahoo() }}">@lang('event.calendar_yahoo')</a></li>
+        <li><a href="{{ $calendar->webOutlook() }}">@lang('event.calendar_outlook')</a></li>
+        <li><a href="{{ $calendar->ics() }}">@lang('event.calendar_download_ics')</a></li>
+      </ul>
+    </details>
   </article>
 
   @if (!$schedule->packages->isEmpty())
