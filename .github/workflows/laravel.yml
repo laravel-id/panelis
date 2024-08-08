@@ -24,7 +24,7 @@ jobs:
     - name: Create Database
       run: |
         mkdir -p database
-        touch database/database.sqlite
+        touch database/testing.sqlite
 
     - name: Install Dependencies
       run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
@@ -44,8 +44,8 @@ jobs:
     - name: Build Assets
       run: npm run build
 
-    - name: Execute tests (Unit and Feature tests) via Pest
+    - name: Execute tests (Unit and Feature tests)
       env:
         DB_CONNECTION: sqlite
-        DB_DATABASE: database/database.sqlite
+        DB_DATABASE: database/testing.sqlite
       run: php artisan test --parallel
