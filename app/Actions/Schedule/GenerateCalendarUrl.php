@@ -17,7 +17,11 @@ class GenerateCalendarUrl
             $finishedAt = $schedule->started_at;
         }
 
-        return Link::create($schedule->title, $schedule->started_at, $finishedAt)
-            ->address($schedule->location);
+        $link = Link::create($schedule->title, $schedule->started_at, $finishedAt);
+        if ((! empty($schedule->location) && $schedule->location !== 'TBA') && ! $schedule->is_virtual) {
+            $link->address($schedule->location);
+        }
+
+        return $link;
     }
 }
