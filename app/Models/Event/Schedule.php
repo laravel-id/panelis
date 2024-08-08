@@ -146,12 +146,12 @@ class Schedule extends Model implements Sitemapable
                     ->first();
 
                 if (! empty($url)) {
-                    Log::warning('Missing external URL for event.', [
-                        'title' => $this->title,
-                    ]);
-
                     return $url->default_short_url;
                 }
+
+                Log::warning('Missing external URL for event.', [
+                    'title' => $this->title,
+                ]);
 
                 // return origin URL
                 return $this->url;
