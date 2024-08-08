@@ -72,7 +72,7 @@
     <div><small><i class="ri-calendar-2-line"></i> @lang('event.schedule_datetime'):</small></div>
     <p>{{ $schedule->held_at }}</p>
     <div class="overflow-auto">
-      @include('pages.schedules.related', compact('relatedSchedules', 'nextWeekSchedules'))
+      @include('pages.schedules.related', compact('relatedSchedules'))
     </div>
 
     @if(!$schedule->is_virtual)

@@ -51,12 +51,6 @@ class ScheduleController extends Controller
             ],
         ]);
 
-        // find schedule for next week
-        $nextWeekSchedules = Schedule::getPublishedSchedules([
-            'date' => $schedule->started_at->timezone(get_timezone())->addWeek()->format('Y-m-d'),
-            $excludes,
-        ]);
-
         return view('pages.schedules.view')
             ->with(compact(
                 'schedule',
@@ -65,7 +59,6 @@ class ScheduleController extends Controller
                 'format',
                 'dateFormat',
                 'relatedSchedules',
-                'nextWeekSchedules',
             ))
             ->with('externalUrl', $schedule->external_url)
             ->with('title', sprintf('%s - %s', $schedule->title, $year));
