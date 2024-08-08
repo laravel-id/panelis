@@ -130,7 +130,7 @@
         <li><a href="{{ $calendar->google() }}">@lang('event.calendar_google')</a></li>
         <li><a href="{{ $calendar->yahoo() }}">@lang('event.calendar_yahoo')</a></li>
         <li><a href="{{ $calendar->webOutlook() }}">@lang('event.calendar_outlook')</a></li>
-        <li><a href="{{ $calendar->ics() }}">@lang('event.calendar_download_ics')</a></li>
+        <li><a href="{{ $calendar->ics(['UID' => $schedule->slug, 'URL' => url()->current()]) }}">@lang('event.calendar_download_ics')</a></li>
       </ul>
     </details>
   </article>
