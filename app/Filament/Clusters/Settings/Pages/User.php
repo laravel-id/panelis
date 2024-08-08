@@ -2,6 +2,7 @@
 
 namespace App\Filament\Clusters\Settings\Pages;
 
+use App\Events\SettingUpdated;
 use App\Filament\Clusters\Settings;
 use App\Models\Role;
 use App\Models\Setting;
@@ -93,6 +94,8 @@ class User extends Page implements HasForms, Settings\HasUpdateableForm
             foreach (Arr::dot($this->form->getState()) as $key => $value) {
                 Setting::set($key, $value);
             }
+
+            event(new SettingUpdated);
 
             Notification::make('user_updated')
                 ->title(__('setting.user_updated'))
