@@ -139,7 +139,9 @@ class Schedule extends Model implements Sitemapable
         return new Attribute(
             get: function (): ?string {
                 $url = ShortURL::query()
+                    ->select('default_short_url')
                     ->where('destination_url', $this->url)
+                    ->where('single_use', false)
                     ->first();
 
                 if (! empty($url)) {
@@ -150,7 +152,8 @@ class Schedule extends Model implements Sitemapable
                     return $url->default_short_url;
                 }
 
-                return null;
+                // return origin URL
+                return $this->url;
             },
         );
     }
@@ -341,7 +344,12 @@ class Schedule extends Model implements Sitemapable
     {
         return self::query()
             ->where('slug', $slug)
-            ->with(['packages'])
+            ->with([
+                'packages',
+                'district' => fn(BelongsTo $builder): BelongsTo => $builder->select('id', 'name'),
+                'organizers' => fn(BelongsToMany $builder): BelongsToMany => $builder->select('id', 'slug', 'name'),
+                'types' => fn(BelongsToMany $builder): BelongsToMany => $builder->select('id', 'title'),
+            ])
             ->firstOrFail();
     }
 
