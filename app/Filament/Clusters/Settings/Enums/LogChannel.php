@@ -20,6 +20,8 @@ enum LogChannel: string implements HasOption
 
     case Papertrail = 'papertrail';
 
+    case Larabug = 'larabug';
+
     public static function options(): array
     {
         return collect(LogChannel::cases())

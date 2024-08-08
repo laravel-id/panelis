@@ -41,6 +41,8 @@ class AutoBackup extends Page implements HasForms
 
     public array $filesystems;
 
+    public array $dropbox;
+
     public bool $isButtonDisabled = true;
 
     private ?Database $databaseService;
@@ -93,7 +95,7 @@ class AutoBackup extends Page implements HasForms
                         $path = $this->databaseService->backup();
 
                         // upload to cloud if possible
-                        if ($data['upload_to_cloud']) {
+                        if ($data['upload_to_cloud'] ?? false) {
                             UploadToCloud::dispatch($path);
                         }
 
@@ -142,6 +144,11 @@ class AutoBackup extends Page implements HasForms
                     ],
                 ],
             ],
+
+            'dropbox' => [
+                'client_id' => config('dropbox.client_id'),
+                'client_secret' => config('dropbox.client_secret'),
+            ],
         ]);
     }
 
@@ -161,8 +168,9 @@ class AutoBackup extends Page implements HasForms
 
                 Section::make(__('database.cloud_backup'))
                     ->description(__('database.cloud_backup_section_description'))
-                    ->collapsed(! config('database.cloud_backup_enabled', false))
-                    ->disabled(fn (Get $get): bool => ! $get('database.auto_backup_enabled'))
+                    ->collapsible()
+                    ->visible(Auth::user()->can('CloudDBBackup'))
+                    ->disabled(fn (Get $get): bool => ! $get('database.auto_backup_enabled') || config('app.demo'))
                     ->schema(Databases\Forms\CloudBackupForm::make()),
             ])
             ->disabled(! Auth::user()->can('UpdateAutoBackupDb'));
