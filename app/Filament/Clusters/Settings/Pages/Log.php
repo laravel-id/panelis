@@ -140,18 +140,21 @@ class Log extends Page implements HasForms
 
                 Section::make(__('setting.log_larabug'))
                     ->visible(fn (Get $get): bool => in_array('larabug', $get('logging.channels.stack.channels')))
+                    ->collapsible()
                     ->schema(Settings\Forms\Log\LarabugForm::make()),
 
                 Section::make(__('setting.log_papertrail'))
                     ->visible(function (Get $get): bool {
                         return in_array('papertrail', $get('logging.channels.stack.channels'));
                     })
+                    ->collapsible()
                     ->schema(Settings\Forms\Log\PapertailForm::make()),
 
                 Section::make(__('setting.log_slack'))
                     ->visible(function (Get $get): bool {
                         return in_array('slack', $get('logging.channels.stack.channels'));
                     })
+                    ->collapsible()
                     ->schema(Settings\Forms\Log\SlackForm::make()),
             ]);
     }
