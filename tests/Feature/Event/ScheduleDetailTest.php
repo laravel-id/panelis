@@ -48,10 +48,15 @@ class ScheduleDetailTest extends TestCase
 
     public function test_calendar_link_data(): void
     {
-        $schedule = Schedule::factory()->create();
+        $schedule = Schedule::factory()->create([
+            'started_at' => now()->addMonth(),
+            'finished_at' => null,
+        ]);
 
         $response = $this->get('/event/'.$schedule->slug);
 
-        $response->assertViewHas('calendar');
+        $response->assertOk()
+            ->assertViewHas('calendar')
+            ->assertSeeText(__('event.add_to_calendar'));
     }
 }

@@ -80,7 +80,7 @@ class Schedule extends Model implements Sitemapable
             get: function (?string $value): array {
                 return collect(json_decode($value, true))
                     ->map(function (array $contact): array {
-                        if (! empty($contact['is_wa']) && $contact['is_wa'] === true && ! empty($contact['phone'])) {
+                        if (!empty($contact['is_wa']) && $contact['is_wa'] === true && !empty($contact['phone'])) {
                             $phone = $contact['phone'];
 
                             // assume it's local number
@@ -116,7 +116,7 @@ class Schedule extends Model implements Sitemapable
 
     public function getFinishTimeAttribute(): ?string
     {
-        if (! empty($this->finished_at)) {
+        if (!empty($this->finished_at)) {
             return $this->finished_at->format('H:i');
         }
 
@@ -127,7 +127,7 @@ class Schedule extends Model implements Sitemapable
     {
         $location = $this->location;
 
-        if (! empty($this->district)) {
+        if (!empty($this->district)) {
             $location = sprintf('%s, %s', $this->location, $this->district->name);
         }
 
@@ -144,7 +144,7 @@ class Schedule extends Model implements Sitemapable
                     ->where('single_use', false)
                     ->first();
 
-                if (! empty($url)) {
+                if (!empty($url)) {
                     Log::warning('Missing external URL for event.', [
                         'title' => $this->title,
                     ]);
@@ -165,19 +165,19 @@ class Schedule extends Model implements Sitemapable
                 $dateFormat = get_date_format();
                 $timeFormat = get_time_format();
                 $timezone = get_timezone();
-                $displayTime = ! boolval($this->metadata['hide_time'] ?? false);
+                $displayTime = !boolval($this->metadata['hide_time'] ?? false);
 
                 $this->started_at = $this->started_at->timezone($timezone);
                 $dateStartedAt = $this->started_at->translatedFormat($dateFormat);
                 $timeStartedAt = $this->started_at->translatedFormat($timeFormat);
 
-                if (! empty($this->finished_at)) {
+                if (!empty($this->finished_at)) {
                     $this->finished_at = $this->finished_at->timezone($timezone);
                     $dateFinishedAt = $this->finished_at->translatedFormat($dateFormat);
                     $timeFinishedAt = $this->finished_at->translatedFormat($timeFormat);
 
                     if ($this->started_at->isSameDay($this->finished_at)) {
-                        if (! $displayTime) {
+                        if (!$displayTime) {
                             return $dateStartedAt;
                         }
 
@@ -188,7 +188,7 @@ class Schedule extends Model implements Sitemapable
                         ]);
                     }
 
-                    if (! $displayTime) {
+                    if (!$displayTime) {
                         return sprintf('%s - %s', $dateStartedAt, $dateFinishedAt);
                     }
 
@@ -209,19 +209,23 @@ class Schedule extends Model implements Sitemapable
         );
     }
 
-    public function getIsPastAttribute(): bool
+    public function isPast(): Attribute
     {
-        $now = now(get_timezone());
+        return new Attribute(
+            get: function (): bool {
+                $now = now(get_timezone());
 
-        if (! empty($this->finished_at)) {
-            return $this->finished_at
-                ->timezone(get_timezone())
-                ->lt($now);
-        }
+                if (!empty($this->finished_at)) {
+                    return $this->finished_at
+                        ->timezone(get_timezone())
+                        ->lt($now);
+                }
 
-        return $this->started_at
-            ->timezone(get_timezone())
-            ->lt($now);
+                return $this->started_at
+                    ->timezone(get_timezone())
+                    ->lt($now);
+            },
+        );
     }
 
     public function user(): BelongsTo
@@ -267,7 +271,7 @@ class Schedule extends Model implements Sitemapable
         $timezone = get_timezone();
 
         $date = null;
-        if (! empty($filters['date'])) {
+        if (!empty($filters['date'])) {
             try {
                 $date = Carbon::parse($filters['date']);
             } catch (InvalidFormatException) {
@@ -276,7 +280,7 @@ class Schedule extends Model implements Sitemapable
 
         return self::query()
             ->with([
-                'district' => fn (BelongsTo $builder): BelongsTo => $builder->select('id', 'name'),
+                'district' => fn(BelongsTo $builder): BelongsTo => $builder->select('id', 'name'),
             ])
             ->when(config('database.default') !== DatabaseType::SQLite->value, function () use ($method): void {
                 Log::warning('You need to set up custom filter & selector for this query.', [
@@ -301,7 +305,7 @@ class Schedule extends Model implements Sitemapable
                     DATE(started_at, ?) AS local_started_at
                 SELECT, [$modifier]);
             })
-            ->when(! empty($filters['keyword']), function (Builder $builder) use ($filters): Builder {
+            ->when(!empty($filters['keyword']), function (Builder $builder) use ($filters): Builder {
                 $keyword = sprintf('%%%s%%', trim($filters['keyword']));
 
                 return $builder->where(function (Builder $builder) use ($keyword): Builder {
@@ -314,7 +318,7 @@ class Schedule extends Model implements Sitemapable
             })
 
             // exclude from filters
-            ->when(! empty($filters['excludes']), function (Builder $builder) use ($filters): Builder {
+            ->when(!empty($filters['excludes']), function (Builder $builder) use ($filters): Builder {
                 foreach ($filters['excludes'] as $column => $values) {
                     $builder->whereNotIn($column, $values);
                 }
@@ -323,17 +327,17 @@ class Schedule extends Model implements Sitemapable
             })
 
             // do not include virtual event by default
-            ->when(empty($filters['virtual']), fn (Builder $builder): Builder => $builder->where('is_virtual', false))
+            ->when(empty($filters['virtual']), fn(Builder $builder): Builder => $builder->where('is_virtual', false))
 
             // filter if 'date' exists
-            ->when(! empty($date), fn (Builder $builder): Builder => $builder->where('local_started_at', $date->toDateString()))
+            ->when(!empty($date), fn(Builder $builder): Builder => $builder->where('local_started_at', $date->toDateString()))
 
             // filter by default date
             ->when(empty($date), function (Builder $builder) use ($timezone, $filters): Builder {
                 $now = now($timezone);
 
                 return $builder
-                    ->when(empty($filters['past']), fn (Builder $builder): Builder => $builder->whereDate('local_started_at', '>=', $now))
+                    ->when(empty($filters['past']), fn(Builder $builder): Builder => $builder->whereDate('local_started_at', '>=', $now))
                     ->whereDate('local_started_at', '<=', $now->addYear());
             })
             ->orderBy('started_at')
@@ -346,9 +350,9 @@ class Schedule extends Model implements Sitemapable
             ->where('slug', $slug)
             ->with([
                 'packages',
-                'district' => fn (BelongsTo $builder): BelongsTo => $builder->select('id', 'name'),
-                'organizers' => fn (BelongsToMany $builder): BelongsToMany => $builder->select('id', 'slug', 'name'),
-                'types' => fn (BelongsToMany $builder): BelongsToMany => $builder->select('id', 'title'),
+                'district' => fn(BelongsTo $builder): BelongsTo => $builder->select('id', 'name'),
+                'organizers' => fn(BelongsToMany $builder): BelongsToMany => $builder->select('id', 'slug', 'name'),
+                'types' => fn(BelongsToMany $builder): BelongsToMany => $builder->select('id', 'title'),
             ])
             ->firstOrFail();
     }
@@ -360,8 +364,8 @@ class Schedule extends Model implements Sitemapable
             ->whereRelation('organizers', 'id', $orgId)
             ->orderByDesc('started_at')
             ->with([
-                'district' => fn (BelongsTo $builder): BelongsTo => $builder->select('id', 'name'),
-                'types' => fn (BelongsToMany $builder): BelongsToMany => $builder->select('id', 'title'),
+                'district' => fn(BelongsTo $builder): BelongsTo => $builder->select('id', 'name'),
+                'types' => fn(BelongsToMany $builder): BelongsToMany => $builder->select('id', 'title'),
             ])
             ->get();
     }
@@ -385,7 +389,7 @@ class Schedule extends Model implements Sitemapable
 
                 return $builder->selectRaw('*, DATE(started_at, ?) AS local_started_at', [$modifier]);
             })
-            ->when(! empty($month), function (Builder $builder) use ($year, $month): Builder {
+            ->when(!empty($month), function (Builder $builder) use ($year, $month): Builder {
                 $local = now(get_timezone())
                     ->setMonth($month)
                     ->setYear($year);
@@ -424,7 +428,7 @@ class Schedule extends Model implements Sitemapable
                     DATE(started_at, ?) AS local_started_at
                 SELECT, [$modifier])
             ->with([
-                'district' => fn (BelongsTo $builder): BelongsTo => $builder->select('id', 'name'),
+                'district' => fn(BelongsTo $builder): BelongsTo => $builder->select('id', 'name'),
             ])
             ->orderByDesc('started_at')
             ->whereDate('local_started_at', '<=', now(get_timezone()))

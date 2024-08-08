@@ -123,7 +123,7 @@
     @livewire('schedule.toolbar', compact('schedule'))
 
     <details class="dropdown">
-      <summary role="button">
+      <summary role="button" {{ !$schedule->is_past ?: 'disabled' }}>
         @lang('event.add_to_calendar')
       </summary>
       <ul>

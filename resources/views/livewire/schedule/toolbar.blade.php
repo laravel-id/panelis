@@ -4,8 +4,8 @@
   <hr/>
 
   <div role="group">
-    <button @guest disabled @endguest wire:click="bookmark" class="{{ $marked ? 'primary' : 'outline' }}" data-tooltip="@lang('event.tip_schedule_bookmark')"><i class="ri-bookmark-fill"></i> {{ $this->count }}</button>
-    <button x-on:click="modal = true" class="outline" data-tooltip="@lang('event.tip_schedule_report')"><i class="ri-error-warning-fill"></i></button>
+    <button @if(auth()->guest() or $schedule->is_past) disabled @endif wire:click="bookmark" class="{{ $marked ? 'primary' : 'outline' }}" data-tooltip="@lang('event.tip_schedule_bookmark')"><i class="ri-bookmark-fill"></i> {{ $this->count }}</button>
+    <button @if($schedule->is_past) disabled @endif x-on:click="modal = true" class="outline" data-tooltip="@lang('event.tip_schedule_report')"><i class="ri-error-warning-fill"></i></button>
     @auth
       <a href="{{ EditSchedule::getUrl(['record' => $schedule]) }}" role="button" class="outline"><i class="ri-pencil-fill"></i></a>
     @endauth
