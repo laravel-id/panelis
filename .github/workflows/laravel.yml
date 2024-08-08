@@ -24,7 +24,10 @@ jobs:
     - name: Create Database
       run: |
         mkdir -p database
-        touch database/testing.sqlite
+        touch database/database.sqlite
+
+    - name: Create Database for Testing
+      run: touch database/testing.sqlite
 
     - name: Install Dependencies
       run: composer install -q --no-ansi --no-interaction --no-scripts --no-progress --prefer-dist
