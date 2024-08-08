@@ -12,7 +12,8 @@ class ScheduleIndexTest extends TestCase
     {
         $response = $this->get('/');
 
-        $response->assertStatus(200)
+        $response->assertSuccessful()
+            ->assertViewIs('pages.schedules.index')
             ->assertSeeText(config('app.name'));
     }
 }

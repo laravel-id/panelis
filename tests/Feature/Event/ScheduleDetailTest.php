@@ -16,7 +16,8 @@ class ScheduleDetailTest extends TestCase
 
         $response = $this->get('/event/'.$schedule->slug);
 
-        $response->assertStatus(200)
+        $response->assertSuccessful()
+            ->assertViewIs('pages.schedules.view')
             ->assertViewHas([
                 'timezone',
                 'schedule',
@@ -34,7 +35,7 @@ class ScheduleDetailTest extends TestCase
     {
         $response = $this->get('/event/not-found');
 
-        $response->assertStatus(404);
+        $response->assertNotFound();
     }
 
     public function test_related_schedules_data(): void
@@ -42,7 +43,7 @@ class ScheduleDetailTest extends TestCase
         $schedule = Schedule::factory()->create();
         $response = $this->get('/event/'.$schedule->slug);
 
-        $response->assertStatus(200)
+        $response->assertSuccessful()
             ->assertViewHas('relatedSchedules');
     }
 
@@ -55,7 +56,7 @@ class ScheduleDetailTest extends TestCase
 
         $response = $this->get('/event/'.$schedule->slug);
 
-        $response->assertOk()
+        $response->assertSuccessful()
             ->assertViewHas('calendar')
             ->assertSeeText(__('event.add_to_calendar'));
     }
