@@ -2,16 +2,14 @@
 
 namespace App\Filament\Clusters\Settings\Pages;
 
+use App\Events\SettingUpdated;
 use App\Filament\Clusters\Settings;
 use App\Filament\Clusters\Settings\Enums\LogChannel;
-use App\Filament\Clusters\Settings\Enums\LogLevel;
 use App\Models\Setting;
 use Filament\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Forms\Form;
@@ -21,7 +19,9 @@ use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log as Logger;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -39,6 +39,8 @@ class Log extends Page implements HasForms
 
     public array $logging;
 
+    public array $larabug;
+
     public bool $isButtonDisabled = false;
 
     protected function getHeaderActions(): array
@@ -49,11 +51,17 @@ class Log extends Page implements HasForms
                 ->modalWidth(MaxWidth::Medium)
                 ->form([
                     Textarea::make('message')
-                        ->label(__('setting.log_message')),
+                        ->label(__('setting.log_message'))
+                        ->required(),
                 ])
                 ->action(function (array $data): void {
                     try {
-                        \Illuminate\Support\Facades\Log::debug($data['message'] ?? 'Testing log');
+                        Logger::debug($data['message'] ?? 'Testing log');
+
+                        // special test for Larabug
+                        if (in_array('larabug', config('logging.channels.stack.channels'))) {
+                            Artisan::call('larabug:test');
+                        }
 
                         Notification::make('log_test_sent')
                             ->title(__('setting.log_test_sent'))
@@ -104,6 +112,12 @@ class Log extends Page implements HasForms
                 ],
             ],
 
+            'larabug' => [
+                'login_key' => config('larabug.login_key'),
+                'project_key' => config('larabug.project_key'),
+                'environments' => config('larabug.environments'),
+            ],
+
             'isButtonDisabled' => ! Auth::user()->can('ViewLogSetting'),
         ]);
     }
@@ -124,56 +138,24 @@ class Log extends Page implements HasForms
                             ->options(LogChannel::options()),
                     ]),
 
-                Section::make(__('setting.log_slack'))
-                    ->visible(function (Get $get): bool {
-                        return in_array('slack', $get('logging.channels.stack.channels'));
-                    })
-                    ->schema([
-                        Select::make('logging.channels.slack.level')
-                            ->label(__('setting.log_level'))
-                            ->options(LogLevel::options())
-                            ->searchable()
-                            ->required()
-                            ->enum(LogLevel::class),
-
-                        TextInput::make('logging.channels.slack.url')
-                            ->label(__('setting.slack_webhook_url'))
-                            ->hint(
-                                str(__('setting.slack_webhook_hint'))
-                                    ->inlineMarkdown()
-                                    ->toHtmlString()
-                            )
-                            ->url()
-                            ->required(),
-
-                        TextInput::make('logging.channels.slack.username')
-                            ->label(__('setting.slack_username'))
-                            ->string()
-                            ->required(),
-                    ]),
+                Section::make(__('setting.log_larabug'))
+                    ->visible(fn (Get $get): bool => in_array('larabug', $get('logging.channels.stack.channels')))
+                    ->collapsible()
+                    ->schema(Settings\Forms\Log\LarabugForm::make()),
 
                 Section::make(__('setting.log_papertrail'))
                     ->visible(function (Get $get): bool {
                         return in_array('papertrail', $get('logging.channels.stack.channels'));
                     })
-                    ->schema([
-                        Select::make('logging.channels.papertrail.level')
-                            ->label(__('setting.log_level'))
-                            ->options(LogLevel::options())
-                            ->searchable()
-                            ->required()
-                            ->enum(LogLevel::class),
+                    ->collapsible()
+                    ->schema(Settings\Forms\Log\PapertailForm::make()),
 
-                        TextInput::make('logging.channels.papertrail.url')
-                            ->label(__('setting.log_papertrail_url'))
-                            ->url()
-                            ->required(),
-
-                        TextInput::make('logging.channels.papertrail.port')
-                            ->label(__('setting.log_papertrail_port'))
-                            ->numeric()
-                            ->required(),
-                    ]),
+                Section::make(__('setting.log_slack'))
+                    ->visible(function (Get $get): bool {
+                        return in_array('slack', $get('logging.channels.stack.channels'));
+                    })
+                    ->collapsible()
+                    ->schema(Settings\Forms\Log\SlackForm::make()),
             ]);
     }
 
@@ -187,26 +169,27 @@ class Log extends Page implements HasForms
         $this->validate();
 
         try {
-            $stacks = [];
-            foreach (Arr::dot($this->form->getState()) as $key => $value) {
-                if (str_contains($key, 'logging.channels.stack.channels')) {
-                    $stacks[] = $value;
-
-                    continue;
-                }
-
-                Setting::updateOrCreate(compact('key'), compact('value'));
+            $logs = [];
+            foreach (Arr::dot($this->form->getState()['logging']) as $value) {
+                $logs[] = $value;
             }
 
             // store array channels
-            Setting::updateOrCreate(['key' => 'logging.channels.stack.channels'], ['value' => $stacks]);
+            Setting::set('logging.channels.stack.channels', $logs);
+
+            // larabug environments
+            foreach ($this->form->getState()['larabug'] as $key => $value) {
+                Setting::set('larabug.'.$key, $value);
+            }
+
+            event(new SettingUpdated);
 
             Notification::make('log_updated')
                 ->title(__('setting.log_updated'))
                 ->success()
                 ->send();
         } catch (\Exception $e) {
-            \Illuminate\Support\Facades\Log::error($e);
+            Logger::error($e);
 
             Notification::make('log_not_updated')
                 ->title(__('setting.log_not_updated'))

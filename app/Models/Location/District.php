@@ -21,7 +21,7 @@ class District extends Model
     ];
 
     protected $casts = [
-        'is_active' => true,
+        'is_active' => 'boolean',
     ];
 
     public function region(): BelongsTo

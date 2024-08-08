@@ -23,7 +23,7 @@ enum AvatarProvider: string implements HasOption
 
     public static function options(): array
     {
-        return (collect(AvatarProvider::cases()))
+        return collect(AvatarProvider::cases())
             ->mapWithKeys(function (AvatarProvider $case): array {
                 return [$case->value => $case->label()];
             })

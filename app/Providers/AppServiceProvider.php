@@ -4,6 +4,8 @@ namespace App\Providers;
 
 use App\Services\Database\Database;
 use App\Services\Database\DatabaseFactory;
+use App\Services\OAuth\OAuth;
+use App\Services\OAuth\OAuthFactory;
 use Illuminate\Support\Number;
 use Illuminate\Support\ServiceProvider;
 
@@ -14,8 +16,12 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(Database::class, function ($app): ?object {
+        $this->app->bind(Database::class, function (): ?object {
             return DatabaseFactory::make();
+        });
+
+        $this->app->bind(OAuth::class, function (): ?OAuth {
+            return OAuthFactory::make();
         });
     }
 
@@ -31,7 +37,7 @@ class AppServiceProvider extends ServiceProvider
             ?bool $isSymbolSuffix = null,
         ): string {
             $format = $format ?? config('app.number_format', '');
-            $isSymbolSuffix = $isSymbolSuffix ?? config('app.symbol_suffix', false);
+            $isSymbolSuffix = $isSymbolSuffix ?? config('app.number_symbol_suffix', false);
 
             if (empty($format)) {
                 if ($isSymbolSuffix) {

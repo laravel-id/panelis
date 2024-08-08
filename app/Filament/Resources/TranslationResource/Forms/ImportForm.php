@@ -2,7 +2,6 @@
 
 namespace App\Filament\Resources\TranslationResource\Forms;
 
-use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Radio;
 

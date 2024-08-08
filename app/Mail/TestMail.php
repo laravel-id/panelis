@@ -19,9 +19,7 @@ class TestMail extends Mailable
     public function __construct(
         private readonly string $address,
         private readonly string $name,
-    ) {
-
-    }
+    ) {}
 
     /**
      * Get the message envelope.

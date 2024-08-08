@@ -2,18 +2,14 @@
 
 namespace App\Filament\Clusters\Databases\Pages;
 
+use App\Events\SettingUpdated;
 use App\Filament\Clusters\Databases;
-use App\Filament\Clusters\Databases\Enums\DatabasePeriod;
-use App\Filament\Clusters\Databases\Enums\DatabaseType;
+use App\Jobs\Database\UploadToCloud;
 use App\Models\Setting;
 use App\Services\Database\Database;
 use Exception;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
-use Filament\Forms\Components\TextInput;
-use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
@@ -24,9 +20,7 @@ use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Number;
 use Illuminate\Validation\ValidationException;
 use KoalaFacade\FilamentAlertBox\Forms\Components\AlertBox;
 use Symfony\Component\HttpFoundation\Response;
@@ -44,6 +38,10 @@ class AutoBackup extends Page implements HasForms
     protected static ?int $navigationSort = 2;
 
     public array $database;
+
+    public array $filesystems;
+
+    public array $dropbox;
 
     public bool $isButtonDisabled = true;
 
@@ -75,10 +73,31 @@ class AutoBackup extends Page implements HasForms
             Action::make('backup')
                 ->visible(Auth::user()->can('BackupDb'))
                 ->label(__('database.button_backup_now'))
+                ->form([
+                    AlertBox::make('cloud_backup_disabled')
+                        ->label(__('database.cloud_backup_disabled'))
+                        ->helperText(__('database.cloud_backup_is_disabled'))
+                        ->visible(! config('database.cloud_backup_enabled', false))
+                        ->warning(),
+
+                    Section::make()
+                        ->visible(config('database.cloud_backup_enabled', false))
+                        ->schema([
+                            Toggle::make('upload_to_cloud')
+                                ->label(__('database.upload_to_cloud', [
+                                    'provider' => __(sprintf('database.cloud_storage_%s', config('database.cloud_storage'))),
+                                ])),
+                        ]),
+                ])
                 ->requiresConfirmation()
-                ->action(function (): void {
+                ->action(function (array $data): void {
                     try {
-                        $this->databaseService->backup();
+                        $path = $this->databaseService->backup();
+
+                        // upload to cloud if possible
+                        if ($data['upload_to_cloud'] ?? false) {
+                            UploadToCloud::dispatch($path);
+                        }
 
                         Notification::make('backup')
                             ->title(__('database.file_created'))
@@ -113,83 +132,47 @@ class AutoBackup extends Page implements HasForms
                 'backup_period' => config('database.backup_period'),
                 'backup_time' => config('database.backup_time', '00:00'),
                 'backup_max' => config('database.backup_max', 3),
+
+                // cloud backup settings
+                'cloud_backup_enabled' => config('database.cloud_backup_enabled', false),
+                'cloud_storage' => config('database.cloud_storage'),
+            ],
+            'filesystems' => [
+                'disks' => [
+                    'dropbox' => [
+                        'token' => config('filesystems.disks.dropbox.token'),
+                    ],
+                ],
+            ],
+
+            'dropbox' => [
+                'client_id' => config('dropbox.client_id'),
+                'client_secret' => config('dropbox.client_secret'),
             ],
         ]);
     }
 
     public function form(Form $form): Form
     {
-        $database = data_get(config('database.connections'), config('database.default'));
+        return $form
+            ->schema([
+                AlertBox::make('package_installed')
+                    ->warning()
+                    ->label(__('database.auto_backup_is_disabled'))
+                    ->helperText(__('database.auto_backup_disabled_reason'))
+                    ->hidden(fn (): bool => $this->databaseService?->isAvailable() ?? false),
 
-        return $form->schema([
-            AlertBox::make('package_installed')
-                ->warning()
-                ->label(__('database.auto_backup_is_disabled'))
-                ->helperText(__('database.auto_backup_disabled_reason'))
-                ->hidden(fn (): bool => $this->databaseService?->isAvailable() ?? false),
+                Section::make(__('database.auto_backup'))
+                    ->description(__('database.auto_backup_info'))
+                    ->schema(Databases\Forms\AutoBackupForm::make($this->databaseService)),
 
-            Section::make(__('database.auto_backup'))
-                ->description(__('database.auto_backup_info'))
-                ->schema([
-                    Placeholder::make('database.default')
-                        ->label(__('database.type'))
-                        ->content(DatabaseType::getType(config('database.default'))),
-
-                    Placeholder::make('database.version')
-                        ->label(__('database.version'))
-                        ->content($this->databaseService?->getVersion()),
-
-                    Placeholder::make('database.url')
-                        ->label(__('database.path'))
-                        ->visible(fn (): bool => config('database.default') === DatabaseType::SQLite->value)
-                        ->helperText(function (): ?string {
-                            if (config('app.demo')) {
-                                return __('database.hidden_in_demo');
-                            }
-
-                            return null;
-                        })
-                        ->content(config('app.demo') ? '***' : $database['database'] ?? null),
-
-                    Toggle::make('database.auto_backup_enabled')
-                        ->label(__('database.backup_enabled'))
-                        ->live()
-                        ->disabled(fn (): bool => ! $this->databaseService?->isAvailable()),
-
-                    Placeholder::make('database.size')
-                        ->label(__('database.size'))
-                        ->visible(fn (): bool => config('database.default') === DatabaseType::SQLite->value)
-                        ->content(function () use ($database): ?string {
-                            if (config('database.default') === DatabaseType::SQLite->value) {
-                                return Number::fileSize(File::size($database['database']));
-                            }
-
-                            return null;
-                        })
-                        ->disabled(fn (Get $get): bool => ! $get('database.auto_backup_enabled')),
-
-                    Radio::make('database.backup_period')
-                        ->label(__('database.period'))
-                        ->options(DatabasePeriod::options())
-                        ->required()
-                        ->disabled(fn (Get $get): bool => ! $get('database.auto_backup_enabled')),
-
-                    TimePicker::make('database.backup_time')
-                        ->label(__('database.backup_time'))
-                        ->seconds(false)
-                        ->timezone(config('app.timezone'))
-                        ->native(false)
-                        ->required()
-                        ->disabled(fn (Get $get): bool => ! $get('database.auto_backup_enabled')),
-
-                    TextInput::make('database.backup_max')
-                        ->label(__('database.backup_max'))
-                        ->numeric()
-                        ->minValue(1)
-                        ->required()
-                        ->disabled(fn (Get $get): bool => ! $get('database.auto_backup_enabled')),
-                ]),
-        ])
+                Section::make(__('database.cloud_backup'))
+                    ->description(__('database.cloud_backup_section_description'))
+                    ->collapsible()
+                    ->visible(Auth::user()->can('CloudDBBackup'))
+                    ->disabled(fn (Get $get): bool => ! $get('database.auto_backup_enabled') || config('app.demo'))
+                    ->schema(Databases\Forms\CloudBackupForm::make()),
+            ])
             ->disabled(! Auth::user()->can('UpdateAutoBackupDb'));
     }
 
@@ -206,6 +189,8 @@ class AutoBackup extends Page implements HasForms
             foreach (Arr::dot($this->form->getState()) as $key => $value) {
                 Setting::updateOrCreate(compact('key'), compact('value'));
             }
+
+            event(new SettingUpdated);
 
             Notification::make('backup_updated')
                 ->title(__('database.backup_updated'))

@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\TranslationResource\Forms;
 
 use App\Models\Translation;
-use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Toggle;
