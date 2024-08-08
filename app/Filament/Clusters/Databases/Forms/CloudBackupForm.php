@@ -54,7 +54,7 @@ class CloudBackupForm
                 ->required(fn (Get $get): bool => $get('database.cloud_backup_enabled')),
 
             TextInput::make('dropbox.client_id')
-                ->label('database.dropbox_api_key')
+                ->label(__('database.dropbox_api_key'))
                 ->hint(\str(__('database.dropbox_token_hint'))->inlineMarkdown()->toHtmlString())
                 ->visible(fn (Get $get): bool => $get('database.cloud_backup_enabled') && $get('database.cloud_storage') === CloudProvider::Dropbox->value)
                 ->afterStateUpdated(function (?string $state): void {
@@ -68,7 +68,7 @@ class CloudBackupForm
                 ->required(),
 
             TextInput::make('dropbox.client_secret')
-                ->label('database.dropbox_api_secret')
+                ->label(__('database.dropbox_api_secret'))
                 ->visible(fn (Get $get): bool => $get('database.cloud_backup_enabled') && $get('database.cloud_storage') === CloudProvider::Dropbox->value)
                 ->afterStateUpdated(function (?string $state): void {
                     if (! empty($state)) {
