@@ -169,4 +169,10 @@
       </div>
     @endforeach
   @endif
+
+  <div class="elfsight-app-b25033ce-b01a-46a6-8d58-b890986a911f" data-elfsight-app-lazy></div>
 @endsection
+
+@push('js')
+  <script src="https://static.elfsight.com/platform/platform.js" data-use-service-core defer></script>
+@endpush
