@@ -65,6 +65,10 @@ class ReplicateForm
                         ->native(false)
                         ->date()
                         ->minDate(fn (Get $get) => $get('started_at')),
+
+                    Toggle::make('metadata.hide_time')
+                        ->label(__('event.schedule_hide_time'))
+                        ->default(false),
                 ]),
 
             Section::make(__('event.schedule_where'))
@@ -86,6 +90,12 @@ class ReplicateForm
                         ->options(District::query()->pluck('name', 'id'))
                         ->hidden(fn (Get $get): bool => $get('is_virtual'))
                         ->required(fn (Get $get): bool => ! $get('is_virtual')),
+
+                    TextInput::make('metadata.location_url')
+                        ->label(__('event.schedule_location_url'))
+                        ->hidden(fn (Get $get): bool => $get('is_virtual') ?? false)
+                        ->nullable()
+                        ->url(),
                 ]),
 
             Toggle::make('replicate_type')
