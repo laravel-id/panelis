@@ -15,8 +15,8 @@ return new class extends Migration
             $table->id();
             $table->string('title');
             $table->string('description')->nullable();
-            $table->string('label');
             $table->string('url');
+            $table->json('types');
             $table->dateTime('logged_at');
             $table->timestamps();
         });

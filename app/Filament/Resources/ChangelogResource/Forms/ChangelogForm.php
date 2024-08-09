@@ -2,9 +2,11 @@
 
 namespace App\Filament\Resources\ChangelogResource\Forms;
 
+use App\Filament\Resources\ChangelogResource\Enums\ChangelogType;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\MarkdownEditor;
+use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 
 class ChangelogForm
@@ -19,21 +21,21 @@ class ChangelogForm
             MarkdownEditor::make('description')
                 ->label(__('changelog.description')),
 
-            Grid::make(2)
-                ->schema([
-                    TextInput::make('label')
-                        ->label(__('changelog.url_label'))
-                        ->required(),
+            TextInput::make('url')
+                ->label(__('changelog.url'))
+                ->url()
+                ->required(),
 
-                    TextInput::make('url')
-                        ->label(__('changelog.url'))
-                        ->url()
-                        ->required(),
-                ]),
+            TagsInput::make('types')
+                ->label(__('changelog.types'))
+                ->reorderable()
+                ->suggestions(ChangelogType::cases())
+                ->required(),
 
             DateTimePicker::make('logged_at')
                 ->label(__('changelog.logged_at'))
                 ->native(false)
+                ->default(now())
                 ->timezone(get_timezone())
                 ->format(get_datetime_format())
                 ->seconds(false)

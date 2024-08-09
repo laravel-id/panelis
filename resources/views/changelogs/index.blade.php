@@ -11,7 +11,7 @@
 								<thead>
 								<tr>
 										<th>@lang('changelog.logged_at')</th>
-										<th>@lang('changelog.url')</th>
+										<th>@lang('changelog.types')</th>
 										<th>@lang('changelog.description')</th>
 								</tr>
 								</thead>
@@ -21,10 +21,12 @@
 										<tr>
 												<td>{{ $changelog->logged_at->format(config('app.date_format', 'Y-m-d')) }}</td>
 												<td>
-														<a href="{{ $changelog->url }}">{{ $changelog->label }}</a>
+														@foreach($changelog->types as $type)
+																<mark>{{ $type }}</mark>
+														@endforeach
 												</td>
 												<td>
-														{{ $changelog->title }} <br/>
+														<a href="{{ $changelog->url }}">{{ $changelog->title }}</a> <br/>
 														<small>{{ $changelog->description }}</small>
 												</td>
 										</tr>

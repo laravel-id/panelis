@@ -18,12 +18,13 @@ class Changelog extends Model
     protected $fillable = [
         'title',
         'description',
-        'label',
         'url',
+        'types',
         'logged_at',
     ];
 
     protected $casts = [
         'logged_at' => 'datetime',
+        'types' => 'array',
     ];
 }
