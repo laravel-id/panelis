@@ -14,6 +14,7 @@
 						<li><h1>{{ config('app.name') }}</h1></li>
 				</ul>
 				<ul>
+						<li><a href="{{ config('app.demo_url') }}">@lang('navigation.demo')</a></li>
 						<li><a href="{{ config('app.repository_url') }}">@lang('navigation.repository')</a></li>
 				</ul>
 		</nav>
