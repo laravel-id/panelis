@@ -16,6 +16,10 @@ class EditTranslation extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            Actions\CreateAction::make()
+                ->url(CreateTranslation::getUrl())
+                ->visible(Auth::user()->can('CreateTranslation')),
+
             Actions\DeleteAction::make()
                 ->visible(fn (?Translation $line): bool => ! $line->is_system && Auth::user()->can('DeleteTranslation')),
         ];
