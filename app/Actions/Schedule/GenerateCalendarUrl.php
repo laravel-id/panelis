@@ -14,7 +14,7 @@ class GenerateCalendarUrl
     {
         $finishedAt = $schedule->finished_at;
         if (empty($schedule->finished_at)) {
-            $finishedAt = $schedule->started_at;
+            $finishedAt = $schedule->started_at->addHours(config('event.time_difference', 4));
         }
 
         $link = Link::create($schedule->title, $schedule->started_at, $finishedAt);
