@@ -145,7 +145,7 @@ class ScheduleForm
 
                             TextInput::make('metadata.location_url')
                                 ->label(__('event.schedule_location_url'))
-                                ->hidden(fn (Get $get): bool => $get('is_virtual'))
+                                ->hidden(fn (Get $get): bool => $get('is_virtual') ?? false)
                                 ->nullable()
                                 ->url(),
                         ]),
