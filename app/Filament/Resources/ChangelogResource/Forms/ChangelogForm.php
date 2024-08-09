@@ -8,6 +8,7 @@ use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
+use Illuminate\Support\Str;
 
 class ChangelogForm
 {
@@ -16,6 +17,7 @@ class ChangelogForm
         return [
             TextInput::make('title')
                 ->label(__('changelog.title'))
+                ->dehydrateStateUsing(fn(?string $state): ?string => Str::apa($state ?? ''))
                 ->required(),
 
             MarkdownEditor::make('description')
