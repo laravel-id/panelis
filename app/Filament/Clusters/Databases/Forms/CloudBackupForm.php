@@ -30,6 +30,7 @@ class CloudBackupForm
                 ->label(__('database.cloud_backup_enabled'))
                 ->afterStateUpdated(function (Set $set, ?bool $state): void {
                     $set('database.cloud_storage', null);
+
                     Setting::set('database.cloud_backup_enabled', $state);
                     event(new SettingUpdated);
                 })
