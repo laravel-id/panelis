@@ -72,7 +72,7 @@
     <div><small><i class="ri-calendar-2-line"></i> @lang('event.schedule_datetime'):</small></div>
     <p>{{ $schedule->held_at }}</p>
     <div class="overflow-auto">
-      @include('pages.schedules.related', compact('relatedSchedules', 'nextWeekSchedules'))
+      @include('pages.schedules.related', compact('relatedSchedules'))
     </div>
 
     @if(!$schedule->is_virtual)
@@ -121,6 +121,18 @@
       @endforeach
     @endif
     @livewire('schedule.toolbar', compact('schedule'))
+
+    <details class="dropdown">
+      <summary role="button" {{ !$schedule->is_past ?: 'disabled' }}>
+        @lang('event.add_to_calendar')
+      </summary>
+      <ul>
+        <li><a href="{{ $calendar->google() }}">@lang('event.calendar_google')</a></li>
+        <li><a href="{{ $calendar->yahoo() }}">@lang('event.calendar_yahoo')</a></li>
+        <li><a href="{{ $calendar->webOutlook() }}">@lang('event.calendar_outlook')</a></li>
+        <li><a href="{{ $calendar->ics(['UID' => $schedule->slug, 'URL' => url()->current()]) }}">@lang('event.calendar_download_ics')</a></li>
+      </ul>
+    </details>
   </article>
 
   @if (!$schedule->packages->isEmpty())

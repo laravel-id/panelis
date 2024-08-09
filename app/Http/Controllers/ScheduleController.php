@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Actions\Schedule\GenerateCalendarUrl;
 use App\Models\Event\Organizer;
 use App\Models\Event\Schedule;
 use Illuminate\Http\JsonResponse;
@@ -51,22 +52,14 @@ class ScheduleController extends Controller
             ],
         ]);
 
-        // find schedule for next week
-        $nextWeekSchedules = Schedule::getPublishedSchedules([
-            'date' => $schedule->started_at->timezone(get_timezone())->addWeek()->format('Y-m-d'),
-            $excludes,
-        ]);
-
         return view('pages.schedules.view')
             ->with(compact(
                 'schedule',
                 'startedAt',
                 'organizers',
-                'format',
-                'dateFormat',
                 'relatedSchedules',
-                'nextWeekSchedules',
             ))
+            ->with('calendar', GenerateCalendarUrl::run($schedule))
             ->with('externalUrl', $schedule->external_url)
             ->with('title', sprintf('%s - %s', $schedule->title, $year));
     }

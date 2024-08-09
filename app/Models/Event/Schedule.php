@@ -54,6 +54,7 @@ class Schedule extends Model implements Sitemapable
         'metadata' => 'array',
         'contacts' => 'array',
         'categories' => 'array',
+        'is_virtual' => 'boolean',
     ];
 
     protected $fillable = [
@@ -139,18 +140,21 @@ class Schedule extends Model implements Sitemapable
         return new Attribute(
             get: function (): ?string {
                 $url = ShortURL::query()
+                    ->select('default_short_url')
                     ->where('destination_url', $this->url)
+                    ->where('single_use', false)
                     ->first();
 
                 if (! empty($url)) {
-                    Log::warning('Missing external URL for event.', [
-                        'title' => $this->title,
-                    ]);
-
                     return $url->default_short_url;
                 }
 
-                return null;
+                Log::warning('Missing external URL for event.', [
+                    'title' => $this->title,
+                ]);
+
+                // return origin URL
+                return $this->url;
             },
         );
     }
@@ -206,19 +210,23 @@ class Schedule extends Model implements Sitemapable
         );
     }
 
-    public function getIsPastAttribute(): bool
+    public function isPast(): Attribute
     {
-        $now = now(get_timezone());
+        return new Attribute(
+            get: function (): bool {
+                $now = now(get_timezone());
 
-        if (! empty($this->finished_at)) {
-            return $this->finished_at
-                ->timezone(get_timezone())
-                ->lt($now);
-        }
+                if (! empty($this->finished_at)) {
+                    return $this->finished_at
+                        ->timezone(get_timezone())
+                        ->lt($now);
+                }
 
-        return $this->started_at
-            ->timezone(get_timezone())
-            ->lt($now);
+                return $this->started_at
+                    ->timezone(get_timezone())
+                    ->lt($now);
+            },
+        );
     }
 
     public function user(): BelongsTo
@@ -341,8 +349,26 @@ class Schedule extends Model implements Sitemapable
     {
         return self::query()
             ->where('slug', $slug)
-            ->with(['packages'])
+            ->with([
+                'packages',
+                'district' => fn (BelongsTo $builder): BelongsTo => $builder->select('id', 'name'),
+                'organizers' => fn (BelongsToMany $builder): BelongsToMany => $builder->select('id', 'slug', 'name'),
+                'types' => fn (BelongsToMany $builder): BelongsToMany => $builder->select('id', 'title'),
+            ])
             ->firstOrFail();
+    }
+
+    public static function getByOrganizer(int $orgId): Collection
+    {
+        return self::query()
+            ->select('id', 'slug', 'title', 'started_at', 'categories', 'location', 'district_id')
+            ->whereRelation('organizers', 'id', $orgId)
+            ->orderByDesc('started_at')
+            ->with([
+                'district' => fn (BelongsTo $builder): BelongsTo => $builder->select('id', 'name'),
+                'types' => fn (BelongsToMany $builder): BelongsToMany => $builder->select('id', 'title'),
+            ])
+            ->get();
     }
 
     public static function getFilteredSchedules(int $year, ?int $month = null): Collection

@@ -10,10 +10,7 @@ class OrganizerController extends Controller
 {
     public function view(Organizer $organizer): View
     {
-        $schedules = Schedule::query()
-            ->whereRelation('organizers', 'id', $organizer->id)
-            ->orderByDesc('started_at')
-            ->get();
+        $schedules = Schedule::getByOrganizer($organizer->id);
 
         return view('pages.organizers.view', compact('organizer', 'schedules'))
             ->with('timezone', get_timezone())

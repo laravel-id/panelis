@@ -5,9 +5,10 @@ namespace App\Providers;
 use App\Facades\Event\Schedule;
 use App\Services\Database\Database;
 use App\Services\Database\DatabaseFactory;
-use Illuminate\Support\Facades\URL;
 use App\Services\OAuth\OAuth;
 use App\Services\OAuth\OAuthFactory;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Number;
 use Illuminate\Support\ServiceProvider;
 
@@ -34,6 +35,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        Model::preventLazyLoading(! $this->app->isProduction());
+
         if ($this->app->environment('production')) {
             URL::forceScheme('https');
         }
