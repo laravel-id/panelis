@@ -11,6 +11,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Get;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Number;
 
@@ -44,7 +45,7 @@ class AutoBackupForm
             Toggle::make('database.auto_backup_enabled')
                 ->label(__('database.backup_enabled'))
                 ->live()
-                ->disabled(fn (): bool => ! $databaseService?->isAvailable()),
+                ->disabled(fn (): bool => ! $databaseService?->isAvailable() || (config('app.demo') || !Auth::user()->is_root)),
 
             Placeholder::make('database.size')
                 ->label(__('database.size'))
