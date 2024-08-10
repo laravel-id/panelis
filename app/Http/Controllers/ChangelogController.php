@@ -10,7 +10,7 @@ class ChangelogController extends Controller
 {
     public function __invoke(Request $request): View
     {
-        abort_if(!config('app.demo', false) && !app()->isLocal(), 404);
+        abort_if(! config('app.demo', false) && ! app()->isLocal(), 404);
 
         $changelogs = Changelog::query()
             ->orderByDesc('logged_at')

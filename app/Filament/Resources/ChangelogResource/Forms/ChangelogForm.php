@@ -4,7 +4,6 @@ namespace App\Filament\Resources\ChangelogResource\Forms;
 
 use App\Filament\Resources\ChangelogResource\Enums\ChangelogType;
 use Filament\Forms\Components\DateTimePicker;
-use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
@@ -17,7 +16,7 @@ class ChangelogForm
         return [
             TextInput::make('title')
                 ->label(__('changelog.title'))
-                ->dehydrateStateUsing(fn(?string $state): ?string => Str::apa($state ?? ''))
+                ->dehydrateStateUsing(fn (?string $state): ?string => Str::apa($state ?? ''))
                 ->required(),
 
             MarkdownEditor::make('description')

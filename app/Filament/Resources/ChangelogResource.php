@@ -4,7 +4,6 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\ChangelogResource\Forms\ChangelogForm;
 use App\Filament\Resources\ChangelogResource\Pages;
-use App\Filament\Resources\ChangelogResource\RelationManagers;
 use App\Models\Changelog;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
@@ -12,8 +11,6 @@ use Filament\Resources\Resource;
 use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class ChangelogResource extends Resource
 {
@@ -51,8 +48,8 @@ class ChangelogResource extends Resource
 
                 TextColumn::make('title')
                     ->label(__('changelog.title'))
-                    ->url(fn(Changelog $changelog): ?string => $changelog->url)
-                    ->description(fn(Changelog $changelog): ?string => $changelog->description),
+                    ->url(fn (Changelog $changelog): ?string => $changelog->url)
+                    ->description(fn (Changelog $changelog): ?string => $changelog->description),
 
                 TextColumn::make('local_created_at')
                     ->label(__('ui.created_at')),

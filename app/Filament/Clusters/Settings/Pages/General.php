@@ -46,7 +46,7 @@ class General extends Page
             Action::make('export')
                 ->label(__('setting.btn_export_all'))
                 ->visible(Auth::user()->can('ExportSetting'))
-                ->disabled(config('app.demo') || !Auth::user()->is_root)
+                ->disabled(config('app.demo') || ! Auth::user()->is_root)
                 ->requiresConfirmation()
                 ->modalDescription(__('setting.modal_export_all'))
                 ->action(function (): StreamedResponse {
@@ -57,7 +57,7 @@ class General extends Page
                 Action::make('import')
                     ->label(__('setting.btn_import'))
                     ->visible(Auth::user()->can('ImportSetting'))
-                    ->disabled(config('app.demo') || !Auth::user()->is_root)
+                    ->disabled(config('app.demo') || ! Auth::user()->is_root)
                     ->requiresConfirmation()
                     ->modalDescription(__('setting.modal_import'))
                     ->form([
