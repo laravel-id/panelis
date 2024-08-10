@@ -19,7 +19,7 @@
 								<tbody>
 								@foreach($changelogs as $changelog)
 										<tr>
-												<td>{{ $changelog->logged_at->format(config('app.date_format', 'Y-m-d')) }}</td>
+												<td>{{ $changelog->logged_at->diffForHumans() }}</td>
 												<td>
 														@foreach($changelog->types as $type)
 																<mark>{{ $type }}</mark>
