@@ -23,7 +23,8 @@ class CloudBackupForm
 
     public static function make(): array
     {
-        self::$oauth = app(OAuth::class);
+        self::$oauth = app(OAuth::class)
+            ->driver(config('database.cloud_storage', CloudProvider::Dropbox->value));
 
         return [
             Toggle::make('database.cloud_backup_enabled')

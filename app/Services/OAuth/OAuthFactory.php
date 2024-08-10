@@ -2,20 +2,19 @@
 
 namespace App\Services\OAuth;
 
-use App\Services\OAuth\Vendors\Dropbox;
-use App\Services\OAuth\Vendors\GoogleDrive;
+use Illuminate\Support\Manager;
 
-class OAuthFactory
+/**
+ * @mixin OAuth
+ */
+class OAuthFactory extends Manager
 {
     const GoogleDrive = 'google_drive';
 
     const Dropbox = 'dropbox';
 
-    public static function make(): OAuth
+    public function getDefaultDriver(): string
     {
-        return match (config('oauth.provider')) {
-            self::GoogleDrive => new GoogleDrive,
-            default => new Dropbox,
-        };
+        return self::Dropbox;
     }
 }
