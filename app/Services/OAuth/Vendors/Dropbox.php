@@ -133,10 +133,11 @@ class Dropbox implements OAuth
      */
     public function getUser(?string $token = null): OAuth
     {
-        $token = $token ?? config('filesystems.disks.dropbox.token');
+
+        $auth = $this->authorize(config('dropbox.refresh_token'));
 
         $response = Http::throwIf(app()->isLocal())
-            ->withToken($token)
+            ->withToken($auth->getToken())
             ->send('POST', 'https://api.dropboxapi.com/2/users/get_current_account');
 
         if (! $response->successful()) {
@@ -160,8 +161,8 @@ class Dropbox implements OAuth
             ->post('https://api.dropbox.com/oauth2/token', [
                 'refresh_token' => $refreshToken,
                 'grant_type' => 'refresh_token',
-                'client_id' => $this->clientId,
-                'client_secret' => $this->clientSecret,
+                'client_id' => $this->clientId ?? config('dropbox.client_id'),
+                'client_secret' => $this->clientSecret ?? config('dropbox.client_secret'),
             ]);
     }
 
