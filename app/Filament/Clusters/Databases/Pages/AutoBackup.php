@@ -170,7 +170,7 @@ class AutoBackup extends Page implements HasForms
                     ->description(__('database.cloud_backup_section_description'))
                     ->collapsible()
                     ->visible(Auth::user()->can('CloudDBBackup'))
-                    ->disabled(fn (Get $get): bool => ! $get('database.auto_backup_enabled') || config('app.demo'))
+                    ->disabled(fn (Get $get): bool => ! $get('database.auto_backup_enabled') || config('app.demo') || ! Auth::user()->is_root)
                     ->schema(Databases\Forms\CloudBackupForm::make()),
             ])
             ->disabled(! Auth::user()->can('UpdateAutoBackupDb'));
