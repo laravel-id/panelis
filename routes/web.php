@@ -7,6 +7,7 @@ use App\Http\Controllers\OrganizerController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SubscriberController;
+use App\Http\Middleware\CacheResponse;
 use AshAllenDesign\ShortURL\Facades\ShortURL;
 use App\Http\Controllers\OAuth\DropboxController;
 use Illuminate\Support\Facades\Route;
@@ -47,7 +48,9 @@ Route::get('/organizer/{organizer:slug}', [OrganizerController::class, 'view'])-
 
 Route::get('/calendar', [ScheduleController::class, 'calendar'])->name('schedule.calendar');
 Route::get('/archive', [ScheduleController::class, 'archive'])->name('schedule.archive');
-Route::get('/event/{slug}', [ScheduleController::class, 'view'])->name('schedule.view');
+Route::get('/event/{slug}', [ScheduleController::class, 'view'])
+    ->middleware([CacheResponse::class])
+    ->name('schedule.view');
 Route::get('/{year}/{month?}', [ScheduleController::class, 'filter'])
     ->where(['year' => '[0-9]+', 'month' => '[0-9]+'])
     ->name('schedule.filter');
