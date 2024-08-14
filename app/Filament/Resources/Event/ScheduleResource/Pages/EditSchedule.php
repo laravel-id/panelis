@@ -7,6 +7,7 @@ use App\Models\URL\ShortURL;
 use AshAllenDesign\ShortURL\Facades\ShortURL as URLShortener;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 class EditSchedule extends EditRecord
@@ -36,6 +37,9 @@ class EditSchedule extends EditRecord
 
     protected function afterSave(): void
     {
+        // clear cached response
+        Cache::forget('response.'.route('schedule.view', $this->record->slug));
+
         $exists = ShortURL::query()
             ->where('destination_url', $this->record->url)
             ->exists();
