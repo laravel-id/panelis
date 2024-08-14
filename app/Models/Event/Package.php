@@ -2,6 +2,7 @@
 
 namespace App\Models\Event;
 
+use App\Filament\Resources\Event\ScheduleResource\Enums\PackagePriceType;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,10 +11,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 /**
  * @property float $price
+ * @property PackagePriceType $price_type
+ * @property bool $is_sold
  * @property Carbon $started_at
  * @property Carbon $ended_at
  * @property string $description
  * @property string $url
+ * @property bool $is_past
  */
 class Package extends Model
 {
@@ -24,12 +28,16 @@ class Package extends Model
         'price' => 'float',
         'started_at' => 'datetime',
         'ended_at' => 'datetime',
+        'price_type' => PackagePriceType::class,
+        'is_sold' => 'bool',
     ];
 
     protected $fillable = [
         'sort',
         'title',
+        'price_type',
         'price',
+        'is_sold',
         'started_at',
         'ended_at',
         'description',
@@ -66,29 +74,18 @@ class Package extends Model
         );
     }
 
-    public function startedAt(): Attribute
+    public function isPast(): Attribute
     {
-        return Attribute::make(
-            get: function (?string $value): ?Carbon {
-                if (! empty($value)) {
-                    return Carbon::parse($value)->timezone(get_timezone());
+        return new Attribute(
+            get: function (): bool {
+                if (! empty($this->ended_at)) {
+                    $timezone = get_timezone();
+
+                    return $this->ended_at->timezone($timezone)->lt(now($timezone));
                 }
 
-                return null;
-            },
-        );
-    }
-
-    public function endedAt(): Attribute
-    {
-        return Attribute::make(
-            get: function (?string $value): ?Carbon {
-                if (! empty($value)) {
-                    return Carbon::parse($value)->timezone(get_timezone());
-                }
-
-                return null;
-            },
+                return false;
+            }
         );
     }
 }

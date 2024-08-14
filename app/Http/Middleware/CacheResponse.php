@@ -16,6 +16,10 @@ class CacheResponse
      */
     public function handle(Request $request, Closure $next): Response
     {
+        if (! boolval(config('response.cache', false)) || ! app()->isProduction()) {
+            return $next($request);
+        }
+
         $key = 'response.'.$request->fullUrl();
         if (Cache::has($key)) {
             return response(Cache::get($key));
