@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Event\Schedule;
 use App\Services\Database\Database;
 use App\Services\Database\DatabaseFactory;
 use App\Services\OAuth\OAuth;
@@ -21,6 +22,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->bind('schedule', fn () => new Schedule);
+
         $this->app->bind(Database::class, function (): ?object {
             return DatabaseFactory::make();
         });
