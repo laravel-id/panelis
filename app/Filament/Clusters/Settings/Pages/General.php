@@ -2,10 +2,16 @@
 
 namespace App\Filament\Clusters\Settings\Pages;
 
+use App\Actions\Setting\ExportAll;
+use App\Actions\Setting\ImportAll;
 use App\Events\SettingUpdated;
 use App\Filament\Clusters\Settings;
 use App\Models\Setting;
 use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
+use Exception;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Form;
@@ -13,8 +19,10 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log as Logger;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class General extends Page
 {
@@ -31,6 +39,58 @@ class General extends Page
     public array $telescope;
 
     public bool $isButtonDisabled = false;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            Action::make('export')
+                ->label(__('setting.btn_export_all'))
+                ->visible(Auth::user()->can('ExportSetting'))
+                ->requiresConfirmation()
+                ->modalDescription(__('setting.modal_export_all'))
+                ->action(function (): StreamedResponse {
+                    return ExportAll::run();
+                }),
+
+            ActionGroup::make([
+                Action::make('import')
+                    ->label(__('setting.btn_import'))
+                    ->visible(Auth::user()->can('ImportSetting'))
+                    ->requiresConfirmation()
+                    ->modalDescription(__('setting.modal_import'))
+                    ->form([
+                        FileUpload::make('settings')
+                            ->label(__('setting.exported_file'))
+                            ->previewable(false)
+                            ->storeFiles(false)
+                            ->fetchFileInformation(false)
+                            ->disk('local')
+                            ->visibility('private')
+                            ->acceptedFileTypes([
+                                'application/json',
+                            ])
+                            ->required(),
+                    ])
+                    ->action(function (array $data): void {
+                        try {
+                            ImportAll::run($data['settings']);
+
+                            Notification::make('setting_imported')
+                                ->title(__('setting.setting_imported'))
+                                ->success()
+                                ->send();
+                        } catch (Exception $e) {
+                            Logger::error($e);
+
+                            Notification::make('setting_not_imported')
+                                ->title(__('setting.setting_not_imported'))
+                                ->danger()
+                                ->send();
+                        }
+                    }),
+            ]),
+        ];
+    }
 
     public function getTitle(): string|Htmlable
     {
