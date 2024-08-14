@@ -77,6 +77,7 @@ class PackageForm
                 ->orderColumn('sort')
                 ->reorderable()
                 ->cloneable()
+                ->collapsible()
                 ->reorderableWithButtons(true)
                 ->columns(2),
         ];
