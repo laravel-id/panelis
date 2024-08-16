@@ -93,6 +93,8 @@ class ScheduleForm
                                 ->minutesStep(15)
                                 ->closeOnDateSelection()
                                 ->seconds(false)
+                                ->displayFormat('Y-m-d H:i')
+                                ->default(now(get_timezone())->hour(5)->minute(0))
                                 ->native(false)
                                 ->maxDate(fn (Get $get): ?string => $get('finished_at'))
                                 ->live(onBlur: true)

@@ -41,6 +41,7 @@ class PackageForm
                             Select::make('price_type')
                                 ->label(__('event.package_price_type'))
                                 ->options(PackagePriceType::options())
+                                ->default(PackagePriceType::Normal->value)
                                 ->enum(PackagePriceType::class)
                                 ->nullable(),
 
