@@ -40,8 +40,13 @@
   </nav>
 
   <hgroup>
-    <h2 class="pico-color-{{ get_color_theme() }}-700">{{ $schedule->title }}</h2>
+	  <h2 class="pico-color-{{ get_color_theme() }}-700 event-title">{{ $schedule->title }}</h2>
   </hgroup>
+  @if (!empty($schedule->parent))
+  <div class="parent-event">
+    <i class="ri-corner-down-right-line"></i> <a href="{{ route('schedule.view', $schedule->parent->slug) }}">{{ $schedule->parent->title }}</a>
+  </div>
+  @endif
 
   <article>
     @if (!empty($schedule->description))

@@ -24,3 +24,8 @@ h1.brand {
         display: none;
     }
 }
+
+div.parent-event {
+    margin-top: -20px;
+    margin-bottom: 10px;
+}

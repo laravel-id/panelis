@@ -41,25 +41,33 @@ class ScheduleForm
                                 ->moveFiles()
                                 ->nullable(),
 
-                            TextInput::make('title')
-                                ->label(__('event.schedule_title'))
-                                ->minLength(3)
-                                ->maxLength(250)
-                                ->live(onBlur: true)
-                                ->afterStateUpdated(function (Set $set, ?string $state, string $operation): void {
-                                    if (! empty($state) && $operation === 'create') {
-                                        $set('slug', Str::slug($state));
-                                    }
-                                })
-                                ->required(),
+                            Select::make('parent_id')
+                                ->label(__('event.schedule_parent'))
+                                ->relationship('parent', 'title')
+                                ->searchable()
+                                ->preload(),
 
-                            TextInput::make('slug')
-                                ->label(__('event.schedule_slug'))
-                                ->prefix(route('schedule.view', '').'/')
-                                ->minLength(3)
-                                ->maxLength(300)
-                                ->required()
-                                ->unique(ignoreRecord: true),
+                            Grid::make(2)
+                                ->schema([
+                                    TextInput::make('title')
+                                        ->label(__('event.schedule_title'))
+                                        ->minLength(3)
+                                        ->maxLength(250)
+                                        ->live(onBlur: true)
+                                        ->afterStateUpdated(function (Set $set, ?string $state, string $operation): void {
+                                            if (! empty($state) && $operation === 'create') {
+                                                $set('slug', Str::slug($state));
+                                            }
+                                        })
+                                        ->required(),
+
+                                    TextInput::make('slug')
+                                        ->label(__('event.schedule_slug'))
+                                        ->minLength(3)
+                                        ->maxLength(300)
+                                        ->required()
+                                        ->unique(ignoreRecord: true),
+                                ]),
 
                             MarkdownEditor::make('description')
                                 ->label(__('event.schedule_description'))

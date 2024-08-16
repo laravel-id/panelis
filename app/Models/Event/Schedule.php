@@ -41,6 +41,7 @@ use Spatie\Sitemap\Tags\Url;
  * @property Collection $packages
  * @property Collection $types
  * @property string $title
+ * @property self $parent
  */
 class Schedule extends Model implements Sitemapable
 {
@@ -58,6 +59,7 @@ class Schedule extends Model implements Sitemapable
     ];
 
     protected $fillable = [
+        'parent_id',
         'user_id',
         'district_id',
         'slug',
@@ -229,6 +231,11 @@ class Schedule extends Model implements Sitemapable
         );
     }
 
+    public function parent(): BelongsTo
+    {
+        return $this->belongsTo(self::class);
+    }
+
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
@@ -350,6 +357,7 @@ class Schedule extends Model implements Sitemapable
         return self::query()
             ->where('slug', $slug)
             ->with([
+                'parent',
                 'packages',
                 'district' => fn (BelongsTo $builder): BelongsTo => $builder->select('id', 'name'),
                 'organizers' => fn (BelongsToMany $builder): BelongsToMany => $builder->select('id', 'slug', 'name'),
