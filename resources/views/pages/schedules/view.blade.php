@@ -97,7 +97,7 @@
     <p>
       <i class="ri-external-link-line"></i>
       @if (!$schedule->is_past)
-        <a rel="nofollow" href="{{ $externalUrl }}">{{ $externalUrl }}</a>
+        <a rel="nofollow" href="{{ $externalUrl }}?ref=schedules.run">{{ $externalUrl }}</a>
       @else
         <del>{{ $externalUrl }}</del>
       @endif
