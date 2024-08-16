@@ -14,7 +14,7 @@
   @vite(['resources/css/app.css', 'resources/js/app.js'])
   @stack('js')
 
-  <title>{{ $title ?? config('app.name') }}</title>
+  <title>{{ $pageTitle ?? $title ?? config('app.name') }}</title>
 </head>
 <body>
 <main class="container">

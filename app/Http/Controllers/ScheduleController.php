@@ -86,6 +86,7 @@ class ScheduleController extends Controller
 
         return view('pages.schedules.filter')
             ->with('schedules', Schedule::getFilteredSchedules($year, $month))
+            ->with('pageTitle', __('event.schedules_in', ['time' => $title]))
             ->with('title', $title);
     }
 
