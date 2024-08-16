@@ -3,9 +3,11 @@
 namespace App\Filament\Resources\URL;
 
 use App\Filament\Resources\URL\ShortURLResource\Pages;
+use App\Filament\Resources\URL\ShortURLResource\RedirectStatus;
 use App\Models\URL\ShortURL;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Placeholder;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -55,6 +57,12 @@ class ShortURLResource extends Resource
                             ->label(__('url.destination_url'))
                             ->live(onBlur: true)
                             ->url()
+                            ->required(),
+
+                        Radio::make('status')
+                            ->label(__('url.redirect_status'))
+                            ->options(RedirectStatus::options())
+                            ->default(301)
                             ->required(),
 
                         Toggle::make('single_use')

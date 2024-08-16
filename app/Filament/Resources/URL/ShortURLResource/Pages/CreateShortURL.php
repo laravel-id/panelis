@@ -25,6 +25,7 @@ class CreateShortURL extends CreateRecord
         }
 
         $url = URLShortener::destinationUrl($data['destination_url'])
+            ->redirectStatusCode($data['status'] ?? ShortURLResource\RedirectStatus::Found->value)
             ->trackVisits($data['track_visits'] ?? true)
             ->singleUse($data['single_use'] ?? false);
 
