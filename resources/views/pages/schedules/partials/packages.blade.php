@@ -33,9 +33,11 @@
 					@if(!empty($package->url))
 						<p><i class="ri-links-line"></i> <a href="{{ $package->url }}">@lang('event.link_package_register')</a></p>
 					@endif
-						<hr/>
 
-					<p>{!! Str::markdown($package->description ?? '', ['html_input' => 'strip']) !!}</p>
+					@if(!empty($package->description))
+						<hr/>
+						<p>{!! Str::markdown($package->description ?? '', ['html_input' => 'strip']) !!}</p>
+					@endif
 				</div>
 			</article>
 		@endforeach
