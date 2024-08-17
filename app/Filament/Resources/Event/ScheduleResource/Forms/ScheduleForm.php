@@ -96,12 +96,12 @@ class ScheduleForm
                         ->schema([
                             DateTimePicker::make('started_at')
                                 ->label(__('event.schedule_started_at'))
+                                ->displayFormat(get_datetime_format())
                                 ->suffixIcon('heroicon-s-calendar')
                                 ->timezone(get_timezone())
                                 ->minutesStep(15)
                                 ->closeOnDateSelection()
                                 ->seconds(false)
-                                ->displayFormat('Y-m-d H:i')
                                 ->default(now(get_timezone())->hour(5)->minute(0))
                                 ->native(false)
                                 ->maxDate(fn (Get $get): ?string => $get('finished_at'))
@@ -110,6 +110,7 @@ class ScheduleForm
 
                             DateTimePicker::make('finished_at')
                                 ->label(__('event.schedule_finished_at'))
+                                ->displayFormat(get_datetime_format())
                                 ->suffixIcon('heroicon-s-calendar')
                                 ->timezone(get_timezone())
                                 ->minutesStep(15)

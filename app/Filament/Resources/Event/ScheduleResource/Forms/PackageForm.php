@@ -57,6 +57,7 @@ class PackageForm
                         ->schema([
                             DatetimePicker::make('started_at')
                                 ->label(__('event.package_started_at'))
+                                ->displayFormat(get_datetime_format())
                                 ->native(false)
                                 ->seconds(false)
                                 ->minutesStep(30)
@@ -68,6 +69,7 @@ class PackageForm
 
                             DatetimePicker::make('ended_at')
                                 ->label(__('event.package_ended_at'))
+                                ->displayFormat(get_datetime_format())
                                 ->native(false)
                                 ->seconds(false)
                                 ->minutesStep(30)

@@ -75,6 +75,7 @@ class ShortURLResource extends Resource
 
                         DateTimePicker::make('deactivated_at')
                             ->label(__('url.expired_at'))
+                            ->displayFormat(get_datetime_format())
                             ->native(false)
                             ->seconds(false)
                             ->timezone(get_timezone())
