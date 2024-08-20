@@ -76,11 +76,15 @@
 		<hr/>
 
 		<div><small><i class="ri-calendar-2-line"></i> @lang('event.schedule_datetime'):</small></div>
-		<p>{{ $schedule->held_at }} ({{ $startedAt->from(now(get_timezone()), CarbonInterface::DIFF_RELATIVE_TO_NOW, false, 2) }})</p>
+		<p>
+			{{ $schedule->held_at }}
+			@if (!$schedule->is_past)
+				({{ $startedAt->from(now(get_timezone()), CarbonInterface::DIFF_RELATIVE_TO_NOW, false, 2) }})
+			@endif
+		</p>
 		<div class="overflow-auto">
 			@include('pages.schedules.related', compact('relatedSchedules'))
 		</div>
-		from
 
 		@if(!$schedule->is_virtual)
 			<hr/>
