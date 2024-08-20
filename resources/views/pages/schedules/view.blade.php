@@ -82,9 +82,12 @@
 				({{ $startedAt->from(now(get_timezone()), CarbonInterface::DIFF_RELATIVE_TO_NOW, false, 2) }})
 			@endif
 		</p>
-		<div class="overflow-auto">
-			@include('pages.schedules.related', compact('relatedSchedules'))
-		</div>
+
+		@if (!$relatedSchedules->isEmpty())
+			<div class="overflow-auto">
+				@include('pages.schedules.related', compact('relatedSchedules'))
+			</div>
+		@endif
 
 		@if(!$schedule->is_virtual)
 			<hr/>
@@ -153,6 +156,8 @@
 	<div class="elfsight-app-b25033ce-b01a-46a6-8d58-b890986a911f" data-elfsight-app-lazy></div>
 @endsection
 
+@if (app()->isProduction())
 @push('js')
 	<script src="https://static.elfsight.com/platform/platform.js" data-use-service-core defer></script>
 @endpush
+@endif
