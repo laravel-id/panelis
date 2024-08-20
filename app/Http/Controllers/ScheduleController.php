@@ -40,9 +40,6 @@ class ScheduleController extends Controller
 
         $startedAt = $schedule->started_at->timezone($this->timezone);
 
-        $format = config('app.datetime_format', 'Y-m-d H:i:s');
-        $dateFormat = str_replace(['H', 'i', 'g', 'G', 'u', ':', 'Y', 'y'], '', $format);
-
         // find schedules with same date
         $relatedSchedules = Schedule::getPublishedSchedules([
             'date' => $schedule->started_at->timezone(get_timezone())->format('Y-m-d'),
