@@ -8,15 +8,17 @@
 
   <meta name="description" content="{{ $description }}">
 
+  <link rel="canonical" href="{{ url()->current() }}">
+
   <meta property="og:url" content="{{ url()->current() }}">
   <meta property="og:type" content="website">
-  <meta property="og:title" content="{{ $title }}">
+  <meta property="og:title" content="{{ $pageTitle }}">
   <meta property="og:description" content="{{ $description }}">
 
   <meta name="twitter:card" content="summary_large_image">
   <meta property="twitter:domain" content="schedules.run">
   <meta property="twitter:url" content="{{ url()->current() }}">
-  <meta name="twitter:title" content="{{ $title }}">
+  <meta name="twitter:title" content="{{ $pageTitle }}">
   <meta name="twitter:description" content="{{ $description }}">
 @endpush
 
