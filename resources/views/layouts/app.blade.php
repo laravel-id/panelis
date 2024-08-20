@@ -10,8 +10,9 @@
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.{{ get_color_theme() }}.min.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.colors.min.css" />
+	<title>{{ $pageTitle ?? $title ?? config('app.name') }}</title>
 
-  @vite(['resources/css/app.css', 'resources/js/app.js'])
+	@vite(['resources/css/app.css', 'resources/js/app.js'])
   @stack('js')
 </head>
 <body>
