@@ -41,8 +41,7 @@
 					<tr>
 						<td>
 							<div class="pico-color-{{ $schedule->is_past ? 'grey' : get_color_theme()  }}-600">{{ $schedule->started_at->timezone($timezone)->translatedFormat('d') }}</div>
-							{{ $schedule->started_at->timezone($timezone)->translatedFormat('M') }}
-							<sup>{{ $schedule->started_at->timezone($timezone)->format('y') }}</sup>
+							{{ $schedule->started_at->timezone($timezone)->translatedFormat('M') }}<sup>{{ $schedule->started_at->timezone($timezone)->format('y') }}</sup>
 						</td>
 						<td>
 							<a href="{{ route('schedule.view', ['slug' => $schedule->slug]) }}"
