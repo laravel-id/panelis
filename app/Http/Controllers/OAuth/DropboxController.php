@@ -5,7 +5,7 @@ namespace App\Http\Controllers\OAuth;
 use App\Events\SettingUpdated;
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
-use App\Services\OAuth\OAuth;
+use App\Services\OAuth\OAuthFactory;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -14,7 +14,7 @@ use Illuminate\Support\Facades\Log;
 
 class DropboxController extends Controller
 {
-    public function __invoke(Request $request, OAuth $oauth): RedirectResponse
+    public function __invoke(Request $request, OAuthFactory $oauth): RedirectResponse
     {
         $request->validate([
             'code' => ['required'],
@@ -37,6 +37,7 @@ class DropboxController extends Controller
             if (! empty($auth->getRefreshToken())) {
                 Setting::set('filesystems.disks.dropbox.token', $auth->getToken());
                 Setting::set('dropbox.refresh_token', $auth->getRefreshToken());
+                Setting::set('dropbox.expired_at', $auth->getExpiresIn());
 
                 event(new SettingUpdated);
             }
