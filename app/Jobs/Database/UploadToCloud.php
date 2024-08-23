@@ -3,6 +3,7 @@
 namespace App\Jobs\Database;
 
 use App\Events\SettingUpdated;
+use App\Filament\Clusters\Databases\Enums\CloudProvider;
 use App\Models\Setting;
 use App\Services\OAuth\OAuth;
 use Carbon\Carbon;
@@ -30,8 +31,11 @@ class UploadToCloud implements ShouldQueue
     /**
      * Execute the job.
      */
-    public function handle(OAuth $oauth): void
+    public function handle(): void
     {
+        $oauth = app(OAuth::class)
+            ->driver(config('database.cloud_storage', CloudProvider::Dropbox->value));
+
         // get token by refresh token
         $refreshToken = config('dropbox.refresh_token');
         if (empty($refreshToken)) {
