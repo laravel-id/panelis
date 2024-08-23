@@ -6,6 +6,9 @@ use App\Filament\Pages\Auth\EditProfile;
 use App\Filament\Pages\Auth\EmailVerificationPrompt;
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Auth\RequestPasswordReset;
+use App\Filament\Pages\Dashboard;
+use App\Filament\Widgets\SimpleAnalytics\StatsChart as SimpleAnalyticsStatsChart;
+use App\Filament\Widgets\SimpleAnalytics\TopPage as SimpleAnalyticsTopPage;
 use App\Http\Middleware\RegisterModules;
 use App\Http\Middleware\SetTheme;
 use Filament\Http\Middleware\Authenticate;
@@ -13,7 +16,6 @@ use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\NavigationGroup;
 use Filament\Navigation\NavigationItem;
-use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Widgets;
@@ -82,12 +84,14 @@ class AdminPanelProvider extends PanelProvider
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->discoverClusters(in: app_path('Filament/Clusters'), for: 'App\\Filament\\Clusters')
             ->pages([
-                Pages\Dashboard::class,
+                Dashboard::class,
             ])
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
                 Widgets\FilamentInfoWidget::class,
+                SimpleAnalyticsStatsChart::class,
+                SimpleAnalyticsTopPage::class,
             ])
             ->middleware([
                 EncryptCookies::class,
