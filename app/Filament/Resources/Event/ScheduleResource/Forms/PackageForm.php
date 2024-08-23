@@ -2,11 +2,14 @@
 
 namespace App\Filament\Resources\Event\ScheduleResource\Forms;
 
+use App\Filament\Resources\Event\ScheduleResource\Enums\PackagePriceType;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Get;
 
 class PackageForm
@@ -22,13 +25,25 @@ class PackageForm
                     'lg' => 2,
                 ])
                 ->schema([
+                    Toggle::make('is_sold')
+                        ->label(__('event.package_is_sold'))
+                        ->nullable(),
+
+                    TextInput::make('title')
+                        ->label(__('event.package_title'))
+                        ->maxLength(250)
+                        ->columnSpan(2)
+                        ->required(),
+
                     Grid::make()
                         ->columnSpan(2)
                         ->schema([
-                            TextInput::make('title')
-                                ->label(__('event.package_title'))
-                                ->maxLength(250)
-                                ->required(),
+                            Select::make('price_type')
+                                ->label(__('event.package_price_type'))
+                                ->options(PackagePriceType::options())
+                                ->default(PackagePriceType::Normal->value)
+                                ->enum(PackagePriceType::class)
+                                ->nullable(),
 
                             TextInput::make('price')
                                 ->label(__('event.package_price'))
@@ -42,6 +57,7 @@ class PackageForm
                         ->schema([
                             DatetimePicker::make('started_at')
                                 ->label(__('event.package_started_at'))
+                                ->displayFormat(get_datetime_format())
                                 ->native(false)
                                 ->seconds(false)
                                 ->minutesStep(30)
@@ -53,6 +69,7 @@ class PackageForm
 
                             DatetimePicker::make('ended_at')
                                 ->label(__('event.package_ended_at'))
+                                ->displayFormat(get_datetime_format())
                                 ->native(false)
                                 ->seconds(false)
                                 ->minutesStep(30)
@@ -76,6 +93,8 @@ class PackageForm
                 ])
                 ->orderColumn('sort')
                 ->reorderable()
+                ->cloneable()
+                ->collapsible()
                 ->reorderableWithButtons(true)
                 ->columns(2),
         ];

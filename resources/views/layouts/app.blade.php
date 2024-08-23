@@ -10,11 +10,10 @@
 
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.{{ get_color_theme() }}.min.css"/>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@picocss/pico@2/css/pico.colors.min.css" />
+	<title>{{ $pageTitle ?? $title ?? config('app.name') }}</title>
 
-  @vite(['resources/css/app.css', 'resources/js/app.js'])
+	@vite(['resources/css/app.css', 'resources/js/app.js'])
   @stack('js')
-
-  <title>{{ $title ?? config('app.name') }}</title>
 </head>
 <body>
 <main class="container">
@@ -35,5 +34,8 @@
 
   @yield('content')
 </main>
+<!-- 100% privacy-first analytics -->
+<script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
+<noscript><img src="https://queue.simpleanalyticscdn.com/noscript.gif" alt="" referrerpolicy="no-referrer-when-downgrade" /></noscript>
 </body>
 </html>

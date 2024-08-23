@@ -88,7 +88,7 @@ class DistrictResource extends Resource
                 TextColumn::make('local_updated_at')
                     ->label(__('ui.updated_at'))
                     ->sortable()
-                    ->tooltip(fn (?Model $record): string => $record->updated_at ?? '')
+                    ->tooltip(fn (?Model $record): string => $record->local_updated_at->translatedFormat(get_datetime_format()) ?? '')
                     ->since(),
             ])
             ->filters([

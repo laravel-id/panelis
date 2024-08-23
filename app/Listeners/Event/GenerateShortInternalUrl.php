@@ -3,6 +3,7 @@
 namespace App\Listeners\Event;
 
 use App\Models\URL\ShortURL;
+use AshAllenDesign\ShortURL\Exceptions\ShortURLException;
 use AshAllenDesign\ShortURL\Facades\ShortURL as URLShortener;
 
 class GenerateShortInternalUrl
@@ -17,6 +18,8 @@ class GenerateShortInternalUrl
 
     /**
      * Handle the event.
+     *
+     * @throws ShortURLException
      */
     public function handle(object $event): void
     {
@@ -28,6 +31,7 @@ class GenerateShortInternalUrl
 
         if (empty($shortUrl)) {
             URLShortener::destinationUrl(route('schedule.view', $slug))
+                ->redirectStatusCode(302)
                 ->urlKey($slug)
                 ->make();
         }

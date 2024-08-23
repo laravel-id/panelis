@@ -46,6 +46,7 @@ class ReplicateForm
                 ->schema([
                     DateTimePicker::make('started_at')
                         ->label(__('event.schedule_started_at'))
+                        ->displayFormat(get_datetime_format())
                         ->timezone(get_timezone())
                         ->minutesStep(15)
                         ->closeOnDateSelection()
@@ -57,6 +58,7 @@ class ReplicateForm
 
                     DateTimePicker::make('finished_at')
                         ->label(__('event.schedule_finished_at'))
+                        ->displayFormat(get_datetime_format())
                         ->native(false)
                         ->timezone(get_timezone())
                         ->minutesStep(15)
