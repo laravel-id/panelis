@@ -4,6 +4,7 @@ namespace App\Services\OAuth\Vendors;
 
 use App\Services\OAuth\OAuth;
 use Carbon\Carbon;
+use Carbon\CarbonImmutable;
 use GuzzleHttp\Promise\PromiseInterface;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
@@ -121,11 +122,7 @@ class Dropbox implements OAuth
 
     public function getExpiresIn(): ?Carbon
     {
-        if (is_numeric($this->expiresIn)) {
-            return Carbon::now()->addSeconds($this->expiresIn);
-        }
-
-        return null;
+        return Carbon::now()->addSeconds($this->expiresIn);
     }
 
     /**
@@ -133,11 +130,21 @@ class Dropbox implements OAuth
      */
     public function getUser(?string $token = null): OAuth
     {
+        $token = null;
+        if (! empty(config('dropbox.expired_at'))) {
+            $expiredAt = CarbonImmutable::parse(config('dropbox.expired_at'));
+            if (now()->lt($expiredAt)) {
+                $token = config('filesystems.disks.dropbox.token');
+            }
+        }
 
-        $auth = $this->authorize(config('dropbox.refresh_token'));
+        if (empty($token)) {
+            $auth = $this->authorize(config('dropbox.refresh_token'));
+            $token = $auth->getToken();
+        }
 
         $response = Http::throwIf(app()->isLocal())
-            ->withToken($auth->getToken())
+            ->withToken($token)
             ->send('POST', 'https://api.dropboxapi.com/2/users/get_current_account');
 
         if (! $response->successful()) {
