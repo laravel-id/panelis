@@ -46,7 +46,8 @@ class CloudBackupForm
                         event(new SettingUpdated);
 
                         Config::set('oauth.provider', $state);
-                        self::$oauth = app(OAuth::class);
+                        self::$oauth = app(OAuth::class)
+                            ->driver($state);
                     }
                 })
                 ->live()

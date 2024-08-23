@@ -7,8 +7,6 @@ use App\Services\Database\Database;
 use App\Services\Database\DatabaseFactory;
 use App\Services\OAuth\OAuth;
 use App\Services\OAuth\OAuthFactory;
-use App\Services\OAuth\Vendors\Dropbox;
-use App\Services\OAuth\Vendors\GoogleDrive;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Database\Eloquent\Model;
@@ -29,12 +27,7 @@ class AppServiceProvider extends ServiceProvider
         });
 
         $this->app->singleton(OAuth::class, function (Application $app): OAuthFactory {
-            $manager = new OAuthFactory($app);
-
-            $manager->extend(OAuthFactory::Dropbox, fn (): OAuth => new Dropbox);
-            $manager->extend(OAuthFactory::GoogleDrive, fn (): OAuth => new GoogleDrive);
-
-            return $manager;
+            return new OAuthFactory($app);
         });
     }
 
