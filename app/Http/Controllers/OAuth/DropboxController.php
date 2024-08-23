@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\OAuth;
 
 use App\Events\SettingUpdated;
-use App\Filament\Clusters\Databases\Enums\CloudProvider;
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
-use App\Services\OAuth\OAuth;
+use App\Services\OAuth\OAuthFactory;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,7 +14,7 @@ use Illuminate\Support\Facades\Log;
 
 class DropboxController extends Controller
 {
-    public function __invoke(Request $request): RedirectResponse
+    public function __invoke(Request $request, OAuthFactory $oauth): RedirectResponse
     {
         $request->validate([
             'code' => ['required'],
@@ -23,8 +22,6 @@ class DropboxController extends Controller
         ]);
 
         try {
-            $oauth = app(OAuth::class)->driver(CloudProvider::Dropbox->value);
-
             $states = json_decode(Crypt::decryptString($request->input('state')), true);
 
             $auth = $oauth->setAppKey(config('dropbox.client_id'))
