@@ -27,8 +27,10 @@ class Page extends Model
     {
         // cache using preferred driver instead of using built-in cache
         return Cache::remember('widget.top_page', now()->addMinutes(10), function (): array {
+            $host = config('services.simple_analytics.host', 'https://simpleanalytics.com/schedules.run.json');
+
             $response = Http::withHeader('Api-Key', config('services.simple_analytics.api_key'))
-                ->get('https://simpleanalytics.com/schedules.run.json', [
+                ->get($host, [
                     'start' => 'today-7d',
                     'end' => 'today',
                     'fields' => 'pages',

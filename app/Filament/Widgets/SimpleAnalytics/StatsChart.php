@@ -61,7 +61,9 @@ class StatsChart extends ChartWidget
 
     private function getStatsData(): array
     {
-        return Cache::remember('widget.stats_chart', now()->addMinutes(10), function (): array {
+        $key = sprintf('widget.stats_chart.%s', sha1(serialize($this->filters)));
+
+        return Cache::remember($key, now()->addMinutes(10), function (): array {
             $start = now(get_timezone())->subDays(7)->toDateString();
             $end = now(get_timezone())->toDateString();
 
@@ -73,8 +75,9 @@ class StatsChart extends ChartWidget
                 $end = Carbon::parse($this->filters['ended_at'])->toDateString();
             }
 
+            $host = config('services.simple_analytics.host', 'https://simpleanalytics.com/schedules.run.json');
             $response = Http::withHeader('Api-Key', config('services.simple_analytics.api_key'))
-                ->get('https://simpleanalytics.com/schedules.run.json?version=5&fields=histogram&start=yesterday&end=today', [
+                ->get($host, [
                     'timezone' => get_timezone(),
                     'version' => 5,
                     'fields' => 'histogram',
