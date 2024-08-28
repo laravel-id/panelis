@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Auth;
 
 class TopPage extends BaseWidget
 {
+    protected static ?int $sort = 3;
+
     public static function canView(): bool
     {
         return Auth::user()->can('SeeTopPageWidget');

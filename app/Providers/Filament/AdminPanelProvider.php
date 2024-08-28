@@ -7,6 +7,7 @@ use App\Filament\Pages\Auth\EmailVerificationPrompt;
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Auth\RequestPasswordReset;
 use App\Filament\Pages\Dashboard;
+use App\Filament\Widgets\SimpleAnalytics\ReferralChart as SimpleAnalyticsReferralChart;
 use App\Filament\Widgets\SimpleAnalytics\StatsChart as SimpleAnalyticsStatsChart;
 use App\Filament\Widgets\SimpleAnalytics\TopPage as SimpleAnalyticsTopPage;
 use App\Http\Middleware\RegisterModules;
@@ -88,6 +89,7 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 SimpleAnalyticsStatsChart::class,
+                SimpleAnalyticsReferralChart::class,
                 SimpleAnalyticsTopPage::class,
             ])
             ->middleware([

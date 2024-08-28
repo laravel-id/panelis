@@ -5,6 +5,7 @@ namespace App\Filament\Widgets\SimpleAnalytics;
 use Carbon\Carbon;
 use Filament\Widgets\ChartWidget;
 use Filament\Widgets\Concerns\InteractsWithPageFilters;
+use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
@@ -13,7 +14,11 @@ class StatsChart extends ChartWidget
 {
     use InteractsWithPageFilters;
 
+    protected static ?int $sort = 1;
+
     protected static ?string $pollingInterval = null;
+
+    protected int|string|array $columnSpan = 'full';
 
     public static function canView(): bool
     {
@@ -23,6 +28,11 @@ class StatsChart extends ChartWidget
     protected function getType(): string
     {
         return 'line';
+    }
+
+    public function getHeading(): string|Htmlable|null
+    {
+        return __('widget.sa_stat_chart_heading');
     }
 
     public function getDescription(): ?string
