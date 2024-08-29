@@ -73,7 +73,7 @@
               {{ $schedule->started_at->timezone($timezone)->format('M') }}<sup>{{ $schedule->started_at->timezone($timezone)->format('y') }}</sup>
             </td>
             <td>
-              <a href="{{ route('schedule.view', ['slug' => $schedule->slug]) }}" class="{{ $schedule->is_past ? 'secondary' : 'primary' }}">
+              <a href="{{ route('schedule.view', ['slug' => $schedule->slug]) }}" class="{{ $schedule->is_past ? 'secondary' : 'primary' }} schedule-title">
                 {{ $schedule->title }}
               </a>
 

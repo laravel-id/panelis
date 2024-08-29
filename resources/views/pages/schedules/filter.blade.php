@@ -49,7 +49,7 @@
 						</td>
 						<td>
 							<a href="{{ route('schedule.view', ['slug' => $schedule->slug]) }}"
-							   class="{{ $schedule->is_past ? 'secondary' : 'primary' }}">
+							   class="{{ $schedule->is_past ? 'secondary' : 'primary' }} schedule-title" >
 								{{ $schedule->title }}
 							</a>
 
