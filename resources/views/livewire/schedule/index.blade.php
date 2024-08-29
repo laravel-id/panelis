@@ -45,9 +45,12 @@
 						</td>
 						<td>
 							<a href="{{ route('schedule.view', ['slug' => $schedule->slug]) }}"
-							   class="{{ $schedule->is_past ? 'secondary' : 'primary' }}">
+							   class="{{ $schedule->is_past ? 'secondary' : 'primary' }} schedule-title">
 								{{ $schedule->title }}
 							</a>
+							@if ($schedule->is_ongoing)
+								<i class="ri-broadcast-fill pico-color-red-500"></i>
+							@endif
 							<br/>
 							<small>
 								@if ($schedule->is_virtual OR empty($schedule->full_location))
