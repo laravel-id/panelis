@@ -22,7 +22,7 @@ class StatsChart extends ChartWidget
 
     public static function canView(): bool
     {
-        return Auth::user()->can('SeeStatsChartWidget');
+        return Auth::user()->can('ViewStatsChartWidget');
     }
 
     protected function getType(): string

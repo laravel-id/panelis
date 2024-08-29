@@ -14,7 +14,7 @@ class TopPage extends BaseWidget
 
     public static function canView(): bool
     {
-        return Auth::user()->can('SeeTopPageWidget');
+        return Auth::user()->can('ViewTopPageWidget');
     }
 
     public function table(Table $table): Table
