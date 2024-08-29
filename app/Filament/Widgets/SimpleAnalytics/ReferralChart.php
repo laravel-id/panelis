@@ -2,8 +2,10 @@
 
 namespace App\Filament\Widgets\SimpleAnalytics;
 
+use App\Filament\Widgets\SimpleAnalytics\Enums\StatsFilter;
 use Filament\Widgets\ChartWidget;
 use Illuminate\Contracts\Support\Htmlable;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Http;
 
@@ -32,6 +34,11 @@ class ReferralChart extends ChartWidget
         ],
     ];
 
+    public static function canView(): bool
+    {
+        return Auth::user()->can('ViewReferralChartWidget');
+    }
+
     public function getHeading(): string|Htmlable|null
     {
         return __('widget.sa_referrals');
@@ -39,12 +46,9 @@ class ReferralChart extends ChartWidget
 
     protected function getFilters(): ?array
     {
-        return [
-            '' => __('widget.sa_filter_default'),
-            'today' => __('widget.sa_filter_today'),
-            'week' => __('widget.sa_filter_week'),
-            'month' => __('widget.sa_filter_month'),
-        ];
+        return collect(StatsFilter::cases())
+            ->mapWithKeys(fn (StatsFilter $filter): array => [$filter->value => $filter->label()])
+            ->all();
     }
 
     protected function getData(): array
@@ -57,12 +61,7 @@ class ReferralChart extends ChartWidget
                     'version' => 5,
                     'fields' => 'referrers',
                     'timezone' => get_timezone(),
-                    'start' => match ($this->filter) {
-                        null, '', 'default' => 'today-7d',
-                        'today' => 'today',
-                        'week' => 'today-7d',
-                        'month' => 'today-30d',
-                    },
+                    'start' => StatsFilter::tryFrom($this->filter)?->filter(),
                     'end' => 'today',
                 ]);
 
