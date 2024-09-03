@@ -73,6 +73,9 @@ class Event extends Model
             }
         }
 
+        $sanitizedKeyword = preg_replace('/[^a-zA-Z0-9\s]/', '', $keyword);
+        $sanitizedKeyword .= '*';
+
         return self::query()
             ->when(config('database.default') === DatabaseType::SQLite->value, function (Builder $builder): Builder {
                 $offset = timezone_offset_get(timezone_open(get_timezone()), now()) / 60 / 60;
@@ -92,7 +95,7 @@ class Event extends Model
                     DATE(started_at, ?) AS local_started_at
                 SELECT, [$modifier]);
             })
-            ->when(!empty($keyword), fn(Builder $builder): Builder => $builder->whereRaw('events MATCH ?', [$keyword.'*']))
+            ->when(!empty($keyword), fn(Builder $builder): Builder => $builder->whereRaw('events MATCH ?', [$sanitizedKeyword]))
             ->when(!$virtual, fn(Builder $builder): Builder => $builder->where('is_virtual', false))
             ->when(empty($date), function (Builder $builder) use ($past): Builder {
                 $now = CarbonImmutable::now(get_timezone());
