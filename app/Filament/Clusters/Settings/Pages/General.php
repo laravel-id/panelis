@@ -36,8 +36,6 @@ class General extends Page
 
     public array $app;
 
-    public array $telescope;
-
     public bool $isButtonDisabled = false;
 
     protected function getHeaderActions(): array
@@ -121,10 +119,6 @@ class General extends Page
                 'email_as_sender' => config('app.email_as_sender'),
             ],
 
-            'telescope' => [
-                'enabled' => config('telescope.enabled', false),
-            ],
-
             'isButtonDisabled' => ! Auth::user()->can('UpdateGeneralSetting'),
         ]);
     }
@@ -176,9 +170,6 @@ class General extends Page
 
             Setting::set($key, $value);
         }
-
-        // specific setting for telescope
-        Setting::set('telescope.enabled', data_get($state, 'telescope.enabled', false));
 
         event(new SettingUpdated);
 

@@ -12,9 +12,6 @@ class DebugForm
             Toggle::make('app.debug')
                 ->label(__('setting.app_debug'))
                 ->helperText(fn (): ?string => app()->isProduction() ? __('setting.helper_app_debug') : null),
-
-            Toggle::make('telescope.enabled')
-                ->label(__('setting.telescope_enabled')),
         ];
     }
 }
