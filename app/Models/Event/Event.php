@@ -87,6 +87,7 @@ class Event extends Model
                 return $builder->selectRaw(<<<'SELECT'
                     slug,
                     title,
+                    highlight(events, 2, '<b>', '</b>') marked_title,
                     location,
                     categories,
                     started_at,
