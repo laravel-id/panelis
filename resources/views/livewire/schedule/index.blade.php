@@ -53,10 +53,10 @@
 							@endif
 							<br/>
 							<small>
-								@if ($schedule->is_virtual OR empty($schedule->full_location))
+								@if ($schedule->is_virtual OR empty($schedule->location))
 									<i class="ri-earth-line"></i>
 								@else
-									{!! $schedule->full_location !!}
+									{!! $schedule->location !!}
 								@endif
 							</small>
 							<br/>
