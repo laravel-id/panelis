@@ -3,7 +3,9 @@
 namespace App\Providers;
 
 use App\Events\Event\ScheduleCreated;
+use App\Events\Event\ScheduleUpdated;
 use App\Events\SettingUpdated;
+use App\Listeners\Event\AddToIndex;
 use App\Listeners\Event\GenerateImage;
 use App\Listeners\Event\GenerateShortExternalUrl;
 use App\Listeners\Event\GenerateShortInternalUrl;
@@ -31,9 +33,14 @@ class EventServiceProvider extends ServiceProvider
         ],
 
         ScheduleCreated::class => [
+            AddToIndex::class,
             GenerateShortExternalUrl::class,
             GenerateShortInternalUrl::class,
             GenerateImage::class,
+        ],
+
+        ScheduleUpdated::class => [
+            AddToIndex::class,
         ],
 
         SettingUpdated::class => [

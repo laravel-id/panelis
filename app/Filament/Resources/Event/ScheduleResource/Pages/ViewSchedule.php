@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Event\ScheduleResource\Pages;
 
 use App\Filament\Resources\Event\ScheduleResource;
+use App\Models\Event\Event;
 use App\Models\Event\Package;
 use App\Models\Event\Schedule;
 use Filament\Actions;
@@ -40,7 +41,10 @@ class ViewSchedule extends ViewRecord
                         return ViewSchedule::getUrl(['record' => $replica]);
                     }),
 
-                Actions\DeleteAction::make(),
+                Actions\DeleteAction::make()
+                    ->after(function (Schedule $schedule): void {
+                        Event::query()->where('id', $schedule->id)->delete();
+                    }),
             ]),
         ];
     }

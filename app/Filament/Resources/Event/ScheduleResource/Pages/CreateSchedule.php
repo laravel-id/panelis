@@ -11,13 +11,15 @@ class CreateSchedule extends CreateRecord
 {
     protected static string $resource = ScheduleResource::class;
 
+    protected ?bool $hasDatabaseTransactions = true;
+
     protected function mutateFormDataBeforeCreate(array $data): array
     {
         if (empty($data['description'])) {
             $data['description'] = '';
         }
 
-        if (!Str::isAscii($data['title'])) {
+        if (! Str::isAscii($data['title'])) {
             $data['alias'] = Str::ascii($data['title']);
         }
 

@@ -56,7 +56,7 @@
 								@if ($schedule->is_virtual OR empty($schedule->location))
 									<i class="ri-earth-line"></i>
 								@else
-									{!! $schedule->location !!}
+									{!! $schedule->marked_location !!}
 								@endif
 							</small>
 							<br/>

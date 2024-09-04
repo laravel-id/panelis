@@ -16,6 +16,27 @@ class Event extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
+    protected $fillable = [
+        'id',
+        'slug',
+        'title',
+        'description',
+        'location',
+        'region',
+        'categories',
+        'organizers',
+        'types',
+        'started_at',
+        'finished_at',
+        'is_virtual',
+    ];
+
+    protected $attributes = [
+        'is_virtual' => false,
+    ];
+
     protected $casts = [
         'categories' => 'array',
         'started_at' => 'datetime',
@@ -29,7 +50,7 @@ class Event extends Model
             get: function (): bool {
                 $now = now(get_timezone());
 
-                if (!empty($this->finished_at)) {
+                if (! empty($this->finished_at)) {
                     return $this->finished_at
                         ->timezone(get_timezone())
                         ->lt($now);
@@ -48,7 +69,7 @@ class Event extends Model
             get: function (): bool {
                 $now = now(get_timezone());
                 $start = $this->started_at->timezone(get_timezone());
-                if (!empty($this->finished_at)) {
+                if (! empty($this->finished_at)) {
                     $finish = $this->finished_at->timezone(get_timezone());
                 } else {
                     $finish = $start->copy()->addHours(3);
@@ -66,7 +87,7 @@ class Event extends Model
         $virtual = (bool) $virtual;
         $past = (bool) $past;
 
-        if (!empty($date)) {
+        if (! empty($date)) {
             try {
                 $date = Carbon::parse($date);
             } catch (InvalidFormatException) {
@@ -87,22 +108,23 @@ class Event extends Model
                 return $builder->selectRaw(<<<'SELECT'
                     slug,
                     title,
-                    highlight(events, 2, '<b>', '</b>') marked_title,
                     location,
                     categories,
                     started_at,
                     finished_at,
                     is_virtual,
-                    DATE(started_at, ?) AS local_started_at
+                    DATE(started_at, ?) AS local_started_at,
+                    highlight(events, 2, '<b>', '</b>') marked_title,
+                    highlight(events, 4, '<b>', '</b>') marked_location
                 SELECT, [$modifier]);
             })
-            ->when(!empty($keyword), fn(Builder $builder): Builder => $builder->whereRaw('events MATCH ?', [$sanitizedKeyword]))
-            ->when(!$virtual, fn(Builder $builder): Builder => $builder->where('is_virtual', false))
+            ->when(! empty($keyword), fn (Builder $builder): Builder => $builder->whereRaw('events MATCH ?', [$sanitizedKeyword]))
+            ->when(! $virtual, fn (Builder $builder): Builder => $builder->where('is_virtual', false))
             ->when(empty($date), function (Builder $builder) use ($past): Builder {
                 $now = CarbonImmutable::now(get_timezone());
 
                 return $builder
-                    ->when(!$past, fn(Builder $builder): Builder => $builder->whereDate('local_started_at', '>=', $now))
+                    ->when(! $past, fn (Builder $builder): Builder => $builder->whereDate('local_started_at', '>=', $now))
                     ->whereDate('local_started_at', '<=', $now->addYear());
             })
             ->orderBy('local_started_at')
