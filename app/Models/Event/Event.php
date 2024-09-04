@@ -108,13 +108,14 @@ class Event extends Model
                 return $builder->selectRaw(<<<'SELECT'
                     slug,
                     title,
-                    highlight(events, 2, '<b>', '</b>') marked_title,
                     location,
                     categories,
                     started_at,
                     finished_at,
                     is_virtual,
-                    DATE(started_at, ?) AS local_started_at
+                    DATE(started_at, ?) AS local_started_at,
+                    highlight(events, 2, '<b>', '</b>') marked_title,
+                    highlight(events, 4, '<b>', '</b>') marked_location
                 SELECT, [$modifier]);
             })
             ->when(! empty($keyword), fn (Builder $builder): Builder => $builder->whereRaw('events MATCH ?', [$sanitizedKeyword]))
