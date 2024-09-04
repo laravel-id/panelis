@@ -10,6 +10,7 @@ use App\Filament\Resources\Event\ScheduleResource\Pages;
 use App\Filament\Resources\Event\ScheduleResource\Pages\ViewSchedule;
 use App\Filament\Resources\Event\ScheduleResource\Widgets\ScheduleOverview;
 use App\Filament\Resources\Event\TypeResource\Forms\TypeForm;
+use App\Models\Event\Event;
 use App\Models\Event\Organizer;
 use App\Models\Event\Schedule;
 use App\Models\Event\Type;
@@ -192,7 +193,10 @@ class ScheduleResource extends Resource
                             return ViewSchedule::getUrl(['record' => $replica]);
                         }),
 
-                    DeleteAction::make(),
+                    DeleteAction::make()
+                        ->after(function (Schedule $schedule): void {
+                            Event::query()->where('id', $schedule->id)->delete();
+                        }),
                 ]),
             ])
             ->bulkActions([

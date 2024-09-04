@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Event\ScheduleResource\Pages;
 
+use App\Events\Event\ScheduleUpdated;
 use App\Filament\Resources\Event\ScheduleResource;
 use App\Models\URL\ShortURL;
 use AshAllenDesign\ShortURL\Exceptions\ShortURLException;
@@ -41,6 +42,8 @@ class EditSchedule extends EditRecord
      */
     protected function afterSave(): void
     {
+        event(new ScheduleUpdated($this->record));
+
         // clear cached response
         Cache::forget('response.'.route('schedule.view', $this->record->slug));
 
