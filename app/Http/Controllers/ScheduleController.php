@@ -58,6 +58,7 @@ class ScheduleController extends Controller
             ))
             ->with('calendar', GenerateCalendarUrl::run($schedule))
             ->with('externalUrl', $schedule->external_url)
+            ->with('structuredData', $this->generateStructuredData($schedule))
             ->with('title', sprintf('%s - %s', $schedule->title, $year));
     }
 
@@ -121,5 +122,58 @@ class ScheduleController extends Controller
                 })
                 ->toArray(),
         );
+    }
+
+    private function generateStructuredData(Schedule $schedule): array
+    {
+        $schedule->load('district.region');
+
+        $location = [
+            '@type' => 'VirtualLocation',
+        ];
+
+        if (! $schedule->is_virtual) {
+            $location = [
+                '@type' => 'Place',
+                'name' => $schedule->location,
+                'address' => [
+                    '@type' => 'PostalAddress',
+                    'addressLocality' => $schedule->district?->name,
+                    'addressRegion' => $schedule->district?->region?->name,
+                    'addressCountry' => 'ID',
+                ],
+            ];
+        }
+
+        $offers = [];
+        foreach ($schedule->packages as $package) {
+            $offers[] = [
+                '@type' => 'Offer',
+                'name' => $package->title,
+                'price' => $package->price,
+                'priceCurrency' => 'IDR',
+                'validFrom' => $package->started_at?->toIso8601String(),
+                'url' => $package->url,
+                'availability' => $package->is_sold || $schedule->is_past
+                    ? 'https://schema.org/SoldOut'
+                    : 'https://schema.org/InStock',
+            ];
+        }
+
+        return [
+            '@context' => 'https://schema.org',
+            '@type' => 'Event',
+            'name' => $schedule->title,
+            'description' => Str::words(strip_tags($schedule->description), 200),
+            'image' => $schedule->opengraph_image,
+            'startDate' => $schedule->started_at->toIso8601String(),
+            'endDate' => $schedule->finished_at?->toIso8601String(),
+            'eventStatus' => 'https://schema.org/EventScheduled',
+            'eventAttendanceMode' => $schedule->is_virtual
+                ? 'https://schema.org/OnlineEventAttendanceMode'
+                : 'https://schema.org/OfflineEventAttendanceMode',
+            'location' => $location,
+            'offers' => $offers,
+        ];
     }
 }
