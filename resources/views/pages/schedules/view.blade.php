@@ -156,6 +156,12 @@
 	<div class="elfsight-app-b25033ce-b01a-46a6-8d58-b890986a911f" data-elfsight-app-lazy></div>
 @endsection
 
+@push('js')
+	<script type="application/ld+json">
+		{!! json_encode($structuredData, app()->isProduction() ? 0 : JSON_PRETTY_PRINT) !!}
+	</script>
+@endpush
+
 @if (app()->isProduction())
 @push('js')
 	<script src="https://static.elfsight.com/platform/platform.js" data-use-service-core defer></script>

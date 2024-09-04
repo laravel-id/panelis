@@ -42,6 +42,8 @@ use Spatie\Sitemap\Tags\Url;
  * @property Collection $types
  * @property string $title
  * @property self $parent
+ * @property string $opengraph_image
+ * @property bool $is_past
  * @property District $district
  */
 class Schedule extends Model implements Sitemapable
