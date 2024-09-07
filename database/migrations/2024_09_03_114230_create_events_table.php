@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        $query = <<<SQL
+        $query = <<<'SQL'
         create virtual table events using fts5 (
             id,
             slug,
@@ -24,7 +24,8 @@ return new class extends Migration
             organizers,
             started_at,
             finished_at,
-            is_virtual
+            is_virtual,
+            is_pinned
         );
         SQL;
 

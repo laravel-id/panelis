@@ -31,6 +31,7 @@ class Event extends Model
         'started_at',
         'finished_at',
         'is_virtual',
+        'is_pinned',
     ];
 
     protected $attributes = [
@@ -42,6 +43,7 @@ class Event extends Model
         'started_at' => 'datetime',
         'finished_at' => 'datetime',
         'is_virtual' => 'boolean',
+        'is_pinned' => 'boolean',
     ];
 
     public function isPast(): Attribute
@@ -78,6 +80,35 @@ class Event extends Model
                 return $now->gte($start) && $now->lte($finish);
             }
         );
+    }
+
+    public static function getPinnedSchedule(): ?Event
+    {
+        return self::query()
+            ->when(config('database.default') === DatabaseType::SQLite->value, function (Builder $builder): Builder {
+                $offset = timezone_offset_get(timezone_open(get_timezone()), now()) / 60 / 60;
+                $modifier = vsprintf('%s%s hours', [
+                    $offset >= 0 ? '+' : '-',
+                    abs($offset),
+                ]);
+
+                return $builder->selectRaw(<<<'SELECT'
+                    slug,
+                    title,
+                    location,
+                    categories,
+                    started_at,
+                    finished_at,
+                    is_virtual,
+                    DATE(started_at, ?) AS local_started_at,
+                    highlight(events, 2, '<b>', '</b>') marked_title,
+                    highlight(events, 4, '<b>', '</b>') marked_location,
+                    is_pinned
+                SELECT, [$modifier]);
+            })
+            ->where('local_started_at', '>=', now(get_timezone())->toDateTimeString())
+            ->where('is_pinned', '1')
+            ->first();
     }
 
     public static function getPublishedSchedules(array $filters = []): Collection
