@@ -399,7 +399,7 @@ class Schedule extends Model implements Sitemapable
             ->get();
     }
 
-    public static function getFilteredSchedules(int $year, ?int $month = null): Collection
+    public static function getFilteredSchedules(int $year, ?int $month = null, ?int $day = null): Collection
     {
         $method = __METHOD__;
 
@@ -418,12 +418,18 @@ class Schedule extends Model implements Sitemapable
 
                 return $builder->selectRaw('*, DATE(started_at, ?) AS local_started_at', [$modifier]);
             })
-            ->when(! empty($month), function (Builder $builder) use ($year, $month): Builder {
+            ->when(! empty($month) || ! empty($day), function (Builder $builder) use ($year, $month, $day): Builder {
                 $local = now(get_timezone())
                     ->setMonth($month)
                     ->setYear($year);
 
                 if (config('database.default') === DatabaseType::SQLite->value) {
+                    if (! empty($day)) {
+                        $local = $local->setDay($day);
+
+                        return $builder->where('local_started_at', $local->toDateString());
+                    }
+
                     return $builder->whereBetween('local_started_at', [
                         $local->startOfMonth()->toDateString(),
                         $local->endOfMonth()->toDateString(),

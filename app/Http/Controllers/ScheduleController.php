@@ -67,7 +67,7 @@ class ScheduleController extends Controller
         return view('pages.schedules.index');
     }
 
-    public function filter(int $year, ?int $month = null): View
+    public function filter(int $year, ?int $month = null, ?int $day = null): View
     {
         $date = now($this->timezone)
             ->setMonth($month)
@@ -83,7 +83,7 @@ class ScheduleController extends Controller
         }
 
         return view('pages.schedules.filter')
-            ->with('schedules', Schedule::getFilteredSchedules($year, $month))
+            ->with('schedules', Schedule::getFilteredSchedules($year, $month, $day))
             ->with('pageTitle', __('event.schedules_in', ['time' => $title]))
             ->with('title', $title);
     }

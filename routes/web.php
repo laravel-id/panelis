@@ -3,13 +3,13 @@
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\MessageController;
+use App\Http\Controllers\OAuth\DropboxController;
 use App\Http\Controllers\OrganizerController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SubscriberController;
 use App\Http\Middleware\CacheResponse;
 use AshAllenDesign\ShortURL\Facades\ShortURL;
-use App\Http\Controllers\OAuth\DropboxController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -51,8 +51,12 @@ Route::get('/archive', [ScheduleController::class, 'archive'])->name('schedule.a
 Route::get('/event/{slug}', [ScheduleController::class, 'view'])
     ->middleware([CacheResponse::class])
     ->name('schedule.view');
-Route::get('/{year}/{month?}', [ScheduleController::class, 'filter'])
-    ->where(['year' => '[0-9]+', 'month' => '[0-9]+'])
+Route::get('/{year}/{month?}/{day?}', [ScheduleController::class, 'filter'])
+    ->where([
+        'year' => '[0-9]+',
+        'month' => '[0-9]+',
+        'day' => '[0-9]+',
+    ])
     ->name('schedule.filter');
 
 Route::get('/dropbox', DropboxController::class)->name('callback.dropbox');
