@@ -41,6 +41,9 @@ class ScheduleForm
                                 ->moveFiles()
                                 ->nullable(),
 
+                            Toggle::make('metadata.is_pinned')
+                                ->label(__('event.schedule_pin')),
+
                             Select::make('parent_id')
                                 ->label(__('event.schedule_parent'))
                                 ->relationship('parent', 'title')

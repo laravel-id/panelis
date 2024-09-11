@@ -3,7 +3,6 @@
 namespace App\Livewire\Schedule;
 
 use App\Models\Event\Event;
-use App\Models\Event\Schedule;
 use Illuminate\Database\Eloquent\Collection;
 use Livewire\Attributes\Lazy;
 use Livewire\Attributes\Url;
@@ -28,12 +27,19 @@ class Index extends Component
 
     private function getFilteredSchedules(): ?Collection
     {
-        return Event::getPublishedSchedules($this->only([
+        $events = Event::getPublishedSchedules($this->only([
             'keyword',
             'virtual',
             'past',
             'date',
         ]));
+
+        $pinnedEvent = Event::getPinnedSchedule();
+        if (! empty($pinnedEvent)) {
+            $events->prepend($pinnedEvent);
+        }
+
+        return $events;
     }
 
     public function mount(): void

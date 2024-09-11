@@ -41,6 +41,7 @@ class AddToIndex
                 'region' => $event->schedule->district?->region?->name,
                 'types' => $event->schedule->types->map(fn (Type $type): ?string => $type->title),
                 'organizers' => $event->schedule->organizers->map(fn (Organizer $organizer): ?string => $organizer->name),
+                'is_pinned' => $event->schedule->metadata['is_pinned'] ?? false,
             ],
         ));
     }

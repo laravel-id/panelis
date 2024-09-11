@@ -44,6 +44,9 @@
 							{{ $schedule->started_at->timezone($timezone)->translatedFormat('M') }}<sup>{{ $schedule->started_at->timezone($timezone)->format('y') }}</sup>
 						</td>
 						<td>
+							@if ($schedule->is_pinned && !$schedule->is_past)
+								<small class="pico-color-{{ get_color_theme() }}-800"><i class="ri-pushpin-2-fill"></i> @lang('event.schedule_pinned')</small><br/>
+							@endif
 							<a href="{{ route('schedule.view', ['slug' => $schedule->slug]) }}"
 							   class="{{ $schedule->is_past ? 'secondary' : 'primary' }} schedule-title">
 								{!! $schedule->marked_title !!}
