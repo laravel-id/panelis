@@ -277,6 +277,14 @@ class Schedule extends Model implements Sitemapable
             ->orderBy('sort');
     }
 
+    /**
+     * @return HasMany<Participant>
+     */
+    public function participants(): HasMany
+    {
+        return $this->hasMany(Participant::class);
+    }
+
     public function district(): BelongsTo
     {
         return $this->belongsTo(District::class);

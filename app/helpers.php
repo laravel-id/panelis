@@ -46,3 +46,13 @@ if (! function_exists('get_color_theme')) {
         return $selected ?? config('color.theme', 'zinc');
     }
 }
+
+if (! function_exists('set_locale')) {
+    function set_locale(string $locale): void
+    {
+        $locales = config('app.locales', [config('app.locale')]);
+        if ($locale != app()->getLocale() && in_array($locale, $locales)) {
+            app()->setLocale($locale);
+        }
+    }
+}

@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Event;
 
 use App\Actions\Schedule\GenerateCalendarUrl;
+use App\Http\Controllers\Controller;
 use App\Models\Event\Organizer;
 use App\Models\Event\Schedule;
 use Illuminate\Http\JsonResponse;
@@ -24,6 +25,7 @@ class ScheduleController extends Controller
     public function view(string $slug): View
     {
         $schedule = Schedule::getScheduleBySlug($slug);
+        set_locale($schedule->metadata['locale'] ?? app()->getLocale());
 
         $organizers = $schedule->organizers
             ->map(function (Organizer $organizer): string {
@@ -93,35 +95,6 @@ class ScheduleController extends Controller
         return view('pages.schedules.filter')
             ->with('schedules', Schedule::getArchivedSchedules())
             ->with('title', __('event.schedule_archive'));
-    }
-
-    public function calendar(): View
-    {
-        return view('pages.schedules.calendar')
-            ->with('title', __('event.schedule_calendar'));
-    }
-
-    public function json(Request $request): JsonResponse
-    {
-        return response()->json(
-            Schedule::getPublishedSchedules()
-                ->map(function (Schedule $schedule): array {
-                    return [
-                        'title' => $schedule->title,
-                        'start' => $schedule
-                            ->started_at
-                            ->timezone($this->timezone)
-                            ->format('Y-m-d H:i'),
-                        'end' => $schedule
-                            ->finished_at
-                            ?->timezone($this->timezone)
-                            ?->format('Y-m-d H:i') ?? null,
-                        'url' => route('schedule.view', $schedule->slug),
-                        'allDay' => false,
-                    ];
-                })
-                ->toArray(),
-        );
     }
 
     private function generateStructuredData(Schedule $schedule): array

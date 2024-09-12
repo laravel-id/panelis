@@ -4,6 +4,7 @@ namespace App\Livewire\Schedule;
 
 use App\Models\Event\Event;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\View\View;
 use Livewire\Attributes\Lazy;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -52,8 +53,9 @@ class Index extends Component
         $this->schedules = $this->getFilteredSchedules();
     }
 
-    public function render()
+    public function render(): View
     {
-        return view('livewire.schedule.index');
+        return view('livewire.schedule.index')
+            ->extends('layouts.app');
     }
 }
