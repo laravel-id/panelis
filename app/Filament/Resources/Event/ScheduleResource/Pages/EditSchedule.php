@@ -47,6 +47,9 @@ class EditSchedule extends EditRecord
         // clear cached response
         Cache::forget('response.'.route('schedule.view', $this->record->slug));
 
+        // clear pinned event
+        Cache::forget('event.pinned');
+
         $exists = ShortURL::query()
             ->where('destination_url', $this->record->url)
             ->exists();

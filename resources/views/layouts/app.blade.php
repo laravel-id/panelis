@@ -13,7 +13,6 @@
 	<title>{{ $pageTitle ?? $title ?? config('app.name') }}</title>
 
 	@vite(['resources/css/app.css', 'resources/js/app.js'])
-  @stack('js')
 </head>
 <body>
 <main class="container">
@@ -37,5 +36,6 @@
 <!-- 100% privacy-first analytics -->
 <script async defer src="https://scripts.simpleanalyticscdn.com/latest.js"></script>
 <noscript><img src="https://queue.simpleanalyticscdn.com/noscript.gif" alt="" referrerpolicy="no-referrer-when-downgrade" /></noscript>
+@stack('js')
 </body>
 </html>

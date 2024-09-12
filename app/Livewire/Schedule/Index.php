@@ -4,16 +4,16 @@ namespace App\Livewire\Schedule;
 
 use App\Models\Event\Event;
 use Illuminate\Database\Eloquent\Collection;
-use Livewire\Attributes\Lazy;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\View\View;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 
-#[Lazy]
 class Index extends Component
 {
     public ?Collection $schedules = null;
 
-    #[Url]
+    #[Url(history: true)]
     public ?string $keyword = '';
 
     #[Url]
@@ -34,8 +34,11 @@ class Index extends Component
             'date',
         ]));
 
-        $pinnedEvent = Event::getPinnedSchedule();
-        if (! empty($pinnedEvent)) {
+        $pinnedEvent = Cache::remember('event.pinned', now()->addHour(), function (): ?Event {
+            return Event::getPinnedSchedule();
+        });
+
+        if (!empty($pinnedEvent)) {
             $events->prepend($pinnedEvent);
         }
 
@@ -52,8 +55,10 @@ class Index extends Component
         $this->schedules = $this->getFilteredSchedules();
     }
 
-    public function render()
+    public function render(): View
     {
-        return view('livewire.schedule.index');
+        return view('livewire.schedule.index')
+            ->extends('layouts.app')
+            ->title(config('app.title'));
     }
 }
