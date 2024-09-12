@@ -45,7 +45,7 @@ class EditSchedule extends EditRecord
         event(new ScheduleUpdated($this->record));
 
         // clear cached response
-        Cache::forget('response.'.route('schedule.view', $this->record->slug));
+        Cache::forget('response.'.sha1(route('schedule.view', $this->record->slug)));
 
         // clear pinned event
         Cache::forget('event.pinned');
