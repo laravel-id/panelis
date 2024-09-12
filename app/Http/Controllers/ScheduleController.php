@@ -62,11 +62,6 @@ class ScheduleController extends Controller
             ->with('title', sprintf('%s - %s', $schedule->title, $year));
     }
 
-    public function index(): View
-    {
-        return view('pages.schedules.index');
-    }
-
     public function filter(int $year, ?int $month = null, ?int $day = null): View
     {
         $date = now($this->timezone)

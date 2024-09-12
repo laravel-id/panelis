@@ -9,6 +9,7 @@ use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SubscriberController;
 use App\Http\Middleware\CacheResponse;
+use App\Livewire\Schedule\Index;
 use AshAllenDesign\ShortURL\Facades\ShortURL;
 use Illuminate\Support\Facades\Route;
 
@@ -22,7 +23,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::get('/', [ScheduleController::class, 'index'])->name('index');
+Route::get('/', Index::class)->name('index');
 
 Route::middleware('guest')->group(function (): void {
     Route::get('/login', [LoginController::class, 'form'])->name('login');
