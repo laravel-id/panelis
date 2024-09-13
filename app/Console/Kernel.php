@@ -2,7 +2,6 @@
 
 namespace App\Console;
 
-use App\Actions\Ping;
 use App\Filament\Clusters\Databases\Enums\DatabasePeriod;
 use Carbon\Carbon;
 use Illuminate\Console\Scheduling\Schedule;
@@ -39,6 +38,8 @@ class Kernel extends ConsoleKernel
             });
 
         $schedule->command('subscriber:send-schedule')->monthly();
+
+        $schedule->command('auth:clear-resets')->daily();
     }
 
     /**

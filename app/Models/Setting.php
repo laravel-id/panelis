@@ -25,6 +25,7 @@ class Setting extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'key',
         'value',
         'is_custom',
@@ -113,9 +114,12 @@ class Setting extends Model
         }
     }
 
-    public static function set(string $key, mixed $value, bool $isCustom = false): void
+    public static function set(string $key, mixed $value, bool $isCustom = false, ?int $userId = null): void
     {
-        self::updateOrCreate(compact('key'), [
+        self::updateOrCreate([
+            'key' => $key,
+            'user_id' => $userId,
+        ], [
             'value' => $value,
             'is_custom' => $isCustom,
         ]);

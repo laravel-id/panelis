@@ -22,10 +22,6 @@
 
       <x-form.checkbox label="user.remember_login" name="remember" />
 
-      <p>
-        <a href="">@lang('user.forgot_password')</a>
-      </p>
-
       <footer>
         <x-form.button label="user.btn_login" />
       </footer>

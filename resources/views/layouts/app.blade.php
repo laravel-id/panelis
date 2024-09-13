@@ -16,20 +16,46 @@
 </head>
 <body>
 <main class="container">
-  <nav>
-    <ul>
-      <li>
-        <strong class="pico-color-{{ get_color_theme() }}">
-          <i class="ri-run-fill"></i>
-          {{ config('app.name') }}
-        </strong>
-      </li>
-    </ul>
-    <ul>
-      <li><a href="{{ route('schedule.archive') }}">@lang('event.schedule_archive')</a></li>
-      <li><a href="{{ route('message.form') }}">@lang('message.contact')</a></li>
-    </ul>
-  </nav>
+	<nav>
+		<ul>
+			<li><strong>
+					<a href="{{ route('index') }}">{{ config('app.name') }}</a>
+				</strong></li>
+		</ul>
+		<ul>
+			<li><a href="{{ route('schedule.archive') }}">@lang('event.schedule_archive')</a></li>
+			<li><a href="{{ route('message.form') }}">@lang('message.contact')</a></li>
+			@guest
+				<li>
+					<details class="dropdown">
+						<summary>
+							@lang('navigation.user')
+						</summary>
+						<ul class="rtl">
+							<li><a href="{{ route('login') }}">@lang('user.login')</a></li>
+							<li><a href="{{ route('register') }}">@lang('user.register')</a></li>
+							<li><a href="{{ route('password.request') }}">@lang('user.forgot_password')</a></li>
+						</ul>
+					</details>
+				</li>
+			@endguest
+
+			@auth
+			<li>
+				<details class="dropdown">
+					<summary>
+						@lang('user.account')
+					</summary>
+					<ul dir="rtl">
+						<li><a href="{{ route('user.profile') }}">@lang('user.profile')</a></li>
+						<li><a href="{{ route('user.setting') }}">@lang('user.setting')</a></li>
+						<li><a href="{{ route('logout') }}">@lang('user.logout')</a></li>
+					</ul>
+				</details>
+			</li>
+			@endauth
+		</ul>
+	</nav>
 
   @yield('content')
 </main>
