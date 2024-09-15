@@ -5,7 +5,9 @@ namespace App\Http\Controllers;
 use App\Actions\Schedule\GenerateCalendarUrl;
 use App\Models\Event\Organizer;
 use App\Models\Event\Schedule;
+use App\Models\Slug;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
@@ -21,8 +23,17 @@ class ScheduleController extends Controller
         view()->share('timezone', $this->timezone);
     }
 
-    public function view(string $slug): View
+    public function view(string $slug): View|RedirectResponse
     {
+        // redirect old slug to a new one
+        $history = Slug::query()
+            ->where('origin', $slug)
+            ->orderByDesc('created_at')
+            ->first();
+        if (! empty($history)) {
+            return redirect(route('schedule.view', $history->destination), $history->status);
+        }
+
         $schedule = Schedule::getScheduleBySlug($slug);
 
         $organizers = $schedule->organizers
