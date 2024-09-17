@@ -126,7 +126,7 @@ class ScheduleForm
 
                             Toggle::make('metadata.hide_time')
                                 ->label(__('event.schedule_hide_time'))
-                                ->default(false),
+                                ->default(true),
                         ]),
 
                     Section::make(__('event.schedule_where'))

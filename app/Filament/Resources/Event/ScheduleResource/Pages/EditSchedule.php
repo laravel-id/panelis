@@ -9,6 +9,7 @@ use AshAllenDesign\ShortURL\Exceptions\ShortURLException;
 use AshAllenDesign\ShortURL\Facades\ShortURL as URLShortener;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
@@ -26,6 +27,14 @@ class EditSchedule extends EditRecord
 
     protected function mutateFormDataBeforeSave(array $data): array
     {
+        if ($this->record->slug !== $data['slug']) {
+            $this->record->slugs()->create([
+                'origin' => $this->record->slug,
+                'destination' => $data['slug'],
+                'status' => Response::HTTP_MOVED_PERMANENTLY,
+            ]);
+        }
+
         if (empty($data['description'])) {
             $data['description'] = '';
         }

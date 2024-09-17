@@ -1,3 +1,5 @@
+[![Run Tests](https://github.com/yugo412/run-schedules/actions/workflows/laravel.yml/badge.svg)](https://github.com/yugo412/run-schedules/actions/workflows/laravel.yml)
+
 ## About Panelis
 
 Panelis is a ready-to-use admin panel built with [Laravel](https://laravel.com) and [Filament](https://filamentphp.com), making it easy to manage your Laravel application.
