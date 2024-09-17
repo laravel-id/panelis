@@ -1,4 +1,7 @@
-@php use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;use Filament\Enums\ThemeMode; @endphp
+@php
+	use App\Enums\ThemeMode;
+	use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
+@endphp
 <div>
 	<nav aria-label="breadcrumb">
 		<ul>

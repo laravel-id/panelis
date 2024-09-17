@@ -2,6 +2,7 @@
 
 namespace App\Filament\Clusters\Settings\Forms;
 
+use App\Enums\ThemeMode;
 use App\Filament\Clusters\Settings\Enums\PicoTheme;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
@@ -21,10 +22,7 @@ class AppThemeForm
 
             Radio::make('color.mode')
                 ->label(__('setting.theme_mode'))
-                ->options([
-                    'dark' => __('setting.theme_dark'),
-                    'light' => __('setting.theme_light'),
-                ]),
+                ->options(ThemeMode::options()),
         ];
     }
 }
