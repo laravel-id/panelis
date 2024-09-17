@@ -41,7 +41,7 @@
 			@endguest
 
 			@auth
-			<li>
+			<li class="large-screen">
 				<details class="dropdown">
 					<summary>
 						@lang('user.account')
