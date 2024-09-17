@@ -6,12 +6,10 @@
 		</ul>
 	</nav>
 
-	<hgroup>
-		<h2>@lang('user.my_profile')</h2>
-	</hgroup>
-
 	<form wire:submit="update">
 		<article>
+
+			<header>@lang('user.my_profile')</header>
 
 			<details open>
 				<summary>

@@ -10,12 +10,9 @@
 		</ul>
 	</nav>
 
-	<hgroup>
-		<h2>@lang('user.general_setting')</h2>
-	</hgroup>
-
 	<form wire:submit="update">
 		<article>
+			<header>@lang('user.general_setting')</header>
 
 			<fieldset>
 				<legend>@lang('user.language_preference') *</legend>
