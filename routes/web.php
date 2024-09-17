@@ -38,10 +38,10 @@ Route::middleware('guest')->group(function (): void {
     Route::post('/register', [RegisterController::class, 'register']);
 
     Route::get('/forgot-password', [RequestController::class, 'request'])->name('password.request');
-    Route::post('/forgot-password', [RequestController::class, 'sendLink'])->name('password.request');
+    Route::post('/forgot-password', [RequestController::class, 'sendLink']);
 
     Route::get('/reset-password', [ResetController::class, 'reset'])->name('password.reset');
-    Route::post('/reset-password', [ResetController::class, 'update'])->name('password.reset');
+    Route::post('/reset-password', [ResetController::class, 'update']);
 });
 
 Route::middleware('auth')->group(function (): void {
