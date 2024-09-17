@@ -29,7 +29,7 @@
 				<li>
 					<details class="dropdown">
 						<summary>
-							@lang('navigation.user')
+							@lang('user.account')
 						</summary>
 						<ul class="rtl">
 							<li><a href="{{ route('login') }}">@lang('user.login')</a></li>
