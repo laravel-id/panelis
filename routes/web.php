@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Auth\Password\RequestController;
+use App\Http\Controllers\Auth\Password\ResetController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\OAuth\DropboxController;
@@ -10,6 +13,8 @@ use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SubscriberController;
 use App\Http\Middleware\CacheResponse;
 use App\Livewire\Schedule\Index;
+use App\Livewire\User\Profile;
+use App\Livewire\User\Setting;
 use AshAllenDesign\ShortURL\Facades\ShortURL;
 use Illuminate\Support\Facades\Route;
 
@@ -31,6 +36,19 @@ Route::middleware('guest')->group(function (): void {
 
     Route::get('/register', [RegisterController::class, 'form'])->name('register');
     Route::post('/register', [RegisterController::class, 'register']);
+
+    Route::get('/forgot-password', [RequestController::class, 'request'])->name('password.request');
+    Route::post('/forgot-password', [RequestController::class, 'sendLink'])->name('password.request');
+
+    Route::get('/reset-password', [ResetController::class, 'reset'])->name('password.reset');
+    Route::post('/reset-password', [ResetController::class, 'update'])->name('password.reset');
+});
+
+Route::middleware('auth')->group(function (): void {
+    Route::get('/profile', Profile::class)->name('user.profile');
+    Route::get('/setting', Setting::class)->name('user.setting');
+
+    Route::get('/logout', LogoutController::class)->name('logout');
 });
 
 Route::post('/schedules.json', [ScheduleController::class, 'json']);
