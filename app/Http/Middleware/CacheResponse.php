@@ -20,7 +20,7 @@ class CacheResponse
             return $next($request);
         }
 
-        $key = 'response.'.$request->fullUrl();
+        $key = 'response.'.sha1($request->fullUrl());
         if (Cache::has($key)) {
             return response(Cache::get($key));
         }

@@ -24,13 +24,6 @@
 
       <x-form.input label="user.password_confirmation" name="password_confirmation" type="password" required/>
 
-      <p>
-        <i class="ri-lock-2-fill"></i>
-        <a href="{{ route('login') }}">
-          @lang('user.login')
-        </a>
-      </p>
-
       <footer>
         <x-form.button label="user.btn_register" />
       </footer>

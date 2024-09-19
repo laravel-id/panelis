@@ -5,6 +5,7 @@ namespace App\Filament\Resources\Event\ScheduleResource\Pages;
 use App\Events\Event\ScheduleCreated;
 use App\Filament\Resources\Event\ScheduleResource;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
 class CreateSchedule extends CreateRecord
@@ -29,5 +30,7 @@ class CreateSchedule extends CreateRecord
     protected function afterCreate(): void
     {
         event(new ScheduleCreated($this->record));
+
+        Cache::forget('event.pinned');
     }
 }

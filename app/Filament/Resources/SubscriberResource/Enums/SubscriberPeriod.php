@@ -13,7 +13,7 @@ enum SubscriberPeriod: string implements HasOption
     public static function options(): array
     {
         return collect(SubscriberPeriod::cases())
-            ->mapWithKeys(fn(SubscriberPeriod $case): array => [$case->value => $case->label()])
+            ->mapWithKeys(fn (SubscriberPeriod $case): array => [$case->value => $case->label()])
             ->toArray();
     }
 

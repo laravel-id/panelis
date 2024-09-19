@@ -4,17 +4,16 @@ namespace App\Livewire\Schedule;
 
 use App\Models\Event\Event;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\View\View;
-use Livewire\Attributes\Lazy;
 use Livewire\Attributes\Url;
 use Livewire\Component;
 
-#[Lazy]
 class Index extends Component
 {
     public ?Collection $schedules = null;
 
-    #[Url]
+    #[Url(history: true)]
     public ?string $keyword = '';
 
     #[Url]
@@ -35,7 +34,10 @@ class Index extends Component
             'date',
         ]));
 
-        $pinnedEvent = Event::getPinnedSchedule();
+        $pinnedEvent = Cache::remember('event.pinned', now()->addHour(), function (): ?Event {
+            return Event::getPinnedSchedule();
+        });
+
         if (! empty($pinnedEvent)) {
             $events->prepend($pinnedEvent);
         }
@@ -55,7 +57,23 @@ class Index extends Component
 
     public function render(): View
     {
+        $sitelinks = [
+            '@context' => 'https://schema.org',
+            '@type' => 'WebSite',
+            'url' => config('app.url'),
+            'potentialAction' => [
+                '@type' => 'SearchAction',
+                'query-input' => 'required name=search_term_string',
+                'target' => [
+                    '@type' => 'EntryPoint',
+                    'urlTemplate' => config('app.url').'/?keyword={search_term_string}',
+                ],
+            ],
+        ];
+
         return view('livewire.schedule.index')
-            ->extends('layouts.app');
+            ->extends('layouts.app')
+            ->with('sitelinks', $sitelinks)
+            ->title(config('app.title'));
     }
 }

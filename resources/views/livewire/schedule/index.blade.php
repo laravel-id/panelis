@@ -1,10 +1,9 @@
 <div>
 	<form>
 		<fieldset role="group">
-			<input aria-busy="true" name="keyword" wire:model.live.debounce.100ms="keyword" value="{{ request('keyword') }}"
-			       id="search-input" type="text" placeholder="@lang('event.schedule_placeholder_search')"/>
-			<a wire:loading.attr="aria-busy" x-show="$wire.keyword.length >= 1" href="#"
-			   x-on:click.prevent="$wire.keyword = ''; $wire.$refresh()" type="reset" class="outline secondary">
+			<input aria-busy="true" name="keyword" wire:model.live.debounce.100ms="keyword" id="search-input" type="text" placeholder="@lang('event.schedule_placeholder_search')"/>
+			<a wire:loading.attr="aria-busy" x-show="$wire.keyword && $wire.keyword.length >= 1" href="#"
+				 x-on:click.prevent="$wire.keyword = ''; $wire.$refresh(); $wire.dispatch('keyword-cleared')" type="reset" class="outline secondary">
 				<i wire:loading.remove class="ri-close-line"></i>
 			</a>
 		</fieldset>
@@ -38,17 +37,24 @@
 				</thead>
 				<tbody>
 				@foreach($schedules as $schedule)
-					<tr>
+					@php
+						$localStartedAt = $schedule->started_at->timezone(get_timezone());
+					@endphp
+					<tr wire:key="{{ $schedule->slug }}">
 						<td>
-							<div class="pico-color-{{ $schedule->is_past ? 'grey' : get_color_theme()  }}-600">{{ $schedule->started_at->timezone($timezone)->translatedFormat('d') }}</div>
-							{{ $schedule->started_at->timezone($timezone)->translatedFormat('M') }}<sup>{{ $schedule->started_at->timezone($timezone)->format('y') }}</sup>
+							<div class="pico-color-{{ $schedule->is_past ? 'grey' : get_color_theme()  }}-600">
+								<a href="{{ route('schedule.filter', [$localStartedAt->year, $localStartedAt->month, $localStartedAt->day]) }}" class="schedule-title">
+									{{ $localStartedAt->translatedFormat('d') }}
+								</a>
+							</div>
+							{{ $localStartedAt->translatedFormat('M') }}<sup>{{ $localStartedAt->format('y') }}</sup>
 						</td>
 						<td>
 							@if ($schedule->is_pinned && !$schedule->is_past)
-								<small class="pico-color-{{ get_color_theme() }}-800"><i class="ri-pushpin-2-fill"></i> @lang('event.schedule_pinned')</small><br/>
+								<small class="pico-color-{{ get_color_theme() }}-700"><i class="ri-pushpin-2-fill"></i> @lang('event.schedule_pinned')</small><br/>
 							@endif
 							<a href="{{ route('schedule.view', ['slug' => $schedule->slug]) }}"
-							   class="{{ $schedule->is_past ? 'secondary' : 'primary' }} schedule-title">
+								 class="{{ $schedule->is_past ? 'secondary' : 'primary' }} schedule-title">
 								{!! $schedule->marked_title !!}
 							</a>
 							@if ($schedule->is_ongoing)
@@ -81,3 +87,20 @@
 		</div>
 	@endif
 </div>
+
+@push('js')
+@script
+<script>
+    $wire.on('keyword-cleared', (event) => {
+        const searchInput = document.getElementById('search-input')
+				searchInput.focus()
+		});
+</script>
+@endscript
+@endpush
+
+@push('js')
+	<script type="application/ld+json">
+		{!! json_encode($sitelinks, app()->isProduction() ? 0 : JSON_PRETTY_PRINT) !!}
+	</script>
+@endpush

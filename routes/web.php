@@ -1,6 +1,9 @@
 <?php
 
 use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\LogoutController;
+use App\Http\Controllers\Auth\Password\RequestController;
+use App\Http\Controllers\Auth\Password\ResetController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Event\ParticipantController;
 use App\Http\Controllers\Event\ScheduleController;
@@ -11,6 +14,9 @@ use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SubscriberController;
 use App\Http\Middleware\CacheResponse;
 use App\Livewire\Participants\Register;
+use App\Livewire\Schedule\Index;
+use App\Livewire\User\Profile;
+use App\Livewire\User\Setting;
 use AshAllenDesign\ShortURL\Facades\ShortURL;
 use Illuminate\Support\Facades\Route;
 
@@ -24,7 +30,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::get('/', [ScheduleController::class, 'index'])->name('index');
+Route::get('/', Index::class)->name('index');
 
 Route::middleware('guest')->group(function (): void {
     Route::get('/login', [LoginController::class, 'form'])->name('login');
@@ -32,6 +38,19 @@ Route::middleware('guest')->group(function (): void {
 
     Route::get('/register', [RegisterController::class, 'form'])->name('register');
     Route::post('/register', [RegisterController::class, 'register']);
+
+    Route::get('/forgot-password', [RequestController::class, 'request'])->name('password.request');
+    Route::post('/forgot-password', [RequestController::class, 'sendLink']);
+
+    Route::get('/reset-password', [ResetController::class, 'reset'])->name('password.reset');
+    Route::post('/reset-password', [ResetController::class, 'update']);
+});
+
+Route::middleware('auth')->group(function (): void {
+    Route::get('/profile', Profile::class)->name('user.profile');
+    Route::get('/setting', Setting::class)->name('user.setting');
+
+    Route::get('/logout', LogoutController::class)->name('logout');
 });
 
 Route::get('/subscribe', [SubscriberController::class, 'form'])->name('subscriber.form');

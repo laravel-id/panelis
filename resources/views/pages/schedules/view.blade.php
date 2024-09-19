@@ -41,6 +41,9 @@
 
 	<hgroup>
 		<h2 class="pico-color-{{ get_color_theme() }}-700 event-title">{{ $schedule->title }}</h2>
+		@if(!empty($schedule->metadata['tagline']))
+			<p>{{ $schedule->metadata['tagline'] }}</p>
+		@endif
 	</hgroup>
 	@if (!empty($schedule->parent))
 		<div class="parent-event">

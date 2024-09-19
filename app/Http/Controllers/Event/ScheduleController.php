@@ -6,8 +6,8 @@ use App\Actions\Schedule\GenerateCalendarUrl;
 use App\Http\Controllers\Controller;
 use App\Models\Event\Organizer;
 use App\Models\Event\Schedule;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use App\Models\Slug;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -22,8 +22,17 @@ class ScheduleController extends Controller
         view()->share('timezone', $this->timezone);
     }
 
-    public function view(string $slug): View
+    public function view(string $slug): View|RedirectResponse
     {
+        // redirect old slug to a new one
+        $history = Slug::query()
+            ->where('origin', $slug)
+            ->orderByDesc('created_at')
+            ->first();
+        if (! empty($history)) {
+            return redirect(route('schedule.view', $history->destination), $history->status);
+        }
+
         $schedule = Schedule::getScheduleBySlug($slug);
         set_locale($schedule->metadata['locale'] ?? app()->getLocale());
 
@@ -62,11 +71,6 @@ class ScheduleController extends Controller
             ->with('externalUrl', $schedule->external_url)
             ->with('structuredData', $this->generateStructuredData($schedule))
             ->with('title', sprintf('%s - %s', $schedule->title, $year));
-    }
-
-    public function index(): View
-    {
-        return view('pages.schedules.index');
     }
 
     public function filter(int $year, ?int $month = null, ?int $day = null): View
@@ -126,8 +130,8 @@ class ScheduleController extends Controller
                 'price' => $package->price,
                 'priceCurrency' => 'IDR',
                 'validFrom' => $package->started_at?->toIso8601String(),
-                'url' => $package->url,
-                'availability' => $package->is_sold || $schedule->is_past
+                'url' => $package->url ?? $schedule->url,
+                'availability' => $package->is_sold || $package->is_past || $schedule->is_past
                     ? 'https://schema.org/SoldOut'
                     : 'https://schema.org/InStock',
             ];

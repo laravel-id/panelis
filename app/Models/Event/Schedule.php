@@ -6,6 +6,7 @@ use App\Filament\Clusters\Databases\Enums\DatabaseType;
 use App\Models\Location\District;
 use App\Models\Report;
 use App\Models\Schedule\Bookmark;
+use App\Models\Slug;
 use App\Models\Traits\HasLocalTime;
 use App\Models\URL\ShortURL;
 use App\Models\User;
@@ -249,6 +250,14 @@ class Schedule extends Model implements Sitemapable
                 return $now->gte($start) && $now->lte($finish);
             }
         );
+    }
+
+    /**
+     * @return MorphMany<Slug>
+     */
+    public function slugs(): MorphMany
+    {
+        return $this->morphMany(Slug::class, 'sluggable');
     }
 
     public function parent(): BelongsTo

@@ -38,6 +38,9 @@ class Kernel extends ConsoleKernel
             });
 
         $schedule->command('subscriber:send-schedule')->monthly();
+
+        $schedule->command('auth:clear-resets')->daily();
+
         $schedule->command('event:payment-expired')->everyMinute();
     }
 

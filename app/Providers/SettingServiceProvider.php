@@ -4,7 +4,6 @@ namespace App\Providers;
 
 use App\Models\Setting;
 use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Schema;
@@ -32,14 +31,11 @@ class SettingServiceProvider extends ServiceProvider
         if ($hasSetting) {
             Setting::getAll()->each(function (Setting $setting): void {
                 Config::set($setting->key, $setting->value);
-            });
 
-            if (Auth::check()) {
-                Setting::getByUser(Auth::id())->each(function (Setting $setting): void {
-                    // override config from db with user's
-                    Config::set($setting->key, $setting->value);
-                });
-            }
+                if ($setting->key === 'app.locale') {
+                    $this->app->setLocale($setting->value);
+                }
+            });
         }
 
         LanguageSwitch::configureUsing(function (LanguageSwitch $lang) {
