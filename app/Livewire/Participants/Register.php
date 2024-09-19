@@ -12,6 +12,7 @@ use App\Models\Event\Schedule;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
@@ -134,9 +135,10 @@ class Register extends Component
                 ]);
 
             return $this->schedule->participants()->create([
-                'bib' => $bib,
+                'user_id' => Auth::id(),
                 'package_id' => $package->id,
                 'payment_id' => $payment->id,
+                'bib' => $bib,
                 'id_type' => $this->idType,
                 'id_number' => $this->idNumber,
                 'name' => $this->name,

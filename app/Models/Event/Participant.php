@@ -7,6 +7,7 @@ use App\Enums\Participants\Gender;
 use App\Enums\Participants\IdentityType;
 use App\Enums\Participants\Relation;
 use App\Enums\Participants\Status;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -16,6 +17,7 @@ use Illuminate\Support\Str;
 /**
  * @property string $ulid
  * @property Status $status
+ * @property BelongsTo $user
  */
 class Participant extends Model
 {
@@ -23,6 +25,7 @@ class Participant extends Model
     use SoftDeletes;
 
     protected $fillable = [
+        'user_id',
         'schedule_id',
         'package_id',
         'payment_id',
@@ -57,6 +60,14 @@ class Participant extends Model
             $participant->ulid = Str::ulid();
             $participant->status = Status::Pending;
         });
+    }
+
+    /**
+     * @return BelongsTo<User>
+     */
+    public function user(): BelongsTo
+    {
+        return $this->belongsTo(User::class);
     }
 
     /**

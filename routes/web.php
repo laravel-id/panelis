@@ -13,6 +13,7 @@ use App\Http\Controllers\OrganizerController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SubscriberController;
 use App\Http\Middleware\CacheResponse;
+use App\Livewire\Participants\Index as ParticipantIndex;
 use App\Livewire\Participants\Register;
 use App\Livewire\Schedule\Index;
 use App\Livewire\User\Profile;
@@ -68,6 +69,8 @@ Route::get('/organizer/{organizer:slug}', [OrganizerController::class, 'view'])-
 Route::get('/event/{slug}/register', Register::class)->name('participant.register');
 Route::get('/participant/{participant:ulid}', [ParticipantController::class, 'view'])->name('participant.view');
 Route::get('/participant/status/{participant:ulid}', [ParticipantController::class, 'status'])->name('participant.status');
+Route::middleware('auth')
+    ->get('/event/{slug}/participants', ParticipantIndex::class)->name('participant.index');
 
 Route::get('/archive', [ScheduleController::class, 'archive'])->name('schedule.archive');
 Route::get('/event/{slug}', [ScheduleController::class, 'view'])

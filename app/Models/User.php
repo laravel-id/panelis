@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Filament\Clusters\Settings\Enums\AvatarProvider;
+use App\Models\Event\Participant;
 use App\Models\Traits\HasLocalTime;
 use Carbon\Carbon;
 use Filament\Models\Contracts\FilamentUser;
@@ -35,6 +36,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property string $email
  * @property bool $is_root
  * @property int $id
+ * @property HasMany $participants
  */
 class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenants
 {
@@ -143,5 +145,13 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
     public function settings(): HasMany
     {
         return $this->hasMany(Setting::class);
+    }
+
+    /**
+     * @return HasMany<Participant>
+     */
+    public function participants(): HasMany
+    {
+        return $this->hasMany(Participant::class);
     }
 }
