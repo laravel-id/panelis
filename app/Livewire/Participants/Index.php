@@ -8,7 +8,6 @@ use App\Models\Event\Schedule;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 use Livewire\Attributes\Url;
 use Livewire\Component;
@@ -61,11 +60,11 @@ class Index extends Component
         $this->schedule->load([
             'participants' => function (HasMany $query): HasMany {
                 return $query->take(10)
-                    ->when(!empty($this->keyword), function (Builder $builder): Builder {
-                        return $builder->where('name', 'like', '%' . $this->keyword . '%')
-                            ->orWhere('bib', 'like', '%' . $this->keyword . '%');
+                    ->when(! empty($this->keyword), function (Builder $builder): Builder {
+                        return $builder->where('name', 'like', '%'.$this->keyword.'%')
+                            ->orWhere('bib', 'like', '%'.$this->keyword.'%');
                     });
-            }
+            },
         ]);
 
         return view('livewire.participants.index')
