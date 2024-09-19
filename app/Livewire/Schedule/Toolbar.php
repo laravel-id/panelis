@@ -41,7 +41,7 @@ class Toolbar extends Component
             ->withTrashed()
             ->first();
 
-        if (!empty($bookmark)) {
+        if (! empty($bookmark)) {
             if ($bookmark->trashed()) {
                 $bookmark->restore();
                 $this->marked = true;

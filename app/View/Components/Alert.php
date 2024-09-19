@@ -26,6 +26,6 @@ class Alert extends Component
 
     public function shouldRender(): bool
     {
-        return !empty($this->message);
+        return ! empty($this->message);
     }
 }

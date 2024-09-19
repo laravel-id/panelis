@@ -56,7 +56,7 @@ class SubscriberResource extends Resource
                     TextColumn::make('period')
                         ->label(__('subscriber.period'))
                         ->sortable()
-                        ->formatStateUsing(fn(Subscriber $subscriber): string => $subscriber->period->label()),
+                        ->formatStateUsing(fn (Subscriber $subscriber): string => $subscriber->period->label()),
 
                     TextColumn::make('subscribed_at')
                         ->label(__('subscriber.subscribed_at'))
@@ -77,9 +77,9 @@ class SubscriberResource extends Resource
                     ->trueLabel(__('subscriber.subscribed'))
                     ->falseLabel(__('subscriber.unsubscribed'))
                     ->queries(
-                        true: fn(Builder $builder): Builder => $builder->subscribed(),
-                        false: fn(Builder $builder): Builder => $builder->subscribed(false),
-                        blank: fn(Builder $builder): Builder => $builder,
+                        true: fn (Builder $builder): Builder => $builder->subscribed(),
+                        false: fn (Builder $builder): Builder => $builder->subscribed(false),
+                        blank: fn (Builder $builder): Builder => $builder,
                     ),
             ])
             ->actions([

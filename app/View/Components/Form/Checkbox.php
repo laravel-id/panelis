@@ -13,8 +13,7 @@ class Checkbox extends Component
      */
     public function __construct(
         public string $label = '',
-    )
-    {
+    ) {
         //
     }
 

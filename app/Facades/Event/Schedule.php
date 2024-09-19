@@ -16,7 +16,7 @@ class Schedule
         $storage = Storage::disk('public');
         $path = sprintf('events/%s/%s.png', $dir, $schedule->slug);
 
-        $image = (new Image())
+        $image = (new Image)
             ->accentColor($schedule->metadata['color'] ?? '#76ABAE')
             ->border(BorderPosition::Top, width: 15)
             ->title(Str::words($schedule->title, 5))
