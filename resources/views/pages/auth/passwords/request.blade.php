@@ -11,7 +11,10 @@
 	<form method="post" action="{{ route('password.request') }}">
 		@csrf
 
+
 		<article>
+			<header>{{ $title }}</header>
+
 			<x-form.input label="user.email" :value="old('email')" name="email" type="email" required />
 
 			<footer>
