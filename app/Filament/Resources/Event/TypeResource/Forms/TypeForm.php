@@ -15,7 +15,8 @@ class TypeForm
                 ->label(__('event.type'))
                 ->searchable()
                 ->bulkToggleable()
-                ->options(Type::options()),
+                ->options(Type::options())
+                ->required(),
         ];
     }
 }
