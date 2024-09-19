@@ -25,7 +25,7 @@ class SubscriberController extends Controller
     public function submit(SubscribeRequest $request): RedirectResponse
     {
         $subscriber = Subscriber::query()->updateOrCreate(['email' => $request->input('email')], $request->validated());
-        if (!$subscriber->wasRecentlyCreated && $subscriber->is_subscribed) {
+        if (! $subscriber->wasRecentlyCreated && $subscriber->is_subscribed) {
             return redirect()
                 ->back()
                 ->with('error', __('subscriber.message_already_subscribed'));

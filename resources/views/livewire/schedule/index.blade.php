@@ -98,3 +98,9 @@
 </script>
 @endscript
 @endpush
+
+@push('js')
+	<script type="application/ld+json">
+		{!! json_encode($sitelinks, app()->isProduction() ? 0 : JSON_PRETTY_PRINT) !!}
+	</script>
+@endpush

@@ -7,9 +7,9 @@ use App\Services\Database\Database;
 use App\Services\Database\DatabaseFactory;
 use App\Services\OAuth\OAuth;
 use App\Services\OAuth\OAuthFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\URL;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Number;
 use Illuminate\Support\ServiceProvider;
 
@@ -20,7 +20,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind('schedule', fn (): Schedule => new Schedule());
+        $this->app->bind('schedule', fn (): Schedule => new Schedule);
 
         $this->app->bind(Database::class, function (): ?object {
             return DatabaseFactory::make();

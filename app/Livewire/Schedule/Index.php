@@ -38,7 +38,7 @@ class Index extends Component
             return Event::getPinnedSchedule();
         });
 
-        if (!empty($pinnedEvent)) {
+        if (! empty($pinnedEvent)) {
             $events->prepend($pinnedEvent);
         }
 
@@ -57,8 +57,23 @@ class Index extends Component
 
     public function render(): View
     {
+        $sitelinks = [
+            '@context' => 'https://schema.org',
+            '@type' => 'WebSite',
+            'url' => config('app.url'),
+            'potentialAction' => [
+                '@type' => 'SearchAction',
+                'query-input' => 'required name=search_term_string',
+                'target' => [
+                    '@type' => 'EntryPoint',
+                    'urlTemplate' => config('app.url').'/?keyword={search_term_string}',
+                ],
+            ],
+        ];
+
         return view('livewire.schedule.index')
             ->extends('layouts.app')
+            ->with('sitelinks', $sitelinks)
             ->title(config('app.title'));
     }
 }
