@@ -29,11 +29,10 @@
 						<summary>
 							@lang('navigation.menu')
 						</summary>
-						<ul class="rtl">
+						<ul dir="rtl">
 							<li><a href="{{ route('login') }}">@lang('user.login')</a></li>
 							<li><a href="{{ route('register') }}">@lang('user.register')</a></li>
 							<li><a href="{{ route('password.request') }}">@lang('user.forgot_password')</a></li>
-							<li class="divider"></li>
 							<li><a href="{{ route('schedule.archive') }}">@lang('event.schedule_archive')</a></li>
 							<li><a href="{{ route('message.form') }}">@lang('message.contact')</a></li>
 						</ul>
@@ -45,13 +44,12 @@
 			<li>
 				<details class="dropdown">
 					<summary>
-						@lang('user.account')
+						@lang('navigation.menu')
 					</summary>
 					<ul dir="rtl">
 						<li><a href="{{ route('user.profile') }}">@lang('user.profile')</a></li>
 						<li><a href="{{ route('user.setting') }}">@lang('user.setting')</a></li>
 						<li><a href="{{ route('logout') }}">@lang('user.logout')</a></li>
-						<li class="divider"></li>
 						<li><a href="{{ route('schedule.archive') }}">@lang('event.schedule_archive')</a></li>
 						<li><a href="{{ route('message.form') }}">@lang('message.contact')</a></li>
 					</ul>
