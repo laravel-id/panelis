@@ -160,7 +160,7 @@ class ScheduleController extends Controller
                 'priceCurrency' => 'IDR',
                 'validFrom' => $package->started_at?->toIso8601String(),
                 'url' => $package->url ?? $schedule->url,
-                'availability' => $package->is_sold || $schedule->is_past
+                'availability' => $package->is_sold || $package->is_past || $schedule->is_past
                     ? 'https://schema.org/SoldOut'
                     : 'https://schema.org/InStock',
             ];

@@ -4,7 +4,7 @@
 		@foreach($chunk as $package)
 			<article>
 				<header class="pico-color-{{ get_color_theme() }}-700">
-					@if ($schedule->is_past OR $package->is_sold)
+					@if ($schedule->is_past OR $package->is_past OR $package->is_sold)
 						<del><strong>{{ $package->title }}</strong></del>
 					@else
 						<strong>{{ $package->title }}</strong>
