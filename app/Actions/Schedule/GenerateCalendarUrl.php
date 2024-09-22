@@ -12,12 +12,13 @@ class GenerateCalendarUrl
 
     public function handle(Schedule $schedule): Link
     {
-        $finishedAt = $schedule->finished_at;
+        $startedAt = $schedule->started_at->timezone(get_timezone());
+        $finishedAt = $schedule->finished_at?->timezone(get_timezone());
         if (empty($schedule->finished_at)) {
-            $finishedAt = $schedule->started_at->addHours(config('event.time_difference', 4));
+            $finishedAt = $startedAt->copy()->addHours(config('event.time_difference', 4));
         }
 
-        $link = Link::create($schedule->title, $schedule->started_at, $finishedAt);
+        $link = Link::create($schedule->title, $startedAt, $finishedAt);
         if ((! empty($schedule->location) && $schedule->location !== 'TBA') && ! $schedule->is_virtual) {
             $link->address($schedule->full_location);
         }
