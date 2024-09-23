@@ -9,6 +9,7 @@ use App\Enums\Participants\Relation;
 use App\Enums\Participants\Status;
 use App\Models\User;
 use Illuminate\Contracts\Translation\HasLocalePreference;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -17,6 +18,8 @@ use Illuminate\Support\Str;
 
 /**
  * @property string $ulid
+ * @property string $name
+ * @property string $bib
  * @property Status $status
  * @property BelongsTo $user
  * @property BelongsTo $schedule
@@ -62,6 +65,24 @@ class Participant extends Model implements HasLocalePreference
             $participant->ulid = Str::ulid();
             $participant->status = Status::Pending;
         });
+    }
+
+    public function whatsapp(): Attribute
+    {
+        return new Attribute(
+            get: function (): string {
+                $phone = Str::of($this->phone);
+                if ($phone->startsWith('+')) {
+                    return $phone->replace('+', '');
+                }
+
+                if ($phone->startsWith('0')) {
+                    return $phone->replaceStart('0', '62');
+                }
+
+                return $phone;
+            },
+        );
     }
 
     /**

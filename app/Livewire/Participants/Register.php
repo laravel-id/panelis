@@ -10,12 +10,14 @@ use App\Mail\Participants\RegisteredMail;
 use App\Models\Event\Package;
 use App\Models\Event\Payment;
 use App\Models\Event\Schedule;
+use App\Notifications\Participants\RegisteredNotification;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use Livewire\Attributes\Validate;
@@ -113,7 +115,7 @@ class Register extends Component
         ];
     }
 
-    public function register(): RedirectResponse|Redirector
+    public function register()
     {
         $this->validate();
 
@@ -161,7 +163,12 @@ class Register extends Component
                 ->send(new RegisteredMail($participant));
         }
 
-        return redirect()->route('participant.status', $participant->ulid);
+        Notification::routes([
+            'mail' => data_get($this->schedule->metadata, 'notification_email'),
+            'slack' => data_get($this->schedule->metadata, 'notification_slack_channel_id')
+        ])->notify(new RegisteredNotification($participant));
+
+//        return redirect()->route('participant.status', $participant->ulid);
     }
 
     public function render(): View
