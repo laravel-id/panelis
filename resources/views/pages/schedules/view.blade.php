@@ -1,28 +1,9 @@
-@php use App\Filament\Resources\Event\ScheduleResource\Pages\EditSchedule;use Carbon\CarbonInterface; @endphp
+@php
+	use App\Filament\Resources\Event\ScheduleResource\Pages\EditSchedule;
+ 	use Carbon\CarbonInterface;
+@endphp
+
 @extends('layouts.app')
-
-@push('metadata')
-	@php
-		$description = Str::limit($schedule->description, 160);
-	@endphp
-
-	<link rel="canonical" href="{{ url()->current() }}"/>
-
-	<meta name="description" content="{{ $description }}">
-
-	<meta property="og:url" content="{{ url()->current() }}">
-	<meta property="og:type" content="website">
-	<meta property="og:title" content="{{ $title }}">
-	<meta property="og:description" content="{{ $description }}">
-	<meta property="og:image" content="{{ $schedule->opengraph_image }}">
-
-	<meta name="twitter:card" content="summary_large_image">
-	<meta property="twitter:domain" content="schedules.run">
-	<meta property="twitter:url" content="{{ url()->current() }}">
-	<meta name="twitter:title" content="{{ $title }}">
-	<meta name="twitter:description" content="{{ $description }}">
-	<meta name="twitter:image" content="{{ $schedule->opengraph_image }}">
-@endpush
 
 @section('content')
 	<nav aria-label="breadcrumb">
@@ -40,7 +21,7 @@
 	</nav>
 
 	<hgroup>
-		<h2 class="pico-color-{{ get_color_theme() }}-700 event-title">{{ $schedule->title }}</h2>
+		<h2 class="pico-color-{{ get_color_theme() }}-500 event-title">{{ $schedule->title }}</h2>
 		@if(!empty($schedule->metadata['tagline']))
 			<p>{{ $schedule->metadata['tagline'] }}</p>
 		@endif

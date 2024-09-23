@@ -60,6 +60,11 @@ class ScheduleController extends Controller
             ],
         ]);
 
+        seo()
+            ->title($schedule->title, false)
+            ->description(Str::limit($schedule->description ?? '', 120))
+            ->images($schedule->opengraph_image);
+
         return view('pages.schedules.view')
             ->with(compact(
                 'schedule',
@@ -88,6 +93,8 @@ class ScheduleController extends Controller
             $title = $year;
         }
 
+        seo()->title(__('event.schedules_in', ['time' => $title]), false);
+
         return view('pages.schedules.filter')
             ->with('schedules', Schedule::getFilteredSchedules($year, $month, $day))
             ->with('pageTitle', __('event.schedules_in', ['time' => $title]))
@@ -96,6 +103,8 @@ class ScheduleController extends Controller
 
     public function archive(): View
     {
+        seo()->title(__('event.schedule_archive'), false);
+
         return view('pages.schedules.filter')
             ->with('schedules', Schedule::getArchivedSchedules())
             ->with('title', __('event.schedule_archive'));
