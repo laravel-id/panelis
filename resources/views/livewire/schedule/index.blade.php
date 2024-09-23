@@ -51,7 +51,7 @@
 						</td>
 						<td>
 							@if ($schedule->is_pinned && !$schedule->is_past)
-								<small class="pico-color-{{ get_color_theme() }}-700"><i class="ri-pushpin-2-fill"></i> @lang('event.schedule_pinned')</small><br/>
+								<small class="pico-color-{{ get_color_theme() }}-400"><i class="ri-pushpin-2-fill"></i> @lang('event.schedule_pinned')</small><br/>
 							@endif
 							<a href="{{ route('schedule.view', ['slug' => $schedule->slug]) }}"
 								 class="{{ $schedule->is_past ? 'secondary' : 'primary' }} schedule-title">
