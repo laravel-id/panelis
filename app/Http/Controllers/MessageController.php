@@ -11,6 +11,8 @@ class MessageController extends Controller
 {
     public function form(): View
     {
+        seo()->title(__('message.contact'), false);
+
         return view('pages.messages.form')
             ->with('title', __('message.contact'));
     }
