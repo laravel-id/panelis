@@ -36,6 +36,8 @@ class Index extends Component
 
         $participant->status = Status::Completed;
         $participant->save();
+
+        $this->close();
     }
 
     public function view(string $ulid): void
@@ -67,9 +69,10 @@ class Index extends Component
             },
         ]);
 
+        seo()->title(__('event.schedule_participant', ['title' => $this->schedule->title]));
+
         return view('livewire.participants.index')
             ->extends('layouts.app')
-            ->title(__('event.schedule_participant', ['title' => $this->schedule->title]))
             ->with('schedule', $this->schedule);
     }
 }

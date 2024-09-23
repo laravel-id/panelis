@@ -8,6 +8,7 @@ use App\Enums\Participants\IdentityType;
 use App\Enums\Participants\Relation;
 use App\Enums\Participants\Status;
 use App\Models\User;
+use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -18,8 +19,9 @@ use Illuminate\Support\Str;
  * @property string $ulid
  * @property Status $status
  * @property BelongsTo $user
+ * @property BelongsTo $schedule
  */
-class Participant extends Model
+class Participant extends Model implements HasLocalePreference
 {
     use HasFactory;
     use SoftDeletes;
@@ -92,5 +94,10 @@ class Participant extends Model
     public function payment(): BelongsTo
     {
         return $this->belongsTo(Payment::class);
+    }
+
+    public function preferredLocale(): string
+    {
+        return config('app.locale', 'en');
     }
 }

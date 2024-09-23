@@ -6,6 +6,7 @@ use App\Enums\Participants\BloodType;
 use App\Enums\Participants\Gender;
 use App\Enums\Participants\IdentityType;
 use App\Enums\Participants\Relation;
+use App\Mail\Participants\RegisteredMail;
 use App\Models\Event\Package;
 use App\Models\Event\Payment;
 use App\Models\Event\Schedule;
@@ -14,6 +15,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use Livewire\Attributes\Validate;
@@ -111,7 +113,7 @@ class Register extends Component
         ];
     }
 
-    public function register(): Redirector|RedirectResponse
+    public function register(): RedirectResponse|Redirector
     {
         $this->validate();
 
@@ -153,6 +155,12 @@ class Register extends Component
             ]);
         });
 
+        if (! empty($participant->email)) {
+            Mail::to($participant->email)
+                ->locale(data_get($this->schedule->metadata, 'locale', config('app.locale')))
+                ->send(new RegisteredMail($participant));
+        }
+
         return redirect()->route('participant.status', $participant->ulid);
     }
 
@@ -161,6 +169,8 @@ class Register extends Component
         abort_if(empty($this->schedule->metadata['registration']), Response::HTTP_NOT_FOUND);
 
         set_locale($this->schedule->metadata['locale'] ?? app()->getLocale());
+
+        seo()->title(__('event.schedule_registration', ['title' => $this->schedule->title]), false);
 
         return view('livewire.participants.register')
             ->with('title', __('event.schedule_registration', ['title' => $this->schedule->title]))

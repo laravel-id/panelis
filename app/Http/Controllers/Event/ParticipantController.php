@@ -19,6 +19,8 @@ class ParticipantController extends Controller
     {
         $participant->load(['payment', 'schedule']);
 
+        seo()->title(__('event.participant_status'), false);
+
         return view('pages.participants.status', compact('participant'));
     }
 }
