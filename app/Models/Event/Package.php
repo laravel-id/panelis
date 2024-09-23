@@ -43,6 +43,7 @@ class Package extends Model
         'ended_at',
         'description',
         'url',
+        'quota',
     ];
 
     public function schedule(): BelongsTo
