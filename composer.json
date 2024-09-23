@@ -12,6 +12,7 @@
         "calebporzio/sushi": "^2.5",
         "filament/filament": "^3.2",
         "guzzlehttp/guzzle": "^7.2",
+        "honeystone/laravel-seo": "^1.4",
         "itsgoingd/clockwork": "^5.2",
         "koalafacade/filament-alertbox": "^1.0",
         "larabug/larabug": "^3.1",

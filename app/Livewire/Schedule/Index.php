@@ -71,9 +71,13 @@ class Index extends Component
             ],
         ];
 
+        seo()
+            ->title(config('app.name'), config('app.title'))
+            ->description(config('app.description'))
+            ->keywords(config('app.keywords'));
+
         return view('livewire.schedule.index')
             ->extends('layouts.app')
-            ->with('sitelinks', $sitelinks)
-            ->title(config('app.title'));
+            ->with('sitelinks', $sitelinks);
     }
 }

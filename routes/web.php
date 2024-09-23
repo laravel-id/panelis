@@ -51,8 +51,6 @@ Route::middleware('auth')->group(function (): void {
     Route::get('/logout', LogoutController::class)->name('logout');
 });
 
-Route::post('/schedules.json', [ScheduleController::class, 'json']);
-
 Route::get('/subscribe', [SubscriberController::class, 'form'])->name('subscriber.form');
 Route::post('/subscribe', [SubscriberController::class, 'submit'])->name('subscriber.submit');
 Route::get('/subscribe/{key}', [SubscriberController::class, 'subscribe'])->name('subscriber.subscribe');
@@ -65,7 +63,6 @@ Route::get('/sitemap.xml', SitemapController::class)->name('sitemap');
 
 Route::get('/organizer/{organizer:slug}', [OrganizerController::class, 'view'])->name('organizer.view');
 
-Route::get('/calendar', [ScheduleController::class, 'calendar'])->name('schedule.calendar');
 Route::get('/archive', [ScheduleController::class, 'archive'])->name('schedule.archive');
 Route::get('/event/{slug}', [ScheduleController::class, 'view'])
     ->middleware([CacheResponse::class])

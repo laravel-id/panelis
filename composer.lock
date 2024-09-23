@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "f486b3f4484143157f881e485ef49c96",
+    "content-hash": "91f8380f10e648163f69835220ac6c88",
     "packages": [
         {
             "name": "anourvalar/eloquent-serialize",
@@ -2625,6 +2625,86 @@
                 "source": "https://github.com/vinkla/hashids/tree/5.0.2"
             },
             "time": "2023-02-23T15:00:54+00:00"
+        },
+        {
+            "name": "honeystone/laravel-seo",
+            "version": "1.4.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/Honeystone/laravel-seo.git",
+                "reference": "22093ecdd4a73c581362af272e1ada536a9a36e3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/Honeystone/laravel-seo/zipball/22093ecdd4a73c581362af272e1ada536a9a36e3",
+                "reference": "22093ecdd4a73c581362af272e1ada536a9a36e3",
+                "shasum": ""
+            },
+            "require": {
+                "ext-zip": "*",
+                "illuminate/contracts": "^10.0|^11.0",
+                "laravel/prompts": "^0.1.25",
+                "php": "^8.2",
+                "spatie/laravel-package-tools": "^1.16.4"
+            },
+            "require-dev": {
+                "nunomaduro/collision": "^8.0",
+                "nunomaduro/larastan": "^2.9",
+                "nunomaduro/phpinsights": "^2.11",
+                "orchestra/testbench": "^9.2",
+                "pestphp/pest": "^2.0",
+                "pestphp/pest-plugin-laravel": "^2.4",
+                "phpstan/extension-installer": "^1.4",
+                "phpstan/phpstan-deprecation-rules": "^1.2",
+                "phpstan/phpstan-phpunit": "^1.4",
+                "phpunit/phpunit": "^10.0",
+                "spatie/laravel-ray": "^1.37",
+                "spatie/schema-org": "^3.23"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Honeystone\\Seo\\Providers\\SeoServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "files": [
+                    "src/helpers.php"
+                ],
+                "psr-4": {
+                    "Honeystone\\Seo\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "George Palmer",
+                    "email": "george@honeystone.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "SEO metadata and JSON-LD package for Laravel.",
+            "homepage": "https://honeystone.com",
+            "keywords": [
+                "JSON-LD",
+                "favicons",
+                "honeystone",
+                "laravel",
+                "metadata",
+                "opengraph",
+                "seo",
+                "twitter"
+            ],
+            "support": {
+                "issues": "https://github.com/Honeystone/laravel-seo/issues",
+                "source": "https://github.com/Honeystone/laravel-seo/tree/1.4.1"
+            },
+            "time": "2024-09-16T10:22:02+00:00"
         },
         {
             "name": "intervention/gif",
