@@ -6,9 +6,7 @@ use App\Actions\Schedule\GenerateCalendarUrl;
 use App\Models\Event\Organizer;
 use App\Models\Event\Schedule;
 use App\Models\Slug;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use Illuminate\View\View;
 
@@ -60,10 +58,10 @@ class ScheduleController extends Controller
             ],
         ]);
 
-        seo()
-            ->title($schedule->title, false)
+        seo()->title($schedule->title, false)
             ->description(Str::limit($schedule->description ?? '', 120))
-            ->images($schedule->opengraph_image);
+            ->images($schedule->opengraph_image)
+            ->openGraphSite(config('app.name'));
 
         return view('pages.schedules.view')
             ->with(compact(
@@ -93,7 +91,8 @@ class ScheduleController extends Controller
             $title = $year;
         }
 
-        seo()->title(__('event.schedules_in', ['time' => $title]), false);
+        seo()->title(__('event.schedules_in', ['time' => $title]), false)
+            ->openGraphSite(config('app.name'));
 
         return view('pages.schedules.filter')
             ->with('schedules', Schedule::getFilteredSchedules($year, $month, $day))
@@ -103,7 +102,8 @@ class ScheduleController extends Controller
 
     public function archive(): View
     {
-        seo()->title(__('event.schedule_archive'), false);
+        seo()->title(__('event.schedule_archive'), false)
+            ->openGraphSite(config('app.name'));
 
         return view('pages.schedules.filter')
             ->with('schedules', Schedule::getArchivedSchedules());

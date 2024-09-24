@@ -11,7 +11,8 @@ class MessageController extends Controller
 {
     public function form(): View
     {
-        seo()->title(__('message.contact'), false);
+        seo()->title(__('message.contact'), false)
+            ->openGraphSite(config('app.name'));
 
         return view('pages.messages.form')
             ->with('title', __('message.contact'));
