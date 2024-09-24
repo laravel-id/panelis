@@ -7,6 +7,8 @@ use App\Services\Database\Database;
 use App\Services\Database\DatabaseFactory;
 use App\Services\OAuth\OAuth;
 use App\Services\OAuth\OAuthFactory;
+use App\Services\Payments\Factory as PaymentFactory;
+use App\Services\Payments\Payment;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\URL;
@@ -28,6 +30,10 @@ class AppServiceProvider extends ServiceProvider
 
         $this->app->singleton(OAuth::class, function (Application $app): OAuthFactory {
             return new OAuthFactory($app);
+        });
+
+        $this->app->bind(Payment::class, function (Application $app): PaymentFactory {
+            return new PaymentFactory($app);
         });
     }
 
