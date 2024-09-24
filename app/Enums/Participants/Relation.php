@@ -2,8 +2,13 @@
 
 namespace App\Enums\Participants;
 
-enum Relation: string
+use App\Models\Enums\HasOption;
+use App\Models\Traits\HasOption as HasOptionTrait;
+
+enum Relation: string implements HasOption
 {
+    use HasOptionTrait;
+
     case Parent = 'parent';
 
     case Child = 'child';

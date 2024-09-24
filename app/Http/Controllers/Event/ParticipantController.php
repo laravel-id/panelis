@@ -21,6 +21,8 @@ class ParticipantController extends Controller
 
         seo()->title(__('event.participant_status'), false);
 
-        return view('pages.participants.status', compact('participant'));
+        return view('pages.participants.status')
+            ->with('participant', $participant)
+            ->with('schedule', $participant->schedule);
     }
 }

@@ -14,5 +14,5 @@
 		</ul>
 	</nav>
 
-	@include(sprintf('pages.participants.partials.%s-payment', strtolower($participant->payment->status->value)), compact('participant'))
+	@include(sprintf('pages.participants.partials.%s', strtolower($participant->status->value)), compact('participant'))
 @endsection

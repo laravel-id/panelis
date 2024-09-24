@@ -2,8 +2,13 @@
 
 namespace App\Enums\Participants;
 
-enum BloodType: string
+use App\Models\Enums\HasOption;
+use App\Models\Traits\HasOption as HasOptionTrait;
+
+enum BloodType: string implements HasOption
 {
+    use HasOptionTrait;
+
     case A = 'a';
 
     case B = 'b';

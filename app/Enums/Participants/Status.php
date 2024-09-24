@@ -2,7 +2,9 @@
 
 namespace App\Enums\Participants;
 
-enum Status: string
+use App\Models\Enums\HasOption;
+
+enum Status: string implements HasOption
 {
     case Pending = 'pending';
 
@@ -15,12 +17,21 @@ enum Status: string
      */
     case Canceled = 'canceled';
 
+    case OnHold = 'on_hold';
+
     case Completed = 'completed';
 
     /**
      * Participant has been finished the event.
      */
     case Finished = 'finished';
+
+    public static function options(): array
+    {
+        return collect(self::cases())
+            ->mapWithKeys(fn (self $case): array => [$case->value => $case->label()])
+            ->all();
+    }
 
     public function label(): string
     {

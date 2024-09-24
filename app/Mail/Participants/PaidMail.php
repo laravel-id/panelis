@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class RegisteredNotification extends Mailable implements ShouldQueue
+class PaidMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
@@ -28,7 +28,7 @@ class RegisteredNotification extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: __('Pendaftaran Peserta pada :title', [
+            subject: __('event.participant_payment_confirmed', [
                 'title' => $this->participant->schedule->title,
             ]),
         );
@@ -40,11 +40,11 @@ class RegisteredNotification extends Mailable implements ShouldQueue
     public function content(): Content
     {
         return new Content(
-            markdown: 'mail.participants.registered-notification',
+            markdown: 'mail.participants.paid-mail',
             with: [
                 'participant' => $this->participant,
                 'schedule' => $this->participant->schedule,
-            ]
+            ],
         );
     }
 

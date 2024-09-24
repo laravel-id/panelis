@@ -2,8 +2,13 @@
 
 namespace App\Enums\Participants;
 
-enum Gender: string
+use App\Models\Enums\HasOption;
+use App\Models\Traits\HasOption as HasOptionTrait;
+
+enum Gender: string implements HasOption
 {
+    use HasOptionTrait;
+
     case Male = 'm';
 
     case Female = 'f';

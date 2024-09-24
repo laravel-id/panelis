@@ -9,4 +9,9 @@ enum PaymentStatus: string
     case Paid = 'paid';
 
     case Expired = 'expired';
+
+    public function label(): string
+    {
+        return __(sprintf('event.payment_status_%s', $this->value));
+    }
 }

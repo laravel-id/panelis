@@ -23,6 +23,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-
+        if (! app()->isProduction()) {
+            Schema::table('packages', function (Blueprint $table) {
+                $table->dropColumn('quota');
+            });
+        }
     }
 };

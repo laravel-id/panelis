@@ -7,6 +7,7 @@ use App\Enums\Participants\Gender;
 use App\Enums\Participants\IdentityType;
 use App\Enums\Participants\Relation;
 use App\Enums\Participants\Status;
+use App\Models\Traits\HasLocalTime;
 use App\Models\User;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Casts\Attribute;
@@ -17,16 +18,21 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
 /**
+ * @property int $schedule_id
+ * @property int $package_id
+ * @property null|int $user_id
  * @property string $ulid
  * @property string $name
  * @property string $bib
  * @property Status $status
  * @property BelongsTo $user
  * @property BelongsTo $schedule
+ * @property BelongsTo $payment
  */
 class Participant extends Model implements HasLocalePreference
 {
     use HasFactory;
+    use HasLocalTime;
     use SoftDeletes;
 
     protected $fillable = [
@@ -52,6 +58,7 @@ class Participant extends Model implements HasLocalePreference
 
     protected $casts = [
         'birthdate' => 'date',
+        'id_number' => 'encrypted',
         'id_type' => IdentityType::class,
         'gender' => Gender::class,
         'blood_type' => BloodType::class,
@@ -65,6 +72,18 @@ class Participant extends Model implements HasLocalePreference
             $participant->ulid = Str::ulid();
             $participant->status = Status::Pending;
         });
+    }
+
+    public function name(): Attribute
+    {
+        return new Attribute(
+            set: function (string $name): string {
+                return Str::of($name)
+                    ->transliterate()
+                    ->squish()
+                    ->toString();
+            },
+        );
     }
 
     public function whatsapp(): Attribute

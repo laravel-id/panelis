@@ -34,10 +34,10 @@ class Register extends Component
     #[Validate]
     public string $idType = '';
 
-    #[Validate('required')]
+    #[Validate('required|numeric')]
     public string $idNumber = '';
 
-    #[Validate('required|min:3')]
+    #[Validate]
     public string $name = '';
 
     #[Validate]
@@ -78,10 +78,19 @@ class Register extends Component
     public function rules(): array
     {
         return [
-            'package' => ['required'],
+            'package' => [
+                'required',
+                'exists:packages,id',
+            ],
             'idType' => [
                 'required',
                 Rule::in(array_column(IdentityType::cases(), 'value')),
+            ],
+            'name' => [
+                'required',
+                'min:3',
+                'max:100',
+                'regex:/^[\pL\s\-]+$/u',
             ],
             'gender' => [
                 'required',
@@ -115,7 +124,7 @@ class Register extends Component
         ];
     }
 
-    public function register()
+    public function register(): RedirectResponse|Redirector
     {
         $this->validate();
 
@@ -165,10 +174,12 @@ class Register extends Component
 
         Notification::routes([
             'mail' => data_get($this->schedule->metadata, 'notification_email'),
-            'slack' => data_get($this->schedule->metadata, 'notification_slack_channel_id')
+            'slack' => data_get($this->schedule->metadata, 'notification_slack_channel_id'),
         ])->notify(new RegisteredNotification($participant));
 
-//        return redirect()->route('participant.status', $participant->ulid);
+        $this->reset();
+
+        return redirect()->route('participant.status', $participant->ulid);
     }
 
     public function render(): View

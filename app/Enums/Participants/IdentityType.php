@@ -2,8 +2,13 @@
 
 namespace App\Enums\Participants;
 
-enum IdentityType: string
+use App\Models\Enums\HasOption;
+use App\Models\Traits\HasOption as HasOptionTrait;
+
+enum IdentityType: string implements HasOption
 {
+    use HasOptionTrait;
+
     case KTP = 'ktp';
 
     case SIM = 'sim';

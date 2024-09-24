@@ -3,20 +3,21 @@
 namespace App\Mail\Participants;
 
 use App\Models\Event\Participant;
+use DragonCode\Contracts\Queue\ShouldQueue;
 use Illuminate\Bus\Queueable;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
 
-class RegisteredMail extends Mailable
+class RegisteredMail extends Mailable implements ShouldQueue
 {
     use Queueable, SerializesModels;
 
     /**
      * Create a new message instance.
      */
-    public function __construct(public readonly Participant $participant) {}
+    public function __construct(private readonly Participant $participant) {}
 
     /**
      * Get the message envelope.
@@ -36,8 +37,9 @@ class RegisteredMail extends Mailable
         return new Content(
             markdown: 'mail.participants.registered-mail',
             with: [
+                'participant' => $this->participant,
                 'schedule' => $this->participant->schedule,
-            ]
+            ],
         );
     }
 

@@ -1,5 +1,5 @@
 <x-mail::message>
-# @lang('Halo, :name!', ['name' => $participant->name])
+# @lang('Halo, **:name**!', ['name' => $participant->name])
 
 @lang('Terima kasih telah mendaftar di [:event](:url). Kamu telah terdaftar sebagai calon peserta dengan nomor BIB **:bib**.', [
 	'event' => $schedule->title,
@@ -15,8 +15,8 @@
 |        |          |
 | ------------- |-------------:|
 | @lang('Nominal')     | **{{ Number::money($participant->payment?->total ?? 0) }}**      |
-| @lang('Bank tujuan') | Bank Central Asia |
-| @lang('Nomor rekening')      | 12847576 |
+| @lang('Bank tujuan') | {{ data_get($schedule->metadata, 'bank_name') }} |
+| @lang('Nomor rekening')      | {{ data_get($schedule->metadata, 'bank_number') }} |
 | @lang('Maksimal pembayaran') | {{ $participant->payment->expired_at->timezone(get_timezone())->translatedFormat(get_datetime_format()) }} |
 </x-mail::table>
 

@@ -2,7 +2,7 @@
 
 namespace App\Notifications\Participants;
 
-use App\Mail\Participants\RegisteredNotification as RegisteredMail;
+use App\Mail\Participants\PaidNotification as PaidMail;
 use App\Models\Event\Participant;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -10,7 +10,7 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Notifications\AnonymousNotifiable;
 use Illuminate\Notifications\Notification;
 
-class RegisteredNotification extends Notification implements ShouldQueue
+class PaidNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
@@ -41,7 +41,7 @@ class RegisteredNotification extends Notification implements ShouldQueue
             ? $notifiable->routeNotificationFor('mail')
             : $notifiable->email;
 
-        return (new RegisteredMail($this->participant))
+        return (new PaidMail($this->participant))
             ->to($address);
     }
 
