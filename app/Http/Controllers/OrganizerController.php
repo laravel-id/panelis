@@ -12,7 +12,8 @@ class OrganizerController extends Controller
     {
         $schedules = Schedule::getByOrganizer($organizer->id);
 
-        seo()->title($organizer->name, false);
+        seo()->title($organizer->name, false)
+            ->openGraphSite(config('app.name'));
 
         return view('pages.organizers.view', compact('organizer', 'schedules'))
             ->with('timezone', get_timezone())
