@@ -33,6 +33,7 @@
         "deployer/deployer": "^7.4",
         "fakerphp/faker": "^1.9.1",
         "glhd/laravel-dumper": "^2.0",
+        "laravel-lang/common": "^6.4",
         "laravel/pail": "^1.1",
         "laravel/pint": "^1.16",
         "laravel/sail": "^1.31",
