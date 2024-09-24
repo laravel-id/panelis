@@ -8,7 +8,7 @@
 @section('content')
 	<nav aria-label="breadcrumb">
 		<ul>
-			<li><a href="{{ route('index') }}">Home</a></li>
+			<li><a href="{{ route('index') }}">@lang('navigation.home')</a></li>
 			<li>
 				<a href="{{ route('schedule.filter', ['year' => $startedAt->format('Y')]) }}">{{ $startedAt->format('Y') }}</a>
 			</li>
@@ -85,39 +85,38 @@
 			</p>
 		@endif
 
-		<hr/>
-		<div><small><i class="ri-questionnaire-line"></i> @lang('event.schedule_info_registration'):</small></div>
-		<p>
-			<i class="ri-external-link-line"></i>
-			@if (!$schedule->is_past)
+		@if (!$schedule->is_past)
+			<hr/>
+			<div><small><i class="ri-questionnaire-line"></i> @lang('event.schedule_info_registration'):</small></div>
+			<p>
+				<i class="ri-external-link-line"></i>
 				<a rel="nofollow" href="{{ $externalUrl }}?ref=schedules.run">{{ $externalUrl }}</a>
-			@else
-				<del>{{ $externalUrl }}</del>
-			@endif
-		</p>
+			</p>
 
-		@if(!empty($schedule->contacts) AND !$schedule->is_past)
-			@foreach ($schedule->contacts as $contacts)
-				<div>
-					@if (!empty($contacts['is_wa']) && $contacts['is_wa'] === true)
-						<i class="ri-whatsapp-line"></i>
-					@else
-						<i class="ri-phone-line"></i>
-					@endif
-
-					<span>
-            @if (!empty($contacts['wa_url']))
-							<a href="{{ $contacts['wa_url'] }}" target="_blank">{{ $contacts['phone'] }}</a>
+			@if(!empty($schedule->contacts))
+				@foreach ($schedule->contacts as $contacts)
+					<div>
+						@if (!empty($contacts['is_wa']) && $contacts['is_wa'] === true)
+							<i class="ri-whatsapp-line"></i>
 						@else
-							{{ $contacts['phone'] }}
+							<i class="ri-phone-line"></i>
 						@endif
-          </span>
-					@if (!empty($contacts['name']))
-						- {{ $contacts['name'] }}
-					@endif
-				</div>
-			@endforeach
+
+						<span>
+							@if (!empty($contacts['wa_url']))
+								<a href="{{ $contacts['wa_url'] }}" target="_blank">{{ $contacts['phone'] }}</a>
+							@else
+								{{ $contacts['phone'] }}
+							@endif
+						</span>
+						@if (!empty($contacts['name']))
+							- {{ $contacts['name'] }}
+						@endif
+					</div>
+				@endforeach
+			@endif
 		@endif
+
 		@livewire('schedule.toolbar', compact('schedule'))
 
 		<details class="dropdown">
