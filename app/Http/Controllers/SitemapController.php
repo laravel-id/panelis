@@ -16,6 +16,8 @@ class SitemapController extends Controller
             ->add([
                 route('schedule.archive'),
                 route('message.form'),
+                route('login'),
+                route('register'),
             ])
             ->add(Organizer::all())
             ->add(Schedule::getPublishedSchedules())
