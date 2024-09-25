@@ -2,7 +2,7 @@
 
 namespace App\Services\Payments\DTO;
 
-class PaymentLink
+class PaymentUrl
 {
     private string $orderId = '';
 
@@ -20,10 +20,12 @@ class PaymentLink
 
     private int|float $total = 0;
 
+    private string $paymentUrl;
+
     public function setCustomer(
         string $name,
-        ?string $phone,
-        ?string $email,
+        ?string $phone = null,
+        ?string $email = null,
     ): self {
         $this->customers = [
             'name' => $name,
@@ -121,5 +123,17 @@ class PaymentLink
     public function getTotal(): int|float
     {
         return $this->total;
+    }
+
+    public function setPaymentUrl(string $url): self
+    {
+        $this->paymentUrl = $url;
+
+        return $this;
+    }
+
+    public function getPaymentUrl(): string
+    {
+        return $this->paymentUrl;
     }
 }

@@ -3,8 +3,9 @@
 namespace App\Services\Payments\Vendors;
 
 use App\Http\Integrations\Moota\MootaConnector;
+use App\Http\Integrations\Moota\Requests\BankAccount;
 use App\Http\Integrations\Moota\Requests\ReceiveMoney;
-use App\Services\Payments\DTO\PaymentLink;
+use App\Services\Payments\DTO\PaymentUrl;
 use App\Services\Payments\Payment;
 use Illuminate\Support\Facades\Log;
 use Saloon\Exceptions\Request\FatalRequestException;
@@ -19,25 +20,40 @@ readonly class Moota implements Payment
      * @throws RequestException
      * @throws \JsonException
      */
-    public function createPaymentLink(PaymentLink $paymentLink): array
+    public function createPaymentUrl(PaymentUrl $paymentUrl): ?PaymentUrl
     {
         $response = $this->connector->send(new ReceiveMoney([
-            'order_id' => $paymentLink->getOrderId(),
-            'bank_id' => $paymentLink->getBankId(),
-            'customers' => $paymentLink->getCustomer(),
-            'items' => $paymentLink->getItems(),
-            'description' => $paymentLink->getDescription(),
-            'note' => $paymentLink->getNote(),
-            'redirect_url' => $paymentLink->getRedirectUrl(),
-            'total' => $paymentLink->getTotal(),
+            'order_id' => $paymentUrl->getOrderId(),
+            'bank_account_id' => $paymentUrl->getBankId(),
+            'customers' => $paymentUrl->getCustomer(),
+            'items' => $paymentUrl->getItems(),
+            'description' => $paymentUrl->getDescription(),
+            'note' => $paymentUrl->getNote(),
+            'redirect_url' => $paymentUrl->getRedirectUrl(),
+            'total' => $paymentUrl->getTotal(),
         ]));
 
         if ($response->failed()) {
             Log::warning('Failed to create payment link: '.$response->body());
 
+            return null;
+        }
+
+        return (new PaymentUrl)
+            ->setOrderId($response->json('order_id'))
+            ->setBankId($response->json('bank_id'))
+            ->setPaymentUrl($response->json('payment_url'));
+    }
+
+    public function getRegisteredBanks(): array
+    {
+        $response = $this->connector->send(new BankAccount);
+        if ($response->failed()) {
+            Log::warning('Failed to get registered banks: '.$response->body());
+
             return [];
         }
 
-        return $response->json();
+        return [];
     }
 }

@@ -12,7 +12,17 @@ class MootaConnector extends Connector
 
     public function resolveBaseUrl(): string
     {
-        return 'https://app.moota.co/api/v2';
+        $path = '/api/v2';
+        $host = rtrim(config('moota.host', ''), '/');
+        if (empty($host)) {
+            if (app()->isProduction()) {
+                $host = 'https://app.moota.co';
+            } else {
+                $host = 'https://private-anon-17aa1ec034-mootaapiv2.apiary-mock.com';
+            }
+        }
+
+        return $host.$path;
     }
 
     protected function defaultHeaders(): array
