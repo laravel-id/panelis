@@ -71,10 +71,11 @@ class Index extends Component
             ],
         ];
 
-        seo()
-            ->title(config('app.name'), config('app.title'))
+        seo()->title(config('app.name'), config('app.title'))
             ->description(config('app.description'))
-            ->keywords(config('app.keywords'));
+            ->keywords(config('app.keywords'))
+            ->openGraphSite(config('app.name'))
+            ->twitterCreator(config('app.x_username'));
 
         return view('livewire.schedule.index')
             ->extends('layouts.app')

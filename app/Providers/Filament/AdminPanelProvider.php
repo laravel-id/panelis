@@ -49,7 +49,10 @@ class AdminPanelProvider extends PanelProvider
             ->navigationItems([
                 NavigationItem::make(__('navigation.website'))
                     ->icon('heroicon-o-globe-alt')
-                    ->url(config('app.url'), shouldOpenInNewTab: true),
+                    ->url(
+                        url: app()->isProduction() ? 'https://schedules.run' : config('app.url'),
+                        shouldOpenInNewTab: true,
+                    ),
 
                 NavigationItem::make(__('event.schedule_create'))
                     // ->url(CreateSchedule::getUrl())
