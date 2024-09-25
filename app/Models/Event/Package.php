@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 /**
  * @property float $price
@@ -42,11 +43,28 @@ class Package extends Model
         'ended_at',
         'description',
         'url',
+        'quota',
     ];
 
     public function schedule(): BelongsTo
     {
         return $this->belongsTo(Schedule::class);
+    }
+
+    /**
+     * @return HasMany<Participant>
+     */
+    public function participants(): HasMany
+    {
+        return $this->hasmany(Participant::class);
+    }
+
+    /**
+     * @return BelongsTo<Payment>
+     */
+    public function payment(): BelongsTo
+    {
+        return $this->belongsTo(Payment::class);
     }
 
     public function period(): Attribute

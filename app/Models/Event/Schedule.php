@@ -46,6 +46,7 @@ use Spatie\Sitemap\Tags\Url;
  * @property string $opengraph_image
  * @property bool $is_past
  * @property District $district
+ * @property Collection $participants
  */
 class Schedule extends Model implements Sitemapable
 {
@@ -284,6 +285,15 @@ class Schedule extends Model implements Sitemapable
     {
         return $this->hasMany(Package::class)
             ->orderBy('sort');
+    }
+
+    /**
+     * @return HasMany<Participant>
+     */
+    public function participants(): HasMany
+    {
+        return $this->hasMany(Participant::class)
+            ->orderBy('created_at');
     }
 
     public function district(): BelongsTo
