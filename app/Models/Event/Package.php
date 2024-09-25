@@ -59,14 +59,6 @@ class Package extends Model
         return $this->hasmany(Participant::class);
     }
 
-    /**
-     * @return BelongsTo<Payment>
-     */
-    public function payment(): BelongsTo
-    {
-        return $this->belongsTo(Payment::class);
-    }
-
     public function period(): Attribute
     {
         return Attribute::make(

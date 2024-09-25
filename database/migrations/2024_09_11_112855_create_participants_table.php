@@ -5,7 +5,6 @@ use App\Enums\Participants\Gender;
 use App\Enums\Participants\IdentityType;
 use App\Enums\Participants\Status;
 use App\Models\Event\Package;
-use App\Models\Event\Payment;
 use App\Models\Event\Schedule;
 use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
@@ -22,10 +21,6 @@ return new class extends Migration
         Schema::create('participants', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(User::class)
-                ->nullable()
-                ->constrained()
-                ->cascadeOnDelete();
-            $table->foreignIdFor(Payment::class)
                 ->nullable()
                 ->constrained()
                 ->cascadeOnDelete();

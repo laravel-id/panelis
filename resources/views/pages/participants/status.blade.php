@@ -1,4 +1,4 @@
-@php use App\Enums\Events\PaymentStatus; @endphp
+@php use App\Enums\Transaction\TransactionStatus; @endphp
 @extends('layouts.app')
 
 @push('metadata')
@@ -10,7 +10,8 @@
 	<nav aria-label="breadcrumb">
 		<ul>
 			<li><a href="{{ route('index') }}">@lang('navigation.home')</a></li>
-			<li><a href="{{ route('schedule.view', $participant->schedule->slug) }}">{{ $participant->schedule->title }}</a></li>
+			<li><a href="{{ route('schedule.view', $participant->schedule->slug) }}">{{ $participant->schedule->title }}</a>
+			</li>
 		</ul>
 	</nav>
 

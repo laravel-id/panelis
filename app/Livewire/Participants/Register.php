@@ -2,17 +2,16 @@
 
 namespace App\Livewire\Participants;
 
+use App\Actions\Transaction\CreatePaymentUrl;
 use App\Enums\Participants\BloodType;
 use App\Enums\Participants\Gender;
 use App\Enums\Participants\IdentityType;
 use App\Enums\Participants\Relation;
 use App\Mail\Participants\RegisteredMail;
 use App\Models\Event\Package;
-use App\Models\Event\Payment;
 use App\Models\Event\Schedule;
 use App\Notifications\Participants\RegisteredNotification;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -22,7 +21,6 @@ use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
-use Livewire\Features\SupportRedirects\Redirector;
 
 class Register extends Component
 {
@@ -124,7 +122,7 @@ class Register extends Component
         ];
     }
 
-    public function register(): RedirectResponse|Redirector
+    public function register()
     {
         $this->validate();
 
@@ -141,16 +139,9 @@ class Register extends Component
 
             $package = Package::query()->findOrFail($this->package);
 
-            $payment = Payment::query()
-                ->create([
-                    'total' => $package->price + $counter,
-                    'expired_at' => now()->addMinutes($this->schedule->metadata['expired_duration'] ?? 60),
-                ]);
-
-            return $this->schedule->participants()->create([
+            $participant = $this->schedule->participants()->create([
                 'user_id' => Auth::id(),
                 'package_id' => $package->id,
-                'payment_id' => $payment->id,
                 'bib' => $bib,
                 'id_type' => $this->idType,
                 'id_number' => $this->idNumber,
@@ -164,6 +155,32 @@ class Register extends Component
                 'emergency_phone' => $this->emergencyPhone,
                 'emergency_relation' => $this->emergencyRelation,
             ]);
+
+            $transaction = $participant->transaction()->create([
+                'total' => $package->price,
+                'expired_at' => now()->addHours(6),
+                'metadata' => [
+                    'customer' => [
+                        'name' => $participant->name,
+                        'phone' => $participant->phone,
+                        'email' => $participant->email,
+                    ],
+                ],
+            ]);
+
+            $transaction->items()->create([
+                'name' => $package->title,
+                'price' => $package->price,
+            ]);
+
+            //            $payment = CreatePaymentUrl::run($transaction);
+            //
+            //            $metadata = $transaction->metadata;
+            //            $metadata['payment_url'] = $payment->getPaymentUrl();
+            //            $transaction->metadata = $metadata;
+            //            $transaction->save();
+
+            return $participant;
         });
 
         if (! empty($participant->email)) {
@@ -177,9 +194,9 @@ class Register extends Component
             'slack' => data_get($this->schedule->metadata, 'notification_slack_channel_id'),
         ])->notify(new RegisteredNotification($participant));
 
-        $this->reset();
-
-        return redirect()->route('participant.status', $participant->ulid);
+        //        $this->reset();
+        //
+        //        return redirect()->route('participant.status', $participant->ulid);
     }
 
     public function render(): View

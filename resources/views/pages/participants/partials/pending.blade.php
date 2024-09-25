@@ -15,7 +15,7 @@
 			<tr>
 				<td>@lang('Nominal')</td>
 				<td>
-					<strong>{{ Number::money($participant->payment->total) }}</strong>
+					<strong>{{ Number::money($participant->transaction->total) }}</strong>
 				</td>
 			</tr>
 			<tr>
@@ -28,7 +28,7 @@
 			</tr>
 			<tr>
 				<td>@lang('Maksimal pembayaran')</td>
-				<td>{{ $participant->payment->expired_at->timezone(get_timezone())->translatedFormat(get_datetime_format()) }}</td>
+				<td>{{ $participant->transaction->expired_at->timezone(get_timezone())->translatedFormat(get_datetime_format()) }}</td>
 			</tr>
 			</tbody>
 		</table>

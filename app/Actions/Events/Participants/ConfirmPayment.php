@@ -2,8 +2,8 @@
 
 namespace App\Actions\Events\Participants;
 
-use App\Enums\Events\PaymentStatus;
 use App\Enums\Participants\Status;
+use App\Enums\Transaction\TransactionStatus;
 use App\Mail\Participants\PaidMail;
 use App\Models\Event\Participant;
 use App\Notifications\Participants\PaidNotification;
@@ -22,8 +22,8 @@ class ConfirmPayment
             $participant->status = Status::Paid;
             $participant->save();
 
-            $participant->payment->status = PaymentStatus::Paid;
-            $participant->payment->save();
+            $participant->transaction->status = TransactionStatus::Paid;
+            $participant->transaction->save();
 
             if (! empty($participant->email)) {
                 Mail::to($participant->email)

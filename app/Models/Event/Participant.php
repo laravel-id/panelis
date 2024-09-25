@@ -8,12 +8,14 @@ use App\Enums\Participants\IdentityType;
 use App\Enums\Participants\Relation;
 use App\Enums\Participants\Status;
 use App\Models\Traits\HasLocalTime;
+use App\Models\Transaction\Transaction;
 use App\Models\User;
 use Illuminate\Contracts\Translation\HasLocalePreference;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
 
@@ -27,7 +29,6 @@ use Illuminate\Support\Str;
  * @property Status $status
  * @property BelongsTo $user
  * @property BelongsTo $schedule
- * @property BelongsTo $payment
  */
 class Participant extends Model implements HasLocalePreference
 {
@@ -39,7 +40,6 @@ class Participant extends Model implements HasLocalePreference
         'user_id',
         'schedule_id',
         'package_id',
-        'payment_id',
         'ulid',
         'bib',
         'id_type',
@@ -128,16 +128,13 @@ class Participant extends Model implements HasLocalePreference
         return $this->belongsTo(Package::class);
     }
 
-    /**
-     * @return BelongsTo<Payment>
-     */
-    public function payment(): BelongsTo
-    {
-        return $this->belongsTo(Payment::class);
-    }
-
     public function preferredLocale(): string
     {
         return config('app.locale', 'en');
+    }
+
+    public function transaction(): MorphOne
+    {
+        return $this->morphOne(Transaction::class, 'transactionable');
     }
 }

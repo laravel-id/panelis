@@ -41,7 +41,7 @@ class Kernel extends ConsoleKernel
 
         $schedule->command('auth:clear-resets')->daily();
 
-        $schedule->command('event:payment-expired')->everyMinute();
+        $schedule->command('event:transaction-expired')->everyMinute();
     }
 
     /**

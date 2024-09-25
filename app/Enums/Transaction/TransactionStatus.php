@@ -1,14 +1,16 @@
 <?php
 
-namespace App\Enums\Events;
+namespace App\Enums\Transaction;
 
-enum PaymentStatus: string
+enum TransactionStatus: string
 {
     case Pending = 'pending';
 
     case Paid = 'paid';
 
     case Expired = 'expired';
+
+    case Canceled = 'canceled';
 
     public function label(): string
     {

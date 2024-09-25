@@ -14,10 +14,10 @@
 <x-mail::table>
 |        |          |
 | ------------- |-------------:|
-| @lang('Nominal')     | **{{ Number::money($participant->payment?->total ?? 0) }}**      |
+| @lang('Nominal')     | **{{ Number::money($participant->transaction?->total ?? 0) }}**      |
 | @lang('Bank tujuan') | {{ data_get($schedule->metadata, 'bank_name') }} |
 | @lang('Nomor rekening')      | {{ data_get($schedule->metadata, 'bank_number') }} |
-| @lang('Maksimal pembayaran') | {{ $participant->payment->expired_at->timezone(get_timezone())->translatedFormat(get_datetime_format()) }} |
+| @lang('Maksimal pembayaran') | {{ $participant->transaction->expired_at->timezone(get_timezone())->translatedFormat(get_datetime_format()) }} |
 </x-mail::table>
 
 @lang('Abaikan pesan ini jika kamu sudah melakukan pembayaran.')

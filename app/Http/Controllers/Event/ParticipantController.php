@@ -17,7 +17,7 @@ class ParticipantController extends Controller
 
     public function status(Participant $participant): View
     {
-        $participant->load(['payment', 'schedule']);
+        $participant->load(['transaction', 'schedule']);
 
         seo()->title(__('event.participant_status'), false);
 

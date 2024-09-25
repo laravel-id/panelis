@@ -2,9 +2,11 @@
 
 namespace App\Console\Commands\Event;
 
-use App\Enums\Events\PaymentStatus;
-use App\Models\Event\Payment;
+use App\Enums\Participants\Status;
+use App\Enums\Transaction\TransactionStatus;
+use App\Models\Transaction\Transaction;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\DB;
 
 class CheckExpiredPaymentCommand extends Command
 {
@@ -13,7 +15,7 @@ class CheckExpiredPaymentCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'event:payment-expired';
+    protected $signature = 'event:transaction-expired';
 
     /**
      * The console command description.
@@ -27,13 +29,18 @@ class CheckExpiredPaymentCommand extends Command
      */
     public function handle(): int
     {
-        Payment::query()
+        Transaction::query()
             ->where('expired_at', '<', now())
-            ->where('status', PaymentStatus::Pending)
+            ->where('status', TransactionStatus::Pending)
             ->get()
-            ->each(function (Payment $payment): void {
-                $payment->status = PaymentStatus::Expired;
-                $payment->save();
+            ->each(function (Transaction $transaction): void {
+                DB::transaction(function () use ($transaction): void {
+                    $transaction->status = TransactionStatus::Expired;
+                    $transaction->save();
+
+                    $transaction->transactionable->status = Status::Expired;
+                    $transaction->transactionable->save();
+                });
             });
 
         return self::SUCCESS;
