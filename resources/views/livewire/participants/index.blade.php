@@ -25,7 +25,7 @@
 				<table>
 					<thead>
 					<tr>
-
+						<th>@lang('event.schedule_category')</th>
 						<th>@lang('event.participant_bib')</th>
 						<th>@lang('event.participant_name')</th>
 						<th>@lang('event.participant_gender')</th>
@@ -37,6 +37,7 @@
 					<tbody>
 					@foreach($schedule->participants as $participant)
 						<tr wire:key="{{ $participant->ulid }}">
+							<td><strong>{{ $participant->package->title }}</strong></td>
 							<td><strong>{{ $participant->bib }}</strong></td>
 							<td><a href="javascript:void(0)"
 										 wire:click="view('{{ $participant->ulid }}')">{{ $participant->name }}</a></td>

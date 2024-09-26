@@ -60,8 +60,9 @@ class Index extends Component
         abort_if(empty($this->schedule), Response::HTTP_NOT_FOUND);
 
         $this->schedule->load([
+            'participants.package',
             'participants' => function (HasMany $query): HasMany {
-                return $query->take(10)
+                return $query->take(100)
                     ->when(! empty($this->keyword), function (Builder $builder): Builder {
                         return $builder->where('name', 'like', '%'.$this->keyword.'%')
                             ->orWhere('bib', 'like', '%'.$this->keyword.'%');
