@@ -24,6 +24,11 @@ class SettingForm
                 ->label(__('event.enable_registration'))
                 ->live(),
 
+            Toggle::make('metadata.registration_need_auth')
+                ->label(__('event.registration_need_auth'))
+                ->disabled(fn (Get $get): bool => ! $get('metadata.registration'))
+                ->default(false),
+
             Fieldset::make(__('event.payment_setting'))
                 ->columns(1)
                 ->disabled(fn (Get $get): bool => ! $get('metadata.registration'))

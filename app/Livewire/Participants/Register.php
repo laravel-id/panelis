@@ -67,12 +67,18 @@ class Register extends Component
     #[Validate('accepted')]
     public bool $accepted = false;
 
-    public function mount(string $slug): void
+    public function mount(string $slug): Redirector|RedirectResponse|null
     {
         $this->schedule = Schedule::getScheduleBySlug($slug);
+        if (data_get($this->schedule->metadata, 'registration_need_auth', false) && Auth::guest()) {
+            return to_route('login');
+        }
+
         $this->schedule->load('packages');
 
         $this->package = request('package');
+
+        return null;
     }
 
     public function rules(): array
