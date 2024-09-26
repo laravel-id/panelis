@@ -19,6 +19,8 @@ use Illuminate\Support\Str;
  * @property Bank $bank
  * @property Item $items
  * @property int|null $user_id
+ * @property string $vendor
+ * @property string $vendor_id
  */
 class Transaction extends Model
 {

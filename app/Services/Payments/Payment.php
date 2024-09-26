@@ -9,7 +9,11 @@ interface Payment
 {
     public function getVendor(): string;
 
-    public function createPaymentUrl(PaymentUrl $paymentUrl): ?PaymentUrl;
+    public function createPayment(PaymentUrl $paymentUrl): ?PaymentUrl;
+
+    public function getPayment(string $id): ?PaymentUrl;
+
+    public function cancelPayment(string $id): ?PaymentUrl;
 
     public function getBanks(): array;
 

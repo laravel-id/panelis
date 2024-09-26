@@ -7,7 +7,7 @@ use Saloon\Enums\Method;
 use Saloon\Http\Request;
 use Saloon\Traits\Body\HasJsonBody;
 
-class ReceiveMoney extends Request implements HasBody
+class CreatePayment extends Request implements HasBody
 {
     use HasJsonBody;
 

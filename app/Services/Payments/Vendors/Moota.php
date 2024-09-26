@@ -5,8 +5,10 @@ namespace App\Services\Payments\Vendors;
 use App\Http\Integrations\Moota\MootaConnector;
 use App\Http\Integrations\Moota\Requests\BankAccount;
 use App\Http\Integrations\Moota\Requests\BankList;
+use App\Http\Integrations\Moota\Requests\CancelPayment;
 use App\Http\Integrations\Moota\Requests\CreateBankAccount;
-use App\Http\Integrations\Moota\Requests\ReceiveMoney;
+use App\Http\Integrations\Moota\Requests\CreatePayment;
+use App\Http\Integrations\Moota\Requests\GetPayment;
 use App\Services\Payments\DTO\Bank;
 use App\Services\Payments\DTO\PaymentUrl;
 use App\Services\Payments\Payment;
@@ -29,9 +31,9 @@ readonly class Moota implements Payment
      * @throws RequestException
      * @throws \JsonException
      */
-    public function createPaymentUrl(PaymentUrl $paymentUrl): ?PaymentUrl
+    public function createPayment(PaymentUrl $paymentUrl): ?PaymentUrl
     {
-        $response = $this->connector->send(new ReceiveMoney([
+        $response = $this->connector->send(new CreatePayment([
             'order_id' => $paymentUrl->getId(),
             'bank_account_id' => $paymentUrl->getBankId(),
             'customers' => $paymentUrl->getCustomer(),
@@ -48,15 +50,48 @@ readonly class Moota implements Payment
             return null;
         }
 
-        return (new PaymentUrl)
-            ->setId('test-123')
-            ->setVendor($this->getVendor())
-            ->setPaymentUrl('https://app.moota.co/payment/PYM-xxxxx-xxxxx');
+        $paymentUrl = $response->json('data.payment_url');
+        if (! empty($paymentUrl)) {
+            $paths = explode('/', parse_url($paymentUrl, PHP_URL_PATH));
+            $id = end($paths);
+        }
 
         return (new PaymentUrl)
-            ->setId($response->json('order_id'))
-            ->setBankId($response->json('bank_id'))
-            ->setPaymentUrl($response->json('payment_url'));
+            ->setVendor($this->getVendor())
+            ->setId($id ?? '')
+            ->setBankId($response->json('data.bank_id'))
+            ->setPaymentUrl($paymentUrl);
+    }
+
+    public function getPayment(string $id): ?PaymentUrl
+    {
+        $response = $this->connector->send(new GetPayment($id));
+        if ($response->failed()) {
+            Log::warning('Failed to get draft mutation'.$response->body());
+
+            return null;
+        }
+
+        $data = $response->json('data');
+        if (empty($data)) {
+            return null;
+        }
+
+        return (new PaymentUrl)
+            ->setVendor($this->getVendor())
+            ->setId($data['trx_id'])
+            ->setTotal($data['total']);
+    }
+
+    public function cancelPayment(string $id): ?PaymentUrl
+    {
+        $response = $this->connector->send(new CancelPayment($id));
+        if ($response->failed()) {
+            return null;
+        }
+
+        return (new PaymentUrl)
+            ->setId($id);
     }
 
     public function getBanks(): array

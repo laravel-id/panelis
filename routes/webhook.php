@@ -1,6 +1,6 @@
 <?php
 
-use App\Services\Payments\Factory;
+use App\Http\Controllers\Webhook\MootaController;
 use Illuminate\Support\Facades\Route;
 
-Route::get('payment', function (Factory $factory) {});
+Route::post('/moota', MootaController::class);

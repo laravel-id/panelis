@@ -161,7 +161,7 @@ class Register extends Component
             $transaction = $participant->transaction()->create([
                 'bank_id' => data_get($this->schedule->metadata, 'bank_id'),
                 'total' => $package->price,
-                'expired_at' => now()->addHours(6),
+                'expired_at' => now()->addMinutes(data_get($this->schedule->metadata, 'expired_duration', 60)),
                 'metadata' => [
                     'redirect_url' => route('participant.status', $participant->ulid),
                     'customer' => [
@@ -177,14 +177,9 @@ class Register extends Component
                 'price' => $package->price,
             ]);
 
-            $payment = CreatePaymentUrl::run($transaction);
-
-            $metadata = $transaction->metadata;
-            $metadata['payment_url'] = $payment->getPaymentUrl();
-            $transaction->metadata = $metadata;
-            $transaction->vendor_id = $payment->getId();
-            $transaction->vendor = $payment->getVendor();
-            $transaction->save();
+            CreatePaymentUrl::run($transaction, __('event.payment_for_package', [
+                'title' => $this->schedule->title,
+            ]));
 
             return $participant;
         });

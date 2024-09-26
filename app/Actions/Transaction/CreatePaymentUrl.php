@@ -34,6 +34,21 @@ class CreatePaymentUrl
             ->setRedirectUrl($transaction->metadata['redirect_url'])
             ->setTotal($transaction->total);
 
-        return $this->provider->createPaymentUrl($payload);
+        $payment = $this->provider->createPayment($payload);
+
+        if (! empty($payment->getPaymentUrl())) {
+            // replace origin amount with modified amount from moota
+            $draftPayment = $this->provider->getPayment($payment->getId());
+            $transaction->total = $draftPayment->getTotal();
+
+            $metadata = $transaction->metadata;
+            $metadata['payment_url'] = $payment->getPaymentUrl();
+            $transaction->metadata = $metadata;
+            $transaction->vendor = $payment->getVendor();
+            $transaction->vendor_id = $payment->getId();
+            $transaction->save();
+        }
+
+        return $payment;
     }
 }

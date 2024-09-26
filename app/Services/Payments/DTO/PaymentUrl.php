@@ -20,6 +20,8 @@ class PaymentUrl
 
     private string $redirectUrl;
 
+    private int|float $subTotal = 0;
+
     private int|float $total = 0;
 
     private string $paymentUrl;

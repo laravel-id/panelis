@@ -13,7 +13,7 @@
 		<a href="{{ $participant->transaction->metadata['payment_url'] }}" class="full-width" role="button">@lang('Bayar sekarang')</a>
 	</p>
 
-	<p>@lang('Jika kamu mengalami kendala dengan tata cara pembayaran, jangan sungkan untuk mengirim pesan ke narahubung di bawah.')</p>
+	<p>@lang('Jika kamu mengalami kendala dengan tata cara pembayaran atau pembayaran belum terkonfirmasi dalam 1x24 jam, jangan sungkan untuk mengirim pesan ke narahubung di bawah.')</p>
 
 	<article>
 		@include('pages.schedules.partials.contact', ['schedule' => $participant->schedule])

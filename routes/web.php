@@ -31,7 +31,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::get('/', Index::class)->name('index');
+Route::any('/', Index::class)->name('index');
 
 Route::middleware('guest')->group(function (): void {
     Route::get('/login', [LoginController::class, 'form'])->name('login');
