@@ -19,6 +19,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string $description
  * @property string $url
  * @property bool $is_past
+ * @property int $quota
  */
 class Package extends Model
 {

@@ -32,4 +32,13 @@ class Bank extends Model
     {
         return $this->hasmany(Transaction::class);
     }
+
+    public static function options(): array
+    {
+        return self::query()
+            ->where('is_active', true)
+            ->get()
+            ->mapWithKeys(fn (self $bank): array => [$bank->id => sprintf('%s - (%s - %s)', $bank->bank_name, $bank->account_number, $bank->account_name)])
+            ->all();
+    }
 }

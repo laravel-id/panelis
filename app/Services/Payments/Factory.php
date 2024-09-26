@@ -12,8 +12,6 @@ use Illuminate\Support\Manager;
  */
 class Factory extends Manager
 {
-    const Moota = 'moota';
-
     public function __construct(Container $container)
     {
         parent::__construct($container);
@@ -21,14 +19,12 @@ class Factory extends Manager
 
     public function getDefaultDriver(): string
     {
-        return self::Moota;
+        return Vendor::Moota->value;
     }
 
     public function getDrivers(): array
     {
-        return [
-            self::Moota,
-        ];
+        return array_column(Vendor::cases(), 'value');
     }
 
     public function createMootaDriver(): Payment

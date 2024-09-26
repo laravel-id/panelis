@@ -7,34 +7,13 @@
 		])
 	</p>
 
-	<p>@lang('Saat ini status pembayaran kamu tertunda. Segera lakukan pembayaran dengan mentransfer sesuai nominal ke rekening tujuan yang tertera di bawah.')</p>
+	<p>@lang('Saat ini status pembayaran kamu tertunda. Segera selesaikan transaksi dengan mengklik tombol di bawah dan mengikuti instruksi yang ada pada halaman tersebut.')</p>
 
-	<article>
-		<table class="overflow-auto">
-			<tbody>
-			<tr>
-				<td>@lang('Nominal')</td>
-				<td>
-					<strong>{{ Number::money($participant->transaction->total) }}</strong>
-				</td>
-			</tr>
-			<tr>
-				<td>@lang('Bank tujuan')</td>
-				<td>{{ data_get($schedule->metadata, 'bank_name') }}</td>
-			</tr>
-			<tr>
-				<td>@lang('Nomor rekening')</td>
-				<td>{{ data_get($schedule->metadata, 'bank_number') }}</td>
-			</tr>
-			<tr>
-				<td>@lang('Maksimal pembayaran')</td>
-				<td>{{ $participant->transaction->expired_at->timezone(get_timezone())->translatedFormat(get_datetime_format()) }}</td>
-			</tr>
-			</tbody>
-		</table>
-	</article>
+	<p>
+		<a href="{{ $participant->transaction->metadata['payment_url'] }}" class="full-width" role="button">@lang('Bayar sekarang')</a>
+	</p>
 
-	<p>@lang('Jika kamu mengalami kendala dengan status pembayaran, jangan sungkan untuk menghubungi narahubung di bawah.')</p>
+	<p>@lang('Jika kamu mengalami kendala dengan tata cara pembayaran, jangan sungkan untuk mengirim pesan ke narahubung di bawah.')</p>
 
 	<article>
 		@include('pages.schedules.partials.contact', ['schedule' => $participant->schedule])

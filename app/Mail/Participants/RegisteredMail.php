@@ -39,6 +39,7 @@ class RegisteredMail extends Mailable implements ShouldQueue
             with: [
                 'participant' => $this->participant,
                 'schedule' => $this->participant->schedule,
+                'paymentUrl' => data_get($this->participant->transaction->metadata, 'payment_url'),
             ],
         );
     }

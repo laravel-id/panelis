@@ -26,11 +26,12 @@ class CreatePaymentUrl
         });
 
         $payload = (new PaymentUrl)
-            ->setOrderId($transaction->ulid)
+            ->setId($transaction->ulid)
             ->setBankId($transaction->bank->vendor_id)
-            ->setCustomer($transaction->metadata['customer'])
+            ->setCustomer(...$transaction->metadata['customer'])
             ->setItems($items->toArray())
             ->setDescription($description ?? '')
+            ->setRedirectUrl($transaction->metadata['redirect_url'])
             ->setTotal($transaction->total);
 
         return $this->provider->createPaymentUrl($payload);

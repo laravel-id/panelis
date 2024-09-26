@@ -12,6 +12,7 @@ use App\Models\Event\Package;
 use App\Models\Event\Schedule;
 use App\Notifications\Participants\RegisteredNotification;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -21,6 +22,7 @@ use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use Livewire\Attributes\Validate;
 use Livewire\Component;
+use Livewire\Features\SupportRedirects\Redirector;
 
 class Register extends Component
 {
@@ -122,7 +124,7 @@ class Register extends Component
         ];
     }
 
-    public function register()
+    public function register(): RedirectResponse|Redirector
     {
         $this->validate();
 
@@ -157,9 +159,11 @@ class Register extends Component
             ]);
 
             $transaction = $participant->transaction()->create([
+                'bank_id' => data_get($this->schedule->metadata, 'bank_id'),
                 'total' => $package->price,
                 'expired_at' => now()->addHours(6),
                 'metadata' => [
+                    'redirect_url' => route('participant.status', $participant->ulid),
                     'customer' => [
                         'name' => $participant->name,
                         'phone' => $participant->phone,
@@ -173,12 +177,14 @@ class Register extends Component
                 'price' => $package->price,
             ]);
 
-            //            $payment = CreatePaymentUrl::run($transaction);
-            //
-            //            $metadata = $transaction->metadata;
-            //            $metadata['payment_url'] = $payment->getPaymentUrl();
-            //            $transaction->metadata = $metadata;
-            //            $transaction->save();
+            $payment = CreatePaymentUrl::run($transaction);
+
+            $metadata = $transaction->metadata;
+            $metadata['payment_url'] = $payment->getPaymentUrl();
+            $transaction->metadata = $metadata;
+            $transaction->vendor_id = $payment->getId();
+            $transaction->vendor = $payment->getVendor();
+            $transaction->save();
 
             return $participant;
         });
@@ -194,9 +200,9 @@ class Register extends Component
             'slack' => data_get($this->schedule->metadata, 'notification_slack_channel_id'),
         ])->notify(new RegisteredNotification($participant));
 
-        //        $this->reset();
-        //
-        //        return redirect()->route('participant.status', $participant->ulid);
+        $this->reset();
+
+        return redirect()->route('participant.status', $participant->ulid);
     }
 
     public function render(): View

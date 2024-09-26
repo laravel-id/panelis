@@ -9,18 +9,15 @@
 
 <br/>
 
-@lang('Saat ini status pembayaran kamu tertunda. Segera lakukan pembayaran dengan mentransfer sesuai nominal ke rekening tujuan yang tertera di bawah.')
+@lang('Saat ini status pembayaran kamu tertunda. Segera selesaikan transaksi dengan mengklik tombol di bawah dan mengikuti instruksi yang ada pada halaman tersebut.')
 
-<x-mail::table>
-|        |          |
-| ------------- |-------------:|
-| @lang('Nominal')     | **{{ Number::money($participant->transaction?->total ?? 0) }}**      |
-| @lang('Bank tujuan') | {{ data_get($schedule->metadata, 'bank_name') }} |
-| @lang('Nomor rekening')      | {{ data_get($schedule->metadata, 'bank_number') }} |
-| @lang('Maksimal pembayaran') | {{ $participant->transaction->expired_at->timezone(get_timezone())->translatedFormat(get_datetime_format()) }} |
-</x-mail::table>
+<x-mail::button :url="$paymentUrl">
+	Lakukan pembayaran sekarang
+</x-mail::button>
 
 @lang('Abaikan pesan ini jika kamu sudah melakukan pembayaran.')
+
+@lang('Kamu dapat melihat status kepesertaan kamu dengan mengklik tombol di bawah.')
 
 <x-mail::button :url="route('participant.status', $participant->ulid)">
 @lang('Lihat status saya')

@@ -4,7 +4,9 @@ namespace App\Services\Payments\DTO;
 
 class PaymentUrl
 {
-    private string $orderId = '';
+    private string $id = '';
+
+    private string $vendor;
 
     private array $customers = [];
 
@@ -41,16 +43,28 @@ class PaymentUrl
         return $this->customers;
     }
 
-    public function setOrderId(string $orderId): self
+    public function setId(string $id): self
     {
-        $this->orderId = $orderId;
+        $this->id = $id;
 
         return $this;
     }
 
-    public function getOrderId(): string
+    public function getId(): string
     {
-        return $this->orderId;
+        return $this->id;
+    }
+
+    public function setVendor(string $vendor): self
+    {
+        $this->vendor = $vendor;
+
+        return $this;
+    }
+
+    public function getVendor(): string
+    {
+        return $this->vendor;
     }
 
     public function setItems(array $items): self
@@ -72,7 +86,7 @@ class PaymentUrl
         return $this;
     }
 
-    public function getBankId()
+    public function getBankId(): string
     {
         return $this->bank_id;
     }
