@@ -62,15 +62,18 @@ class ParticipantResource extends Resource
 
                 TextColumn::make('bib')
                     ->label(__('event.participant_bib'))
+                    ->sortable()
                     ->weight(FontWeight::Bold)
                     ->searchable(),
 
                 TextColumn::make('name')
                     ->label(__('event.participant_name'))
+                    ->sortable()
                     ->searchable(),
 
                 TextColumn::make('transaction.total')
                     ->label(__('event.participant_payment_total'))
+                    ->sortable()
                     ->alignEnd()
                     ->description(fn (Participant $record): string => $record->transaction->status->label())
                     ->formatStateUsing(fn (Participant $record): string => Number::money($record->transaction->total)),
@@ -89,7 +92,8 @@ class ParticipantResource extends Resource
                     }),
 
                 TextColumn::make('local_created_at')
-                    ->label(__('ui.created_at')),
+                    ->label(__('ui.created_at'))
+                    ->sortable(),
             ])
             ->filters([
                 SelectFilter::make('status')
