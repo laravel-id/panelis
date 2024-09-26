@@ -2,7 +2,7 @@
 	use App\Enums\Participants\BloodType;
 	use App\Enums\Participants\Gender;
 	use App\Enums\Participants\IdentityType;
-	use App\Enums\Participants\Relation;
+	use App\Enums\Participants\Relation;use Illuminate\Support\Str;
 @endphp
 
 @push('metadata')
@@ -31,16 +31,17 @@
 					<div class="grid">
 						@foreach($schedule->packages as $package)
 							<article wire:key="{{ $package->id }}">
-									<label>
-										<input @if($package->is_sold) disabled @endif type="radio" name="package" value="{{ $package->id }}" wire:model.live="package" @error('package') aria-invalid="true" @enderror>
-										@if ($package->is_sold)
-											<del>{{ $package->title }} - {{ Number::money($package->price) }}</del>
-										@else
-											{{ $package->title }} - {{ Number::money($package->price) }}
-										@endif
-									</label>
-									@if (!empty($package->description))
-										<p>{!! Str::markdown($package->description, ['html_input' => 'strip']) !!}</p>
+								<label>
+									<input @if($package->is_sold) disabled @endif type="radio" name="package" value="{{ $package->id }}"
+												 wire:model.live="package" @error('package') aria-invalid="true" @enderror>
+									@if ($package->is_sold)
+										<del>{{ $package->title }} - {{ Number::money($package->price) }}</del>
+									@else
+										{{ $package->title }} - {{ Number::money($package->price) }}
+									@endif
+								</label>
+								@if (!empty($package->description))
+									<p>{!! Str::markdown($package->description, ['html_input' => 'strip']) !!}</p>
 								@endif
 							</article>
 					@endforeach
@@ -87,7 +88,8 @@
 					<legend>@lang('event.participant_gender') *</legend>
 					@foreach(Gender::options() as $value => $label)
 						<label wire:key="{{ $value }}">
-							<input type="radio" value="{{ $value }}" wire:model.live="gender" @error('gender') aria-invalid="true" @enderror>
+							<input type="radio" value="{{ $value }}" wire:model.live="gender"
+										 @error('gender') aria-invalid="true" @enderror>
 							{{ $label }}
 						</label>
 					@endforeach
@@ -105,7 +107,8 @@
 					<legend>@lang('event.participant_blood_type') *</legend>
 					@foreach(BloodType::options() as $value => $label)
 						<label wire:key="{{ $value }}">
-							<input type="radio" value="{{ $value }}" wire:model.live="bloodType" @error('bloodType') aria-invalid="true" @enderror>
+							<input type="radio" value="{{ $value }}" wire:model.live="bloodType"
+										 @error('bloodType') aria-invalid="true" @enderror>
 							{{ $label }}
 						</label>
 					@endforeach
@@ -168,13 +171,10 @@
 			<hr/>
 
 			<details>
-				<summary><strong>Syarat dan Ketentuan</strong></summary>
-				<p>Dengan mendaftar sebagai partisipan acara ini, calon partisipan setuju dan tunduk dengan syarat dan ketentuan
-					yang berlaku pada poin di bawah.</p>
-				<ul>
-					<li>Biaya pendaftaran tidak dapat dikembalikan dengan syarat apapun</li>
-					<li>Keputusan juri tidak dapat diganggu gugat</li>
-				</ul>
+				<summary>
+					<strong>@lang('event.schedule_tos')</strong>
+				</summary>
+				{!! Str::markdown($schedule->metadata['tos'] ?? '') !!}
 			</details>
 
 			<fieldset>

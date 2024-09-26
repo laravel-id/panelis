@@ -6,6 +6,7 @@ use App\Models\Transaction\Bank;
 use App\Services\Payments\Factory;
 use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -82,6 +83,13 @@ class SettingForm
 
                     TextInput::make('metadata.notification_slack_channel_id')
                         ->label(__('event.notification_slack_channel')),
+                ]),
+
+            Fieldset::make(__('event.schedule_tos'))
+                ->columns(1)
+                ->disabled(fn (Get $get): bool => ! $get('metadata.registration'))
+                ->schema([
+                    MarkdownEditor::make('metadata.tos'),
                 ]),
         ];
     }
