@@ -4,18 +4,26 @@ namespace App\Filament\Resources\Transaction;
 
 use App\Filament\Resources\Transaction\BankResource\Pages;
 use App\Models\Transaction\Bank;
+use App\Services\Payments\Vendor;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
+use Illuminate\Support\Number;
 
 class BankResource extends Resource
 {
     protected static ?string $model = Bank::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    public static function getNavigationGroup(): ?string
+    {
+        return __('navigation.event');
+    }
 
-    protected static bool $shouldRegisterNavigation = false;
+    public static function getLabel(): ?string
+    {
+        return __('transaction.bank');
+    }
 
     public static function form(Form $form): Form
     {
@@ -29,18 +37,50 @@ class BankResource extends Resource
     {
         return $table
             ->columns([
-                //
+                TextColumn::make('vendor')
+                    ->label(__('transaction.bank_vendor'))
+                    ->formatStateUsing(function (?string $state): string {
+                        $vendor = Vendor::tryFrom($state);
+                        if (empty($vendor)) {
+                            return __('Not Found');
+                        }
+
+                        return $vendor->label();
+                    }),
+
+                TextColumn::make('bank_name')
+                    ->label(__('transaction.bank_name'))
+                    ->searchable()
+                    ->sortable(),
+
+                TextColumn::make('account_name')
+                    ->label(__('transaction.bank_account_name'))
+                    ->searchable()
+                    ->sortable(),
+
+                TextColumn::make('account_number')
+                    ->label(__('transaction.bank_account_number'))
+                    ->searchable()
+                    ->sortable(),
+
+                TextColumn::make('balance')
+                    ->label(__('transaction.bank_balance'))
+                    ->alignEnd()
+                    ->formatStateUsing(fn (float $state): string => Number::money($state)),
+
+                TextColumn::make('local_created_at')
+                    ->label(__('ui.created_at'))
+                    ->dateTime(get_datetime_format()),
+
             ])
             ->filters([
                 //
             ])
             ->actions([
-                Tables\Actions\EditAction::make(),
+
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
+
             ]);
     }
 

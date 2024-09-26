@@ -2,8 +2,9 @@
 
 namespace App\Filament\Resources\Transaction\BankResource\Pages;
 
+use App\Actions\Transaction\FetchBank;
 use App\Filament\Resources\Transaction\BankResource;
-use Filament\Actions;
+use Filament\Actions\Action;
 use Filament\Resources\Pages\ListRecords;
 
 class ListBanks extends ListRecords
@@ -13,7 +14,13 @@ class ListBanks extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make(),
+            Action::make('refresh')
+                ->label(__('transaction.btn_refresh_bank'))
+                ->action(function (): void {
+                    FetchBank::run();
+
+                    $this->resetTable();
+                }),
         ];
     }
 }

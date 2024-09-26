@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Event\ScheduleResource\Forms;
 
+use App\Actions\Transaction\FetchBank;
 use App\Models\Transaction\Bank;
 use App\Services\Payments\Factory;
 use Filament\Forms\Components\Actions\Action;
@@ -49,21 +50,8 @@ class SettingForm
                                         ->title(__('transaction.bank_synced'))
                                         ->send();
                                 })
-                                ->action(function (Action $action) use ($payment): void {
-                                    foreach ($payment->getRegisteredBanks() as $bank) {
-                                        Bank::query()->updateOrCreate([
-                                            'bank_code' => $bank->getCode(),
-                                            'vendor_id' => $bank->getId(),
-                                            'vendor' => $payment->getVendor(),
-                                            'account_number' => $bank->getAccountNumber(),
-                                        ], [
-                                            'bank_name' => $bank->getLabel(),
-                                            'account_name' => $bank->getAccountName(),
-                                            'is_active' => $bank->isActive(),
-                                            'balance' => $bank->getBalance(),
-                                        ],
-                                        );
-                                    }
+                                ->action(function (Action $action): void {
+                                    FetchBank::run();
 
                                     $action->dispatch('refresh');
                                 }),
