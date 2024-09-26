@@ -3,8 +3,8 @@
 namespace App\Mail\Participants;
 
 use App\Models\Event\Participant;
-use DragonCode\Contracts\Queue\ShouldQueue;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
