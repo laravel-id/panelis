@@ -37,6 +37,7 @@ class AdminPanelProvider extends PanelProvider
         return $panel
             ->default()
             ->id('admin')
+            ->databaseNotifications()
 
             // uncomment to set different path
             ->path($path)
