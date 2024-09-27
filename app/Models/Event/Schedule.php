@@ -311,6 +311,13 @@ class Schedule extends Model implements Sitemapable
         return $this->hasMany(Bookmark::class);
     }
 
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class)
+            ->withTimestamps()
+            ->withPivot('channels');
+    }
+
     public static function getPublishedSchedules(?array $filters = null): Collection
     {
         $method = __METHOD__;

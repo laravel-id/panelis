@@ -5,6 +5,7 @@ namespace App\Mail\Participants;
 use App\Models\Event\Participant;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
@@ -17,7 +18,7 @@ class RegisteredMail extends Mailable implements ShouldQueue
     /**
      * Create a new message instance.
      */
-    public function __construct(private readonly Participant $participant) {}
+    public function __construct(private readonly Participant|Model $participant) {}
 
     /**
      * Get the message envelope.

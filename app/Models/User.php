@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Filament\Clusters\Settings\Enums\AvatarProvider;
 use App\Models\Event\Participant;
+use App\Models\Event\Schedule;
 use App\Models\Traits\HasLocalTime;
 use Carbon\Carbon;
 use Filament\Models\Contracts\FilamentUser;
@@ -153,5 +154,11 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
     public function participants(): HasMany
     {
         return $this->hasMany(Participant::class);
+    }
+
+    public function schedules(): BelongsToMany
+    {
+        return $this->belongsToMany(Schedule::class)
+            ->withTimestamps();
     }
 }
