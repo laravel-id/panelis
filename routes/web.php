@@ -29,7 +29,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::match(['get', 'post'], Index::class)->name('index');
+Route::match(['get', 'post'], '/', Index::class)->name('index');
 Route::match(['get', 'post'], '/ping', PingController::class)->name('ping');
 
 Route::middleware('guest')->group(function (): void {
