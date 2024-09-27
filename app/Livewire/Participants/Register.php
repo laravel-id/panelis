@@ -2,22 +2,22 @@
 
 namespace App\Livewire\Participants;
 
-use App\Actions\Transaction\CreatePaymentUrl;
 use App\Enums\Participants\BloodType;
 use App\Enums\Participants\Gender;
 use App\Enums\Participants\IdentityType;
 use App\Enums\Participants\Relation;
-use App\Mail\Participants\RegisteredMail;
-use App\Models\Event\Package;
+use App\Livewire\Participants\Pipelines\CreateParticipant;
+use App\Livewire\Participants\Pipelines\CreatePayment;
+use App\Livewire\Participants\Pipelines\CreateTransaction;
+use App\Livewire\Participants\Pipelines\SendEmail;
+use App\Livewire\Participants\Pipelines\SendNotification;
+use App\Models\Event\Participant;
 use App\Models\Event\Schedule;
-use App\Notifications\Participants\RegisteredNotification;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
+use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\Rule;
 use Illuminate\View\View;
 use Livewire\Attributes\Validate;
@@ -130,76 +130,22 @@ class Register extends Component
         ];
     }
 
-    public function register(): RedirectResponse|Redirector
+    public function register(): Redirector|RedirectResponse
     {
         $this->validate();
 
-        $participant = DB::transaction(function (): Model {
-            $start = 1000;
-            $counter = $this->schedule->participants()->count();
-
-            $prefix = match ($this->gender) {
-                Gender::Male->value => 'M',
-                Gender::Female->value => 'F',
-            };
-
-            $bib = sprintf('%s%s', $prefix, $start + $counter);
-
-            $package = Package::query()->findOrFail($this->package);
-
-            $participant = $this->schedule->participants()->create([
-                'user_id' => Auth::id(),
-                'package_id' => $package->id,
-                'bib' => $bib,
-                'id_type' => $this->idType,
-                'id_number' => $this->idNumber,
-                'name' => $this->name,
-                'gender' => $this->gender,
-                'blood_type' => $this->bloodType,
-                'birthdate' => $this->birthdate,
-                'phone' => $this->phone,
-                'email' => $this->email,
-                'emergency_name' => $this->emergencyName,
-                'emergency_phone' => $this->emergencyPhone,
-                'emergency_relation' => $this->emergencyRelation,
-            ]);
-
-            $transaction = $participant->transaction()->create([
-                'bank_id' => data_get($this->schedule->metadata, 'bank_id'),
-                'total' => $package->price,
-                'expired_at' => now()->addMinutes(data_get($this->schedule->metadata, 'expired_duration', 60)),
-                'metadata' => [
-                    'redirect_url' => route('participant.status', $participant->ulid),
-                    'customer' => [
-                        'name' => $participant->name,
-                        'phone' => $participant->phone,
-                        'email' => $participant->email,
-                    ],
-                ],
-            ]);
-
-            $transaction->items()->create([
-                'name' => $package->title,
-                'price' => $package->price,
-            ]);
-
-            CreatePaymentUrl::run($transaction, __('event.payment_for_package', [
-                'title' => $this->schedule->title,
-            ]));
-
-            return $participant;
+        $participant = DB::transaction(function (): Participant {
+            return app(Pipeline::class)
+                ->send($this->all())
+                ->through([
+                    CreateParticipant::class,
+                    CreateTransaction::class,
+                    CreatePayment::class,
+                    SendEmail::class,
+                    SendNotification::class,
+                ])
+                ->thenReturn();
         });
-
-        if (! empty($participant->email)) {
-            Mail::to($participant->email)
-                ->locale(data_get($this->schedule->metadata, 'locale', config('app.locale')))
-                ->send(new RegisteredMail($participant));
-        }
-
-        Notification::routes([
-            'mail' => data_get($this->schedule->metadata, 'notification_email'),
-            'slack' => data_get($this->schedule->metadata, 'notification_slack_channel_id'),
-        ])->notify(new RegisteredNotification($participant));
 
         $this->reset();
 
