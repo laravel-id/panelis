@@ -56,12 +56,12 @@ class SettingForm
                                     $action->dispatch('refresh');
                                 }),
                         )
-                        ->required(),
+                        ->required(fn (Get $get): bool => $get('metadata.registration')),
 
                     TextInput::make('metadata.expired_duration')
                         ->label(__('event.schedule_expired_duration'))
                         ->helperText(__('event.helper_expired_duration'))
-                        ->required()
+                        ->required(fn (Get $get): bool => $get('metadata.registration'))
                         ->numeric(),
                 ]),
 
