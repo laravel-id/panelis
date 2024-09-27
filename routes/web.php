@@ -10,6 +10,7 @@ use App\Http\Controllers\Event\ScheduleController;
 use App\Http\Controllers\MessageController;
 use App\Http\Controllers\OAuth\DropboxController;
 use App\Http\Controllers\OrganizerController;
+use App\Http\Controllers\PingController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\SubscriberController;
 use App\Http\Middleware\CacheResponse;
@@ -31,7 +32,8 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "web" middleware group. Make something great!
 |
 */
-Route::any('/', Index::class)->name('index');
+Route::match(['get', 'post'], '/', Index::class)->name('index');
+Route::match(['get', 'post'], '/ping', PingController::class)->name('ping');
 
 Route::middleware('guest')->group(function (): void {
     Route::get('/login', [LoginController::class, 'form'])->name('login');
