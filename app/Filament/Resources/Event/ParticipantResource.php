@@ -60,6 +60,9 @@ class ParticipantResource extends Resource
                     ->label(__('event.schedule_title'))
                     ->url(fn (Participant $record): string => ViewSchedule::getUrl(['record' => $record->schedule_id])),
 
+                TextColumn::make('package.title')
+                    ->label(__('event.schedule_package')),
+
                 TextColumn::make('bib')
                     ->label(__('event.participant_bib'))
                     ->sortable()
