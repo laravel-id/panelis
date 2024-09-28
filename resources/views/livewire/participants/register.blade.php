@@ -30,11 +30,15 @@
 				<fieldset>
 					<div class="grid">
 						@foreach($schedule->packages as $package)
-							<article wire:key="{{ $package->id }}">
+							@php
+								$isSold = ($package->quota > 0 && $package->participants_count >= $package->quota) || $package->is_sold;
+							@endphp
+
+							<article wire:key="{{ $package->id }}" class="@error('package') pico-background-red-400 @enderror">
 								<label>
-									<input @if($package->is_sold) disabled @endif type="radio" name="package" value="{{ $package->id }}"
+									<input @if($isSold) disabled @endif type="radio" name="package" value="{{ $package->id }}"
 												 wire:model.live="package" @error('package') aria-invalid="true" @enderror>
-									@if ($package->is_sold)
+									@if ($isSold)
 										<del>{{ $package->title }} - {{ Number::money($package->price) }}</del>
 									@else
 										{{ $package->title }} - {{ Number::money($package->price) }}
@@ -180,9 +184,15 @@
 			<fieldset>
 				<label>
 					<input type="checkbox" wire:model.live="accepted" value="1" @error('accepted') aria-invalid="true" @enderror>
-					Saya menyetujui syarat dan ketentuan yang berlaku
+					@lang('Saya menyetujui syarat dan ketentuan yang berlaku') *
 				</label>
 			</fieldset>
+
+			@if($errors->any())
+			<article class="pico-background-red-500">
+				@lang('Terjadi kesalahan validasi formulir. Mohon cek kembali data kamu.')
+			</article>
+			@endif
 
 			<button type="submit">@lang('event.btn_participant_register')</button>
 		</article>

@@ -11,10 +11,12 @@ use App\Models\Traits\HasLocalTime;
 use App\Models\Transaction\Transaction;
 use App\Models\User;
 use Illuminate\Contracts\Translation\HasLocalePreference;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
@@ -104,6 +106,15 @@ class Participant extends Model implements HasLocalePreference
         );
     }
 
+    public function scopeIsFulfilled(Builder $query): void
+    {
+        $query->whereIn('status', [
+            Status::Paid,
+            Status::Completed,
+            Status::Finished,
+        ]);
+    }
+
     /**
      * @return BelongsTo<User>
      */
@@ -128,13 +139,24 @@ class Participant extends Model implements HasLocalePreference
         return $this->belongsTo(Package::class);
     }
 
-    public function preferredLocale(): string
+    /**
+     * @return HasMany<Participant>
+     */
+    public function participants(): HasMany
     {
-        return config('app.locale', 'en');
+        return $this->hasMany(Participant::class);
     }
 
+    /**
+     * @return MorphOne<Transaction>
+     */
     public function transaction(): MorphOne
     {
         return $this->morphOne(Transaction::class, 'transactionable');
+    }
+
+    public function preferredLocale(): string
+    {
+        return config('app.locale', 'en');
     }
 }

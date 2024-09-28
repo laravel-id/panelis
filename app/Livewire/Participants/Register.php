@@ -11,8 +11,12 @@ use App\Livewire\Participants\Pipelines\CreatePayment;
 use App\Livewire\Participants\Pipelines\CreateTransaction;
 use App\Livewire\Participants\Pipelines\SendEmail;
 use App\Livewire\Participants\Pipelines\SendNotification;
+use App\Models\Event\Package;
 use App\Models\Event\Participant;
 use App\Models\Event\Schedule;
+use Closure;
+use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Response;
 use Illuminate\Pipeline\Pipeline;
@@ -74,8 +78,6 @@ class Register extends Component
             return to_route('login');
         }
 
-        $this->schedule->load('packages');
-
         $this->package = request('package');
 
         return null;
@@ -87,6 +89,19 @@ class Register extends Component
             'package' => [
                 'required',
                 'exists:packages,id',
+                function (string $attribute, mixed $value, Closure $fail) {
+                    $package = Package::query()
+                        ->whereBelongsTo($this->schedule)
+                        ->withCount([
+                            'participants' => fn (Builder $query): Builder => $query->isFulfilled(),
+                        ])
+                        ->findOrFail($value);
+
+                    $isSold = ($package->quota > 0 && $package->participants_count >= $package->quota) || $package->is_sold;
+                    if ($isSold) {
+                        return $fail('The attribute is invalid.');
+                    }
+                },
             ],
             'idType' => [
                 'required',
@@ -159,6 +174,14 @@ class Register extends Component
         set_locale($this->schedule->metadata['locale'] ?? app()->getLocale());
 
         seo()->title(__('event.schedule_registration', ['title' => $this->schedule->title]), false);
+
+        $this->schedule->load([
+            'packages' => function (HasMany $builder): HasMany {
+                return $builder->withCount([
+                    'participants' => fn (Builder $builder): Builder => $builder->isFulfilled(),
+                ]);
+            },
+        ]);
 
         return view('livewire.participants.register')
             ->with('title', __('event.schedule_registration', ['title' => $this->schedule->title]))

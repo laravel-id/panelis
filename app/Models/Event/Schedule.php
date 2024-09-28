@@ -404,7 +404,11 @@ class Schedule extends Model implements Sitemapable
             ->where('slug', $slug)
             ->with([
                 'parent',
-                'packages',
+                'packages' => function (HasMany $builder): HasMany {
+                    return $builder->withCount([
+                        'participants' => fn (Builder $builder): Builder => $builder->isFulfilled(),
+                    ]);
+                },
                 'district' => fn (BelongsTo $builder): BelongsTo => $builder->select('id', 'name'),
                 'organizers' => fn (BelongsToMany $builder): BelongsToMany => $builder->select('id', 'slug', 'name'),
                 'types' => fn (BelongsToMany $builder): BelongsToMany => $builder->select('id', 'title'),
