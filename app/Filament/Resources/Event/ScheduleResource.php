@@ -49,7 +49,7 @@ class ScheduleResource extends Resource
 
     public static function getLabel(): ?string
     {
-        return __('event.schedule');
+        return __('navigation.schedule');
     }
 
     public static function getWidgets(): array
