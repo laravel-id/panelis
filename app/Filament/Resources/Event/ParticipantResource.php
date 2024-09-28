@@ -75,8 +75,8 @@ class ParticipantResource extends Resource
                     ->label(__('event.participant_payment_total'))
                     ->sortable()
                     ->alignEnd()
-                    ->description(fn (Participant $record): string => $record->transaction->status->label())
-                    ->formatStateUsing(fn (Participant $record): string => Number::money($record->transaction->total)),
+                    ->description(fn (?Participant $record): ?string => $record->transaction?->status?->label())
+                    ->formatStateUsing(fn (?Participant $record): ?string => Number::money($record->transaction?->total)),
 
                 TextColumn::make('status')
                     ->label(__('event.participant_status'))

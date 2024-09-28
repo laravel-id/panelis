@@ -28,13 +28,10 @@ class ConfirmPayment
             if (! empty($participant->email)) {
                 Mail::to($participant->email)
                     ->locale(data_get($participant->schedule->metadata, 'locale', app()->getLocale()))
-                    ->send(new PaidMail($participant));
+                    ->send((new PaidMail($participant))->afterCommit());
             }
 
-            Notification::routes([
-                'mail' => data_get($participant->schedule->metadata, 'notification_email'),
-                'slack' => data_get($participant->schedule->metadata, 'notification_slack_channel_id'),
-            ])->notify(new PaidNotification($participant));
+            Notification::send($participant->schedule->users, (new PaidNotification($participant))->afterCommit());
         });
     }
 }

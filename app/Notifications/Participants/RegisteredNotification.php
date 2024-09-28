@@ -34,11 +34,11 @@ class RegisteredNotification extends Notification implements ShouldQueue
     public function via(object $notifiable): array
     {
         $channels = $notifiable->pivot?->channels;
-        if (! empty($channels)) {
+        if (! empty($channels) && json_validate($channels)) {
             return json_decode($channels, true);
         }
 
-        return ['mail', 'database'];
+        return [];
     }
 
     public function toDatabase(): array

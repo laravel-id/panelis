@@ -14,7 +14,9 @@ return new class extends Migration
     {
         Schema::create('transaction_items', function (Blueprint $table): void {
             $table->id();
-            $table->foreignIdFor(Transaction::class)->constrained();
+            $table->foreignIdFor(Transaction::class)
+                ->constrained()
+                ->cascadeOnDelete();
             $table->string('name');
             $table->integer('quantity')->default(1);
             $table->decimal('discount', 15)->default(0);

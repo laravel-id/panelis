@@ -2,8 +2,11 @@
 
 namespace App\Notifications\Participants;
 
+use App\Filament\Resources\Event\ParticipantResource\Pages\EditParticipant;
 use App\Mail\Participants\PaidNotification as PaidMail;
 use App\Models\Event\Participant;
+use Filament\Notifications\Actions\Action;
+use Filament\Notifications\Notification as FilamentNotification;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
@@ -29,7 +32,27 @@ class PaidNotification extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        $channels = $notifiable->pivot?->channels;
+        if (! empty($channels) && json_validate($channels)) {
+            return json_decode($channels, true);
+        }
+
+        return [];
+    }
+
+    public function toDatabase(): array
+    {
+        return FilamentNotification::make('paid_notification')
+            ->success()
+            ->title(__('event.notification_participant_paid', [
+                'name' => $this->participant->name,
+            ]))
+            ->actions([
+                Action::make('view_participant')
+                    ->label(__('event.view_participant'))
+                    ->url(EditParticipant::getUrl(['record' => $this->participant->id])),
+            ])
+            ->getDatabaseMessage();
     }
 
     /**

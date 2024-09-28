@@ -65,19 +65,6 @@ class SettingForm
                         ->numeric(),
                 ]),
 
-            Fieldset::make(__('event.notification_setting'))
-                ->columns(1)
-                ->disabled(fn (Get $get): bool => ! $get('metadata.registration'))
-                ->schema([
-                    TextInput::make('metadata.notification_email')
-                        ->label(__('event.notification_email'))
-                        ->nullable()
-                        ->email(),
-
-                    TextInput::make('metadata.notification_slack_channel_id')
-                        ->label(__('event.notification_slack_channel')),
-                ]),
-
             Fieldset::make(__('event.schedule_tos'))
                 ->columns(1)
                 ->disabled(fn (Get $get): bool => ! $get('metadata.registration'))

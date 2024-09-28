@@ -2,20 +2,28 @@
 
 namespace App\Filament\Resources\Event\ScheduleResource\Pages;
 
+use App\Enums\NotificationChannels;
 use App\Filament\Resources\Event\ScheduleResource;
 use App\Models\Event\Event;
 use App\Models\Event\Package;
 use App\Models\Event\Schedule;
+use App\Models\User;
 use Filament\Actions;
+use Filament\Actions\Action;
+use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\Select;
 use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\KeyValueEntry;
 use Filament\Infolists\Components\RepeatableEntry;
 use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Infolist;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\IconPosition;
+use Filament\Support\Enums\MaxWidth;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Number;
 use Illuminate\Support\Str;
 
@@ -39,6 +47,43 @@ class ViewSchedule extends ViewRecord
                     })
                     ->successRedirectUrl(function (Schedule $replica): string {
                         return ViewSchedule::getUrl(['record' => $replica]);
+                    }),
+
+                Action::make('invite_user')
+                    ->label(__('event.btn_invite_user'))
+                    ->color('primary')
+                    ->modalWidth(MaxWidth::Medium)
+                    ->icon('heroicon-s-user')
+                    ->form([
+                        Select::make('users')
+                            ->options(
+                                User::query()
+                                    ->where('id', '!=', Auth::id())
+                                    ->pluck('name', 'id'),
+                            )
+                            ->searchable()
+                            ->multiple()
+                            ->required(),
+
+                        CheckboxList::make('channels')
+                            ->label(__('ui.notification_channels'))
+                            ->options(NotificationChannels::options())
+                            ->nullable(),
+                    ])
+                    ->action(function (array $data): void {
+                        $this->record->users()->syncWithoutDetaching(
+                            collect($data['users'])
+                                ->mapWithKeys(fn (string $userId): array => [$userId => [
+                                    'channels' => json_encode($data['channels']),
+                                ]])
+                                ->all(),
+                        );
+
+                        Notification::make('user_invited')
+                            ->title(__('event.schedule_user_invited'))
+                            ->success()
+                            ->send();
+
                     }),
 
                 Actions\DeleteAction::make()
