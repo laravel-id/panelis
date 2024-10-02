@@ -110,7 +110,12 @@
 						</tr>
 						<tr>
 							<td>@lang('event.participant_birthdate')</td>
-							<td><strong>{{ $selectedParticipant->birthdate->translatedFormat('d F Y') }}</strong></td>
+							<td>
+								<strong>
+									{{ $selectedParticipant->birthdate->translatedFormat('d F Y') }}
+									(@lang('event.participant_age', ['age' => $selectedParticipant->birthdate->age]))
+								</strong>
+							</td>
 						</tr>
 						<tr>
 							<td>@lang('event.participant_gender')</td>
