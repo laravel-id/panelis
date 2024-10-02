@@ -74,6 +74,8 @@ Route::get('/participant/status/{participant:ulid}', [ParticipantController::cla
 Route::middleware('auth')
     ->get('/event/{slug}/participants', ParticipantIndex::class)->name('participant.index');
 
+Route::middleware('auth')
+    ->get('/event/organize', [ScheduleController::class, 'organize'])->name('schedule.organize');
 Route::get('/archive', [ScheduleController::class, 'archive'])->name('schedule.archive');
 Route::get('/event/{slug}', [ScheduleController::class, 'view'])
     ->middleware([CacheResponse::class])

@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Spatie\Sitemap\Contracts\Sitemapable;
 use Spatie\Sitemap\Tags\Url;
@@ -497,6 +498,16 @@ class Schedule extends Model implements Sitemapable
             ])
             ->orderByDesc('started_at')
             ->whereDate('local_started_at', '<=', now(get_timezone()))
+            ->get();
+    }
+
+    public static function getOrganizedSchedules(?User $user = null): Collection
+    {
+        $user ??= Auth::user();
+
+        return self::query()
+            ->whereHas('users', fn (Builder $builder) => $builder->where('user_id', $user->id))
+            ->orderByDesc('started_at')
             ->get();
     }
 

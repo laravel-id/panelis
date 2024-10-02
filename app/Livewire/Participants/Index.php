@@ -57,7 +57,7 @@ class Index extends Component
 
     public function render(): View
     {
-        abort_if(empty($this->schedule), Response::HTTP_NOT_FOUND);
+        abort_if(empty($this->schedule) || $this->schedule->is_past, Response::HTTP_NOT_FOUND);
 
         $this->schedule->load([
             'participants.package',

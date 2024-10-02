@@ -112,6 +112,18 @@ class ScheduleController extends Controller
             ->with('title', __('event.schedule_archive'));
     }
 
+    public function organize(): View
+    {
+        $schedules = Schedule::getOrganizedSchedules();
+
+        seo()->title($title = __('event.my_schedule'), false)
+            ->openGraphSite(config('app.name'));
+
+        return view('pages.schedules.organize')
+            ->with('schedules', $schedules)
+            ->with('title', $title);
+    }
+
     private function generateStructuredData(Schedule $schedule): array
     {
         $schedule->load('district.region');
