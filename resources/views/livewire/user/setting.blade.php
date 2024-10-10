@@ -34,6 +34,15 @@
 				@endforeach
 			</fieldset>
 
+			<label for="timezone">
+				@lang('user.timezone') *
+				<select wire:model="timezone" name="timezone">
+					@foreach ($timezones as $tz)
+						<option wire:key="{{ $tz  }}" value="{{ $tz }}">{{ $tz }}</option>
+					@endforeach
+				</select>
+			</label>
+
 			<footer>
 				<button type="submit">@lang('user.btn_update_setting')</button>
 			</footer>
