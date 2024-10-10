@@ -8,12 +8,6 @@
     </ul>
   </nav>
 
-  @if(session('success'))
-    <article>
-      {{ session('success') }}
-    </article>
-  @endif
-
   <x-alert :message="session('success')" />
   <x-alert :message="session('error')" type="error" />
 

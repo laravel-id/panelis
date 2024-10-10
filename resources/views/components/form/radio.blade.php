@@ -1,5 +1,5 @@
 <fieldset>
-  <legend>@lang('subscriber.period')</legend>
+  <legend>@lang('subscriber.period') {{ $attributes->has('required') ? '*' : '' }}</legend>
   @foreach ($options as $value => $label)
     <label>
       <input

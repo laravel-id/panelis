@@ -29,7 +29,7 @@ class ConfirmationMail extends Mailable implements ShouldQueue
     public function envelope(): Envelope
     {
         return new Envelope(
-            subject: __('subscribers.subject_need_confirmation'),
+            subject: __('subscriber.subject_need_confirmation'),
         );
     }
 

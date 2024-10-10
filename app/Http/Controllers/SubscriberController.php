@@ -17,6 +17,9 @@ class SubscriberController extends Controller
 {
     public function form(): View
     {
+        seo()->title(__('subscriber.title'), false)
+            ->openGraphSite(config('app.name'));
+
         return view('pages.subscribers.form')
             ->with('periods', Subscriber::getPeriods())
             ->with('title', __('subscriber.title'));
@@ -40,6 +43,9 @@ class SubscriberController extends Controller
 
     public function subscribe(string $key): View
     {
+        seo()->title(__('subscriber.title'), false)
+            ->openGraphSite(config('app.name'));
+
         try {
             $subscriber = Subscriber::query()
                 ->where('confirmation_key', trim($key))
@@ -59,6 +65,9 @@ class SubscriberController extends Controller
 
     public function unsubscribe(string $key): View
     {
+        seo()->title(__('subscriber.title'), false)
+            ->openGraphSite(config('app.name'));
+
         try {
             $subscriber = Subscriber::query()
                 ->whereNotNull('subscribed_at')
