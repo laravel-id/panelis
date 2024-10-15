@@ -168,24 +168,36 @@ class ScheduleForm
                         ->collapsible()
                         ->schema([
                             Repeater::make('contacts')
-                                ->columns(3)
+                                ->columns()
                                 ->schema([
                                     TextInput::make('name')
                                         ->label(__('event.schedule_contact_name'))
+                                        ->hiddenLabel()
+                                        ->prefixIcon('heroicon-s-user')
                                         ->nullable(),
 
                                     TextInput::make('phone')
                                         ->label(__('event.schedule_contact_phone'))
+                                        ->hiddenLabel()
+                                        ->prefixIcon('heroicon-s-phone')
+                                        ->live(onBlur: true)
+                                        ->dehydrateStateUsing(function (?string $state): string {
+                                            if (! empty($state)) {
+                                                return Str::of($state)
+                                                    ->trim()
+                                                    ->remove('-')
+                                                    ->remove(' ')
+                                                    ->toString();
+                                            }
+
+                                            return '';
+                                        })
                                         ->tel()
                                         ->required(),
 
-                                    TextInput::make('email')
-                                        ->label(__('event.schedule_contact_email'))
-                                        ->email()
-                                        ->nullable(),
-
                                     Checkbox::make('is_wa')
                                         ->label(__('event.schedule_contact_is_wa'))
+                                        ->columnSpanFull()
                                         ->nullable(),
                                 ]),
                         ]),

@@ -10,7 +10,7 @@
 
 	{{ seo()->generate() }}
 
-  <link rel="stylesheet" href="{{ asset('css/pico.'.get_color_theme().'.min.css') }}"/>
+  <link rel="stylesheet" href="{{ asset('css/pico.'.get_color_theme($colorTheme ?? null).'.min.css') }}"/>
   <link rel="stylesheet" href="{{ asset('css/pico.colors.min.css') }}" />
 
 	@vite(['resources/css/app.css', 'resources/js/app.js'])

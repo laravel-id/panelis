@@ -1,5 +1,5 @@
 <x-mail::message>
-  @lang('subscriber.mail_subscribe_confirmation', [
+  @lang('subscriber.mail_subscribe_confirmed', [
       'email' => $subscriber->email,
       'period' => $subscriber->period->label(),
   ])

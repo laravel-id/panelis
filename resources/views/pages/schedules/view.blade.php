@@ -21,7 +21,7 @@
 	</nav>
 
 	<hgroup>
-		<h2 class="pico-color-{{ get_color_theme() }}-500 event-title">{{ $schedule->title }}</h2>
+		<h2 class="pico-color-{{ get_color_theme($colorTheme ?? null) }}-500 event-title">{{ $schedule->title }}</h2>
 		@if(!empty($schedule->metadata['tagline']))
 			<p>{{ $schedule->metadata['tagline'] }}</p>
 		@endif

@@ -75,6 +75,7 @@ class ScheduleController extends Controller
             ->with('calendar', GenerateCalendarUrl::run($schedule))
             ->with('externalUrl', $schedule->external_url)
             ->with('structuredData', $this->generateStructuredData($schedule))
+            ->with('colorTheme', data_get($schedule->metadata, 'theme_color'))
             ->with('title', sprintf('%s - %s', $schedule->title, $year));
     }
 
