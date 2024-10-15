@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Event\ScheduleResource\Forms;
 
 use App\Filament\Resources\Event\ScheduleResource\Enums\PackagePriceType;
 use Filament\Forms\Components\DateTimePicker;
+use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\MarkdownEditor;
 use Filament\Forms\Components\Repeater;
@@ -32,25 +33,8 @@ class PackageForm
                     TextInput::make('title')
                         ->label(__('event.package_title'))
                         ->maxLength(250)
-                        ->columnSpan(2)
+                        ->columnSpan(3)
                         ->required(),
-
-                    Grid::make()
-                        ->columnSpan(2)
-                        ->schema([
-                            Select::make('price_type')
-                                ->label(__('event.package_price_type'))
-                                ->options(PackagePriceType::options())
-                                ->default(PackagePriceType::Normal->value)
-                                ->enum(PackagePriceType::class)
-                                ->nullable(),
-
-                            TextInput::make('price')
-                                ->label(__('event.package_price'))
-                                ->default(0)
-                                ->numeric()
-                                ->required(),
-                        ]),
 
                     Grid::make()
                         ->columnSpan(2)
@@ -86,6 +70,28 @@ class PackageForm
                         ->prefixIcon('heroicon-o-link')
                         ->url()
                         ->nullable(),
+
+                    Fieldset::make(__('event.package_price'))
+                        ->columns(3)
+                        ->schema([
+                            Select::make('price_type')
+                                ->label(__('event.package_price_type'))
+                                ->options(PackagePriceType::options())
+                                ->default(PackagePriceType::Normal->value)
+                                ->enum(PackagePriceType::class)
+                                ->required(),
+
+                            TextInput::make('price')
+                                ->label(__('event.package_price'))
+                                ->default(0)
+                                ->numeric()
+                                ->required(),
+
+                            TextInput::make('quota')
+                                ->label(__('event.package_quota'))
+                                ->numeric()
+                                ->required(),
+                        ]),
 
                     MarkdownEditor::make('description')
                         ->label(__('event.package_description'))

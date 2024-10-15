@@ -2,9 +2,11 @@
 
 namespace App\Filament\Resources\Event\ScheduleResource\Pages;
 
+use App\Enums\NotificationChannels;
 use App\Events\Event\ScheduleCreated;
 use App\Filament\Resources\Event\ScheduleResource;
 use Filament\Resources\Pages\CreateRecord;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
@@ -16,6 +18,8 @@ class CreateSchedule extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
+        $data['user_id'] = Auth::id();
+
         if (empty($data['description'])) {
             $data['description'] = '';
         }
@@ -29,6 +33,11 @@ class CreateSchedule extends CreateRecord
 
     protected function afterCreate(): void
     {
+        // assign current user to newly created schedule
+        Auth::user()->schedules()->attach($this->record, [
+            'channels' => array_column(NotificationChannels::cases(), 'value'),
+        ]);
+
         event(new ScheduleCreated($this->record));
 
         Cache::forget('event.pinned');

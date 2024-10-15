@@ -2,14 +2,18 @@
 
 namespace App\Filament\Resources\Event\ScheduleResource\Pages;
 
+use App\Enums\NotificationChannels;
 use App\Events\Event\ScheduleUpdated;
 use App\Filament\Resources\Event\ScheduleResource;
 use App\Models\URL\ShortURL;
+use App\Models\User;
 use AshAllenDesign\ShortURL\Exceptions\ShortURLException;
 use AshAllenDesign\ShortURL\Facades\ShortURL as URLShortener;
-use Filament\Actions;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Str;
 
@@ -20,8 +24,8 @@ class EditSchedule extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\ViewAction::make(),
-            Actions\DeleteAction::make(),
+            ViewAction::make(),
+            DeleteAction::make(),
         ];
     }
 
@@ -51,6 +55,14 @@ class EditSchedule extends EditRecord
      */
     protected function afterSave(): void
     {
+        // if someone is able to edit the schedule
+        // it should be belonged to the user
+        Auth::user()->schedules()->syncWithoutDetaching([
+            $this->record->id => [
+                'channels' => array_column(NotificationChannels::cases(), 'value'),
+            ],
+        ]);
+
         event(new ScheduleUpdated($this->record));
 
         // clear cached response

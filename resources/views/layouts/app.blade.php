@@ -48,6 +48,7 @@
 						@lang('navigation.menu')
 					</summary>
 					<ul dir="rtl">
+						<li><a href="{{ route('schedule.organize') }}">@lang('event.my_schedule')</a></li>
 						<li><a href="{{ route('user.profile') }}">@lang('user.profile')</a></li>
 						<li><a href="{{ route('user.setting') }}">@lang('user.setting')</a></li>
 						<li><a href="{{ route('logout') }}">@lang('user.logout')</a></li>

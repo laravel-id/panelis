@@ -6,6 +6,7 @@ use App\Filament\Resources\Event\ScheduleResource\Forms\OrganizerForm;
 use App\Filament\Resources\Event\ScheduleResource\Forms\PackageForm;
 use App\Filament\Resources\Event\ScheduleResource\Forms\ReplicateForm;
 use App\Filament\Resources\Event\ScheduleResource\Forms\ScheduleForm;
+use App\Filament\Resources\Event\ScheduleResource\Forms\SettingForm;
 use App\Filament\Resources\Event\ScheduleResource\Pages;
 use App\Filament\Resources\Event\ScheduleResource\Pages\ViewSchedule;
 use App\Filament\Resources\Event\ScheduleResource\Widgets\ScheduleOverview;
@@ -48,7 +49,7 @@ class ScheduleResource extends Resource
 
     public static function getLabel(): ?string
     {
-        return __('event.schedule');
+        return __('navigation.schedule');
     }
 
     public static function getWidgets(): array
@@ -99,6 +100,11 @@ class ScheduleResource extends Resource
                         ->description(__('event.package_section_description'))
                         ->icon('heroicon-s-currency-dollar')
                         ->schema(PackageForm::schema()),
+
+                    Wizard\Step::make(__('event.schedule_setting'))
+                        ->description(__('event.schedule_setting_description'))
+                        ->icon('heroicon-s-wrench')
+                        ->schema(SettingForm::make()),
                 ])
                     ->skippable()
                     ->persistStepInQueryString()

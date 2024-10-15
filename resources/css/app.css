@@ -33,3 +33,7 @@ div.parent-event {
 a.schedule-title {
     text-decoration: none;
 }
+
+a.full-width {
+    width: 100%;
+}

@@ -22,6 +22,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Spatie\Sitemap\Contracts\Sitemapable;
 use Spatie\Sitemap\Tags\Url;
@@ -46,6 +47,7 @@ use Spatie\Sitemap\Tags\Url;
  * @property string $opengraph_image
  * @property bool $is_past
  * @property District $district
+ * @property Collection $participants
  */
 class Schedule extends Model implements Sitemapable
 {
@@ -286,6 +288,15 @@ class Schedule extends Model implements Sitemapable
             ->orderBy('sort');
     }
 
+    /**
+     * @return HasMany<Participant>
+     */
+    public function participants(): HasMany
+    {
+        return $this->hasMany(Participant::class)
+            ->orderBy('created_at');
+    }
+
     public function district(): BelongsTo
     {
         return $this->belongsTo(District::class);
@@ -299,6 +310,13 @@ class Schedule extends Model implements Sitemapable
     public function bookmarks(): HasMany
     {
         return $this->hasMany(Bookmark::class);
+    }
+
+    public function users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class)
+            ->withTimestamps()
+            ->withPivot('channels');
     }
 
     public static function getPublishedSchedules(?array $filters = null): Collection
@@ -387,7 +405,11 @@ class Schedule extends Model implements Sitemapable
             ->where('slug', $slug)
             ->with([
                 'parent',
-                'packages',
+                'packages' => function (HasMany $builder): HasMany {
+                    return $builder->withCount([
+                        'participants' => fn (Builder $builder): Builder => $builder->isFulfilled(),
+                    ]);
+                },
                 'district' => fn (BelongsTo $builder): BelongsTo => $builder->select('id', 'name'),
                 'organizers' => fn (BelongsToMany $builder): BelongsToMany => $builder->select('id', 'slug', 'name'),
                 'types' => fn (BelongsToMany $builder): BelongsToMany => $builder->select('id', 'title'),
@@ -476,6 +498,16 @@ class Schedule extends Model implements Sitemapable
             ])
             ->orderByDesc('started_at')
             ->whereDate('local_started_at', '<=', now(get_timezone()))
+            ->get();
+    }
+
+    public static function getOrganizedSchedules(?User $user = null): Collection
+    {
+        $user ??= Auth::user();
+
+        return self::query()
+            ->whereHas('users', fn (Builder $builder) => $builder->where('user_id', $user->id))
+            ->orderByDesc('started_at')
             ->get();
     }
 

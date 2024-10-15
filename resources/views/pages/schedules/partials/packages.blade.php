@@ -4,6 +4,10 @@
 		@foreach($chunk as $package)
 			<article>
 				<header class="pico-color-{{ get_color_theme() }}-700">
+					@php
+						$isSold = $package->is_sold || ($package->quota > 0 && $package->participants_count >= $package->quota);
+					@endphp
+
 					@if ($schedule->is_past OR $package->is_past OR $package->is_sold)
 						<del><strong>{{ $package->title }}</strong></del>
 					@else
@@ -30,13 +34,22 @@
 						<p><i class="ri-calendar-2-fill"></i> {{ $package->period }}</p>
 					@endif
 
-					@if(!empty($package->url))
+					@if (!empty($schedule->metadata['registration']))
+						<p>
+							<i class="ri-links-line"></i>
+							@if ($isSold)
+								@lang('event.schedule_registration_closed')
+							@else
+								<a href="{{ route('participant.register', ['slug' => $schedule->slug, 'package' => $package->id]) }}">@lang('event.link_package_register')</a>
+							@endif
+						</p>
+					@elseif(!empty($package->url))
 						<p><i class="ri-links-line"></i> <a href="{{ $package->url }}">@lang('event.link_package_register')</a></p>
 					@endif
 
 					@if(!empty($package->description))
 						<hr/>
-						<p>{!! Str::markdown($package->description ?? '', ['html_input' => 'strip']) !!}</p>
+						<p>{!! Str::markdown($package->description, ['html_input' => 'strip']) !!}</p>
 					@endif
 				</div>
 			</article>

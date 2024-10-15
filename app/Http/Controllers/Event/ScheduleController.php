@@ -1,8 +1,9 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Event;
 
 use App\Actions\Schedule\GenerateCalendarUrl;
+use App\Http\Controllers\Controller;
 use App\Models\Event\Organizer;
 use App\Models\Event\Schedule;
 use App\Models\Slug;
@@ -33,6 +34,7 @@ class ScheduleController extends Controller
         }
 
         $schedule = Schedule::getScheduleBySlug($slug);
+        set_locale($schedule->metadata['locale'] ?? app()->getLocale());
 
         $organizers = $schedule->organizers
             ->map(function (Organizer $organizer): string {
@@ -107,7 +109,20 @@ class ScheduleController extends Controller
             ->openGraphSite(config('app.name'));
 
         return view('pages.schedules.filter')
-            ->with('schedules', Schedule::getArchivedSchedules());
+            ->with('schedules', Schedule::getArchivedSchedules())
+            ->with('title', __('event.schedule_archive'));
+    }
+
+    public function organize(): View
+    {
+        $schedules = Schedule::getOrganizedSchedules();
+
+        seo()->title($title = __('event.my_schedule'), false)
+            ->openGraphSite(config('app.name'));
+
+        return view('pages.schedules.organize')
+            ->with('schedules', $schedules)
+            ->with('title', $title);
     }
 
     private function generateStructuredData(Schedule $schedule): array
