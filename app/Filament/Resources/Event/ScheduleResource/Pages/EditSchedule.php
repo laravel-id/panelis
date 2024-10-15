@@ -57,11 +57,11 @@ class EditSchedule extends EditRecord
     {
         // if someone is able to edit the schedule
         // it should be belonged to the user
-        Auth::user()->schedules()->syncWithoutDetaching([
-            $this->record->id => [
-                'channels' => array_column(NotificationChannels::cases(), 'value'),
-            ],
-        ]);
+        //        Auth::user()->schedules()->syncWithoutDetaching([
+        //            $this->record->id => [
+        //                'channels' => array_column(NotificationChannels::cases(), 'value'),
+        //            ],
+        //        ]);
 
         event(new ScheduleUpdated($this->record));
 
