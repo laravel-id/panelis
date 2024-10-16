@@ -39,9 +39,11 @@ class CheckExpiredPaymentCommand extends Command
                     $transaction->status = TransactionStatus::Expired;
                     $transaction->save();
 
-                    $transactionable = $transaction->transactionable->fresh();
-                    $transactionable->status = Status::Expired;
-                    $transactionable->save();
+                    if (! empty($transaction->transactionable)) {
+                        $transactionable = $transaction->transactionable->fresh();
+                        $transactionable->status = Status::Expired;
+                        $transactionable->save();
+                    }
                 });
             });
 
