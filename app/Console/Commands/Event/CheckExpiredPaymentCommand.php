@@ -32,6 +32,7 @@ class CheckExpiredPaymentCommand extends Command
         Transaction::query()
             ->where('expired_at', '<', now())
             ->where('status', TransactionStatus::Pending)
+            ->with('transactionable')
             ->get()
             ->each(function (Transaction $transaction): void {
                 DB::transaction(function () use ($transaction): void {
