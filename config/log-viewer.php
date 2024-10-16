@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\ViewLogs;
+
 return [
 
     /*
@@ -73,7 +75,7 @@ return [
 
     'middleware' => [
         'web',
-        \Opcodes\LogViewer\Http\Middleware\AuthorizeLogViewer::class,
+        ViewLogs::class,
     ],
 
     /*
