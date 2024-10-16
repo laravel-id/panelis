@@ -60,6 +60,12 @@ class AdminPanelProvider extends PanelProvider
                     ->isActiveWhen(fn (): bool => request()->route()->getControllerClass() === CreateSchedule::class)
                     ->group(__('navigation.event'))
                     ->sort(3),
+
+                NavigationItem::make(__('navigation.logs'))
+                    ->url(fn (): string => route('log-viewer.index'))
+                    ->openUrlInNewTab()
+                    ->group(__('navigation.system'))
+                    ->sort(5),
             ])
             ->navigationGroups([
                 NavigationGroup::make(__('navigation.event'))
