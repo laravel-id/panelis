@@ -15,7 +15,13 @@ class ViewLogs
      */
     public function handle(Request $request, Closure $next): Response
     {
-        abort_if(! $request->user()->is_root || ! $request->user()->can('ViewLogs'), Response::HTTP_FORBIDDEN);
+        abort_if(
+            boolean: empty($request->user())
+                || ! $request->user()?->is_root
+                || ! $request->user()->can('ViewLogs'),
+
+            code: Response::HTTP_FORBIDDEN,
+        );
 
         return $next($request);
     }
