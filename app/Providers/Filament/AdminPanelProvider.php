@@ -7,6 +7,7 @@ use App\Filament\Pages\Auth\EmailVerificationPrompt;
 use App\Filament\Pages\Auth\Login;
 use App\Filament\Pages\Auth\RequestPasswordReset;
 use App\Filament\Pages\Dashboard;
+use App\Filament\Resources\Event\ScheduleResource\Pages\CreateSchedule;
 use App\Filament\Widgets\SimpleAnalytics\ReferralChart as SimpleAnalyticsReferralChart;
 use App\Filament\Widgets\SimpleAnalytics\StatsChart as SimpleAnalyticsStatsChart;
 use App\Filament\Widgets\SimpleAnalytics\TopPage as SimpleAnalyticsTopPage;
@@ -46,7 +47,6 @@ class AdminPanelProvider extends PanelProvider
                 EnvironmentIndicatorPlugin::make()
                     ->visible(! app()->isProduction()),
             ])
-
             ->navigationItems([
                 NavigationItem::make(__('navigation.website'))
                     ->icon('heroicon-o-globe-alt')
@@ -56,10 +56,10 @@ class AdminPanelProvider extends PanelProvider
                     ),
 
                 NavigationItem::make(__('event.schedule_create'))
-                    // ->url(CreateSchedule::getUrl())
-                    ->isActiveWhen(fn (): bool => request()->routeIs('filament.admin.resources.event.schedules.create'))
-                    ->url(sprintf('/%s/event/schedules/create', $path))
-                    ->group(__('navigation.event')),
+                    ->url(fn (): string => CreateSchedule::getUrl())
+                    ->isActiveWhen(fn (): bool => request()->route()->getControllerClass() === CreateSchedule::class)
+                    ->group(__('navigation.event'))
+                    ->sort(3),
             ])
             ->navigationGroups([
                 NavigationGroup::make(__('navigation.event'))
@@ -76,7 +76,6 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-o-cog-6-tooth')
                     ->collapsed(),
             ])
-
             ->unsavedChangesAlerts()
 
             //->registration(Register::class)
