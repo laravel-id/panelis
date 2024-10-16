@@ -22,6 +22,7 @@
         "laravel/tinker": "^2.8",
         "livewire/livewire": "^3.5",
         "lorisleiva/laravel-actions": "^2.8",
+        "opcodesio/log-viewer": "^3.11",
         "pxlrbt/filament-environment-indicator": "^2.0",
         "saloonphp/saloon": "^3.0",
         "simonhamp/the-og": "^0.5.5",
