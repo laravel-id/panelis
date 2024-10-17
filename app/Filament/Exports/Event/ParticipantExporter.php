@@ -6,11 +6,14 @@ use App\Enums\Participants\BloodType;
 use App\Enums\Participants\Gender;
 use App\Enums\Participants\IdentityType;
 use App\Enums\Participants\Relation;
+use App\Enums\Participants\Status;
 use App\Models\Event\Participant;
 use Carbon\Carbon;
+use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Exporter;
 use Filament\Actions\Exports\Models\Export;
+use Illuminate\Database\Eloquent\Builder;
 
 class ParticipantExporter extends Exporter
 {
@@ -80,15 +83,28 @@ class ParticipantExporter extends Exporter
 
             ExportColumn::make('status')
                 ->enabledByDefault(false)
-                ->label(__('event.participant_status')),
+                ->label(__('event.participant_status'))
+                ->formatStateUsing(fn (Status $state): string => $state->label()),
 
-            ExportColumn::make('created_at')
+            ExportColumn::make('local_created_at')
                 ->enabledByDefault(false)
                 ->label(__('ui.created_at')),
 
-            ExportColumn::make('updated_at')
+            ExportColumn::make('local_updated_at')
                 ->enabledByDefault(false)
                 ->label(__('ui.updated_at')),
+        ];
+    }
+
+    public static function modifyQuery(Builder $query, array $options = []): Builder
+    {
+        return $query->isFulfilled();
+    }
+
+    public function getFormats(): array
+    {
+        return [
+            ExportFormat::Xlsx,
         ];
     }
 
