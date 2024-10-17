@@ -62,7 +62,7 @@ class Index extends Component
         $this->schedule->load([
             'participants.package',
             'participants' => function (HasMany $query): HasMany {
-                return $query->take(100)
+                return $query->IsFulfilled()
                     ->when(! empty($this->keyword), function (Builder $builder): Builder {
                         return $builder->where('name', 'like', '%'.$this->keyword.'%')
                             ->orWhere('bib', 'like', '%'.$this->keyword.'%');
