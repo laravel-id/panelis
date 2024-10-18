@@ -35,7 +35,7 @@ class CreateSchedule extends CreateRecord
     {
         // assign current user to newly created schedule
         Auth::user()->schedules()->attach($this->record, [
-            'channels' => array_column(NotificationChannels::cases(), 'value'),
+            'channels' => json_encode(array_column(NotificationChannels::cases(), 'value')),
         ]);
 
         event(new ScheduleCreated($this->record));
