@@ -5,7 +5,7 @@ namespace App\Actions\Events\Participants;
 use App\Enums\Participants\Status;
 use App\Enums\Transaction\TransactionStatus;
 use App\Models\Event\Participant;
-use App\Services\Payments\Payment;
+use App\Services\Payments\Factory as PaymentFactory;
 use Illuminate\Support\Facades\DB;
 use Lorisleiva\Actions\Concerns\AsAction;
 
@@ -22,8 +22,8 @@ class Cancel
             $participant->transaction->status = TransactionStatus::Canceled;
             $participant->transaction->save();
 
-            app(Payment::class)
-                ->setProvider($participant->transaction->vendor)
+            app(PaymentFactory::class)
+                ->driver($participant->transaction->vendor)
                 ->cancelPayment($participant->transaction->vendor_id);
         });
     }
