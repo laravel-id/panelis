@@ -28,6 +28,7 @@ class PackageForm
                 ->schema([
                     Toggle::make('is_sold')
                         ->label(__('event.package_is_sold'))
+                        ->columnSpanFull()
                         ->nullable(),
 
                     TextInput::make('title')
@@ -37,7 +38,7 @@ class PackageForm
                         ->required(),
 
                     Grid::make()
-                        ->columnSpan(2)
+                        ->columnSpan(3)
                         ->schema([
                             DatetimePicker::make('started_at')
                                 ->label(__('event.package_started_at'))
@@ -66,13 +67,14 @@ class PackageForm
 
                     TextInput::make('url')
                         ->label(__('event.package_url'))
-                        ->columnSpan(2)
+                        ->columnSpan(3)
                         ->prefixIcon('heroicon-o-link')
                         ->url()
                         ->nullable(),
 
                     Fieldset::make(__('event.package_price'))
                         ->columns(3)
+                        ->columnSpan(3)
                         ->schema([
                             Select::make('price_type')
                                 ->label(__('event.package_price_type'))
@@ -89,13 +91,14 @@ class PackageForm
 
                             TextInput::make('quota')
                                 ->label(__('event.package_quota'))
+                                ->default(0)
                                 ->numeric()
                                 ->required(),
                         ]),
 
                     MarkdownEditor::make('description')
                         ->label(__('event.package_description'))
-                        ->columnSpan(2),
+                        ->columnSpan(3),
                 ])
                 ->orderColumn('sort')
                 ->reorderable()
