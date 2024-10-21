@@ -88,21 +88,21 @@
 		<hr/>
 		<div><small><i class="ri-questionnaire-line"></i> @lang('event.schedule_info_registration'):</small></div>
 		@if(empty($schedule->metadata['registration']))
-			<p>
+			<div>
 				<i class="ri-external-link-line"></i>
 				@if (!$schedule->is_past)
 					<a rel="nofollow" href="{{ $externalUrl }}?ref=schedules.run">{{ $externalUrl }}</a>
 				@else
 					<del>{{ $externalUrl }}</del>
 				@endif
-			</p>
+			</div>
 		@endif
 
 		@if(!empty($instagram = data_get($schedule->metadata, 'instagram')))
-			<p>
+			<div>
 				<i class="ri-instagram-line"></i>
-				<a href="https://instagram.com/{{ $instagram }}">{{ $instagram }}</a>
-			</p>
+				<a href="https://instagram.com/{{ $instagram }}?ref=schedules.run">{{ $instagram }}</a>
+			</div>
 			@endif
 
 		@includeWhen(!empty($schedule->contacts) AND !$schedule->is_past, 'pages.schedules.partials.contact', compact('schedule'))
