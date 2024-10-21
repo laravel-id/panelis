@@ -23,6 +23,10 @@ class ParticipantController extends Controller
 
         return view('pages.participants.status')
             ->with('participant', $participant)
-            ->with('schedule', $participant->schedule);
+            ->with('schedule', $participant->schedule)
+            ->with(
+                'expiredHours',
+                now(get_timezone())->diffInHours($participant->transaction->expired_at->timezone(get_timezone())),
+            );
     }
 }

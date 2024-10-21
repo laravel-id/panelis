@@ -41,6 +41,7 @@ class RegisteredMail extends Mailable implements ShouldQueue
                 'participant' => $this->participant,
                 'schedule' => $this->participant->schedule,
                 'paymentUrl' => data_get($this->participant->transaction->metadata, 'payment_url'),
+                'expiredHours' => now(get_timezone())->diffInHours($this->participant->transaction->expired_at->timezone(get_timezone())),
             ],
         );
     }
