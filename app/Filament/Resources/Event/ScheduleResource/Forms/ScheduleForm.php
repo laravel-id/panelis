@@ -167,6 +167,17 @@ class ScheduleForm
                     Section::make(__('event.schedule_who'))
                         ->collapsible()
                         ->schema([
+                            TextInput::make('metadata.instagram')
+                                ->label(__('event.schedule_contact_instagram'))
+                                ->prefixIcon('heroicon-s-at-symbol')
+                                ->nullable(),
+
+                            TextInput::make('metadata.email')
+                                ->label(__('event.schedule_contact_email'))
+                                ->prefixIcon('heroicon-s-envelope')
+                                ->email()
+                                ->nullable(),
+
                             Repeater::make('contacts')
                                 ->columns()
                                 ->schema([
