@@ -9,10 +9,12 @@
 
 <br/>
 
-@lang('Saat ini status pembayaran kamu tertunda. Segera selesaikan transaksi dengan mengklik tombol di bawah dan mengikuti instruksi yang ada pada halaman tersebut.')
+@lang('Saat ini status pembayaran kamu tertunda. Segera selesaikan transaksi dengan mengklik tombol di bawah dan mengikuti instruksi yang ada pada halaman tersebut. Status kepesertaan kamu akan dibatalkan secara otomatis jika dalam **:hour** jam belum melakukan pembayaran.', [
+    'hour' => $expiredHours,
+])
 
 <x-mail::button :url="$paymentUrl">
-	Lakukan pembayaran sekarang
+	@lang('Bayar sekarang')
 </x-mail::button>
 
 @lang('Abaikan pesan ini jika kamu sudah melakukan pembayaran.')

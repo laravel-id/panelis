@@ -20,6 +20,9 @@
 
 	{{ route('participant.status', $participant->ulid) }}
 
+
+	@lang('Salam sehat selalu, sampai berjumpa di venue!')
+
 	@lang('Terima kasih'),
 	{{ config('app.name') }}
 </x-mail::panel>

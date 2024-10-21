@@ -1,3 +1,4 @@
+@php use Illuminate\Support\Str; @endphp
 <article>
 	<p>@lang('Halo, <strong>:name</strong>!', ['name' => $participant->name])</p>
 	<p>
@@ -7,7 +8,9 @@
 		])
 	</p>
 
-	<p>@lang('Saat ini status pembayaran kamu tertunda. Segera selesaikan transaksi dengan mengklik tombol di bawah dan mengikuti instruksi yang ada pada halaman tersebut.')</p>
+	<p>@lang('Saat ini status pembayaran kamu tertunda. Segera selesaikan transaksi dengan mengklik tombol di bawah dan mengikuti instruksi yang ada pada halaman tersebut. Status kepesertaan kamu akan dibatalkan secara otomatis jika dalam :hour jam belum melakukan pembayaran.', [
+    'hour' => Str::wrap($expiredHours, '<strong>', '</strong>'),
+	])</p>
 
 	<p>
 		<a href="{{ $participant->transaction->metadata['payment_url'] }}" class="full-width" role="button">@lang('Bayar sekarang')</a>
