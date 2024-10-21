@@ -98,6 +98,13 @@
 			</p>
 		@endif
 
+		@if(!empty($instagram = data_get($schedule->metadata, 'instagram')))
+			<p>
+				<i class="ri-instagram-line"></i>
+				<a href="https://instagram.com/{{ $instagram }}">{{ $instagram }}</a>
+			</p>
+			@endif
+
 		@includeWhen(!empty($schedule->contacts) AND !$schedule->is_past, 'pages.schedules.partials.contact', compact('schedule'))
 
 		@livewire('schedule.toolbar', compact('schedule'))
