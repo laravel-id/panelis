@@ -1,5 +1,4 @@
 @php
-	use App\Filament\Resources\Event\ScheduleResource\Pages\EditSchedule;
  	use Carbon\CarbonInterface;
 @endphp
 
@@ -39,15 +38,33 @@
 			<hr/>
 		@endif
 
-		@if(!empty($organizers))
-			<div><small><i class="ri-community-line"></i> @lang('event.organizer'):</small></div>
-			<p>{!! $organizers !!}</p>
-			<hr/>
+		<div>
+			<small>
+				<i class="ri-calendar-2-line"></i> @lang('event.schedule_datetime'):
+			</small>
+		</div>
+		<p>
+			{{ $schedule->held_at }}
+			@if (!$schedule->is_past)
+				({{ $startedAt->from(now(get_timezone()), CarbonInterface::DIFF_RELATIVE_TO_NOW, false, 2) }})
+			@endif
+		</p>
+		@if (!$relatedSchedules->isEmpty())
+			<div class="overflow-auto">
+				@include('pages.schedules.related', compact('relatedSchedules'))
+			</div>
 		@endif
+		<hr/>
 
-		@if(!empty($schedule->types))
-			<div><small><i class="ri-run-line"></i> @lang('event.type'):</small></div>
-			<p>{{ $schedule->types->implode('title', ', ') }}</p>
+		@if(!$schedule->is_virtual)
+			<div><small><i class="ri-map-pin-line"></i> @lang('event.schedule_location'):</small></div>
+			<p>
+				@if (!empty($schedule->metadata['location_url']))
+					<a href="{{ $schedule->metadata['location_url'] }}">{{ $schedule->full_location }}</a>
+				@else
+					{!! $schedule->full_location !!}
+				@endif
+			</p>
 			<hr/>
 		@endif
 
@@ -59,33 +76,18 @@
 		</small>
 		<hr/>
 
-		<div><small><i class="ri-calendar-2-line"></i> @lang('event.schedule_datetime'):</small></div>
-		<p>
-			{{ $schedule->held_at }}
-			@if (!$schedule->is_past)
-				({{ $startedAt->from(now(get_timezone()), CarbonInterface::DIFF_RELATIVE_TO_NOW, false, 2) }})
-			@endif
-		</p>
-
-		@if (!$relatedSchedules->isEmpty())
-			<div class="overflow-auto">
-				@include('pages.schedules.related', compact('relatedSchedules'))
-			</div>
-		@endif
-
-		@if(!$schedule->is_virtual)
+		@if(!empty($schedule->types))
+			<div><small><i class="ri-run-line"></i> @lang('event.type'):</small></div>
+			<p>{{ $schedule->types->implode('title', ', ') }}</p>
 			<hr/>
-			<div><small><i class="ri-map-pin-line"></i> @lang('event.schedule_location'):</small></div>
-			<p>
-				@if (!empty($schedule->metadata['location_url']))
-					<a href="{{ $schedule->metadata['location_url'] }}">{{ $schedule->full_location }}</a>
-				@else
-					{!! $schedule->full_location !!}
-				@endif
-			</p>
 		@endif
 
-		<hr/>
+		@if(!empty($organizers))
+			<div><small><i class="ri-community-line"></i> @lang('event.organizer'):</small></div>
+			<p>{!! $organizers !!}</p>
+			<hr/>
+		@endif
+
 		<div><small><i class="ri-questionnaire-line"></i> @lang('event.schedule_info_registration'):</small></div>
 		@if(empty($schedule->metadata['registration']))
 			<div>
