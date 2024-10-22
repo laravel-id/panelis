@@ -60,7 +60,7 @@ class ScheduleController extends Controller
             ],
         ]);
 
-        seo()->title($schedule->title, false)
+        seo()->title($schedule->title, $year)
             ->description(Str::limit($schedule->description ?? '', 120))
             ->images($schedule->opengraph_image)
             ->openGraphSite(config('app.name'));
