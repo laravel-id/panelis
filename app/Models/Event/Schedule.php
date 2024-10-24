@@ -511,6 +511,16 @@ class Schedule extends Model implements Sitemapable
             ->get();
     }
 
+    public static function countPerMonth(): Collection
+    {
+        return self::query()
+            ->selectRaw('strftime(\'%Y-%m\', started_at) AS month, COUNT(*) AS count')
+            ->whereYear('started_at', now(get_timezone()))
+            ->groupBy('month')
+            ->orderBy('month')
+            ->get();
+    }
+
     public function toSitemapTag(): Url|string|array
     {
         return Url::create(route('schedule.view', $this->slug))
