@@ -72,6 +72,10 @@ class ScheduleForm
                                         ->unique(ignoreRecord: true),
                                 ]),
 
+                            TextInput::make('metadata.tagline')
+                                ->label(__('event.schedule_tagline'))
+                                ->nullable(),
+
                             MarkdownEditor::make('description')
                                 ->label(__('event.schedule_description'))
                                 ->maxLength(5000),
