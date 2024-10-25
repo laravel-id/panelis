@@ -507,6 +507,7 @@ class Schedule extends Model implements Sitemapable
 
         return self::query()
             ->whereHas('users', fn (Builder $builder) => $builder->where('user_id', $user->id))
+            ->whereHas('participants')
             ->orderByDesc('started_at')
             ->get();
     }
