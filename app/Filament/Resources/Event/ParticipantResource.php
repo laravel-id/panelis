@@ -100,6 +100,8 @@ class ParticipantResource extends Resource
             ])
             ->filters([
                 SelectFilter::make('status')
+                    ->label(__('event.participant_status'))
+                    ->multiple()
                     ->options(Status::options()),
             ])
             ->actions([
