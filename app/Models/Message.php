@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
  * @property MessageStatus $status
  * @property int $id
  * @property null|string $email
+ * @property string $subject
+ * @property string $body
  *
  * @method Builder unread()
  */

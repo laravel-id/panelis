@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\Messages\SubmitRequest;
 use App\Models\Message;
+use App\Models\User;
+use App\Notifications\Message\NewNotification;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\View\View;
 
 class MessageController extends Controller
@@ -20,7 +23,12 @@ class MessageController extends Controller
 
     public function submit(SubmitRequest $request): RedirectResponse
     {
-        Message::query()->create($request->validated());
+        $message = Message::query()->create($request->validated());
+
+        Notification::send(
+            notifiables: User::query()->whereDoesntHave('roles')->get(),
+            notification: new NewNotification($message),
+        );
 
         return redirect()
             ->back()

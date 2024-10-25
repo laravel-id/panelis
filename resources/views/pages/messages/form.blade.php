@@ -25,7 +25,7 @@
 
         <x-form.input label="message.subject" name="subject" />
 
-        <x-form.textarea label="message.body" name="body" />
+        <x-form.textarea label="message.body" name="body" required />
 
         <footer>
           <x-form.button label="message.button_submit" />
