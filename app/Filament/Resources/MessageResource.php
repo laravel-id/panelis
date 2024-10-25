@@ -37,13 +37,6 @@ class MessageResource extends Resource
         return __('navigation.message');
     }
 
-    public static function getNavigationBadge(): ?string
-    {
-        return Message::query()
-            ->where('status', MessageStatus::Unread)
-            ->count();
-    }
-
     public static function form(Form $form): Form
     {
         return $form
