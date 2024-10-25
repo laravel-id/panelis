@@ -20,7 +20,7 @@
 					<tr>
 						<th>@lang('event.schedule')</th>
 						<th>@lang('event.schedule_started_at')</th>
-						<th>@lang('ui.actions')</th>
+						<th>#</th>
 					</tr>
 				</thead>
 
