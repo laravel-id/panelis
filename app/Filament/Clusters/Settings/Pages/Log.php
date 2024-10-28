@@ -39,8 +39,6 @@ class Log extends Page implements HasForms
 
     public array $logging;
 
-    public array $larabug;
-
     public bool $isButtonDisabled = false;
 
     protected function getHeaderActions(): array
@@ -57,11 +55,6 @@ class Log extends Page implements HasForms
                 ->action(function (array $data): void {
                     try {
                         Logger::debug($data['message'] ?? 'Testing log');
-
-                        // special test for Larabug
-                        if (in_array('larabug', config('logging.channels.stack.channels'))) {
-                            Artisan::call('larabug:test');
-                        }
 
                         Notification::make('log_test_sent')
                             ->title(__('setting.log_test_sent'))
@@ -112,12 +105,6 @@ class Log extends Page implements HasForms
                 ],
             ],
 
-            'larabug' => [
-                'login_key' => config('larabug.login_key'),
-                'project_key' => config('larabug.project_key'),
-                'environments' => config('larabug.environments'),
-            ],
-
             'isButtonDisabled' => ! Auth::user()->can('ViewLogSetting'),
         ]);
     }
@@ -137,11 +124,6 @@ class Log extends Page implements HasForms
                             ->required()
                             ->options(LogChannel::options()),
                     ]),
-
-                Section::make(__('setting.log_larabug'))
-                    ->visible(fn (Get $get): bool => in_array('larabug', $get('logging.channels.stack.channels')))
-                    ->collapsible()
-                    ->schema(Settings\Forms\Log\LarabugForm::make()),
 
                 Section::make(__('setting.log_papertrail'))
                     ->visible(function (Get $get): bool {
@@ -176,11 +158,6 @@ class Log extends Page implements HasForms
 
             // store array channels
             Setting::set('logging.channels.stack.channels', $logs);
-
-            // larabug environments
-            foreach ($this->form->getState()['larabug'] as $key => $value) {
-                Setting::set('larabug.'.$key, $value);
-            }
 
             event(new SettingUpdated);
 

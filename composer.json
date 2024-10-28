@@ -15,7 +15,6 @@
         "honeystone/laravel-seo": "^1.4",
         "itsgoingd/clockwork": "^5.2",
         "koalafacade/filament-alertbox": "^1.0",
-        "larabug/larabug": "^3.1",
         "laravel/framework": "^10.10",
         "laravel/sanctum": "^3.3",
         "laravel/slack-notification-channel": "^3.3",
