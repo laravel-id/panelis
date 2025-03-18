@@ -4,13 +4,13 @@ namespace App\Filament\Resources\Blog\PostResource\Pages;
 
 use App\Events\Blog\PostDeleted;
 use App\Filament\Resources\Blog\PostResource;
+use App\Filament\Resources\Blog\PostResource\Enums\PostPermission;
 use App\Models\Blog\Post;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\RestoreAction;
 use Filament\Resources\Pages\EditRecord;
-use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class EditPost extends EditRecord
@@ -21,24 +21,22 @@ class EditPost extends EditRecord
     {
         abort_unless(config('module.blog', false), Response::HTTP_NOT_FOUND);
 
-        abort_unless(Auth::user()->can('UpdateBlogPost'), Response::HTTP_FORBIDDEN);
+        abort_unless(user_can(PostPermission::Edit), Response::HTTP_FORBIDDEN);
     }
 
     protected function getHeaderActions(): array
     {
-        $canDelete = Auth::user()->can('DeleteBlogPost');
-
         return [
             DeleteAction::make()
-                ->visible($canDelete),
+                ->visible(user_can(PostPermission::Delete)),
 
             ActionGroup::make([
                 ForceDeleteAction::make()
-                    ->visible($canDelete)
+                    ->visible(user_can(PostPermission::Delete))
                     ->requiresConfirmation()
                     ->after(fn (Post $post) => event(new PostDeleted($post))),
 
-                RestoreAction::make()->visible(Auth::user()->can('UpdateBlogPost')),
+                RestoreAction::make()->visible(user_can(PostPermission::Edit)),
             ]),
         ];
     }

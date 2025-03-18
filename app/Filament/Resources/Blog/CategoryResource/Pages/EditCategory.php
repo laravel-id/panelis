@@ -3,9 +3,12 @@
 namespace App\Filament\Resources\Blog\CategoryResource\Pages;
 
 use App\Filament\Resources\Blog\CategoryResource;
-use Filament\Actions;
+use App\Filament\Resources\Blog\CategoryResource\Enums\CategoryPermission;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\ForceDeleteAction;
+use Filament\Actions\ViewAction;
 use Filament\Resources\Pages\EditRecord;
-use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class EditCategory extends EditRecord
@@ -15,15 +18,14 @@ class EditCategory extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\ViewAction::make()->visible(Auth::user()
-                ->can('ViewBlogCategory')),
+            ViewAction::make()->visible(user_can(CategoryPermission::Read)),
 
-            Actions\ActionGroup::make([
-                Actions\DeleteAction::make()
-                    ->visible(Auth::user()->can('DeleteBlogCategory')),
+            ActionGroup::make([
+                DeleteAction::make()
+                    ->visible(user_can(CategoryPermission::Delete)),
 
-                Actions\ForceDeleteAction::make()
-                    ->visible(Auth::user()->can('DeleteBlogCategory')),
+                ForceDeleteAction::make()
+                    ->visible(user_can(CategoryPermission::Delete)),
             ]),
         ];
     }
@@ -32,6 +34,6 @@ class EditCategory extends EditRecord
     {
         abort_unless(config('module.blog', false), Response::HTTP_NOT_FOUND);
 
-        abort_unless(Auth::user()->can('UpdateBlogCategory'), Response::HTTP_FORBIDDEN);
+        abort_unless(user_can(CategoryPermission::Edit), Response::HTTP_FORBIDDEN);
     }
 }

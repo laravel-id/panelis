@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Blog\PostResource\Forms;
 
+use App\Filament\Resources\Blog\CategoryResource\Enums\CategoryPermission;
 use App\Filament\Resources\Blog\CategoryResource\Forms\CategoryForm;
 use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
@@ -67,7 +68,7 @@ class PostForm
                         ->searchable()
                         ->preload()
                         ->multiple()
-                        ->createOptionForm(CategoryForm::make()),
+                        ->createOptionForm(user_can(CategoryPermission::Add) ? CategoryForm::make() : null),
 
                     DateTimePicker::make('published_at')
                         ->label(__('ui.published_at'))
@@ -76,7 +77,7 @@ class PostForm
                         ->nullable(),
                 ]),
 
-            Section::make(__('blog.additional_data'))
+            Section::make(__('blog.post_additional_data'))
                 ->description(__('blog.post_metadata_section_description'))
                 ->collapsed()
                 ->columnSpan(2)

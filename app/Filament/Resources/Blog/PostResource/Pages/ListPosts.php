@@ -3,9 +3,9 @@
 namespace App\Filament\Resources\Blog\PostResource\Pages;
 
 use App\Filament\Resources\Blog\PostResource;
+use App\Filament\Resources\Blog\PostResource\Enums\PostPermission;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
-use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class ListPosts extends ListRecords
@@ -15,7 +15,7 @@ class ListPosts extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()->visible(Auth::user()->can('CreateBlogPost')),
+            Actions\CreateAction::make()->visible(user_can(PostPermission::Add)),
         ];
     }
 
@@ -23,6 +23,6 @@ class ListPosts extends ListRecords
     {
         abort_unless(config('module.blog', false), Response::HTTP_NOT_FOUND);
 
-        abort_unless(Auth::user()->can('ViewBlogPost'), Response::HTTP_FORBIDDEN);
+        abort_unless(user_can(PostPermission::Browse), Response::HTTP_FORBIDDEN);
     }
 }
