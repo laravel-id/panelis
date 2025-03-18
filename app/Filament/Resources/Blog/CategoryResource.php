@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Blog;
 
+use App\Filament\Resources\Blog\CategoryResource\Enums\CategoryPermission;
 use App\Filament\Resources\Blog\CategoryResource\Forms\CategoryForm;
 use App\Filament\Resources\Blog\CategoryResource\Pages;
 use App\Models\Blog\Category;
@@ -21,7 +22,6 @@ use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 
 class CategoryResource extends Resource
@@ -40,14 +40,19 @@ class CategoryResource extends Resource
         return __('navigation.blog');
     }
 
+    public static function getNavigationLabel(): string
+    {
+        return __('navigation.blog_category');
+    }
+
     public static function shouldRegisterNavigation(): bool
     {
-        return config('module.blog', false);
+        return config('module.blog', false) && self::canAccess();
     }
 
     public static function canAccess(): bool
     {
-        return Auth::user()->can('ViewBlogCategory');
+        return user_can(CategoryPermission::Browse);
     }
 
     public static function form(Form $form): Form
@@ -84,9 +89,6 @@ class CategoryResource extends Resource
 
     public static function table(Table $table): Table
     {
-        $canEdit = Auth::user()->can('EditBlogCategory');
-        $canDelete = Auth::user()->can('DeleteBlogCategory');
-
         return $table
             ->recordUrl(function (Category $category): string {
                 return Pages\ViewCategory::getUrl(['record' => $category]);
@@ -94,7 +96,7 @@ class CategoryResource extends Resource
             ->columns([
                 ToggleColumn::make('is_visible')
                     ->label(__('blog.category_is_visible'))
-                    ->visible($canEdit),
+                    ->visible(user_can(CategoryPermission::Edit)),
 
                 TextColumn::make('slug')
                     ->label(__('blog.category_slug'))
@@ -119,21 +121,21 @@ class CategoryResource extends Resource
             ])
             ->actions([
                 EditAction::make()
-                    ->visible($canEdit),
+                    ->visible(user_can(CategoryPermission::Edit)),
 
                 DeleteAction::make()
-                    ->visible($canDelete),
+                    ->visible(user_can(CategoryPermission::Delete)),
             ])
             ->bulkActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
-                        ->visible($canDelete),
+                        ->visible(user_can(CategoryPermission::Delete)),
 
                     ForceDeleteBulkAction::make()
-                        ->visible($canDelete),
+                        ->visible(user_can(CategoryPermission::Delete)),
 
                     RestoreBulkAction::make()
-                        ->visible(Auth::user()->can('RestoreBlogCategory')),
+                        ->visible(user_can(CategoryPermission::Edit)),
                 ]),
             ]);
     }

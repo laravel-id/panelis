@@ -4,6 +4,7 @@ namespace App\Filament\Clusters\Settings\Pages;
 
 use App\Events\SettingUpdated;
 use App\Filament\Clusters\Settings;
+use App\Filament\Clusters\Settings\Enums\DatetimePermission;
 use App\Models\Setting;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
@@ -16,7 +17,6 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -46,7 +46,7 @@ class Datetime extends Page
 
     public static function canAccess(): bool
     {
-        return Auth::user()->can('ViewDatetimeSetting');
+        return user_can(DatetimePermission::Browse);
     }
 
     public function mount()
@@ -63,7 +63,7 @@ class Datetime extends Page
 
         return $form->schema([
             Section::make(__('setting.datetime'))
-                ->disabled(! Auth::user()->can('UpdateDatetimeSetting'))
+                ->disabled(user_cannot(DatetimePermission::Edit))
                 ->description(__('setting.datetime_section_description'))
                 ->schema([
                     // do not override existing config from Laravel: "app.timezone"
@@ -102,7 +102,7 @@ class Datetime extends Page
      */
     public function update(): void
     {
-        abort_unless(Auth::user()->can('UpdateDatetimeSetting'), Response::HTTP_FORBIDDEN);
+        abort_unless(user_can(DatetimePermission::Edit), Response::HTTP_FORBIDDEN);
 
         $this->validate();
 

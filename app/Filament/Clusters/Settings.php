@@ -2,8 +2,8 @@
 
 namespace App\Filament\Clusters;
 
+use App\Filament\Clusters\Settings\Enums\SettingPermission;
 use Filament\Clusters\Cluster;
-use Illuminate\Support\Facades\Auth;
 
 class Settings extends Cluster
 {
@@ -21,6 +21,6 @@ class Settings extends Cluster
 
     public static function canAccess(): bool
     {
-        return Auth::user()->can('ViewSetting');
+        return user_can(SettingPermission::Browse);
     }
 }

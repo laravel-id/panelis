@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Location;
 
+use App\Filament\Resources\Location\CountryResource\Enums\CountryPermission;
 use App\Filament\Resources\Location\CountryResource\Forms\CountryForm;
 use App\Models\Location\Country;
 use Filament\Forms\Form;
@@ -16,7 +17,6 @@ use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
 
 class CountryResource extends Resource
 {
@@ -41,12 +41,12 @@ class CountryResource extends Resource
 
     public static function canAccess(): bool
     {
-        return Auth::user()->can('ViewCountryLocation');
+        return user_can(CountryPermission::Browse);
     }
 
     public static function shouldRegisterNavigation(): bool
     {
-        return config('module.location', false);
+        return config('module.location', false) && self::canAccess();
     }
 
     public static function form(Form $form): Form
@@ -58,16 +58,13 @@ class CountryResource extends Resource
 
     public static function table(Table $table): Table
     {
-        $canUpdate = Auth::user()->can('UpdateCountryLocation');
-        $canDelete = Auth::user()->can('DeleteCountryLocation');
-
         return $table
             ->paginated(false)
             ->defaultSort('name')
             ->columns([
                 ToggleColumn::make('is_active')
                     ->label(__('location.country_is_active'))
-                    ->visible($canUpdate),
+                    ->visible(user_can(CountryPermission::Edit)),
 
                 TextColumn::make('name')
                     ->label(__('location.country_name'))
@@ -83,8 +80,10 @@ class CountryResource extends Resource
                 TextColumn::make('un_code')
                     ->label(__('location.country_un_code')),
 
-                TextColumn::make('local_updated_at')
+                TextColumn::make('updated_at')
                     ->label(__('ui.updated_at'))
+                    ->since(get_timezone())
+                    ->dateTimeTooltip(get_datetime_format(), get_timezone())
                     ->sortable(),
             ])
             ->filters([
@@ -93,16 +92,16 @@ class CountryResource extends Resource
             ])
             ->actions([
                 EditAction::make()
-                    ->visible($canUpdate),
+                    ->visible(user_can(CountryPermission::Edit)),
 
                 DeleteAction::make()
-                    ->visible($canDelete)
+                    ->visible(user_can(CountryPermission::Delete))
                     ->modalDescription(__('location.country_delete_confirmation')),
             ])
             ->bulkActions([
                 BulkAction::make('toggle')
                     ->label(__('location.country_toggle_status'))
-                    ->visible($canUpdate)
+                    ->visible(user_can(CountryPermission::Delete))
                     ->color('primary')
                     ->icon('heroicon-m-check-circle')
                     ->action(function (Collection $records): void {
@@ -114,7 +113,7 @@ class CountryResource extends Resource
 
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
-                        ->visible($canDelete)
+                        ->visible(user_can(CountryPermission::Delete))
                         ->modalDescription(__('location.country_delete_confirmation')),
                 ]),
             ]);

@@ -3,6 +3,8 @@
 namespace App\Filament\Resources\Location;
 
 use App\Filament\Resources\Location;
+use App\Filament\Resources\Location\DistrictResource\Enums\DistrictPermission;
+use App\Filament\Resources\Location\RegionResource\Enums\RegionPermission;
 use App\Models\Location\District;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -16,9 +18,7 @@ use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
 
 class DistrictResource extends Resource
 {
@@ -45,12 +45,12 @@ class DistrictResource extends Resource
 
     public static function canAccess(): bool
     {
-        return Auth::user()->can('ViewDistrictLocation');
+        return user_can(RegionPermission::Browse);
     }
 
     public static function shouldRegisterNavigation(): bool
     {
-        return config('module.location', false);
+        return config('module.location', false) && self::canAccess();
     }
 
     public static function form(Form $form): Form
@@ -61,15 +61,12 @@ class DistrictResource extends Resource
 
     public static function table(Table $table): Table
     {
-        $canUpdate = Auth::user()->can('UpdateDistrictLocation');
-        $canDelete = Auth::user()->can('DeleteDistrictLocation');
-
         return $table
             ->defaultSort('name')
             ->columns([
                 ToggleColumn::make('is_active')
                     ->label(__('location.district_is_active'))
-                    ->visible($canUpdate),
+                    ->visible(user_can(DistrictPermission::Edit)),
 
                 TextColumn::make('name')
                     ->label(__('location.district_name'))
@@ -85,10 +82,11 @@ class DistrictResource extends Resource
                     ->label(__('location.country'))
                     ->sortable(),
 
-                TextColumn::make('local_updated_at')
+                TextColumn::make('updated_at')
                     ->label(__('ui.updated_at'))
                     ->sortable()
-                    ->tooltip(fn (?Model $record): string => $record->updated_at ?? '')
+                    ->since(get_timezone())
+                    ->dateTimeTooltip(get_datetime_format(), get_timezone())
                     ->since(),
             ])
             ->filters([
@@ -111,17 +109,17 @@ class DistrictResource extends Resource
             ])
             ->actions([
                 EditAction::make()
-                    ->visible($canUpdate),
+                    ->visible(user_can(DistrictPermission::Edit)),
 
                 DeleteAction::make()
-                    ->visible($canDelete),
+                    ->visible(user_can(DistrictPermission::Delete)),
             ])
             ->bulkActions([
                 BulkAction::make('toggle')
                     ->label(__('location.toggle_status'))
                     ->color('primary')
                     ->icon('heroicon-m-check-circle')
-                    ->visible($canUpdate)
+                    ->visible(user_can(DistrictPermission::Edit))
                     ->action(function (Collection $records): void {
                         foreach ($records as $record) {
                             $record->is_active = ! $record->is_active;
@@ -131,7 +129,7 @@ class DistrictResource extends Resource
 
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
-                        ->visible($canDelete),
+                        ->visible(user_can(DistrictPermission::Delete)),
                 ]),
             ]);
     }

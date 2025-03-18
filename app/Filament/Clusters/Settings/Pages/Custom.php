@@ -4,6 +4,7 @@ namespace App\Filament\Clusters\Settings\Pages;
 
 use App\Events\SettingUpdated;
 use App\Filament\Clusters\Settings;
+use App\Filament\Clusters\Settings\Enums\CustomSettingPermission;
 use App\Models\Setting;
 use Exception;
 use Filament\Forms\Components\Actions\Action;
@@ -17,7 +18,6 @@ use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
@@ -48,7 +48,7 @@ class Custom extends Page implements HasForms
 
     public static function canAccess(): bool
     {
-        return Auth::user()->can('ViewCustomSetting');
+        return user_can(CustomSettingPermission::Browse);
     }
 
     public function mount(): void
@@ -65,7 +65,7 @@ class Custom extends Page implements HasForms
     public function form(Form $form): Form
     {
         return $form
-            ->disabled(! Auth::user()->can('ViewCustomSetting'))
+            ->disabled(user_cannot(CustomSettingPermission::Browse))
             ->schema([
                 Section::make(__('setting.custom'))
                     ->description(__('setting.custom_section_description'))
@@ -107,7 +107,7 @@ class Custom extends Page implements HasForms
      */
     public function update(): void
     {
-        abort_unless(Auth::user()->can('UpdateCustomSetting'), Response::HTTP_FORBIDDEN);
+        abort_unless(user_can(CustomSettingPermission::Edit), Response::HTTP_FORBIDDEN);
 
         $this->validate();
 

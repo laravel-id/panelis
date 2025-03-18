@@ -96,7 +96,7 @@ class CloudBackupForm
 
         return Actions::make([
             Action::make('authorize_dropbox')
-                ->label(__('database.authorize_dropbox'))
+                ->label(__('database.btn_authorize_dropbox'))
                 ->disabled(config('app.demo'))
                 ->visible(empty($user))
                 ->disabled(fn (Get $get): bool => empty($get('dropbox.client_id')) || empty($get('dropbox.client_secret')))

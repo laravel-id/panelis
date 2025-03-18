@@ -3,10 +3,11 @@
 namespace App\Filament\Resources\TranslationResource\Pages;
 
 use App\Filament\Resources\TranslationResource;
+use App\Filament\Resources\TranslationResource\Enums\TranslationPermission;
 use App\Models\Translation;
-use Filament\Actions;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
-use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class EditTranslation extends EditRecord
@@ -16,17 +17,17 @@ class EditTranslation extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()
+            CreateAction::make()
                 ->url(CreateTranslation::getUrl())
-                ->visible(Auth::user()->can('CreateTranslation')),
+                ->visible(user_can(TranslationPermission::Add)),
 
-            Actions\DeleteAction::make()
-                ->visible(fn (?Translation $line): bool => ! $line->is_system && Auth::user()->can('DeleteTranslation')),
+            DeleteAction::make()
+                ->visible(fn (?Translation $line): bool => ! $line->is_system && user_can(TranslationPermission::Delete)),
         ];
     }
 
     protected function authorizeAccess(): void
     {
-        abort_unless(Auth::user()->can('EditTranslation'), Response::HTTP_FORBIDDEN);
+        abort_unless(user_can(TranslationPermission::Add), Response::HTTP_FORBIDDEN);
     }
 }

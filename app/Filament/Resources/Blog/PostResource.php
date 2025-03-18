@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Blog;
 
+use App\Filament\Resources\Blog\PostResource\Enums\PostPermission;
 use App\Filament\Resources\Blog\PostResource\Forms\PostForm;
 use App\Filament\Resources\Blog\PostResource\Pages\CreatePost;
 use App\Filament\Resources\Blog\PostResource\Pages\EditPost;
@@ -9,11 +10,19 @@ use App\Filament\Resources\Blog\PostResource\Pages\ListPosts;
 use App\Models\Blog\Post;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Tables\Actions\BulkActionGroup;
+use Filament\Tables\Actions\DeleteAction;
+use Filament\Tables\Actions\DeleteBulkAction;
+use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Actions\RestoreBulkAction;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
+use Filament\Tables\Filters\TrashedFilter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Support\Facades\Auth;
 
 class PostResource extends Resource
 {
@@ -31,14 +40,19 @@ class PostResource extends Resource
         return __('navigation.blog');
     }
 
+    public static function getNavigationLabel(): string
+    {
+        return __('navigation.blog_post');
+    }
+
     public static function canAccess(): bool
     {
-        return Auth::user()->can('ViewBlogPost');
+        return user_can(PostPermission::Browse);
     }
 
     public static function shouldRegisterNavigation(): bool
     {
-        return config('module.blog', false);
+        return config('module.blog', false) && self::canAccess();
     }
 
     public static function form(Form $form): Form
@@ -50,49 +64,46 @@ class PostResource extends Resource
 
     public static function table(Table $table): Table
     {
-        $canUpdate = Auth::user()->can('UpdateBlogPost');
-        $canDelete = Auth::user()->can('DeleteBlogPost');
-
         return $table
             ->columns([
-                Tables\Columns\ToggleColumn::make('is_visible')
-                    ->visible($canUpdate)
+                ToggleColumn::make('is_visible')
+                    ->visible(user_can(PostPermission::Edit))
                     ->label(__('blog.post_is_published')),
 
-                Tables\Columns\TextColumn::make('title')
+                TextColumn::make('title')
                     ->label(__('blog.post_title')),
 
-                Tables\Columns\TextColumn::make('categories.name')
+                TextColumn::make('categories.name')
                     ->label(__('blog.post_categories')),
 
-                Tables\Columns\TextColumn::make('user.name')
+                TextColumn::make('user.name')
                     ->label(__('blog.post_author')),
 
-                Tables\Columns\TextColumn::make('published_at')
+                TextColumn::make('published_at')
                     ->label(__('ui.published_at'))
                     ->since(),
             ])
             ->filters([
-                Tables\Filters\TernaryFilter::make('is_visible')
+                TernaryFilter::make('is_visible')
                     ->label(__('blog.post_is_visible')),
 
-                Tables\Filters\SelectFilter::make('user_id')
+                SelectFilter::make('user_id')
                     ->label(__('blog.post_authors'))
                     ->relationship('user', 'name')
                     ->searchable()
                     ->multiple()
                     ->preload(),
-                Tables\Filters\TrashedFilter::make(),
+                TrashedFilter::make(),
             ])
             ->actions([
-                Tables\Actions\EditAction::make()->visible($canUpdate),
-                Tables\Actions\DeleteAction::make()->visible($canDelete),
+                EditAction::make()->visible(user_can(PostPermission::Edit)),
+                DeleteAction::make()->visible(user_can(PostPermission::Delete)),
             ])
             ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make()->visible($canDelete),
-                    Tables\Actions\RestoreBulkAction::make()->visible($canUpdate),
-                ])->visible($canUpdate || $canDelete),
+                BulkActionGroup::make([
+                    DeleteBulkAction::make()->visible(user_can(PostPermission::Delete)),
+                    RestoreBulkAction::make()->visible(user_can(PostPermission::Edit)),
+                ]),
             ]);
     }
 

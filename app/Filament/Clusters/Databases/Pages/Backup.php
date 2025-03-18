@@ -3,6 +3,7 @@
 namespace App\Filament\Clusters\Databases\Pages;
 
 use App\Filament\Clusters\Databases;
+use App\Filament\Clusters\Databases\Enums\DatabasePermission;
 use App\Models\Database;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
@@ -12,7 +13,6 @@ use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
 use Filament\Tables\Table;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Number;
@@ -41,7 +41,7 @@ class Backup extends Page implements HasTable
 
     public static function canAccess(): bool
     {
-        return Auth::user()->can('ViewDbBackup');
+        return user_can(DatabasePermission::Browse);
     }
 
     public function table(Table $table): Table
@@ -66,7 +66,7 @@ class Backup extends Page implements HasTable
             ])
             ->actions([
                 Action::make('download')
-                    ->visible(Auth::user()->can('DownloadBackupDb'))
+                    ->visible(user_can(DatabasePermission::Download))
                     ->label(__('database.button_download'))
                     ->button()
                     ->color('primary')
@@ -91,7 +91,7 @@ class Backup extends Page implements HasTable
                     }),
 
                 Action::make('delete')
-                    ->visible(Auth::user()->can('DeleteBackupDb'))
+                    ->visible(user_can(DatabasePermission::Delete))
                     ->label(__('database.button_delete'))
                     ->button()
                     ->color('warning')

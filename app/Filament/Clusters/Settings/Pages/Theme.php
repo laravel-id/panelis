@@ -4,6 +4,7 @@ namespace App\Filament\Clusters\Settings\Pages;
 
 use App\Events\SettingUpdated;
 use App\Filament\Clusters\Settings;
+use App\Filament\Clusters\Settings\Enums\ThemePermission;
 use App\Models\Setting;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Components\Section;
@@ -14,7 +15,6 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -42,7 +42,7 @@ class Theme extends Page implements HasForms
 
     public static function canAccess(): bool
     {
-        return Auth::user()->can('ViewThemeSetting');
+        return user_can(ThemePermission::Browse);
     }
 
     public array $colors = ['primary', 'gray', 'success', 'info', 'warning', 'danger'];
@@ -79,7 +79,7 @@ class Theme extends Page implements HasForms
 
     public function update(): void
     {
-        abort_unless(Auth::user()->can('UpdateThemeSetting'), Response::HTTP_FORBIDDEN);
+        abort_unless(user_can(ThemePermission::Edit), Response::HTTP_FORBIDDEN);
 
         try {
             $this->validate();

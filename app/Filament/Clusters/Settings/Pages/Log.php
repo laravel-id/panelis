@@ -5,6 +5,7 @@ namespace App\Filament\Clusters\Settings\Pages;
 use App\Events\SettingUpdated;
 use App\Filament\Clusters\Settings;
 use App\Filament\Clusters\Settings\Enums\LogChannel;
+use App\Filament\Clusters\Settings\Enums\LogPermission;
 use App\Models\Setting;
 use Filament\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
@@ -20,7 +21,6 @@ use Filament\Support\Enums\MaxWidth;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log as Logger;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
@@ -86,7 +86,7 @@ class Log extends Page implements HasForms
 
     public static function canAccess(): bool
     {
-        return Auth::user()->can('ViewLogSetting');
+        return user_cannot(LogPermission::Browse);
     }
 
     public function mount(): void
@@ -118,14 +118,14 @@ class Log extends Page implements HasForms
                 'environments' => config('larabug.environments'),
             ],
 
-            'isButtonDisabled' => ! Auth::user()->can('ViewLogSetting'),
+            'isButtonDisabled' => user_cannot(LogPermission::Browse),
         ]);
     }
 
     public function form(Form $form): Form
     {
         return $form
-            ->disabled(! Auth::user()->can('UpdateLogSetting'))
+            ->disabled(user_cannot(LogPermission::Edit))
             ->schema([
                 Section::make(__('setting.log'))
                     ->description(__('setting.log_section_description'))
@@ -164,7 +164,7 @@ class Log extends Page implements HasForms
      */
     public function update(): void
     {
-        abort_unless(Auth::user()->can('UpdateLogSetting'), Response::HTTP_FORBIDDEN);
+        abort_unless(user_can(LogPermission::Edit), Response::HTTP_FORBIDDEN);
 
         $this->validate();
 

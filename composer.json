@@ -16,7 +16,7 @@
         "laravel/telescope": "^5.0",
         "laravel/tinker": "^2.9",
         "lorisleiva/laravel-actions": "^2.8",
-        "spatie/laravel-permission": "^6.10",
+        "spatie/laravel-permission": "^6.16",
         "spatie/laravel-translation-loader": "^2.8"
     },
     "require-dev": {

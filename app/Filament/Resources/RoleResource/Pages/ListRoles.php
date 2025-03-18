@@ -3,9 +3,10 @@
 namespace App\Filament\Resources\RoleResource\Pages;
 
 use App\Filament\Resources\RoleResource;
-use Filament\Actions;
+use App\Filament\Resources\RoleResource\Enums\RolePermission;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Response;
 
 class ListRoles extends ListRecords
 {
@@ -14,13 +15,13 @@ class ListRoles extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()
-                ->visible(Auth::user()->can('CreateRole')),
+            CreateAction::make()
+                ->visible(user_can(RolePermission::Add)),
         ];
     }
 
-    public function mount(): void
+    public function authorizeAccess(): void
     {
-        abort_unless(Auth::user()->can('ViewRole'), 403);
+        abort_unless(user_can(RolePermission::Browse), Response::HTTP_FORBIDDEN);
     }
 }

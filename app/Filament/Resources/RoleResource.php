@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\RoleResource\Enums\RolePermission;
 use App\Filament\Resources\RoleResource\Forms\RoleForm;
 use App\Filament\Resources\RoleResource\Pages;
 use App\Models\Permission;
@@ -19,7 +20,6 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
 
 class RoleResource extends Resource
 {
@@ -44,9 +44,14 @@ class RoleResource extends Resource
         return __('user.role');
     }
 
+    public static function canAccess(): bool
+    {
+        return user_can(RolePermission::Browse);
+    }
+
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()->can('ViewRole');
+        return self::canAccess();
     }
 
     public static function form(Form $form): Form
@@ -87,7 +92,7 @@ class RoleResource extends Resource
                                 return $record->label;
                             })
                             ->descriptions(
-                                Permission::pluck('description', 'id'),
+                                Permission::pluck('name', 'id'),
                             )
                             ->required(),
                     ]),
@@ -96,20 +101,17 @@ class RoleResource extends Resource
 
     public static function table(Table $table): Table
     {
-        $canUpdate = Auth::user()->can('UpdateRole');
-        $canDelete = Auth::user()->can('DeleteRole');
-
         return $table
             ->paginated(false)
             ->columns([
                 ToggleColumn::make('is_admin')
-                    ->label(__('user.role_is_admin')),
+                    ->label(__('user.role_is_admin'))
+                    ->disabled(! user_can(RolePermission::Edit)),
 
                 TextColumn::make('name')
                     ->label(__('user.role_name'))
                     ->searchable()
-                    ->sortable()
-                    ->description(fn (Role $role): ?string => $role->description),
+                    ->sortable(),
 
                 TextColumn::make('users_count')
                     ->label(__('user.role_user_count'))
@@ -117,22 +119,24 @@ class RoleResource extends Resource
                     ->color('primary')
                     ->sortable(),
 
-                TextColumn::make('local_updated_at')
+                TextColumn::make('updated_at')
                     ->label(__('ui.updated_at'))
+                    ->since(get_timezone())
+                    ->dateTimeTooltip(get_datetime_format(), get_timezone())
                     ->sortable(),
             ])
             ->filters([
                 //
             ])
             ->actions([
-                EditAction::make()->visible($canUpdate),
+                EditAction::make()->visible(user_can(RolePermission::Edit)),
 
                 ActionGroup::make([
                     DeleteAction::make()
                         ->disabled(function (Role $role): bool {
                             return $role->users_count >= 1;
                         })
-                        ->visible($canDelete),
+                        ->visible(user_can(RolePermission::Delete)),
                 ]),
             ])
             ->bulkActions([

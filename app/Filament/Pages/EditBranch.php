@@ -40,6 +40,7 @@ class EditBranch extends EditTenantProfile
                 TextInput::make('email')
                     ->label(__('branch.email'))
                     ->nullable()
+                    ->placeholder('business@email-example.com')
                     ->email(),
 
                 Textarea::make('address')

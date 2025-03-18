@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Blog\CategoryResource\Pages;
 
 use App\Filament\Resources\Blog\CategoryResource;
+use App\Filament\Resources\Blog\CategoryResource\Enums\CategoryPermission;
 use App\Models\Blog\Category;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
@@ -13,7 +14,6 @@ use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\TextEntry\TextEntrySize;
 use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
-use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class ViewCategory extends ViewRecord
@@ -23,15 +23,14 @@ class ViewCategory extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            EditAction::make()->visible(Auth::user()
-                ->can('ViewBlogCategory')),
+            EditAction::make()->visible(user_can(CategoryPermission::Edit)),
 
             ActionGroup::make([
                 DeleteAction::make()
-                    ->visible(Auth::user()->can('DeleteBlogCategory')),
+                    ->visible(user_can(CategoryPermission::Delete)),
 
                 ForceDeleteAction::make()
-                    ->visible(Auth::user()->can('DeleteBlogCategory')),
+                    ->visible(user_can(CategoryPermission::Delete)),
             ]),
         ];
     }
@@ -40,7 +39,7 @@ class ViewCategory extends ViewRecord
     {
         abort_unless(config('module.blog', false), Response::HTTP_NOT_FOUND);
 
-        abort_unless(Auth::user()->can('ViewBlogCategory'), Response::HTTP_FORBIDDEN);
+        abort_unless(user_can(CategoryPermission::Read), Response::HTTP_FORBIDDEN);
     }
 
     public function infolist(Infolist $infolist): Infolist

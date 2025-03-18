@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Blog\PostResource\Pages;
 
 use App\Filament\Resources\Blog\PostResource;
+use App\Filament\Resources\Blog\PostResource\Enums\PostPermission;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,7 +16,7 @@ class CreatePost extends CreateRecord
     {
         abort_unless(config('module.blog', false), Response::HTTP_NOT_FOUND);
 
-        abort_unless(Auth::user()->can('CreateBlogPost'), Response::HTTP_FORBIDDEN);
+        abort_unless(user_can(PostPermission::Add), Response::HTTP_FORBIDDEN);
     }
 
     protected function mutateFormDataBeforeCreate(array $data): array

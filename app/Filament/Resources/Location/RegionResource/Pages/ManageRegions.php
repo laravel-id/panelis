@@ -3,9 +3,9 @@
 namespace App\Filament\Resources\Location\RegionResource\Pages;
 
 use App\Filament\Resources\Location\RegionResource;
+use App\Filament\Resources\Location\RegionResource\Enums\RegionPermission;
 use Filament\Actions;
 use Filament\Resources\Pages\ManageRecords;
-use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class ManageRegions extends ManageRecords
@@ -16,7 +16,7 @@ class ManageRegions extends ManageRecords
     {
         return [
             Actions\CreateAction::make()
-                ->visible(Auth::user()->can('CreateRegionLocation')),
+                ->visible(user_can(RegionPermission::Add)),
         ];
     }
 
@@ -24,6 +24,9 @@ class ManageRegions extends ManageRecords
     {
         abort_unless(config('module.location', false), Response::HTTP_NOT_FOUND);
 
-        abort_unless(Auth::user()->can('ViewRegionLocation'), Response::HTTP_FORBIDDEN);
+        abort_unless(
+            user_can(RegionPermission::Browse) && user_can(RegionPermission::Add),
+            Response::HTTP_FORBIDDEN,
+        );
     }
 }

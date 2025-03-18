@@ -6,6 +6,7 @@ use App\Actions\Setting\ExportAll;
 use App\Actions\Setting\ImportAll;
 use App\Events\SettingUpdated;
 use App\Filament\Clusters\Settings;
+use App\Filament\Clusters\Settings\Enums\SettingPermission;
 use App\Models\Setting;
 use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
 use Exception;
@@ -18,7 +19,6 @@ use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log as Logger;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
@@ -45,7 +45,7 @@ class General extends Page
         return [
             Action::make('export')
                 ->label(__('setting.btn_export_all'))
-                ->visible(Auth::user()->can('ExportSetting'))
+                ->visible(user_can(SettingPermission::Export))
                 ->requiresConfirmation()
                 ->modalDescription(__('setting.modal_export_all'))
                 ->action(function (): StreamedResponse {
@@ -55,7 +55,7 @@ class General extends Page
             ActionGroup::make([
                 Action::make('import')
                     ->label(__('setting.btn_import'))
-                    ->visible(Auth::user()->can('ImportSetting'))
+                    ->visible(user_can(SettingPermission::Import))
                     ->requiresConfirmation()
                     ->modalDescription(__('setting.modal_import'))
                     ->form([
@@ -104,7 +104,7 @@ class General extends Page
 
     public static function canAccess(): bool
     {
-        return Auth::user()->can('ViewGeneralSetting');
+        return user_can(SettingPermission::Browse);
     }
 
     public function mount(): void
@@ -125,7 +125,7 @@ class General extends Page
                 'enabled' => config('telescope.enabled', false),
             ],
 
-            'isButtonDisabled' => ! Auth::user()->can('UpdateGeneralSetting'),
+            'isButtonDisabled' => user_cannot(SettingPermission::Edit),
         ]);
     }
 
@@ -151,7 +151,7 @@ class General extends Page
             Section::make(__('setting.debug_mode'))
                 ->collapsed()
                 ->schema(Settings\Forms\General\DebugForm::make()),
-        ])->disabled(! Auth::user()->can('UpdateGeneralSetting'));
+        ])->disabled(user_cannot(SettingPermission::Edit));
     }
 
     /**
@@ -159,7 +159,7 @@ class General extends Page
      */
     public function update(): void
     {
-        abort_unless(Auth::user()->can('UpdateGeneralSetting'), Response::HTTP_FORBIDDEN);
+        abort_unless(user_can(SettingPermission::Edit), Response::HTTP_FORBIDDEN);
 
         $this->validate();
 

@@ -4,6 +4,7 @@ namespace App\Filament\Clusters\Databases\Pages;
 
 use App\Events\SettingUpdated;
 use App\Filament\Clusters\Databases;
+use App\Filament\Clusters\Databases\Enums\DatabasePermission;
 use App\Jobs\Database\UploadToCloud;
 use App\Models\Setting;
 use App\Services\Database\Database;
@@ -19,7 +20,6 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use KoalaFacade\FilamentAlertBox\Forms\Components\AlertBox;
@@ -59,7 +59,7 @@ class AutoBackup extends Page implements HasForms
 
     public static function canAccess(): bool
     {
-        return Auth::user()->can('ViewAutoBackupDb');
+        return user_can(DatabasePermission::Browse);
     }
 
     public function boot(?Database $database): void
@@ -71,7 +71,7 @@ class AutoBackup extends Page implements HasForms
     {
         return [
             Action::make('backup')
-                ->visible(Auth::user()->can('BackupDb'))
+                ->visible(user_can(DatabasePermission::Backup))
                 ->label(__('database.button_backup_now'))
                 ->form([
                     AlertBox::make('cloud_backup_disabled')
@@ -126,7 +126,7 @@ class AutoBackup extends Page implements HasForms
         }
 
         $this->form->fill([
-            'isButtonDisabled' => ! $this->databaseService?->isAvailable() || ! Auth::user()->can('UpdateAutoBackupDb'),
+            'isButtonDisabled' => ! $this->databaseService?->isAvailable() || ! user_can(DatabasePermission::Edit),
             'database' => [
                 'auto_backup_enabled' => config('database.auto_backup_enabled', false),
                 'backup_period' => config('database.backup_period'),
@@ -169,11 +169,11 @@ class AutoBackup extends Page implements HasForms
                 Section::make(__('database.cloud_backup'))
                     ->description(__('database.cloud_backup_section_description'))
                     ->collapsible()
-                    ->visible(Auth::user()->can('CloudDBBackup'))
+                    ->visible(user_can(DatabasePermission::Backup))
                     ->disabled(fn (Get $get): bool => ! $get('database.auto_backup_enabled') || config('app.demo'))
                     ->schema(Databases\Forms\CloudBackupForm::make()),
             ])
-            ->disabled(! Auth::user()->can('UpdateAutoBackupDb'));
+            ->disabled(user_cannot(DatabasePermission::Edit));
     }
 
     /**
@@ -181,7 +181,7 @@ class AutoBackup extends Page implements HasForms
      */
     public function update(): void
     {
-        abort_unless(Auth::user()->can('UpdateAutoBackupDb'), Response::HTTP_FORBIDDEN);
+        abort_unless(user_can(DatabasePermission::Edit), Response::HTTP_FORBIDDEN);
 
         $this->validate();
 
