@@ -3,9 +3,11 @@
 namespace App\Filament\Resources;
 
 use App\Actions\User\SendResetPasswordLink;
+use App\Filament\Resources\UserResource\Enums\UserPermission;
 use App\Filament\Resources\UserResource\Forms\UserForm;
 use App\Filament\Resources\UserResource\Pages;
 use App\Models\User;
+use Exception;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
@@ -42,9 +44,14 @@ class UserResource extends Resource
         return __('user.user');
     }
 
+    public static function canAccess(): bool
+    {
+        return user_can(UserPermission::Browse);
+    }
+
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()->can('ViewUser');
+        return self::canAccess();
     }
 
     public static function form(Form $form): Form
@@ -74,13 +81,15 @@ class UserResource extends Resource
                     ->sortable(),
 
                 TextColumn::make('email')
-                    ->label(__('user.name'))
+                    ->label(__('user.email'))
                     ->copyable()
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make('local_created_at')
+                TextColumn::make('created_at')
                     ->label(__('ui.created_at'))
+                    ->since(get_timezone())
+                    ->dateTimeTooltip(get_datetime_format(), get_timezone())
                     ->sortable(),
             ])
             ->filters([
@@ -98,13 +107,13 @@ class UserResource extends Resource
                     ->multiple(),
             ])
             ->actions([
-                EditAction::make()->visible(Auth::user()->can('UpdateUser')),
+                EditAction::make()->visible(user_can(UserPermission::Edit)),
 
                 ActionGroup::make([
                     Action::make('send_reset_password_link')
                         ->label(__('user.btn_send_reset_password_link'))
                         ->icon(__('heroicon-o-lock-open'))
-                        ->visible(Auth::user()->can('ResetUserPassword'))
+                        ->visible(user_can(UserPermission::ResetPassword))
                         ->disabled(fn (User $user): bool => Auth::id() === $user->id)
                         ->requiresConfirmation()
                         ->action(function (User $user): void {
@@ -115,7 +124,7 @@ class UserResource extends Resource
                                     ->title(__('user.reset_password_link_sent'))
                                     ->success()
                                     ->send();
-                            } catch (\Exception $e) {
+                            } catch (Exception $e) {
                                 Log::error($e);
 
                                 Notification::make('link_not_sent')

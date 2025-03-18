@@ -3,6 +3,7 @@
 namespace App\Filament\Clusters\Settings\Pages;
 
 use App\Filament\Clusters\Settings;
+use App\Filament\Clusters\Settings\Enums\UserPermission;
 use App\Models\Role;
 use App\Models\Setting;
 use Exception;
@@ -16,7 +17,6 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
@@ -54,13 +54,13 @@ class User extends Page implements HasForms, Settings\HasUpdateableForm
 
     public static function canAccess(): bool
     {
-        return Auth::user()->can('ViewUserSetting');
+        return user_can(UserPermission::Browse);
     }
 
     public function form(Form $form): Form
     {
         return $form
-            ->disabled(! Auth::user()->can('UpdateUserSetting'))
+            ->disabled(user_cannot(UserPermission::Edit))
             ->schema([
                 Section::make(__('setting.user'))
                     ->description(__('setting.user_section_description'))
@@ -85,7 +85,7 @@ class User extends Page implements HasForms, Settings\HasUpdateableForm
      */
     public function update(): void
     {
-        abort_unless(Auth::user()->can('UpdateUserSetting'), Response::HTTP_FORBIDDEN);
+        abort_unless(user_can(UserPermission::Edit), Response::HTTP_FORBIDDEN);
 
         $this->validate();
 

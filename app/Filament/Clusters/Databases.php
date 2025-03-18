@@ -2,8 +2,8 @@
 
 namespace App\Filament\Clusters;
 
+use App\Filament\Clusters\Databases\Enums\DatabasePermission;
 use Filament\Clusters\Cluster;
-use Illuminate\Support\Facades\Auth;
 
 class Databases extends Cluster
 {
@@ -21,6 +21,6 @@ class Databases extends Cluster
 
     public static function canAccess(): bool
     {
-        return Auth::user()->can('ViewDb');
+        return user_can(DatabasePermission::Browse);
     }
 }

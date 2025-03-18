@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\TranslationResource\Enums\TranslationPermission;
 use App\Filament\Resources\TranslationResource\Forms\TranslationForm;
 use App\Filament\Resources\TranslationResource\Pages;
 use App\Models\Translation;
@@ -13,7 +14,6 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\Auth;
 use Spatie\TranslationLoader\LanguageLine;
 
 class TranslationResource extends Resource
@@ -39,9 +39,14 @@ class TranslationResource extends Resource
         return __('navigation.system');
     }
 
+    public static function canAccess(): bool
+    {
+        return user_can(TranslationPermission::Browse);
+    }
+
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()->can('ViewTranslation');
+        return self::canAccess();
     }
 
     public static function form(Form $form): Form
@@ -92,7 +97,7 @@ class TranslationResource extends Resource
             ])
             ->actions([
                 EditAction::make()
-                    ->visible(Auth::user()->can('EditTranslation')),
+                    ->visible(user_can(TranslationPermission::Edit)),
             ])
             ->bulkActions([
 

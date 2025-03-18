@@ -5,6 +5,7 @@ namespace App\Filament\Clusters\Settings\Pages;
 use App\Events\SettingUpdated;
 use App\Filament\Clusters\Settings;
 use App\Filament\Clusters\Settings\Enums\NumberFormat;
+use App\Filament\Clusters\Settings\Enums\NumberPermission;
 use App\Models\Setting;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Radio;
@@ -18,7 +19,6 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -48,7 +48,7 @@ class Number extends Page
 
     public static function canAccess(): bool
     {
-        return Auth::user()->can('ViewNumberSetting');
+        return user_can(NumberPermission::Browse);
     }
 
     public function mount(): void
@@ -67,7 +67,7 @@ class Number extends Page
     {
         return $form->schema([
             Section::make(__('setting.number'))
-                ->disabled(! Auth::user()->can('UpdateNumberSetting'))
+                ->disabled(user_can(NumberPermission::Edit))
                 ->description(__('setting.number_section_description'))
                 ->schema([
                     TextInput::make('app.currency_symbol')
@@ -117,7 +117,7 @@ class Number extends Page
      */
     public function update(): void
     {
-        abort_unless(Auth::user()->can('UpdateNumberSetting'), Response::HTTP_FORBIDDEN);
+        abort_unless(user_can(NumberPermission::Edit), Response::HTTP_FORBIDDEN);
 
         $this->validate();
 

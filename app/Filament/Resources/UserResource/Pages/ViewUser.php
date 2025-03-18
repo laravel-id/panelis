@@ -3,9 +3,9 @@
 namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Filament\Resources\UserResource;
-use Filament\Actions;
+use App\Filament\Resources\UserResource\Enums\UserPermission;
+use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
-use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class ViewUser extends ViewRecord
@@ -15,12 +15,12 @@ class ViewUser extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make()->visible(Auth::user()->can('ViewUser')),
+            EditAction::make()->visible(user_can(UserPermission::Edit)),
         ];
     }
 
     protected function authorizeAccess(): void
     {
-        abort_unless(Auth::user()->can('ViewUser'), Response::HTTP_FORBIDDEN);
+        abort_unless(user_can(UserPermission::Read), Response::HTTP_FORBIDDEN);
     }
 }

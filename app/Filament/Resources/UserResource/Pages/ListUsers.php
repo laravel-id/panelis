@@ -3,9 +3,10 @@
 namespace App\Filament\Resources\UserResource\Pages;
 
 use App\Filament\Resources\UserResource;
-use Filament\Actions;
+use App\Filament\Resources\UserResource\Enums\UserPermission;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ListRecords;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Response;
 
 class ListUsers extends ListRecords
 {
@@ -14,12 +15,12 @@ class ListUsers extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()->visible(Auth::user()->can('CreateUser')),
+            CreateAction::make()->visible(user_can(UserPermission::Add)),
         ];
     }
 
-    public function mount(): void
+    public function authorizeAccess(): void
     {
-        abort_unless(Auth::user()->can('ViewRole'), 403);
+        abort_unless(user_can(UserPermission::Browse), Response::HTTP_FORBIDDEN);
     }
 }

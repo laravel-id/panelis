@@ -29,6 +29,7 @@ class TranslationForm
             TextInput::make('group')
                 ->label(__('translation.group'))
                 ->autocomplete(false)
+                ->autofocus()
                 ->datalist(function (): array {
                     return Translation::orderBy('group')
                         ->groupBy('group')

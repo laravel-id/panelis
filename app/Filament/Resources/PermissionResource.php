@@ -14,7 +14,6 @@ use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Facades\Auth;
 
 class PermissionResource extends Resource
 {
@@ -39,9 +38,14 @@ class PermissionResource extends Resource
         return __('navigation.user');
     }
 
+    public static function canAccess(): bool
+    {
+        return user_can(PermissionResource\Enums\Permission::Browse);
+    }
+
     public static function shouldRegisterNavigation(): bool
     {
-        return Auth::user()->can('ViewPermission');
+        return self::canAccess();
     }
 
     public static function form(Form $form): Form
@@ -58,38 +62,33 @@ class PermissionResource extends Resource
                     ->maxLength(30),
 
                 TextInput::make('guard_name')
-                    ->label('user.permission_guard_name')
+                    ->label(__('user.permission_guard_name'))
                     ->disabledOn('edit')
                     ->default('web')
+                    ->datalist(['web', 'api'])
                     ->required(),
 
                 Placeholder::make('label')
-                    ->label(__('user.permission_label'))
+                    ->label(__('user.permission_name'))
                     ->visibleOn('edit')
                     ->content(fn (Permission $permission): string => $permission->label),
-
-                Placeholder::make('description')
-                    ->label(__('user.permission_description'))
-                    ->visibleOn('edit')
-                    ->content(fn (Permission $permission): string => $permission->description),
             ]);
     }
 
     public static function table(Table $table): Table
     {
-        $canUpdate = Auth::user()->can('UpdatePermission');
-        $canDelete = Auth::user()->can('DeletePermission');
-
         return $table
             ->columns([
                 TextColumn::make('label')
-                    ->label(__('user.permission_label'))
+                    ->label(__('user.permission_name'))
                     ->searchable(['name', 'label', 'description'])
                     ->sortable()
                     ->description(fn (?Model $record): string => $record?->description ?? ''),
 
-                TextColumn::make('local_updated_at')
+                TextColumn::make('updated_at')
                     ->label(__('ui.updated_at'))
+                    ->since(get_timezone())
+                    ->dateTimeTooltip(get_datetime_format(), get_timezone())
                     ->sortable(),
             ])
             ->filters([
@@ -97,12 +96,11 @@ class PermissionResource extends Resource
             ])
             ->actions([
                 EditAction::make()
-                    ->visible($canUpdate),
+                    ->visible(user_can(PermissionResource\Enums\Permission::Edit)),
 
                 ActionGroup::make([
                     DeleteAction::make()
-                        ->visible($canDelete)
-                        ->disabled(fn (Permission $record): bool => $record->is_default),
+                        ->visible(user_can(PermissionResource\Enums\Permission::Delete)),
                 ]),
             ])
             ->bulkActions([

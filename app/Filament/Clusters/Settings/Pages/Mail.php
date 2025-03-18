@@ -4,6 +4,7 @@ namespace App\Filament\Clusters\Settings\Pages;
 
 use App\Events\SettingUpdated;
 use App\Filament\Clusters\Settings;
+use App\Filament\Clusters\Settings\Enums\MailPermission;
 use App\Filament\Clusters\Settings\Enums\MailType;
 use App\Mail\TestMail;
 use App\Models\Branch;
@@ -23,7 +24,6 @@ use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail as Mailer;
 use Illuminate\Validation\ValidationException;
@@ -221,14 +221,14 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
 
     public static function canAccess(): bool
     {
-        return Auth::user()->can('ViewMailSetting');
+        return user_can(MailPermission::Browse);
     }
 
     public function getHeaderActions(): array
     {
         return [
             Action::make('test_mail')
-                ->visible(Auth::user()->can('SendMailTest'))
+                ->visible(user_can(MailPermission::SendTest))
                 ->label(__('setting.mail_button_test'))
                 ->modalWidth(MaxWidth::Medium)
                 ->modalSubmitActionLabel(__('setting.mail_test_button_send'))
@@ -325,7 +325,7 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
 
             'services' => config('services'),
 
-            'isButtonDisabled' => ! Auth::user()->can('UpdateMailSetting'),
+            'isButtonDisabled' => user_cannot(MailPermission::Edit),
         ]);
     }
 
@@ -339,7 +339,7 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
             $this->mailgunSection(),
             $this->postmarkSection(),
             $this->sesSection(),
-        ])->disabled(! Auth::user()->can('UpdateMailSetting'));
+        ])->disabled(user_can(MailPermission::Edit));
     }
 
     /**
@@ -347,7 +347,7 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
      */
     public function update(): void
     {
-        abort_unless(Auth::user()->can('UpdateMailSetting'), Response::HTTP_FORBIDDEN);
+        abort_unless(user_can(MailPermission::Edit), Response::HTTP_FORBIDDEN);
 
         $this->validate();
 

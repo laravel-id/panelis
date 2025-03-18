@@ -3,8 +3,8 @@
 namespace App\Filament\Resources\TranslationResource\Pages;
 
 use App\Filament\Resources\TranslationResource;
+use App\Filament\Resources\TranslationResource\Enums\TranslationPermission;
 use Filament\Resources\Pages\CreateRecord;
-use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
 
 class CreateTranslation extends CreateRecord
@@ -13,6 +13,6 @@ class CreateTranslation extends CreateRecord
 
     protected function authorizeAccess(): void
     {
-        abort_unless(Auth::user()->can('CreateTranslation'), Response::HTTP_FORBIDDEN);
+        abort_unless(user_can(TranslationPermission::Add), Response::HTTP_FORBIDDEN);
     }
 }

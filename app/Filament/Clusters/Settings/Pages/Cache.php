@@ -4,6 +4,7 @@ namespace App\Filament\Clusters\Settings\Pages;
 
 use App\Filament\Clusters\Settings;
 use App\Filament\Clusters\Settings\Enums\CacheDriver;
+use App\Filament\Clusters\Settings\Enums\CachePermission;
 use App\Models\Setting;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Radio;
@@ -16,7 +17,6 @@ use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
@@ -41,7 +41,7 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
 
     public static function canAccess(): bool
     {
-        return Auth::user()->can('ViewCacheSetting');
+        return user_cannot(CachePermission::Browse);
     }
 
     protected function getHeaderActions(): array
@@ -73,7 +73,7 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
                 ->label(__('setting.cache_button_flush'))
                 ->requiresConfirmation()
                 ->color('warning')
-                ->hidden(! Auth::user()->can('FlushCache'))
+                ->hidden(user_cannot(CachePermission::Flush))
                 ->action(function (): void {
                     try {
                         \Illuminate\Support\Facades\Cache::flush();
@@ -107,7 +107,7 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
                 'redis' => config('database.redis'),
             ],
 
-            'isButtonDisabled' => ! Auth::user()->can('ViewCacheSetting'),
+            'isButtonDisabled' => user_can(CachePermission::Browse),
         ]);
     }
 
@@ -141,7 +141,7 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
                 ->visible(fn (Get $get): bool => $get('cache.default') === CacheDriver::DynamoDB->value)
                 ->schema(Settings\Forms\Cache\DynamoDBForm::schema()),
         ])
-            ->disabled(! Auth::user()->can('UpdateCacheSetting'));
+            ->disabled(user_cannot(CachePermission::Edit));
     }
 
     /**
@@ -149,7 +149,7 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
      */
     public function update(): void
     {
-        abort_unless(Auth::user()->can('UpdateCacheSetting'), Response::HTTP_FORBIDDEN);
+        abort_unless(user_can(CachePermission::Edit), Response::HTTP_FORBIDDEN);
 
         $this->validate();
 

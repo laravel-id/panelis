@@ -2,8 +2,8 @@
 
 namespace App\Actions\User;
 
-use App\Models\Permission;
-use Illuminate\Support\Facades\Auth;
+use App\Filament\Resources\PermissionResource\Enums\Permission;
+use App\Models\Permission as Model;
 use Illuminate\Support\Facades\Storage;
 use Lorisleiva\Actions\Concerns\AsAction;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,13 +14,14 @@ class BackupPermission
 
     public function handle(): string
     {
-        abort_if(! Auth::user()->can('BackupPermission'), Response::HTTP_FORBIDDEN);
+        abort_if(! user_can(Permission::Backup), Response::HTTP_FORBIDDEN);
 
-        $permissions = Permission::query()
+        $permissions = Model::query()
             ->get()
-            ->mapWithKeys(function (Permission $permission): array {
+            ->mapWithKeys(function (Model $permission): array {
                 return [$permission->name => [
                     'name' => $permission->name,
+                    'label' => $permission->label,
                     'guard' => $permission->guard_name,
                 ]];
             })

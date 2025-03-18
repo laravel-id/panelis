@@ -2,13 +2,13 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\ModuleResource\Enums\ModulePermission;
 use App\Filament\Resources\ModuleResource\Pages;
 use App\Models\Module;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 
 class ModuleResource extends Resource
@@ -36,7 +36,12 @@ class ModuleResource extends Resource
 
     public static function canAccess(): bool
     {
-        return Auth::user()->can('Manage module');
+        return user_can(ModulePermission::Browse);
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return self::canAccess();
     }
 
     public static function form(Form $form): Form
@@ -53,6 +58,7 @@ class ModuleResource extends Resource
             ->columns([
                 Tables\Columns\ToggleColumn::make('is_enabled')
                     ->label(__('module.is_active'))
+                    ->disabled(user_cannot(ModulePermission::Edit))
                     ->afterStateUpdated(function () {
                         Cache::forget('modules');
                     }),
@@ -70,11 +76,7 @@ class ModuleResource extends Resource
                     ->label(__('module.is_active')),
             ])
             ->actions([])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
-                ]),
-            ]);
+            ->bulkActions([]);
     }
 
     public static function getRelations(): array

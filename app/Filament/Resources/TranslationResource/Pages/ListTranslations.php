@@ -6,16 +6,16 @@ use App\Actions\Translation\Backup;
 use App\Actions\Translation\Import;
 use App\Actions\Translation\Restore;
 use App\Filament\Resources\TranslationResource;
+use App\Filament\Resources\TranslationResource\Enums\TranslationPermission;
 use App\Models\Translation;
 use Exception;
-use Filament\Actions;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
+use Filament\Actions\CreateAction;
 use Filament\Notifications\Actions\Action as NotificationAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Support\Enums\MaxWidth;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -28,18 +28,18 @@ class ListTranslations extends ListRecords
 
     protected function authorizeAccess(): void
     {
-        abort_unless(Auth::user()->can('ViewTranslation'), Response::HTTP_FORBIDDEN);
+        abort_unless(user_can(TranslationPermission::Browse), Response::HTTP_FORBIDDEN);
     }
 
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()
-                ->visible(Auth::user()->can('CreateTranslation')),
+            CreateAction::make()
+                ->visible(user_can(TranslationPermission::Add)),
 
             ActionGroup::make([
                 Action::make('import')
-                    ->visible(Auth::user()->can('ImportTranslation'))
+                    ->visible(user_can(TranslationPermission::Import))
                     ->label(__('translation.import'))
                     ->icon('heroicon-s-arrow-down-tray')
                     ->modalWidth(MaxWidth::Medium)
@@ -85,7 +85,7 @@ class ListTranslations extends ListRecords
                     }),
 
                 Action::make('export')
-                    ->visible(Auth::user()->can('ExportTranslation'))
+                    ->visible(user_can(TranslationPermission::Export))
                     ->label(__('translation.export'))
                     ->icon('heroicon-s-arrow-up-tray')
                     ->modalWidth(MaxWidth::Medium)
@@ -124,7 +124,7 @@ class ListTranslations extends ListRecords
                     }),
 
                 Action::make('backup')
-                    ->visible(Auth::user()->can('BackupTranslation'))
+                    ->visible(user_can(TranslationPermission::Backup))
                     ->label(__('translation.backup'))
                     ->icon('heroicon-o-arrow-down-on-square-stack')
                     ->requiresConfirmation()
@@ -148,7 +148,7 @@ class ListTranslations extends ListRecords
                     }),
 
                 Action::make('restore')
-                    ->visible(Auth::user()->can('RestoreTranslation'))
+                    ->visible(user_can(TranslationPermission::Restore))
                     ->label(__('translation.restore'))
                     ->icon('heroicon-o-arrow-up-on-square-stack')
                     ->requiresConfirmation()

@@ -3,9 +3,9 @@
 namespace App\Filament\Resources\ModuleResource\Pages;
 
 use App\Filament\Resources\ModuleResource;
+use App\Filament\Resources\ModuleResource\Enums\ModulePermission;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Auth;
 
 class ListModules extends ListRecords
 {
@@ -18,6 +18,6 @@ class ListModules extends ListRecords
 
     public function mount(): void
     {
-        abort_unless(Auth::user()->can('Manage module'), Response::HTTP_FORBIDDEN);
+        abort_unless(user_can(ModulePermission::Browse), Response::HTTP_FORBIDDEN);
     }
 }

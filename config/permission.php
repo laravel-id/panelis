@@ -75,8 +75,8 @@ return [
         /*
          * Change this if you want to name the related pivots other than defaults
          */
-        'role_pivot_key' => null, //default 'role_id',
-        'permission_pivot_key' => null, //default 'permission_id',
+        'role_pivot_key' => null, // default 'role_id',
+        'permission_pivot_key' => null, // default 'permission_id',
 
         /*
          * Change this if you want to name the related model primary key other than
@@ -157,5 +157,29 @@ return [
          */
 
         'store' => 'default',
+    ],
+
+    'enums' => [
+        \App\Filament\Resources\Blog\PostResource\Enums\PostPermission::class,
+        \App\Filament\Resources\Blog\CategoryResource\Enums\CategoryPermission::class,
+        \App\Filament\Resources\Location\CountryResource\Enums\CountryPermission::class,
+        \App\Filament\Resources\Location\RegionResource\Enums\RegionPermission::class,
+        \App\Filament\Resources\Location\DistrictResource\Enums\DistrictPermission::class,
+        \App\Filament\Resources\UserResource\Enums\UserPermission::class,
+        \App\Filament\Resources\RoleResource\Enums\RolePermission::class,
+        \App\Filament\Resources\PermissionResource\Enums\Permission::class,
+        \App\Filament\Resources\ModuleResource\Enums\ModulePermission::class,
+        \App\Filament\Resources\TranslationResource\Enums\TranslationPermission::class,
+        \App\Filament\Clusters\Databases\Enums\DatabasePermission::class,
+
+        \App\Filament\Clusters\Settings\Enums\SettingPermission::class,
+        \App\Filament\Clusters\Settings\Enums\CachePermission::class,
+        \App\Filament\Clusters\Settings\Enums\LogPermission::class,
+        \App\Filament\Clusters\Settings\Enums\MailPermission::class,
+        \App\Filament\Clusters\Settings\Enums\CustomSettingPermission::class,
+        \App\Filament\Clusters\Settings\Enums\DatetimePermission::class,
+        \App\Filament\Clusters\Settings\Enums\NumberPermission::class,
+        \App\Filament\Clusters\Settings\Enums\ThemePermission::class,
+        \App\Filament\Clusters\Settings\Enums\UserPermission::class,
     ],
 ];

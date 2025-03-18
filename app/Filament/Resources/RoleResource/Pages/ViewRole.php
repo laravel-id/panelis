@@ -3,9 +3,10 @@
 namespace App\Filament\Resources\RoleResource\Pages;
 
 use App\Filament\Resources\RoleResource;
-use Filament\Actions;
+use App\Filament\Resources\RoleResource\Enums\RolePermission;
+use Filament\Actions\EditAction;
 use Filament\Resources\Pages\ViewRecord;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Http\Response;
 
 class ViewRole extends ViewRecord
 {
@@ -14,13 +15,13 @@ class ViewRole extends ViewRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\EditAction::make()
-                ->visible(Auth::user()->can('UpdateRole')),
+            EditAction::make()
+                ->visible(user_can(RolePermission::Edit)),
         ];
     }
 
     protected function authorizeAccess(): void
     {
-        abort_unless(Auth::user()->can('ViewRole'), 403);
+        abort_unless(user_can(RolePermission::Read), Response::HTTP_FORBIDDEN);
     }
 }
