@@ -77,8 +77,10 @@ class TranslationResource extends Resource
                 TextColumn::make(sprintf('text.%s', config('app.locale')))
                     ->label(__('translation.text')),
 
-                TextColumn::make('local_updated_at')
+                TextColumn::make('updated_at')
                     ->label(__('ui.updated_at'))
+                    ->since(get_timezone())
+                    ->dateTimeTooltip(get_datetime_format(), get_timezone())
                     ->sortable(),
             ])
             ->filters([

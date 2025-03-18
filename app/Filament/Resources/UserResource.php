@@ -86,8 +86,8 @@ class UserResource extends Resource
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make('created_at')
-                    ->label(__('ui.created_at'))
+                TextColumn::make('updated_at')
+                    ->label(__('ui.updated_at'))
                     ->since(get_timezone())
                     ->dateTimeTooltip(get_datetime_format(), get_timezone())
                     ->sortable(),
