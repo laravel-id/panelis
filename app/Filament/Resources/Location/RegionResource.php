@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Location;
 
 use App\Filament\Resources\Location;
+use App\Filament\Resources\Location\RegionResource\Enums\RegionPermission;
 use App\Models\Location\Region;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -16,7 +17,6 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\Auth;
 
 class RegionResource extends Resource
 {
@@ -41,12 +41,12 @@ class RegionResource extends Resource
 
     public static function canAccess(): bool
     {
-        return Auth::user()->can('ViewRegionLocation');
+        return user_can(RegionPermission::Browse);
     }
 
     public static function shouldRegisterNavigation(): bool
     {
-        return config('module.location', false);
+        return config('module.location', false) && self::canAccess();
     }
 
     public static function form(Form $form): Form
@@ -57,15 +57,12 @@ class RegionResource extends Resource
 
     public static function table(Table $table): Table
     {
-        $canUpdate = Auth::user()->can('UpdateRegionLocation');
-        $canDelete = Auth::user()->can('DeleteRegionLocation');
-
         return $table
             ->defaultSort('name')
             ->columns([
                 Tables\Columns\ToggleColumn::make('is_active')
                     ->label(__('location.region_is_active'))
-                    ->visible($canUpdate),
+                    ->visible(user_can(RegionPermission::Edit)),
 
                 Tables\Columns\TextColumn::make('name')
                     ->label(__('location.region_name'))
@@ -77,8 +74,10 @@ class RegionResource extends Resource
                     ->sortable()
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('local_updated_at')
+                Tables\Columns\TextColumn::make('updated_at')
                     ->label(__('ui.updated_at'))
+                    ->since(get_timezone())
+                    ->dateTimeTooltip(get_datetime_format(), get_timezone())
                     ->sortable(),
             ])
             ->filters([
@@ -95,10 +94,10 @@ class RegionResource extends Resource
             ])
             ->actions([
                 EditAction::make()
-                    ->visible($canUpdate),
+                    ->visible(user_can(RegionPermission::Edit)),
 
                 DeleteAction::make()
-                    ->visible($canDelete)
+                    ->visible(user_can(RegionPermission::Delete))
                     ->modalDescription(__('location.delete_confirmation')),
             ])
             ->bulkActions([
@@ -106,7 +105,7 @@ class RegionResource extends Resource
                     ->label(__('location.toggle_status'))
                     ->color('primary')
                     ->icon('heroicon-m-check-circle')
-                    ->visible($canUpdate)
+                    ->visible(user_can(RegionPermission::Edit))
                     ->action(function (Collection $records): void {
                         foreach ($records as $record) {
                             $record->is_active = ! $record->is_active;
@@ -116,7 +115,7 @@ class RegionResource extends Resource
 
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
-                        ->visible($canDelete)
+                        ->visible(user_can(RegionPermission::Delete))
                         ->modalDescription(__('location.delete_confirmation')),
                 ]),
             ]);

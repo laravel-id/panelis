@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Location\DistrictResource\Forms;
 
+use App\Filament\Resources\Location\RegionResource\Enums\RegionPermission;
 use App\Filament\Resources\Location\RegionResource\Forms\RegionForm;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -14,7 +15,7 @@ class DistrictForm
             Select::make('region_id')
                 ->label(__('location.region'))
                 ->relationship('region', 'name')
-                ->createOptionForm(RegionForm::make())
+                ->createOptionForm(user_can(RegionPermission::Add) ? RegionForm::make() : null)
                 ->preload()
                 ->searchable()
                 ->required(),
