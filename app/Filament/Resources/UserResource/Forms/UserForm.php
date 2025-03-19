@@ -11,6 +11,7 @@ use App\Models\User;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
@@ -21,25 +22,29 @@ use Illuminate\Database\Eloquent\Model;
 
 class UserForm
 {
-    public static function make(?string $operation): array
+    public static function schema(?string $operation): array
     {
         return [
             Section::make()
                 ->columnSpan(fn (?Model $record): int => empty($record) ? 3 : 2)
                 ->translateLabel()
                 ->schema([
-                    TextInput::make('email')
-                        ->label(__('user.email'))
-                        ->required()
-                        ->unique(ignoreRecord: true)
-                        ->email()
-                        ->dehydrateStateUsing(fn (string $state): string => strtolower($state)),
+                    Grid::make()
+                        ->schema([
+                            TextInput::make('email')
+                                ->label(__('user.email'))
+                                ->required()
+                                ->unique(ignoreRecord: true)
+                                ->email()
+                                ->dehydrateStateUsing(fn (string $state): string => strtolower($state)),
 
-                    TextInput::make('name')
-                        ->label('user.name')
-                        ->required()
-                        ->minLength(3)
-                        ->maxLength(150),
+                            TextInput::make('name')
+                                ->label('user.name')
+                                ->required()
+                                ->minLength(3)
+                                ->maxLength(150),
+
+                        ]),
 
                     Toggle::make('send_reset_password_link')
                         ->label(__('user.let_user_reset_password'))
@@ -110,7 +115,6 @@ class UserForm
                     CheckboxList::make('role_id')
                         ->label(__('user.role_name'))
                         ->relationship('roles', 'name')
-                        ->descriptions(Role::pluck('description', 'id'))
                         ->getOptionLabelFromRecordUsing(function (Role $role): string {
                             $label = $role->name;
                             if ($role->is_admin) {
