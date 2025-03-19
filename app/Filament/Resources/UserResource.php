@@ -15,6 +15,7 @@ use Filament\Resources\Resource;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -60,7 +61,7 @@ class UserResource extends Resource
 
         return $form
             ->columns(3)
-            ->schema(UserForm::make($operation));
+            ->schema(UserForm::schema($operation));
     }
 
     public static function table(Table $table): Table
@@ -74,6 +75,16 @@ class UserResource extends Resource
                 TextColumn::make('roles.name')
                     ->label(__('user.role'))
                     ->default('*'),
+
+                ImageColumn::make('avatar')
+                    ->defaultImageUrl(function (User $record): string {
+                        $customAvatar = $record->getFilamentAvatarUrl();
+                        if (empty($customAvatar)) {
+                            return 'https://ui-avatars.com/api/?name='.urlencode($record->name);
+                        }
+
+                        return $customAvatar;
+                    }),
 
                 TextColumn::make('name')
                     ->label(__('user.name'))
