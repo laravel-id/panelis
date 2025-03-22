@@ -67,6 +67,7 @@ class AutoBackup extends Page implements HasForms
     public function boot(?DatabaseFactory $database): void
     {
         $this->databaseService = $database;
+        $this->databaseService->driver(config('database.default'));
     }
 
     protected function getHeaderActions(): array
