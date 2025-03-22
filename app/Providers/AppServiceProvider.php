@@ -18,8 +18,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(Database::class, function (): ?object {
-            return DatabaseFactory::make();
+        $this->app->bind(Database::class, function (Application $app): DatabaseFactory {
+            return new DatabaseFactory($app);
         });
 
         $this->app->singleton(OAuth::class, function (Application $app): OAuthFactory {

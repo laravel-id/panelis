@@ -2,18 +2,42 @@
 
 namespace App\Services\Database;
 
-use App\Filament\Clusters\Databases\Enums\DatabaseType;
 use App\Services\Database\Vendors\MySQL;
 use App\Services\Database\Vendors\SQLite;
+use Illuminate\Contracts\Container\Container;
+use Illuminate\Support\Manager;
 
-class DatabaseFactory
+/**
+ * @mixin Database
+ */
+class DatabaseFactory extends Manager
 {
-    public static function make(): ?object
+    private const string SQLite = 'sqlite';
+
+    private const string MySQL = 'mysql';
+
+    protected $drivers = [
+        self::SQLite,
+        self::MySQL,
+    ];
+
+    public function __construct(Container $container)
     {
-        return match (config('database.default')) {
-            DatabaseType::SQLite->value => new SQLite,
-            DatabaseType::MySQL->value => new MySQL,
-            default => null,
-        };
+        parent::__construct($container);
+    }
+
+    public function getDefaultDriver(): string
+    {
+        return self::SQLite;
+    }
+
+    protected function createSqliteDriver(): Database
+    {
+        return new SQLite;
+    }
+
+    protected function createMysqlDriver(): Database
+    {
+        return new MySQL;
     }
 }

@@ -4,7 +4,7 @@ namespace App\Filament\Clusters\Databases\Forms;
 
 use App\Filament\Clusters\Databases\Enums\DatabasePeriod;
 use App\Filament\Clusters\Databases\Enums\DatabaseType;
-use App\Services\Database\Database;
+use App\Services\Database\DatabaseFactory;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\TextInput;
@@ -16,7 +16,7 @@ use Illuminate\Support\Number;
 
 class AutoBackupForm
 {
-    public static function make(?Database $databaseService): array
+    public static function make(?DatabaseFactory $databaseService): array
     {
         $database = data_get(config('database.connections'), config('database.default'));
 
