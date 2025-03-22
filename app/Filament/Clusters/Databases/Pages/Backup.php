@@ -16,6 +16,7 @@ use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Number;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class Backup extends Page implements HasTable
 {
@@ -62,7 +63,8 @@ class Backup extends Page implements HasTable
 
                 TextColumn::make('created_at')
                     ->label(__('database.created_at'))
-                    ->dateTime(config('app.datetime_format'), config('app.datetime_timezone')),
+                    ->since(get_timezone())
+                    ->dateTimeTooltip(get_datetime_format(), get_timezone()),
             ])
             ->actions([
                 Action::make('download')
@@ -70,7 +72,7 @@ class Backup extends Page implements HasTable
                     ->label(__('database.button_download'))
                     ->button()
                     ->color('primary')
-                    ->action(function (Database $db) {
+                    ->action(function (Database $db): ?StreamedResponse {
                         $storage = Storage::disk('local');
 
                         if ($storage->exists($db->path)) {
@@ -88,6 +90,7 @@ class Backup extends Page implements HasTable
                             ->title(__('database.file_not_exist'))
                             ->send();
 
+                        return null;
                     }),
 
                 Action::make('delete')
