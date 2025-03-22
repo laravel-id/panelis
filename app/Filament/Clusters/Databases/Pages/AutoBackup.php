@@ -5,9 +5,11 @@ namespace App\Filament\Clusters\Databases\Pages;
 use App\Events\SettingUpdated;
 use App\Filament\Clusters\Databases;
 use App\Filament\Clusters\Databases\Enums\DatabasePermission;
+use App\Filament\Clusters\Databases\Forms\AutoBackupForm;
+use App\Filament\Clusters\Databases\Forms\CloudBackupForm;
 use App\Jobs\Database\UploadToCloud;
 use App\Models\Setting;
-use App\Services\Database\Database;
+use App\Services\Database\DatabaseFactory;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Section;
@@ -45,7 +47,7 @@ class AutoBackup extends Page implements HasForms
 
     public bool $isButtonDisabled = true;
 
-    private ?Database $databaseService;
+    private DatabaseFactory $databaseService;
 
     public static function getNavigationLabel(): string
     {
@@ -62,7 +64,7 @@ class AutoBackup extends Page implements HasForms
         return user_can(DatabasePermission::Browse);
     }
 
-    public function boot(?Database $database): void
+    public function boot(?DatabaseFactory $database): void
     {
         $this->databaseService = $database;
     }
@@ -120,13 +122,13 @@ class AutoBackup extends Page implements HasForms
 
     public function mount(): void
     {
-        if (! $this->databaseService?->isAvailable()) {
+        if (! $this->databaseService->isAvailable()) {
             Setting::where('key', 'database.auto_backup_enabled')->delete();
             config()->set('database.auto_backup_enabled', false);
         }
 
         $this->form->fill([
-            'isButtonDisabled' => ! $this->databaseService?->isAvailable() || ! user_can(DatabasePermission::Edit),
+            'isButtonDisabled' => ! $this->databaseService->isAvailable() || ! user_can(DatabasePermission::Edit),
             'database' => [
                 'auto_backup_enabled' => config('database.auto_backup_enabled', false),
                 'backup_period' => config('database.backup_period'),
@@ -160,11 +162,11 @@ class AutoBackup extends Page implements HasForms
                     ->warning()
                     ->label(__('database.auto_backup_is_disabled'))
                     ->helperText(__('database.auto_backup_disabled_reason'))
-                    ->hidden(fn (): bool => $this->databaseService?->isAvailable() ?? false),
+                    ->hidden(fn (): bool => $this->databaseService->isAvailable() ?? false),
 
                 Section::make(__('database.auto_backup'))
                     ->description(__('database.auto_backup_info'))
-                    ->schema(Databases\Forms\AutoBackupForm::make($this->databaseService)),
+                    ->schema(AutoBackupForm::make($this->databaseService)),
 
                 Section::make(__('database.cloud_backup'))
                     ->description(__('database.cloud_backup_section_description'))
@@ -173,7 +175,7 @@ class AutoBackup extends Page implements HasForms
                         return user_can(DatabasePermission::Backup) && $get('database.auto_backup_enabled');
                     })
                     ->disabled(fn (Get $get): bool => ! $get('database.auto_backup_enabled') || config('app.demo'))
-                    ->schema(Databases\Forms\CloudBackupForm::make()),
+                    ->schema(CloudBackupForm::make()),
             ])
             ->disabled(user_cannot(DatabasePermission::Edit));
     }
