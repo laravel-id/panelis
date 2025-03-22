@@ -5,6 +5,7 @@ namespace App\Services\OAuth\Vendors;
 use App\Services\OAuth\OAuth;
 use Carbon\Carbon;
 use Carbon\CarbonImmutable;
+use Exception;
 use GuzzleHttp\Promise\PromiseInterface;
 use Illuminate\Http\Client\Response;
 use Illuminate\Support\Facades\Http;
@@ -126,7 +127,7 @@ class Dropbox implements OAuth
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public function getUser(?string $token = null): OAuth
     {

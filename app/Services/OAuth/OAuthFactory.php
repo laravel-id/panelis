@@ -12,9 +12,9 @@ use Illuminate\Support\Manager;
  */
 class OAuthFactory extends Manager
 {
-    const GoogleDrive = 'google_drive';
+    const string GoogleDrive = 'google_drive';
 
-    const Dropbox = 'dropbox';
+    const string Dropbox = 'dropbox';
 
     protected $drivers = [
         self::Dropbox,

@@ -67,6 +67,7 @@ class CloudBackupForm
                 })
                 ->live(onBlur: true)
                 ->password()
+                ->revealable()
                 ->required(),
 
             TextInput::make('dropbox.client_secret')
@@ -80,6 +81,7 @@ class CloudBackupForm
                 })
                 ->live(onBlur: true)
                 ->password()
+                ->revealable()
                 ->required(),
 
             self::dropboxAction(),

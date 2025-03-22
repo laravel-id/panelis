@@ -57,6 +57,10 @@ return [
             'throw' => false,
         ],
 
+        'dropbox' => [
+            'driver' => 'dropbox',
+        ],
+
     ],
 
     /*

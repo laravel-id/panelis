@@ -6,7 +6,6 @@
     "license": "MIT",
     "require": {
         "php": "^8.2",
-        "benjamincrozat/laravel-dropbox-driver": "^3.0",
         "bezhansalleh/filament-language-switch": "^3.1",
         "calebporzio/sushi": "^2.5",
         "filament/filament": "^3.2",
@@ -16,6 +15,7 @@
         "laravel/telescope": "^5.0",
         "laravel/tinker": "^2.9",
         "lorisleiva/laravel-actions": "^2.8",
+        "spatie/flysystem-dropbox": "^3.0",
         "spatie/laravel-permission": "^6.16",
         "spatie/laravel-translation-loader": "^2.8"
     },

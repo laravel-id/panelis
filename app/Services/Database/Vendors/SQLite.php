@@ -45,10 +45,11 @@ class SQLite implements Database
         $database = config('database.connections.sqlite.database');
         $filename = sprintf('%s.sql', time());
 
-        if (! Storage::disk('local')->directoryExists('database')) {
-            Storage::makeDirectory('database');
+        $storage = Storage::disk('local');
+        if (! $storage->directoryExists($dirName = 'database')) {
+            Storage::makeDirectory($dirName);
         }
-        $path = sprintf('%s/%s', storage_path('app/database'), $filename);
+        $path = sprintf('%s/%s', $storage->path($dirName), $filename);
 
         $command = Process::path(database_path())
             ->run(sprintf('sqlite3 %s .dump > %s', $database, $path));

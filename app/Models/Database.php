@@ -44,7 +44,7 @@ class Database extends Model
                 return [
                     'id' => $name,
                     'path' => $file,
-                    'name' => sprintf('%s.%s', $createdAt->toDateTimeString(), $ext),
+                    'name' => sprintf('%s.%s', $name, $ext),
                     'extension' => $ext,
                     'size' => Storage::size($file),
                     'created_at' => $createdAt,
