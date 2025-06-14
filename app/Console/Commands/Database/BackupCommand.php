@@ -4,8 +4,10 @@ namespace App\Console\Commands\Database;
 
 use App\Jobs\Database\UploadToCloud;
 use App\Models\Database as DB;
-use App\Services\Database\Database;
+use App\Models\User;
+use App\Services\Database\DatabaseFactory;
 use Exception;
+use Filament\Notifications\Notification;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
@@ -29,8 +31,18 @@ class BackupCommand extends Command
     /**
      * Execute the console command.
      */
-    public function handle(Database $database): int
+    public function handle(DatabaseFactory $database): int
     {
+        if (! $database->isAvailable()) {
+            $this->error(__('Database backup is not available.'));
+
+            return Command::FAILURE;
+        }
+
+        $users = User::query()
+            ->doesntHave('roles')
+            ->get();
+
         try {
             $path = $database->backup();
             if (file_exists($path)) {
@@ -52,11 +64,21 @@ class BackupCommand extends Command
                 }
             }
 
-            return 0;
+            Notification::make()
+                ->title(__('database.file_created'))
+                ->sendToDatabase($users);
+
+            $this->info(__('Database has been backed up to :path.', ['path' => $path]));
+
+            return Command::SUCCESS;
         } catch (Exception $e) {
             Log::error($e);
         }
 
-        return 1;
+        Notification::make()
+            ->title(__('database.file_not_created'))
+            ->sendToDatabase($users);
+
+        return Command::FAILURE;
     }
 }
