@@ -12,9 +12,9 @@ use Illuminate\Support\Manager;
  */
 class DatabaseFactory extends Manager
 {
-    private const string SQLite = 'sqlite';
+    private const SQLite = 'sqlite';
 
-    private const string MySQL = 'mysql';
+    private const MySQL = 'mysql';
 
     protected $drivers = [
         self::SQLite,
