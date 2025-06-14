@@ -42,8 +42,9 @@ class AdminPanelProvider extends PanelProvider
             // uncomment to set different path
             ->path('admin')
             ->plugins([
-                //TodoPlugin::make(),
+                // TodoPlugin::make(),
             ])
+            ->databaseNotifications()
             ->navigationGroups([
                 NavigationGroup::make(__('navigation.blog'))
                     ->collapsed()
@@ -62,7 +63,7 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-o-cog-6-tooth'),
             ])
 
-            //->registration(Register::class)
+            // ->registration(Register::class)
             ->login(Login::class)
             ->passwordReset(RequestPasswordReset::class)
             ->profile(EditProfile::class)
