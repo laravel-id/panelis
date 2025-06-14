@@ -4,6 +4,7 @@ use App\Filament\Clusters\Databases\Enums\DatabasePeriod;
 use Carbon\Carbon;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Schedule;
 
 /*
@@ -41,3 +42,7 @@ Schedule::command('app:backup-database')
 
         return false;
     })->sendOutputTo(storage_path('logs/db.log'));
+
+Artisan::command('app:ping', function (): void {
+    Http::get(config('app.ping_url'));
+})->when(fn (): bool => !empty(config('app.ping_url')))->everyMinute();
