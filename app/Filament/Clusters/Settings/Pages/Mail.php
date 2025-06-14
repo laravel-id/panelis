@@ -339,7 +339,7 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
             $this->mailgunSection(),
             $this->postmarkSection(),
             $this->sesSection(),
-        ])->disabled(user_can(MailPermission::Edit));
+        ])->disabled(! user_can(MailPermission::Edit));
     }
 
     /**
