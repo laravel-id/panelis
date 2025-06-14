@@ -58,6 +58,10 @@ class AdminPanelProvider extends PanelProvider
                     ->collapsed()
                     ->icon('heroicon-o-user-group'),
 
+                NavigationGroup::make(__('navigation.job'))
+                    ->collapsed()
+                    ->icon('heroicon-o-calendar'),
+
                 NavigationGroup::make(__('navigation.system'))
                     ->collapsed()
                     ->icon('heroicon-o-cog-6-tooth'),

@@ -172,6 +172,9 @@ return [
         \App\Filament\Resources\TranslationResource\Enums\TranslationPermission::class,
         \App\Filament\Clusters\Databases\Enums\DatabasePermission::class,
 
+        \app\Filament\Resources\Job\JobResource\Enums\JobPermission::class,
+        \app\Filament\Resources\Job\FailedJobResource\Enums\FailedJobPermission::class,
+
         \App\Filament\Clusters\Settings\Enums\SettingPermission::class,
         \App\Filament\Clusters\Settings\Enums\CachePermission::class,
         \App\Filament\Clusters\Settings\Enums\LogPermission::class,
