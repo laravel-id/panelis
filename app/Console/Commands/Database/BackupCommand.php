@@ -66,6 +66,7 @@ class BackupCommand extends Command
 
             Notification::make()
                 ->title(__('database.file_created'))
+                ->success()
                 ->sendToDatabase($users);
 
             $this->info(__('Database has been backed up to :path.', ['path' => $path]));
@@ -77,6 +78,7 @@ class BackupCommand extends Command
 
         Notification::make()
             ->title(__('database.file_not_created'))
+            ->warning()
             ->sendToDatabase($users);
 
         return Command::FAILURE;
