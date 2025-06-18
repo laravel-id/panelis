@@ -7,6 +7,7 @@ use App\Filament\Clusters\Settings;
 use App\Filament\Clusters\Settings\Enums\LogChannel;
 use App\Filament\Clusters\Settings\Enums\LogPermission;
 use App\Models\Setting;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Section;
@@ -20,7 +21,6 @@ use Filament\Pages\Page;
 use Filament\Support\Enums\MaxWidth;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Log as Logger;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
@@ -39,8 +39,6 @@ class Log extends Page implements HasForms
 
     public array $logging;
 
-    public array $larabug;
-
     public bool $isButtonDisabled = false;
 
     protected function getHeaderActions(): array
@@ -58,17 +56,12 @@ class Log extends Page implements HasForms
                     try {
                         Logger::debug($data['message'] ?? 'Testing log');
 
-                        // special test for Larabug
-                        if (in_array('larabug', config('logging.channels.stack.channels'))) {
-                            Artisan::call('larabug:test');
-                        }
-
                         Notification::make('log_test_sent')
                             ->title(__('setting.log_test_sent'))
                             ->success()
                             ->send();
 
-                    } catch (\Exception) {
+                    } catch (Exception) {
                     }
                 }),
         ];
@@ -86,7 +79,7 @@ class Log extends Page implements HasForms
 
     public static function canAccess(): bool
     {
-        return user_cannot(LogPermission::Browse);
+        return user_can(LogPermission::Browse);
     }
 
     public function mount(): void
@@ -112,12 +105,6 @@ class Log extends Page implements HasForms
                 ],
             ],
 
-            'larabug' => [
-                'login_key' => config('larabug.login_key'),
-                'project_key' => config('larabug.project_key'),
-                'environments' => config('larabug.environments'),
-            ],
-
             'isButtonDisabled' => user_cannot(LogPermission::Browse),
         ]);
     }
@@ -137,11 +124,6 @@ class Log extends Page implements HasForms
                             ->required()
                             ->options(LogChannel::options()),
                     ]),
-
-                Section::make(__('setting.log_larabug'))
-                    ->visible(fn (Get $get): bool => in_array('larabug', $get('logging.channels.stack.channels')))
-                    ->collapsible()
-                    ->schema(Settings\Forms\Log\LarabugForm::make()),
 
                 Section::make(__('setting.log_papertrail'))
                     ->visible(function (Get $get): bool {
@@ -177,18 +159,13 @@ class Log extends Page implements HasForms
             // store array channels
             Setting::set('logging.channels.stack.channels', $logs);
 
-            // larabug environments
-            foreach ($this->form->getState()['larabug'] as $key => $value) {
-                Setting::set('larabug.'.$key, $value);
-            }
-
             event(new SettingUpdated);
 
             Notification::make('log_updated')
                 ->title(__('setting.log_updated'))
                 ->success()
                 ->send();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Logger::error($e);
 
             Notification::make('log_not_updated')
