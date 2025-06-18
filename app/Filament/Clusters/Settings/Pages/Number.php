@@ -67,7 +67,7 @@ class Number extends Page
     {
         return $form->schema([
             Section::make(__('setting.number'))
-                ->disabled(user_can(NumberPermission::Edit))
+                ->disabled(!user_can(NumberPermission::Edit))
                 ->description(__('setting.number_section_description'))
                 ->schema([
                     TextInput::make('app.currency_symbol')
