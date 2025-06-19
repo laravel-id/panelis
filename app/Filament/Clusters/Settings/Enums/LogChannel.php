@@ -18,8 +18,6 @@ enum LogChannel: string implements HasOption
 
     case Monolog = 'monolog';
 
-    case Nightwatch = 'nightwatch';
-
     case Papertrail = 'papertrail';
 
     public static function options(): array
