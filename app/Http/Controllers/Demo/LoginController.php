@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Demo;
 use App\Http\Controllers\Controller;
 use App\Models\Branch;
 use App\Models\User;
+use Filament\Notifications\Notification;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -27,6 +28,15 @@ class LoginController extends Controller
             ]);
 
         $branch->users()->sync($guest->id);
+
+        $titles = [
+            'app' => config('app.name'),
+            'name' => $guest->name,
+        ];
+        Notification::make('login')
+            ->title(__('Welcome to :app, :name!', $titles))
+            ->success()
+            ->send();
 
         Auth::loginUsingId($guest->id);
 
