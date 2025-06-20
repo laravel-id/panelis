@@ -32,7 +32,7 @@ class Number extends Page
 
     protected static ?string $cluster = Settings::class;
 
-    protected static ?int $navigationSort = 7;
+    protected static ?int $navigationSort = 5;
 
     public array $app;
 

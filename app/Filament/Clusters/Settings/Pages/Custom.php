@@ -32,7 +32,7 @@ class Custom extends Page implements HasForms
 
     protected static ?string $cluster = Settings::class;
 
-    protected static ?int $navigationSort = 9;
+    protected static ?int $navigationSort = 7;
 
     public array $custom;
 
