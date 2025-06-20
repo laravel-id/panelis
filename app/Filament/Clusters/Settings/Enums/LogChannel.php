@@ -18,12 +18,14 @@ enum LogChannel: string implements HasOption
 
     case Monolog = 'monolog';
 
+    case Nightwatch = 'nightwatch';
+
     case Papertrail = 'papertrail';
 
     public static function options(): array
     {
         return collect(LogChannel::cases())
-            ->mapWithKeys(function (LogChannel $case): array {
+            ->mapWithKeys(function (self $case): array {
                 return [$case->value => $case->label()];
             })
             ->sortKeys()
