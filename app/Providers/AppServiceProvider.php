@@ -6,10 +6,13 @@ use App\Services\Database\Database;
 use App\Services\Database\DatabaseFactory;
 use App\Services\OAuth\OAuth;
 use App\Services\OAuth\OAuthFactory;
+use Filament\Support\Facades\FilamentView;
+use Filament\View\PanelsRenderHook;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Number;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\View\View;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -25,6 +28,13 @@ class AppServiceProvider extends ServiceProvider
         $this->app->singleton(OAuth::class, function (Application $app): OAuthFactory {
             return new OAuthFactory($app);
         });
+
+        if (config('app.demo')) {
+            FilamentView::registerRenderHook(
+                PanelsRenderHook::AUTH_LOGIN_FORM_AFTER,
+                fn (): View => view('demo.guest-login'),
+            );
+        }
     }
 
     /**
