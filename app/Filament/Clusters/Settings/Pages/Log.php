@@ -35,9 +35,11 @@ class Log extends Page implements HasForms
 
     protected static ?string $cluster = Settings::class;
 
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 6;
 
     public array $logging;
+
+    public array $nightwatch = [];
 
     public bool $isButtonDisabled = false;
 
@@ -92,16 +94,28 @@ class Log extends Page implements HasForms
                     'stack' => [
                         'channels' => $logging['channels'],
                     ],
-                    'slack' => [
+
+                    LogChannel::Slack->value => [
                         'username' => config('logging.channels.slack.username'),
                         'url' => config('logging.channels.slack.url'),
                         'level' => config('logging.channels.slack.level'),
                     ],
-                    'papertrail' => [
+
+                    LogChannel::Papertrail->value => [
                         'level' => config('logging.channels.papertrail.level'),
                         'url' => config('logging.channels.papertrail.url'),
                         'port' => config('logging.channels.papertrail.port', 514),
                     ],
+                ],
+            ],
+
+            LogChannel::Nightwatch->value => [
+                'enabled' => config('nightwatch.enabled'),
+                'token' => config('nightwatch.token'),
+                'sampling' => [
+                    'requests' => config('nightwatch.sampling.requests'),
+                    'commands' => config('nightwatch.sampling.commands'),
+                    'exceptions' => config('nightwatch.sampling.exceptions'),
                 ],
             ],
 
@@ -122,19 +136,28 @@ class Log extends Page implements HasForms
                             ->descriptions(LogChannel::descriptions())
                             ->live()
                             ->required()
-                            ->options(LogChannel::options()),
+                            ->options(LogChannel::options())
+                            ->disableOptionWhen(function (string $value): bool {
+                                return $value === LogChannel::Nightwatch->value && ! $this->nightwatchInstalled();
+                            }),
                     ]),
+
+                Section::make(__('setting.log_nightwatch'))
+                    ->visible(function (Get $get): bool {
+                        return in_array(LogChannel::Nightwatch->value, $get('logging.channels.stack.channels'))
+                            && $this->nightwatchInstalled();
+                    })->schema(Settings\Forms\Log\NightwatchForm::make()),
 
                 Section::make(__('setting.log_papertrail'))
                     ->visible(function (Get $get): bool {
-                        return in_array('papertrail', $get('logging.channels.stack.channels'));
+                        return in_array(LogChannel::Papertrail->value, $get('logging.channels.stack.channels'));
                     })
                     ->collapsible()
                     ->schema(Settings\Forms\Log\PapertailForm::make()),
 
                 Section::make(__('setting.log_slack'))
                     ->visible(function (Get $get): bool {
-                        return in_array('slack', $get('logging.channels.stack.channels'));
+                        return in_array(LogChannel::Slack->value, $get('logging.channels.stack.channels'));
                     })
                     ->collapsible()
                     ->schema(Settings\Forms\Log\SlackForm::make()),
@@ -159,6 +182,20 @@ class Log extends Page implements HasForms
             // store array channels
             Setting::set('logging.channels.stack.channels', $logs);
 
+            // update specific setting for Nightwatch
+            $nightwatch = Arr::dot($this->form->getState()['nightwatch'] ?? []);
+            foreach ($nightwatch as $key => $value) {
+                $key = sprintf('%s.%s', LogChannel::Nightwatch->value, $key);
+
+                if ($key === 'nightwatch.enabled' && $value === false) {
+                    Setting::set($key, false);
+
+                    break;
+                }
+
+                Setting::set($key, $value);
+            }
+
             event(new SettingUpdated);
 
             Notification::make('log_updated')
@@ -173,5 +210,10 @@ class Log extends Page implements HasForms
                 ->danger()
                 ->send();
         }
+    }
+
+    private function nightwatchInstalled(): bool
+    {
+        return class_exists('Laravel\Nightwatch\NightwatchServiceProvider');
     }
 }
