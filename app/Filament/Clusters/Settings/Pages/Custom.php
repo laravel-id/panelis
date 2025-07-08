@@ -82,6 +82,10 @@ class Custom extends Page implements HasForms
 
                                 Textarea::make('value')
                                     ->label(__('setting.value')),
+
+                                Textarea::make('comment')
+                                    ->label(__('setting.comment'))
+                                    ->placeholder(__('setting.placeholder_comment')),
                             ])
                             ->deleteAction(function (Action $action): void {
                                 $action->requiresConfirmation()
@@ -125,7 +129,12 @@ class Custom extends Page implements HasForms
                     continue;
                 }
 
-                Setting::set($setting['key'], $setting['value'], isCustom: true);
+                Setting::set(
+                    key: $setting['key'],
+                    value: $setting['value'],
+                    isCustom: true,
+                    comment: $setting['comment'],
+                );
             }
 
             event(new SettingUpdated);

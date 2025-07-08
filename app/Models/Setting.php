@@ -25,9 +25,11 @@ class Setting extends Model
     use HasFactory;
 
     protected $fillable = [
+        'user_id',
         'key',
         'value',
         'is_custom',
+        'comment',
     ];
 
     protected $casts = [
@@ -54,7 +56,7 @@ class Setting extends Model
                     Log::error($e);
                 }
 
-                return unserialize($value);
+                return $value;
             },
 
             set: function (mixed $value): string {
@@ -113,11 +115,15 @@ class Setting extends Model
         }
     }
 
-    public static function set(string $key, mixed $value, bool $isCustom = false): void
+    public static function set(string $key, mixed $value, bool $isCustom = false, ?int $userId = null, ?string $comment = null): void
     {
-        self::updateOrCreate(compact('key'), [
+        self::updateOrCreate([
+            'key' => $key,
+            'user_id' => $userId,
+        ], [
             'value' => $value,
             'is_custom' => $isCustom,
+            'comment' => $comment,
         ]);
     }
 
