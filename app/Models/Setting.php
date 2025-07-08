@@ -28,6 +28,7 @@ class Setting extends Model
         'key',
         'value',
         'is_custom',
+        'comment',
     ];
 
     protected $casts = [
@@ -113,11 +114,12 @@ class Setting extends Model
         }
     }
 
-    public static function set(string $key, mixed $value, bool $isCustom = false): void
+    public static function set(string $key, mixed $value, bool $isCustom = false, ?string $comment = null): void
     {
         self::updateOrCreate(compact('key'), [
             'value' => $value,
             'is_custom' => $isCustom,
+            'comment' => $comment,
         ]);
     }
 
