@@ -75,6 +75,7 @@ class Custom extends Page implements HasForms
                             ->reorderable(false)
                             ->itemLabel(fn (array $state): ?string => $state['key'] ?? null)
                             ->collapsed()
+                            ->orderColumn('key')
                             ->schema([
                                 TextInput::make('key')
                                     ->label(__('setting.key'))
