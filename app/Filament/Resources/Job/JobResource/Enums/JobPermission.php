@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Filament\Resources\Job\JobResource\Enums;
+namespace App\Filament\Resources\Job\JobResource\Enums;
 
 enum JobPermission: string
 {

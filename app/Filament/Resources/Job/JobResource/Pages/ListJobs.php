@@ -1,8 +1,8 @@
 <?php
 
-namespace app\Filament\Resources\Job\JobResource\Pages;
+namespace App\Filament\Resources\Job\JobResource\Pages;
 
-use app\Filament\Resources\Job\JobResource;
+use App\Filament\Resources\Job\JobResource;
 use Filament\Resources\Pages\ListRecords;
 
 class ListJobs extends ListRecords
