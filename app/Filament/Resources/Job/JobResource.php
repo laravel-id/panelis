@@ -1,8 +1,8 @@
 <?php
 
-namespace app\Filament\Resources\Job;
+namespace App\Filament\Resources\Job;
 
-use app\Filament\Resources\Job\JobResource\Enums\JobPermission;
+use App\Filament\Resources\Job\JobResource\Enums\JobPermission;
 use App\Models\Job;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;

@@ -1,9 +1,9 @@
 <?php
 
-namespace app\Filament\Resources\Job\FailedJobResource\Pages;
+namespace App\Filament\Resources\Job\FailedJobResource\Pages;
 
-use app\Filament\Resources\Job\FailedJobResource;
-use app\Filament\Resources\Job\FailedJobResource\Enums\FailedJobPermission;
+use App\Filament\Resources\Job\FailedJobResource;
+use App\Filament\Resources\Job\FailedJobResource\Enums\FailedJobPermission;
 use App\Models\FailedJob;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;

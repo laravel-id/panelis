@@ -1,6 +1,6 @@
 <?php
 
-namespace app\Filament\Resources\Job\FailedJobResource\Enums;
+namespace App\Filament\Resources\Job\FailedJobResource\Enums;
 
 enum FailedJobPermission: string
 {
