@@ -9,10 +9,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
- * @method static whereNotNull(string $string)
- * @method static find(mixed $branch)
- * @method static orderBy(string $string)
- * @method static whereSlug(string $slug)
+ * @property int $id
  */
 class Branch extends Model
 {
@@ -21,12 +18,21 @@ class Branch extends Model
 
     protected $fillable = [
         'user_id',
+        'logo',
         'slug',
         'name',
         'address',
         'phone',
         'email',
+        'metadata',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'metadata' => 'array',
+        ];
+    }
 
     /**
      * Get user as owner of branch.
