@@ -10,7 +10,7 @@ enum UserPermission: string
 
     case Edit = 'EditUser';
 
-    case Add = 'AddUser';
+    case Create = 'CreateUser';
 
     case Delete = 'DeleteUser';
 

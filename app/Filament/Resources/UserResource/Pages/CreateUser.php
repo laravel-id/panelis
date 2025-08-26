@@ -14,7 +14,7 @@ class CreateUser extends CreateRecord
 
     protected function authorizeAccess(): void
     {
-        abort_unless(user_can(UserPermission::Add), Response::HTTP_FORBIDDEN);
+        abort_unless(user_can(UserPermission::Create), Response::HTTP_FORBIDDEN);
     }
 
     protected function mutateFormDataBeforeCreate(array $data): array

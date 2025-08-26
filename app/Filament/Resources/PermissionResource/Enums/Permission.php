@@ -4,14 +4,14 @@ namespace App\Filament\Resources\PermissionResource\Enums;
 
 enum Permission: string
 {
-    case Browse = 'BrowsePermissionUser';
+    case Browse = 'BrowseUserPermission';
 
-    case Read = 'ReadPermissionUser';
+    case Read = 'ReadUserPermission';
 
-    case Edit = 'EditPermissionUser';
+    case Edit = 'EditUserPermission';
 
-    case Add = 'AddPermissionUser';
+    case Create = 'CreateUserPermission';
 
-    case Delete = 'DeletePermissionUser';
-    case Backup = 'BackupPermissionUser';
+    case Delete = 'DeleteUserPermission';
+    case Backup = 'BackupUserPermission';
 }

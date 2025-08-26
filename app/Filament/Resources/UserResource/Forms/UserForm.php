@@ -11,6 +11,7 @@ use App\Models\User;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Fieldset;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Section;
@@ -29,20 +30,29 @@ class UserForm
                 ->columnSpan(fn (?Model $record): int => empty($record) ? 3 : 2)
                 ->translateLabel()
                 ->schema([
+                    FileUpload::make('avatar')
+                        ->hiddenLabel()
+                        ->disk('public')
+                        ->directory('avatars')
+                        ->avatar()
+                        ->alignCenter()
+                        ->moveFiles()
+                        ->image(),
+
                     Grid::make()
                         ->schema([
+                            TextInput::make('name')
+                                ->label(__('user.name'))
+                                ->required()
+                                ->minLength(3)
+                                ->maxLength(150),
+
                             TextInput::make('email')
                                 ->label(__('user.email'))
                                 ->required()
                                 ->unique(ignoreRecord: true)
                                 ->email()
                                 ->dehydrateStateUsing(fn (string $state): string => strtolower($state)),
-
-                            TextInput::make('name')
-                                ->label('user.name')
-                                ->required()
-                                ->minLength(3)
-                                ->maxLength(150),
 
                         ]),
 
@@ -83,7 +93,7 @@ class UserForm
                             ViewUser::class,
                             EditUser::class,
                         ])
-                        ->content(fn (User $user): string => $user->local_created_at),
+                        ->content(fn (User $user): string => $user->created_at->timezone(get_timezone())),
 
                     Placeholder::make('updated_at')
                         ->label(__('ui.updated_at'))
@@ -91,10 +101,10 @@ class UserForm
                             ViewUser::class,
                             EditUser::class,
                         ])
-                        ->content(fn (User $user): string => $user->local_updated_at),
+                        ->content(fn (User $user): string => $user->updated_at->timezone(get_timezone())),
                 ]),
 
-            Section::make(__('user.branch'))
+            Section::make(__('branch.label'))
                 ->description(__('user.branch_section_description'))
                 ->visible(fn (): bool => ! empty(Filament::getTenant()))
                 ->schema([
