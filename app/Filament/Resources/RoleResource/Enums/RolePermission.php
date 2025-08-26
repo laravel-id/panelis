@@ -4,13 +4,13 @@ namespace App\Filament\Resources\RoleResource\Enums;
 
 enum RolePermission: string
 {
-    case Browse = 'BrowseRoleUser';
+    case Browse = 'BrowseUserRole';
 
-    case Read = 'ReadRoleUser';
+    case Read = 'ReadUserRole';
 
-    case Edit = 'EditRoleUser';
+    case Edit = 'EditUserRole';
 
-    case Add = 'AddRoleUser';
+    case Create = 'CreateUserRole';
 
-    case Delete = 'DeleteRoleUser';
+    case Delete = 'DeleteUserRole';
 }

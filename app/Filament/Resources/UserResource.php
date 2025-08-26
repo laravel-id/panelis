@@ -12,6 +12,7 @@ use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
+use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Actions\Action;
 use Filament\Tables\Actions\ActionGroup;
 use Filament\Tables\Actions\EditAction;
@@ -89,7 +90,8 @@ class UserResource extends Resource
                 TextColumn::make('name')
                     ->label(__('user.name'))
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->weight(FontWeight::Bold),
 
                 TextColumn::make('email')
                     ->label(__('user.email'))

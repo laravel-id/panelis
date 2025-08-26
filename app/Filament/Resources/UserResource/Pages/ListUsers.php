@@ -15,7 +15,7 @@ class ListUsers extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            CreateAction::make()->visible(user_can(UserPermission::Add)),
+            CreateAction::make()->visible(user_can(UserPermission::Create)),
         ];
     }
 

@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\PermissionResource\Pages;
 
 use App\Actions\User\BackupPermission;
+use App\Actions\User\SeedPermission;
 use App\Filament\Resources\PermissionResource;
 use App\Filament\Resources\PermissionResource\Enums\Permission;
 use Filament\Actions\Action;
@@ -21,7 +22,7 @@ class ManagePermissions extends ManageRecords
     {
         return [
             CreateAction::make()
-                ->visible(user_can(Permission::Add))
+                ->visible(user_can(Permission::Create))
                 ->mutateFormDataUsing(function (array $data): array {
                     $key = Str::snake($data['name']);
 
@@ -32,6 +33,15 @@ class ManagePermissions extends ManageRecords
                 }),
 
             ActionGroup::make([
+                Action::make('generate_permission')
+                    ->visible(user_can(Permission::Create))
+                    ->label(__('user.btn_generate_permission'))
+                    ->requiresConfirmation()
+                    ->visible(user_can(Permission::Create))
+                    ->action(function (): void {
+                        SeedPermission::run();
+                    }),
+
                 Action::make('backup_permission')
                     ->visible(user_can(Permission::Backup))
                     ->label(__('user.btn_backup_permission'))

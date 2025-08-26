@@ -4,7 +4,6 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Filament\Clusters\Settings\Enums\AvatarProvider;
-use App\Models\Traits\HasLocalTime;
 use Carbon\Carbon;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
@@ -27,8 +26,6 @@ use Spatie\Permission\Traits\HasRoles;
 /**
  * @property Carbon $created_at
  * @property Carbon $updated_at
- * @property string $local_created_at
- * @property string $local_updated_at
  * @property BelongsToMany $branches
  * @property Role $roles
  * @property string $email
@@ -38,7 +35,6 @@ use Spatie\Permission\Traits\HasRoles;
 class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenants
 {
     use HasFactory, Notifiable;
-    use HasLocalTime;
     use HasRoles;
     use SoftDeletes;
 
@@ -48,10 +44,11 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
      * @var array<int, string>
      */
     protected $fillable = [
+        'avatar',
         'name',
         'email',
         'password',
-        'avatar',
+        'metadata',
     ];
 
     /**
@@ -64,6 +61,10 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
         'remember_token',
     ];
 
+    protected $attributes = [
+        'metadata' => '[]',
+    ];
+
     /**
      * Get the attributes that should be cast.
      */
@@ -72,6 +73,7 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'metadata' => 'array',
         ];
     }
 

@@ -16,7 +16,7 @@ class ListRoles extends ListRecords
     {
         return [
             CreateAction::make()
-                ->visible(user_can(RolePermission::Add)),
+                ->visible(user_can(RolePermission::Create)),
         ];
     }
 
