@@ -160,6 +160,8 @@ return [
     ],
 
     'enums' => [
+        \App\Filament\Resources\BranchResource\Enums\BranchPermission::class,
+
         \App\Filament\Resources\Blog\PostResource\Enums\PostPermission::class,
         \App\Filament\Resources\Blog\CategoryResource\Enums\CategoryPermission::class,
         \App\Filament\Resources\Location\CountryResource\Enums\CountryPermission::class,
