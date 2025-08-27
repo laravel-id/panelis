@@ -65,11 +65,13 @@ class RoleResource extends Resource
 
                 return end($labels);
             })
+            ->sortKeys()
             ->map(function (Collection $permissions, string $groupLabel) {
                 return Section::make(__('user.permission_'.$groupLabel))
                     ->collapsible()
                     ->schema([
                         CheckboxList::make("permissions_{$groupLabel}")
+                            ->columns(3)
                             ->hiddenLabel()
                             ->options($permissions->pluck('label', 'id')->toArray())
                             ->bulkToggleable()
