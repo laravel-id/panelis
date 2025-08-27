@@ -3,7 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Events\Branch\BranchRegistered;
-use App\Filament\Resources\BranchResource\BranchForm;
+use App\Filament\Resources\BranchResource\Forms\BranchForm;
 use Filament\Facades\Filament;
 use Filament\Forms\Form;
 use Filament\Pages\Tenancy\RegisterTenant;
