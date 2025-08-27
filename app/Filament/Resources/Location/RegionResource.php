@@ -74,11 +74,7 @@ class RegionResource extends Resource
                     ->sortable()
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('updated_at')
-                    ->label(__('ui.updated_at'))
-                    ->since(get_timezone())
-                    ->dateTimeTooltip(get_datetime_format(), get_timezone())
-                    ->sortable(),
+                Tables\Columns\TextColumn::makeSinceDate('updated_at', __('ui.updated_at')),
             ])
             ->filters([
                 TernaryFilter::make('is_active')

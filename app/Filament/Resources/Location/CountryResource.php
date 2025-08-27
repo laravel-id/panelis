@@ -80,11 +80,7 @@ class CountryResource extends Resource
                 TextColumn::make('un_code')
                     ->label(__('location.country_un_code')),
 
-                TextColumn::make('updated_at')
-                    ->label(__('ui.updated_at'))
-                    ->since(get_timezone())
-                    ->dateTimeTooltip(get_datetime_format(), get_timezone())
-                    ->sortable(),
+                TextColumn::makeSinceDate('updated_at', __('ui.updated_at')),
             ])
             ->filters([
                 TernaryFilter::make('is_active')
