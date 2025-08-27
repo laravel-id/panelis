@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\BranchResource;
+namespace App\Filament\Resources\BranchResource\Forms;
 
 use App\Filament\Pages\RegisterBranch;
 use App\Filament\Resources\BranchResource\Pages\EditBranch;

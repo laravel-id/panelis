@@ -3,7 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Events\Branch\BranchUpdated;
-use App\Filament\Resources\BranchResource\BranchForm;
+use App\Filament\Resources\BranchResource\Forms\BranchForm;
 use Filament\Forms\Form;
 use Filament\Pages\Tenancy\EditTenantProfile;
 use Illuminate\Database\Eloquent\Model;

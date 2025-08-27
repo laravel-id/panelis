@@ -2,8 +2,8 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\BranchResource\BranchForm;
 use App\Filament\Resources\BranchResource\Enums\BranchPermission;
+use App\Filament\Resources\BranchResource\Forms\BranchForm;
 use App\Filament\Resources\BranchResource\Pages;
 use App\Models\Branch;
 use Filament\Facades\Filament;
