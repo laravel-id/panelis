@@ -82,12 +82,7 @@ class DistrictResource extends Resource
                     ->label(__('location.country'))
                     ->sortable(),
 
-                TextColumn::make('updated_at')
-                    ->label(__('ui.updated_at'))
-                    ->sortable()
-                    ->since(get_timezone())
-                    ->dateTimeTooltip(get_datetime_format(), get_timezone())
-                    ->since(),
+                TextColumn::makeSinceDate('updated_at', __('ui.updated_at')),
             ])
             ->filters([
                 TernaryFilter::make('is_active')

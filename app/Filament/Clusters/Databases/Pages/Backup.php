@@ -61,10 +61,7 @@ class Backup extends Page implements HasTable
                     ->label(__('database.size'))
                     ->formatStateUsing(fn (Database $db): ?string => Number::fileSize($db->size)),
 
-                TextColumn::make('created_at')
-                    ->label(__('database.created_at'))
-                    ->since(get_timezone())
-                    ->dateTimeTooltip(get_datetime_format(), get_timezone()),
+                TextColumn::makeSinceDate('created_at', __('ui.created_at')),
             ])
             ->actions([
                 Action::make('download')

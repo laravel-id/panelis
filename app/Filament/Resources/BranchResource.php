@@ -71,10 +71,7 @@ class BranchResource extends Resource
                     ->sortable()
                     ->searchable(),
 
-                TextColumn::make('updated_at')
-                    ->label(__('ui.updated_at'))
-                    ->since()
-                    ->dateTimeTooltip(get_datetime_format(), get_timezone()),
+                TextColumn::makeSinceDate('updated_at', __('ui.updated_at')),
             ])
             ->filters([
                 //
