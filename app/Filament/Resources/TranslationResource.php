@@ -26,17 +26,17 @@ class TranslationResource extends Resource
 
     public static function getLabel(): string
     {
-        return __('translation.translation');
+        return __('translation.label');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('navigation.translation');
+        return __('translation.label');
     }
 
     public static function getNavigationGroup(): ?string
     {
-        return __('navigation.system');
+        return __('system.label');
     }
 
     public static function canAccess(): bool
@@ -54,7 +54,7 @@ class TranslationResource extends Resource
         return $form
             ->schema([
                 Section::make()
-                    ->schema(TranslationForm::make()),
+                    ->schema(TranslationForm::schema()),
             ]);
     }
 

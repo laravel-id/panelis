@@ -1,0 +1,31 @@
+<?php
+
+return [
+    'label' => 'Translation',
+    'group' => 'Group',
+    'key' => 'Key',
+    'text' => 'Text',
+    'lang' => 'Language',
+    'line' => 'Line',
+    'is_system' => 'System',
+    'locale' => 'Locale',
+    'system_only' => 'System only',
+    'export_description' => 'Export and download the selected language to a JSON file',
+    'import_description' => 'Import translations from a single JSON file',
+    'helper_locales_generated_setting' => 'Locales list generated automatically based on General Setting',
+    'backup_success' => 'Backup successful',
+    'backup_failed' => 'Backup failed',
+    'restore_success' => 'Restore successful',
+    'restore_failed' => 'Restore failed',
+    'btn' => [
+        'add_line' => 'Add line',
+    ],
+    'group_change_warning' => 'Changing group data may cause some translations to be lost',
+    'key_change_warning' => 'Changing key data may cause some translations to be lost',
+    'file_imported' => 'File has been imported',
+    'import_failed' => 'Import failed',
+    'import_file_invalid' => 'Import file failed',
+    'view_template' => 'View template',
+    'export_success' => 'Export successfull',
+    'export_failed' => 'Export failed',
+];
