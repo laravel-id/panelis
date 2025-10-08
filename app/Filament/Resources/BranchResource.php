@@ -29,6 +29,11 @@ class BranchResource extends Resource
         return __('branch.label');
     }
 
+    public static function getNavigationLabel(): string
+    {
+        return __('branch.label');
+    }
+
     public static function canAccess(): bool
     {
         return user_can(BranchPermission::Browse);

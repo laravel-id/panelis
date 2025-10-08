@@ -40,6 +40,7 @@ class BranchForm
                     ->maxLength(100),
 
                 TextInput::make('slug')
+                    ->label(__('ui.slug'))
                     ->alphaDash()
                     ->required()
                     ->unique(ignoreRecord: true),
