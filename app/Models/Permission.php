@@ -2,21 +2,22 @@
 
 namespace App\Models;
 
-use App\Models\Traits\HasLocalTime;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 /**
- * @method static pluck(string $value, string $label)
- *
- * @property bool $is_default
+ * @property int $id
+ * @property string $name
+ * @property string $guard_name
  * @property string $label
  * @property string $description
+ * @property Carbon $created_at
+ * @property Carbon $updated_at
  */
 class Permission extends \Spatie\Permission\Models\Permission
 {
     use HasFactory;
-    use HasLocalTime;
 
     public function label(): Attribute
     {

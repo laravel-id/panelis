@@ -61,9 +61,7 @@ class JobResource extends Resource
                     ->label(__('job.available_at'))
                     ->date(get_datetime_format(), get_timezone()),
 
-                TextColumn::make('created_at')
-                    ->label(__('job.created_at'))
-                    ->since(get_timezone()),
+                TextColumn::makeSinceDate('created_at', __('ui.created_at')),
             ])
             ->filters([
                 //

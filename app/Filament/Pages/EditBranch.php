@@ -3,9 +3,7 @@
 namespace App\Filament\Pages;
 
 use App\Events\Branch\BranchUpdated;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Components\Textarea;
-use Filament\Forms\Components\TextInput;
+use App\Filament\Resources\BranchResource\Forms\BranchForm;
 use Filament\Forms\Form;
 use Filament\Pages\Tenancy\EditTenantProfile;
 use Illuminate\Database\Eloquent\Model;
@@ -19,36 +17,7 @@ class EditBranch extends EditTenantProfile
 
     public function form(Form $form): Form
     {
-        return $form->schema([
-            Section::make([
-                TextInput::make('name')
-                    ->label(__('branch.name'))
-                    ->required()
-                    ->unique(ignoreRecord: true)
-                    ->maxLength(100),
-
-                TextInput::make('slug')
-                    ->alphaDash()
-                    ->required()
-                    ->unique(ignoreRecord: true),
-
-                TextInput::make('phone')
-                    ->label(__('branch.phone'))
-                    ->nullable()
-                    ->tel(),
-
-                TextInput::make('email')
-                    ->label(__('branch.email'))
-                    ->nullable()
-                    ->placeholder('business@email-example.com')
-                    ->email(),
-
-                Textarea::make('address')
-                    ->label(__('branch.address'))
-                    ->rows(5)
-                    ->nullable(),
-            ]),
-        ]);
+        return $form->schema(BranchForm::schema());
     }
 
     public function handleRecordUpdate(Model $record, array $data): Model
