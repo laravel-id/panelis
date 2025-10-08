@@ -121,7 +121,7 @@ class UserResource extends Resource
                 ActionGroup::make([
                     Action::make('send_reset_password_link')
                         ->label(__('user.btn.send_reset_password_link'))
-                        ->icon(__('heroicon-o-lock-open'))
+                        ->icon('heroicon-o-lock-open')
                         ->visible(user_can(UserPermission::ResetPassword))
                         ->disabled(fn (User $user): bool => Auth::id() === $user->id)
                         ->requiresConfirmation()
