@@ -33,17 +33,17 @@ class UserResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('navigation.user');
+        return __('user.navigation');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('navigation.user');
+        return __('user.navigation');
     }
 
     public static function getLabel(): ?string
     {
-        return __('user.user');
+        return __('user.label');
     }
 
     public static function canAccess(): bool
@@ -70,11 +70,11 @@ class UserResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('branches.name')
-                    ->label(__('user.branch'))
+                    ->label(__('branch.label'))
                     ->visible(fn (): bool => ! empty(Filament::getTenant())),
 
                 TextColumn::make('roles.name')
-                    ->label(__('user.role'))
+                    ->label(__('user.role.name'))
                     ->default('*'),
 
                 ImageColumn::make('avatar')
@@ -103,13 +103,13 @@ class UserResource extends Resource
             ])
             ->filters([
                 SelectFilter::make('branch')
-                    ->label(__('user.branch'))
+                    ->label(__('branch.label'))
                     ->preload()
                     ->multiple()
                     ->relationship('branches', 'name'),
 
                 SelectFilter::make('role')
-                    ->label(__('user.role'))
+                    ->label(__('user.role.label'))
                     ->relationship('roles', 'name')
                     ->searchable()
                     ->preload()
@@ -120,7 +120,7 @@ class UserResource extends Resource
 
                 ActionGroup::make([
                     Action::make('send_reset_password_link')
-                        ->label(__('user.btn_send_reset_password_link'))
+                        ->label(__('user.btn.send_reset_password_link'))
                         ->icon(__('heroicon-o-lock-open'))
                         ->visible(user_can(UserPermission::ResetPassword))
                         ->disabled(fn (User $user): bool => Auth::id() === $user->id)

@@ -26,8 +26,8 @@ class ManagePermissions extends ManageRecords
                 ->mutateFormDataUsing(function (array $data): array {
                     $key = Str::snake($data['name']);
 
-                    $data['label'] = "user.permission_name_{$key}";
-                    $data['description'] = "user.permission_description_{$key}";
+                    $data['label'] = "user.permission.name_{$key}";
+                    $data['description'] = "user.permission.description_{$key}";
 
                     return $data;
                 }),
@@ -35,7 +35,7 @@ class ManagePermissions extends ManageRecords
             ActionGroup::make([
                 Action::make('generate_permission')
                     ->visible(user_can(Permission::Create))
-                    ->label(__('user.btn_generate_permission'))
+                    ->label(__('ui.btn.generate'))
                     ->requiresConfirmation()
                     ->visible(user_can(Permission::Create))
                     ->action(function (): void {
@@ -44,14 +44,13 @@ class ManagePermissions extends ManageRecords
 
                 Action::make('backup_permission')
                     ->visible(user_can(Permission::Backup))
-                    ->label(__('user.btn_backup_permission'))
+                    ->label(__('ui.btn.backup'))
                     ->requiresConfirmation()
                     ->action(function (): void {
-                        $path = BackupPermission::run();
+                        BackupPermission::run();
 
                         Notification::make('permission_stored')
-                            ->title(__('user.permission_backed_up'))
-                            ->body(__('user.permission_backed_up_body', ['path' => $path]))
+                            ->title(__('user.permission.backed_up'))
                             ->success()
                             ->send();
                     }),

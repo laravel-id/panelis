@@ -33,17 +33,17 @@ class RoleResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('navigation.user');
+        return __('user.navigation');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('navigation.role');
+        return __('user.role.label');
     }
 
     public static function getLabel(): ?string
     {
-        return __('user.role');
+        return __('user.role.label');
     }
 
     public static function canAccess(): bool
@@ -67,7 +67,7 @@ class RoleResource extends Resource
             })
             ->sortKeys()
             ->map(function (Collection $permissions, string $groupLabel) {
-                return Section::make(__('user.permission_'.$groupLabel))
+                return Section::make(__('user.permission.'.$groupLabel))
                     ->collapsible()
                     ->schema([
                         CheckboxList::make("permissions_{$groupLabel}")
@@ -117,8 +117,8 @@ class RoleResource extends Resource
         return $form
             ->columns(3)
             ->schema([
-                Section::make(__('user.role'))
-                    ->description(__('user.role_section_description'))
+                Section::make(__('user.role.label'))
+                    ->description(__('user.role.section_description'))
                     ->columnSpan(fn (?Model $record): int => empty($record) ? 3 : 2)
                     ->schema(RoleForm::schema()),
 
@@ -146,17 +146,17 @@ class RoleResource extends Resource
             ->paginated(false)
             ->columns([
                 ToggleColumn::make('is_admin')
-                    ->label(__('user.role_is_admin'))
+                    ->label(__('user.role.is_admin'))
                     ->disabled(! user_can(RolePermission::Edit)),
 
                 TextColumn::make('name')
-                    ->label(__('user.role_name'))
+                    ->label(__('user.role.name'))
                     ->searchable()
                     ->sortable()
                     ->weight(FontWeight::Bold),
 
                 TextColumn::make('users_count')
-                    ->label(__('user.role_user_count'))
+                    ->label(__('user.role.user_count'))
                     ->counts('users')
                     ->color('primary')
                     ->sortable(),

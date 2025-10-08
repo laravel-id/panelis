@@ -25,7 +25,7 @@ class Role extends \Spatie\Permission\Models\Role
                 $label = $role->name;
 
                 if ($role->is_admin) {
-                    $label .= sprintf(' (%s)', __('user.role_admin_access'));
+                    $label .= sprintf(' (%s)', __('user.role.admin_access'));
                 }
 
                 return [$role->id => $label];

@@ -21,7 +21,7 @@ class SeedPermission
                 Permission::query()
                     ->updateOrCreate(['name' => $case->value], [
                         'guard_name' => 'web',
-                        'label' => "user.permission_name_{$key}",
+                        'label' => "user.permission.name_{$key}",
                     ]);
             }
         }

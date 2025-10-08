@@ -25,17 +25,17 @@ class PermissionResource extends Resource
 
     public static function getLabel(): ?string
     {
-        return __('user.permission');
+        return __('user.permission.label');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('navigation.permission');
+        return __('user.permission.navigation');
     }
 
     public static function getNavigationGroup(): ?string
     {
-        return __('navigation.user');
+        return __('user.navigation');
     }
 
     public static function canAccess(): bool
@@ -54,7 +54,7 @@ class PermissionResource extends Resource
             ->columns(1)
             ->schema([
                 TextInput::make('name')
-                    ->label(__('user.permission_name'))
+                    ->label(__('user.permission.name'))
                     ->disabledOn('edit')
                     ->required()
                     ->unique(ignorable: $form->getRecord())
@@ -62,14 +62,14 @@ class PermissionResource extends Resource
                     ->maxLength(30),
 
                 TextInput::make('guard_name')
-                    ->label(__('user.permission_guard_name'))
+                    ->label(__('user.permission.guard_name'))
                     ->disabledOn('edit')
                     ->default('web')
                     ->datalist(['web', 'api'])
                     ->required(),
 
                 Placeholder::make('label')
-                    ->label(__('user.permission_name'))
+                    ->label(__('user.permission.name'))
                     ->visibleOn('edit')
                     ->content(fn (Permission $permission): string => $permission->label),
             ]);
@@ -80,7 +80,7 @@ class PermissionResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('label')
-                    ->label(__('user.permission_name'))
+                    ->label(__('user.permission.name'))
                     ->searchable(['name', 'label', 'description'])
                     ->sortable()
                     ->description(fn (?Model $record): string => $record?->description ?? ''),

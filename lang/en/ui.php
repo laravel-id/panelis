@@ -10,5 +10,8 @@ return [
         'save' => 'Save',
         'backup' => 'Backup',
         'restore' => 'Restore',
+        'generate' => 'Generate',
     ],
+    'published_at' => 'Published at',
+    'deleted_at' => 'Deleted at',
 ];

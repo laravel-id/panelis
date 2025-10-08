@@ -109,7 +109,7 @@ class UserForm
                 ->visible(fn (): bool => ! empty(Filament::getTenant()))
                 ->schema([
                     CheckboxList::make('branches')
-                        ->label(__('user.branch'))
+                        ->label(__('branch.label'))
                         ->relationship('branches')
                         ->bulkToggleable()
                         ->options(
@@ -119,16 +119,15 @@ class UserForm
                         ->required(),
                 ]),
 
-            Section::make(__('user.role'))
-                ->description(__('user.role_section_description'))
+            Section::make(__('user.role.label'))
                 ->schema([
                     CheckboxList::make('role_id')
-                        ->label(__('user.role_name'))
+                        ->label(__('user.role.name'))
                         ->relationship('roles', 'name')
                         ->getOptionLabelFromRecordUsing(function (Role $role): string {
                             $label = $role->name;
                             if ($role->is_admin) {
-                                $label .= sprintf(' (%s)', __('user.role_admin_access'));
+                                $label .= sprintf(' (%s)', __('user.role.admin_access'));
                             }
 
                             return $label;
