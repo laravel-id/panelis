@@ -56,8 +56,8 @@ class CloudBackupForm
                 ->required(fn (Get $get): bool => $get('database.cloud_backup_enabled')),
 
             TextInput::make('dropbox.client_id')
-                ->label(__('database.dropbox_api_key'))
-                ->hint(\str(__('database.dropbox_token_hint'))->inlineMarkdown()->toHtmlString())
+                ->label(__('database.dropbox.api_key'))
+                ->hint(\str(__('database.dropbox.token_hint'))->inlineMarkdown()->toHtmlString())
                 ->visible(fn (Get $get): bool => $get('database.cloud_backup_enabled') && $get('database.cloud_storage') === CloudProvider::Dropbox->value)
                 ->afterStateUpdated(function (?string $state): void {
                     if (! empty($state)) {
@@ -71,7 +71,7 @@ class CloudBackupForm
                 ->required(),
 
             TextInput::make('dropbox.client_secret')
-                ->label(__('database.dropbox_api_secret'))
+                ->label(__('database.dropbox.api_secret'))
                 ->visible(fn (Get $get): bool => $get('database.cloud_backup_enabled') && $get('database.cloud_storage') === CloudProvider::Dropbox->value)
                 ->afterStateUpdated(function (?string $state): void {
                     if (! empty($state)) {
@@ -98,7 +98,7 @@ class CloudBackupForm
 
         return Actions::make([
             Action::make('authorize_dropbox')
-                ->label(__('database.btn_authorize_dropbox'))
+                ->label(__('database.dropbox.btn.authorize'))
                 ->disabled(config('app.demo'))
                 ->visible(empty($user))
                 ->disabled(fn (Get $get): bool => empty($get('dropbox.client_id')) || empty($get('dropbox.client_secret')))
@@ -114,7 +114,7 @@ class CloudBackupForm
                 }),
 
             Action::make('revoke_dropbox')
-                ->label(__('database.revoke_dropbox', ['name' => $user?->getName()]))
+                ->label(__('database.dropbox.btn.revoke', ['name' => $user?->getName()]))
                 ->disabled(config('app.demo'))
                 ->visible(! empty($user))
                 ->requiresConfirmation()

@@ -55,7 +55,7 @@ class SQLite implements Database
             ->run(sprintf('sqlite3 %s .dump > %s', $database, $path));
 
         if (! $command->successful()) {
-            Log::error(__('Failed to run SQLite backup command.'), [
+            Log::error(__('database.failed_to_run_sql'), [
                 'message' => $command->errorOutput(),
             ]);
 
