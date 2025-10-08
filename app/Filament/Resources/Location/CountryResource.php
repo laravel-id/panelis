@@ -26,17 +26,17 @@ class CountryResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('navigation.location');
+        return __('location.label');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('navigation.country');
+        return __('location.country.label');
     }
 
     public static function getLabel(): ?string
     {
-        return __('location.country');
+        return __('location.country.label');
     }
 
     public static function canAccess(): bool
@@ -63,40 +63,39 @@ class CountryResource extends Resource
             ->defaultSort('name')
             ->columns([
                 ToggleColumn::make('is_active')
-                    ->label(__('location.country_is_active'))
+                    ->label(__('location.country.is_active'))
                     ->visible(user_can(CountryPermission::Edit)),
 
                 TextColumn::make('name')
-                    ->label(__('location.country_name'))
+                    ->label(__('location.country.name'))
                     ->searchable()
                     ->sortable(),
 
                 TextColumn::make('alpha2')
-                    ->label(__('location.country_alpha2')),
+                    ->label(__('location.country.alpha2')),
 
                 TextColumn::make('alpha3')
-                    ->label(__('location.country_alpha2')),
+                    ->label(__('location.country.alpha2')),
 
                 TextColumn::make('un_code')
-                    ->label(__('location.country_un_code')),
+                    ->label(__('location.country.un_code')),
 
                 TextColumn::makeSinceDate('updated_at', __('ui.updated_at')),
             ])
             ->filters([
                 TernaryFilter::make('is_active')
-                    ->label(__('location.country_is_visible')),
+                    ->label(__('location.country.is_visible')),
             ])
             ->actions([
                 EditAction::make()
                     ->visible(user_can(CountryPermission::Edit)),
 
                 DeleteAction::make()
-                    ->visible(user_can(CountryPermission::Delete))
-                    ->modalDescription(__('location.country_delete_confirmation')),
+                    ->visible(user_can(CountryPermission::Delete)),
             ])
             ->bulkActions([
                 BulkAction::make('toggle')
-                    ->label(__('location.country_toggle_status'))
+                    ->label(__('location.btn.toggle_status'))
                     ->visible(user_can(CountryPermission::Delete))
                     ->color('primary')
                     ->icon('heroicon-m-check-circle')
@@ -109,8 +108,7 @@ class CountryResource extends Resource
 
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
-                        ->visible(user_can(CountryPermission::Delete))
-                        ->modalDescription(__('location.country_delete_confirmation')),
+                        ->visible(user_can(CountryPermission::Delete)),
                 ]),
             ]);
     }

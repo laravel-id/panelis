@@ -13,7 +13,7 @@ class DistrictForm
     {
         return [
             Select::make('region_id')
-                ->label(__('location.region'))
+                ->label(__('location.region.label'))
                 ->relationship('region', 'name')
                 ->createOptionForm(user_can(RegionPermission::Add) ? RegionForm::make() : null)
                 ->preload()
@@ -21,7 +21,7 @@ class DistrictForm
                 ->required(),
 
             TextInput::make('name')
-                ->label(__('location.district_name'))
+                ->label(__('location.district.name'))
                 ->required()
                 ->minLength(3)
                 ->maxLength(150),
