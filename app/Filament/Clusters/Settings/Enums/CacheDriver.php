@@ -36,11 +36,11 @@ enum CacheDriver: string implements HasOption
 
     public function label(): string
     {
-        return __(sprintf('setting.cache_driver_%s', $this->value));
+        return __(sprintf('setting.cache.%s_driver', $this->value));
     }
 
     public function description(): string
     {
-        return __(sprintf('setting.cache_description_%s', $this->value));
+        return __(sprintf('setting.cache.%s_description', $this->value));
     }
 }

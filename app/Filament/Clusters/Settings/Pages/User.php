@@ -43,12 +43,12 @@ class User extends Page implements HasForms, Settings\HasUpdateableForm
 
     public function getTitle(): string|Htmlable
     {
-        return __('setting.user');
+        return __('setting.user.label');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('navigation.setting_user');
+        return __('setting.user.navigation');
     }
 
     public function mount(): void
@@ -68,24 +68,24 @@ class User extends Page implements HasForms, Settings\HasUpdateableForm
         return $form
             ->disabled(user_cannot(UserPermission::Edit))
             ->schema([
-                Section::make(__('setting.user'))
-                    ->description(__('setting.user_section_description'))
+                Section::make(__('setting.user.label'))
+                    ->description(__('setting.user.section_description'))
                     ->schema([
                         Select::make('user.default_role')
-                            ->label(__('setting.user_default_role'))
+                            ->label(__('setting.user.default_role'))
                             ->native(false)
                             ->searchable()
                             ->options(Role::options())
                             ->required(),
 
                         Radio::make('user.avatar_provider')
-                            ->label(__('setting.user_avatar_provider'))
+                            ->label(__('setting.user.avatar_provider'))
                             ->options(AvatarProvider::options())
                             ->live()
                             ->required(),
 
                         Radio::make('user.avatar_libravatar_style')
-                            ->label(__('setting.user_avatar_libravatar_style'))
+                            ->label(__('setting.user.avatar_libravatar_style'))
                             ->visible(fn (Get $get): bool => $get('user.avatar_provider') === AvatarProvider::Libravatar->value)
                             ->live()
                             ->enum(LibravatarStyle::class)
@@ -94,9 +94,9 @@ class User extends Page implements HasForms, Settings\HasUpdateableForm
 
                         Placeholder::make('avatar')
                             ->hiddenLabel()
-                            ->label('setting.user_sample_avatar')
+                            ->label('setting.user.sample_avatar')
                             ->content(function (Get $get): HtmlString {
-                                $provider = AvatarProvider::tryFrom($get('user.avatar_provider'));
+                                $provider = AvatarProvider::tryFrom($get('user.avatar_provider')) ?? AvatarProvider::UIAvatars;
                                 $style = $get('user.avatar_libravatar_style');
 
                                 if ($provider === AvatarProvider::UIAvatars) {
@@ -124,14 +124,14 @@ class User extends Page implements HasForms, Settings\HasUpdateableForm
             }
 
             Notification::make('user_updated')
-                ->title(__('setting.user_updated'))
+                ->title(__('filament-actions::edit.single.notifications.saved.title'))
                 ->success()
                 ->send();
         } catch (Exception $e) {
             Log::error($e);
 
             Notification::make('user_not_updated')
-                ->title(__('setting.user_not_updated'))
+                ->title(__('setting.user.not_updated'))
                 ->danger()
                 ->send();
         }

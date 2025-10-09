@@ -38,7 +38,7 @@ class RoleResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return __('user.role.label');
+        return __('user.role.navigation');
     }
 
     public static function getLabel(): ?string

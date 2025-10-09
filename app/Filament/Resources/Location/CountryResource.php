@@ -31,7 +31,7 @@ class CountryResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return __('location.country.label');
+        return __('location.country.navigation');
     }
 
     public static function getLabel(): ?string

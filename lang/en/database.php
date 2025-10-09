@@ -1,8 +1,18 @@
 <?php
 
 return [
+    'navigation' => 'Database',
     'cloud_backup_enabled' => 'Enable',
     'cloud_storage' => 'Cloud storage',
+    'dropbox' => [
+        'api_key' => 'API key',
+        'token_hint' => '[Create a new app](https://www.dropbox.com/developers/apps)',
+        'api_secret' => 'API secret',
+        'btn' => [
+            'authorize' => 'Authorize',
+            'revoke' => 'Revoke',
+        ],
+    ],
     'type' => 'Type',
     'version' => 'Version',
     'path' => 'Path',
@@ -12,11 +22,24 @@ return [
     'period' => 'Period',
     'backup_time' => 'Backup time',
     'backup_max' => 'Max. backup',
-    'backup' => 'Backup',
+    'file' => [
+        'label' => 'Files',
+        'name' => 'Name',
+    ],
     'file_not_exist' => 'File does not exist',
     'file_deleted' => 'File has been deleted',
     'file_not_deleted' => 'File not deleted',
+    'auto_backup' => [
+        'label' => 'Auto-backup',
+        'section_description' => 'Configure automatic database backups and optional cloud uploads. You can schedule daily backups and connect to cloud storage like Dropbox.',
+        'not_available' => 'Database backup is not available',
+        'backed_up' => 'Database has been backed up to :path',
+    ],
+    'btn' => [
+        'backup_now' => 'Backup now',
+    ],
     'cloud_backup_disabled' => 'Cloud backup is disabled',
+    'cloud_backup_is_disabled' => 'Cloud backup is disabled',
     'upload_to_cloud' => 'Upload to cloud',
     'file_created' => 'File has been created',
     'file_not_created' => 'File not created',
@@ -26,31 +49,8 @@ return [
     'cloud_backup_section_description' => 'When automatic and cloud backups are enabled, each completed backup will be uploaded to the connected cloud storage.',
     'backup_updated' => 'Updated',
     'backup_not_updated' => 'Failed to update',
-    'btn' => [
-        'backup_now' => 'Backup now',
-    ],
-    'auto_backup' => [
-        'label' => 'Auto-backup',
-        'section_description' => 'Configure automatic database backups and optional cloud uploads. You can schedule daily backups and connect to cloud storage like Dropbox.',
-        'not_available' => 'Database backup is not available',
-        'backed_up' => 'Database has been backed up to :path',
-    ],
-    'period_daily' => 'Daily',
-    'file' => [
-        'name' => 'Name',
-        'label' => 'Files',
-    ],
-    'dropbox' => [
-        'api_key' => 'API key',
-        'api_secret' => 'API secret',
-        'token_hint' => '[Create a new app](https://www.dropbox.com/developers/apps)',
-        'btn' => [
-            'revoke' => 'Revoke',
-            'authorize' => 'Authorize',
-        ],
-    ],
-    'cloud_storage_dropbox' => 'Dropbox',
-    'cloud_backup_is_disabled' => 'Cloud backup is disabled',
-    'navigation' => 'Database',
     'failed_to_run_sql' => 'Failed to run SQLite backup command.',
+    'backup' => 'Backup',
+    'period_daily' => 'Daily',
+    'cloud_storage_dropbox' => 'Dropbox',
 ];

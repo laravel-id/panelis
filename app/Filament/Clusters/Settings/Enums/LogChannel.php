@@ -43,11 +43,11 @@ enum LogChannel: string implements HasOption
 
     public function label(): string
     {
-        return __(sprintf('setting.log_type_%s', $this->value));
+        return __(sprintf('setting.log.%s', $this->value));
     }
 
     public function description(): string
     {
-        return __(sprintf('setting.log_%s_description', $this->value));
+        return __(sprintf('setting.log.%s_description', $this->value));
     }
 }

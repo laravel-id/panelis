@@ -25,6 +25,11 @@ class JobResource extends Resource
         return __('job.label');
     }
 
+    public static function getNavigationLabel(): string
+    {
+        return __('job.navigation');
+    }
+
     public static function canAccess(): bool
     {
         return user_can(JobPermission::Browse);

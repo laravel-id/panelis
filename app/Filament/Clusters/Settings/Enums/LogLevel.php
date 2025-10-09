@@ -33,6 +33,6 @@ enum LogLevel: string implements HasOption
 
     public function label(): string
     {
-        return __(sprintf('setting.log_level_%s', $this->value));
+        return __(sprintf('setting.log.level_%s', $this->value));
     }
 }

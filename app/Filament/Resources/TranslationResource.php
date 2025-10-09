@@ -31,12 +31,12 @@ class TranslationResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return __('translation.label');
+        return __('translation.navigation');
     }
 
     public static function getNavigationGroup(): ?string
     {
-        return __('system.label');
+        return __('ui.system');
     }
 
     public static function canAccess(): bool

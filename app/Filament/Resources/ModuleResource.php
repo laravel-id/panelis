@@ -26,12 +26,12 @@ class ModuleResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return __('module.label');
+        return __('module.navigation');
     }
 
     public static function getNavigationGroup(): ?string
     {
-        return __('system.label');
+        return __('ui.system');
     }
 
     public static function canAccess(): bool

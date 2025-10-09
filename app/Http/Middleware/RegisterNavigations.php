@@ -19,7 +19,7 @@ class RegisterNavigations
     {
         Filament::serving(function () {
             Filament::registerNavigationItems([
-                NavigationItem::make(__('common.source_code'))
+                NavigationItem::make(__('ui.source_code'))
                     ->sort(200)
                     ->group(__('setting.navigation'))
                     ->url('https://github.com/laravel-id/panelis')

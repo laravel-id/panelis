@@ -35,7 +35,7 @@ class DistrictResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return __('location.district.label');
+        return __('location.district.navigation');
     }
 
     public static function getLabel(): ?string

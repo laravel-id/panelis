@@ -31,7 +31,7 @@ class RegionResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return __('location.region.label');
+        return __('location.region.navigation');
     }
 
     public static function getLabel(): ?string

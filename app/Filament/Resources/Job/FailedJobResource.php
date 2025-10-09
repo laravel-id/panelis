@@ -35,6 +35,11 @@ class FailedJobResource extends Resource
         return __('job.failed.label');
     }
 
+    public static function getNavigationLabel(): string
+    {
+        return __('job.failed.navigation');
+    }
+
     public static function canAccess(): bool
     {
         return user_can(FailedJobPermission::Browse);

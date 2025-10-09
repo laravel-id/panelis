@@ -5,4 +5,5 @@ return [
     'is_active' => 'Active',
     'name' => 'Name',
     'description' => 'Description',
+    'navigation' => 'Module',
 ];
