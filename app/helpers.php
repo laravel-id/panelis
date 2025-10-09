@@ -82,3 +82,18 @@ if (! function_exists('user_cannot')) {
         return ! user_can($ability, $model, $field);
     }
 }
+
+if (! function_exists('human_number')) {
+    function human_number(int|float $number): string
+    {
+        if (empty(config('app.number_format'))) {
+            Log::warning('Config app.number_format is not set. Using default: "0 . ,".');
+
+            return number_format($number);
+        }
+
+        [$decimal, $thousand, $separator] = explode(' ', config('app.number_format'));
+
+        return number_format($number, $decimal, $thousand, $separator);
+    }
+}
