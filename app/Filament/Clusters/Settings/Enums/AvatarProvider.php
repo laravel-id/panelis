@@ -27,9 +27,9 @@ enum AvatarProvider: string implements HasOption
         return sprintf('https://www.libravatar.org/avatar/%s?s=80&forcedefault=y&default=%s', $hash, $style);
     }
 
-    private function getUIAvatarsImageUrl(): ?string
+    private function getUIAvatarsImageUrl(User $user): ?string
     {
-        return null;
+        return 'https://ui-avatars.com/api/?name='.urlencode($user->name);
     }
 
     public static function options(): array
@@ -53,10 +53,10 @@ enum AvatarProvider: string implements HasOption
 
     public function getImageUrl(User|Authenticatable $user, ?string $style = null): ?string
     {
-        return match ($this->value) {
-            'gravatar' => $this->getGravatarImageUrl($user),
-            'libravatar' => $this->getLibravatarImageUrl($user, $style),
-            default => $this->getUIAvatarsImageUrl(),
+        return match ($this) {
+            self::Gravatar => $this->getGravatarImageUrl($user),
+            self::Libravatar => $this->getLibravatarImageUrl($user, $style),
+            default => $this->getUIAvatarsImageUrl($user),
         };
     }
 }
