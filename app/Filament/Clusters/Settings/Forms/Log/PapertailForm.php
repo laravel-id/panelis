@@ -12,19 +12,19 @@ class PapertailForm
     {
         return [
             Select::make('logging.channels.papertrail.level')
-                ->label(__('setting.log_level'))
+                ->label(__('setting.log.level'))
                 ->options(LogLevel::options())
                 ->searchable()
                 ->required()
                 ->enum(LogLevel::class),
 
             TextInput::make('logging.channels.papertrail.url')
-                ->label(__('setting.log_papertrail_url'))
+                ->label(__('setting.log.papertrail_url'))
                 ->url()
                 ->required(),
 
             TextInput::make('logging.channels.papertrail.port')
-                ->label(__('setting.log_papertrail_port'))
+                ->label(__('setting.log.papertrail_port'))
                 ->numeric()
                 ->required(),
         ];

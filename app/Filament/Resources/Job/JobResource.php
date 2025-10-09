@@ -17,12 +17,17 @@ class JobResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('navigation.job');
+        return __('job.label');
     }
 
     public static function getLabel(): ?string
     {
-        return __('job.job');
+        return __('job.label');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('job.navigation');
     }
 
     public static function canAccess(): bool

@@ -26,17 +26,17 @@ class RegionResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('navigation.location');
+        return __('location.label');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('navigation.region');
+        return __('location.region.navigation');
     }
 
     public static function getLabel(): ?string
     {
-        return __('location.region');
+        return __('location.region.label');
     }
 
     public static function canAccess(): bool
@@ -61,16 +61,16 @@ class RegionResource extends Resource
             ->defaultSort('name')
             ->columns([
                 Tables\Columns\ToggleColumn::make('is_active')
-                    ->label(__('location.region_is_active'))
+                    ->label(__('location.region.is_active'))
                     ->visible(user_can(RegionPermission::Edit)),
 
                 Tables\Columns\TextColumn::make('name')
-                    ->label(__('location.region_name'))
+                    ->label(__('location.region.name'))
                     ->sortable()
                     ->searchable(),
 
                 Tables\Columns\TextColumn::make('country.name')
-                    ->label(__('location.country'))
+                    ->label(__('location.country.label'))
                     ->sortable()
                     ->searchable(),
 
@@ -78,10 +78,10 @@ class RegionResource extends Resource
             ])
             ->filters([
                 TernaryFilter::make('is_active')
-                    ->label(__('location.region_is_active')),
+                    ->label(__('location.region.is_active')),
 
                 SelectFilter::make('country_id')
-                    ->label(__('location.country'))
+                    ->label(__('location.country.label'))
                     ->relationship('country', 'name')
                     ->multiple()
                     ->searchable()
@@ -93,12 +93,11 @@ class RegionResource extends Resource
                     ->visible(user_can(RegionPermission::Edit)),
 
                 DeleteAction::make()
-                    ->visible(user_can(RegionPermission::Delete))
-                    ->modalDescription(__('location.delete_confirmation')),
+                    ->visible(user_can(RegionPermission::Delete)),
             ])
             ->bulkActions([
                 BulkAction::make('toggle')
-                    ->label(__('location.toggle_status'))
+                    ->label(__('location.btn.toggle_status'))
                     ->color('primary')
                     ->icon('heroicon-m-check-circle')
                     ->visible(user_can(RegionPermission::Edit))
@@ -111,8 +110,7 @@ class RegionResource extends Resource
 
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
-                        ->visible(user_can(RegionPermission::Delete))
-                        ->modalDescription(__('location.delete_confirmation')),
+                        ->visible(user_can(RegionPermission::Delete)),
                 ]),
             ]);
     }

@@ -36,12 +36,12 @@ class Datetime extends Page
 
     public function getTitle(): string|Htmlable
     {
-        return __('setting.datetime');
+        return __('setting.datetime.label');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('navigation.setting_datetime');
+        return __('setting.datetime.navigation');
     }
 
     public static function canAccess(): bool
@@ -52,8 +52,8 @@ class Datetime extends Page
     public function mount()
     {
         $this->form->fill([
-            'app.datetime_timezone' => config('app.datetime_timezone', config('app.timezone')),
-            'app.datetime_format' => config('app.datetime_format', 'Y-m-d H:i'),
+            'app.datetime.timezone' => config('app.datetime.timezone', config('app.timezone')),
+            'app.datetime.format' => config('app.datetime.format', 'Y-m-d H:i'),
         ]);
     }
 
@@ -62,24 +62,24 @@ class Datetime extends Page
         $timezones = collect(\DateTimeZone::listIdentifiers());
 
         return $form->schema([
-            Section::make(__('setting.datetime'))
+            Section::make(__('setting.datetime.label'))
                 ->disabled(user_cannot(DatetimePermission::Edit))
-                ->description(__('setting.datetime_section_description'))
+                ->description(__('setting.datetime.section_description'))
                 ->schema([
                     // do not override existing config from Laravel: "app.timezone"
                     // default timezone should be in UTC, but display timezone is interchangeable
-                    Select::make('app.datetime_timezone')
+                    Select::make('app.datetime.timezone')
                         ->options(array_combine($timezones->toArray(), $timezones->toArray()))
                         ->required()
                         ->searchable()
                         ->in($timezones->toArray())
                         ->live()
-                        ->label(__('setting.datetime_timezone')),
+                        ->label(__('setting.datetime.timezone')),
 
-                    TextInput::make('app.datetime_format')
-                        ->label(__('setting.datetime_format'))
+                    TextInput::make('app.datetime.format')
+                        ->label(__('setting.datetime.format'))
                         ->hint(function (): Htmlable {
-                            return str(__('setting.datetime_format_sample'))
+                            return str(__('setting.datetime.format_sample'))
                                 ->inlineMarkdown()
                                 ->toHtmlString();
                         })
@@ -87,11 +87,11 @@ class Datetime extends Page
                         ->live()
                         ->required(),
 
-                    Placeholder::make('datetime_sample')
-                        ->label(__('setting.datetime_sample'))
+                    Placeholder::make('datetime.sample')
+                        ->label(__('setting.datetime.sample'))
                         ->content(function (Get $get): string {
-                            return now($get('app.datetime_timezone'))
-                                ->translatedFormat($get('app.datetime_format'));
+                            return now($get('app.datetime.timezone'))
+                                ->translatedFormat($get('app.datetime.format'));
                         }),
                 ]),
         ]);
@@ -112,8 +112,8 @@ class Datetime extends Page
             Setting::updateOrCreate(compact('key'), ['value' => $value ?? '']);
         }
 
-        Notification::make('datetime_updated')
-            ->title(__('setting.datetime_updated'))
+        Notification::make('datetime.updated')
+            ->title(__('filament-actions::edit.single.notifications.saved.title'))
             ->success()
             ->send();
     }

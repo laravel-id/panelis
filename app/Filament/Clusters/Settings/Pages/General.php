@@ -44,23 +44,21 @@ class General extends Page
     {
         return [
             Action::make('export')
-                ->label(__('setting.btn_export_all'))
+                ->label(__('ui.btn.export'))
                 ->visible(user_can(SettingPermission::Export))
                 ->requiresConfirmation()
-                ->modalDescription(__('setting.modal_export_all'))
                 ->action(function (): StreamedResponse {
                     return ExportAll::run();
                 }),
 
             ActionGroup::make([
                 Action::make('import')
-                    ->label(__('setting.btn_import'))
+                    ->label(__('ui.btn.import'))
                     ->visible(user_can(SettingPermission::Import))
                     ->requiresConfirmation()
-                    ->modalDescription(__('setting.modal_import'))
                     ->form([
                         FileUpload::make('settings')
-                            ->label(__('setting.exported_file'))
+                            ->label(__('setting.general.exported_file'))
                             ->previewable(false)
                             ->storeFiles(false)
                             ->fetchFileInformation(false)
@@ -76,14 +74,14 @@ class General extends Page
                             ImportAll::run($data['settings']);
 
                             Notification::make('setting_imported')
-                                ->title(__('setting.setting_imported'))
+                                ->title(__('setting.general.setting_imported'))
                                 ->success()
                                 ->send();
                         } catch (Exception $e) {
                             Logger::error($e);
 
                             Notification::make('setting_not_imported')
-                                ->title(__('setting.setting_not_imported'))
+                                ->title(__('setting.general.setting_not_imported'))
                                 ->danger()
                                 ->send();
                         }
@@ -94,12 +92,12 @@ class General extends Page
 
     public function getTitle(): string|Htmlable
     {
-        return __('setting.general');
+        return __('setting.general.label');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('navigation.setting_general');
+        return __('setting.general.navigation');
     }
 
     public static function canAccess(): bool
@@ -144,11 +142,11 @@ class General extends Page
         }
 
         return $form->schema([
-            Section::make(__('setting.general'))
-                ->description(__('setting.general_section_description'))
+            Section::make(__('setting.general.label'))
+                ->description(__('setting.general.section_description'))
                 ->schema(Settings\Forms\General\GeneralForm::make()),
 
-            Section::make(__('setting.debug_mode'))
+            Section::make(__('setting.general.debug_mode'))
                 ->collapsed()
                 ->schema(Settings\Forms\General\DebugForm::make()),
         ])->disabled(user_cannot(SettingPermission::Edit));
@@ -183,7 +181,7 @@ class General extends Page
         event(new SettingUpdated);
 
         Notification::make('general_updated')
-            ->title(__('setting.general_updated'))
+            ->title(__('filament-actions::edit.single.notifications.saved.title'))
             ->success()
             ->send();
     }

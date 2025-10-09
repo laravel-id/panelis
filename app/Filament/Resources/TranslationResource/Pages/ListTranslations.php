@@ -40,10 +40,10 @@ class ListTranslations extends ListRecords
             ActionGroup::make([
                 Action::make('import')
                     ->visible(user_can(TranslationPermission::Import))
-                    ->label(__('translation.import'))
+                    ->label(__('ui.btn.import'))
                     ->icon('heroicon-s-arrow-down-tray')
                     ->modalWidth(MaxWidth::Medium)
-                    ->modalSubmitActionLabel(__('translation.import_submit'))
+                    ->modalSubmitActionLabel(__('ui.btn.import'))
                     ->modalDescription(__('translation.import_description'))
                     ->modalIcon('heroicon-o-arrow-up-on-square')
                     ->form(TranslationResource\Forms\ImportForm::make())
@@ -86,12 +86,12 @@ class ListTranslations extends ListRecords
 
                 Action::make('export')
                     ->visible(user_can(TranslationPermission::Export))
-                    ->label(__('translation.export'))
+                    ->label(__('ui.btn.export'))
                     ->icon('heroicon-s-arrow-up-tray')
                     ->modalWidth(MaxWidth::Medium)
                     ->modalDescription(__('translation.export_description'))
                     ->modalIcon('heroicon-o-arrow-down-on-square')
-                    ->modalSubmitActionLabel(__('translation.export_submit'))
+                    ->modalSubmitActionLabel(__('ui.btn.export'))
                     ->form(TranslationResource\Forms\ExportForm::make())
                     ->action(function (array $data): ?StreamedResponse {
                         try {
@@ -125,10 +125,9 @@ class ListTranslations extends ListRecords
 
                 Action::make('backup')
                     ->visible(user_can(TranslationPermission::Backup))
-                    ->label(__('translation.backup'))
+                    ->label(__('ui.btn.backup'))
                     ->icon('heroicon-o-arrow-down-on-square-stack')
                     ->requiresConfirmation()
-                    ->modalDescription(__('translation.backup_confirmation'))
                     ->action(function (): void {
                         try {
                             Backup::run();
@@ -149,7 +148,7 @@ class ListTranslations extends ListRecords
 
                 Action::make('restore')
                     ->visible(user_can(TranslationPermission::Restore))
-                    ->label(__('translation.restore'))
+                    ->label(__('ui.btn.restore'))
                     ->icon('heroicon-o-arrow-up-on-square-stack')
                     ->requiresConfirmation()
                     ->action(function (): void {

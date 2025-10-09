@@ -1,3 +1,3 @@
 <x-mail::message>
-    @lang('setting.mail_test_content')
+    @lang('setting.mail.test_content')
 </x-mail::message>

@@ -18,7 +18,7 @@ class ListFailedJobs extends ListRecords
     {
         return [
             Action::make('retry')
-                ->label(__('job.btn_retry_all'))
+                ->label(__('job.btn.retry_all'))
                 ->requiresConfirmation()
                 ->visible(user_can(FailedJobPermission::Retry))
                 ->disabled(FailedJob::query()->count() <= 0)

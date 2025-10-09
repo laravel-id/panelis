@@ -3,7 +3,7 @@
         {{ $this->form }}
         <div>
         <x-filament::button type="submit" size="sm" :disabled="$isButtonDisabled ?? false">
-            @lang('ui.button_save')
+            @lang('ui.btn.save')
         </x-filament::button>
         </div>
     </x-filament-panels::form>

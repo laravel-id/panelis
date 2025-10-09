@@ -31,13 +31,13 @@ enum MailType: string implements HasOption
     {
         return collect(MailType::cases())
             ->mapWithKeys(function (MailType $case): array {
-                return [$case->value => __(sprintf('setting.mail_description_%s', $case->value))];
+                return [$case->value => __(sprintf('setting.mail.%s_description', $case->value))];
             })
             ->toArray();
     }
 
     public function label(): string
     {
-        return __(sprintf('setting.mail_type_%s', $this->value));
+        return __(sprintf('setting.mail.%s_driver', $this->value));
     }
 }

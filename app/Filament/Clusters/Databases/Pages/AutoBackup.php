@@ -51,12 +51,12 @@ class AutoBackup extends Page implements HasForms
 
     public static function getNavigationLabel(): string
     {
-        return __('navigation.auto_backup');
+        return __('database.auto_backup.label');
     }
 
     public function getTitle(): string|Htmlable
     {
-        return __('database.auto_backup');
+        return __('database.auto_backup.label');
     }
 
     public static function canAccess(): bool
@@ -75,7 +75,7 @@ class AutoBackup extends Page implements HasForms
         return [
             Action::make('backup')
                 ->visible(user_can(DatabasePermission::Backup))
-                ->label(__('database.button_backup_now'))
+                ->label(__('database.btn.backup_now'))
                 ->form([
                     AlertBox::make('cloud_backup_disabled')
                         ->label(__('database.cloud_backup_disabled'))
@@ -165,8 +165,8 @@ class AutoBackup extends Page implements HasForms
                     ->helperText(__('database.auto_backup_disabled_reason'))
                     ->hidden(fn (): bool => $this->databaseService->isAvailable() ?? false),
 
-                Section::make(__('database.auto_backup'))
-                    ->description(__('database.auto_backup_info'))
+                Section::make(__('database.auto_backup.label'))
+                    ->description(__('database.auto_backup.section_description'))
                     ->schema(AutoBackupForm::make($this->databaseService)),
 
                 Section::make(__('database.cloud_backup'))

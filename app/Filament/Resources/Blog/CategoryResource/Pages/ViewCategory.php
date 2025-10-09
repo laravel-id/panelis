@@ -52,15 +52,15 @@ class ViewCategory extends ViewRecord
                     ->columns(2)
                     ->schema([
                         TextEntry::make('name')
-                            ->label(__('blog.category_title'))
+                            ->label(__('blog.category.title'))
                             ->size(TextEntrySize::Large),
 
                         TextEntry::make('slug')
-                            ->label(__('blog.category_slug'))
+                            ->label(__('blog.category.slug'))
                             ->size(TextEntrySize::Large),
 
                         TextEntry::make('description')
-                            ->label(__('blog.category_description'))
+                            ->label(__('blog.category.description'))
                             ->columnSpanFull()
                             ->markdown(),
                     ]),

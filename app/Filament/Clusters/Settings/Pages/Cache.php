@@ -31,7 +31,7 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
 
     protected static ?string $cluster = Settings::class;
 
-    protected static ?int $navigationSort = 8;
+    protected static ?int $navigationSort = 7;
 
     public array $cache;
 
@@ -41,28 +41,28 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
 
     public static function canAccess(): bool
     {
-        return user_cannot(CachePermission::Browse);
+        return user_can(CachePermission::Browse);
     }
 
     protected function getHeaderActions(): array
     {
         return [
             Action::make('test_cache')
-                ->label(__('setting.cache_button_test'))
+                ->label(__('setting.cache.btn.test'))
                 ->visible(false)
                 ->action(function (): void {
                     try {
                         \Illuminate\Support\Facades\Cache::put('test', 'test', now()->addMinute(5));
 
-                        Notification::make('cache_test_success')
-                            ->title(__('setting.cache_test_success'))
+                        Notification::make('cache.test_success')
+                            ->title(__('setting.cache.test_success'))
                             ->success()
                             ->send();
                     } catch (\Exception $e) {
                         Log::error($e);
 
-                        Notification::make('cache_test_failed')
-                            ->title(__('setting.cache_test_failed'))
+                        Notification::make('cache.test_failed')
+                            ->title(__('setting.cache.test_failed'))
                             ->body($e->getMessage())
                             ->danger()
                             ->send();
@@ -70,7 +70,7 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
                 }),
 
             Action::make('flush_cache')
-                ->label(__('setting.cache_button_flush'))
+                ->label(__('setting.cache.btn.flush'))
                 ->requiresConfirmation()
                 ->color('warning')
                 ->hidden(user_cannot(CachePermission::Flush))
@@ -78,8 +78,8 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
                     try {
                         \Illuminate\Support\Facades\Cache::flush();
 
-                        Notification::make('cache_flushed')
-                            ->title(__('setting.cache_flushed'))
+                        Notification::make('cache.flushed')
+                            ->title(__('setting.cache.flushed'))
                             ->success()
                             ->send();
                     } catch (\Exception $e) {
@@ -91,12 +91,12 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
 
     public function getTitle(): string|Htmlable
     {
-        return __('setting.cache');
+        return __('setting.cache.label');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('navigation.setting_cache');
+        return __('setting.cache.navigation');
     }
 
     public function mount(): void
@@ -107,18 +107,18 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
                 'redis' => config('database.redis'),
             ],
 
-            'isButtonDisabled' => user_can(CachePermission::Browse),
+            'isButtonDisabled' => user_cannot(CachePermission::Browse),
         ]);
     }
 
     public function form(Form $form): Form
     {
         return $form->schema([
-            Section::make(__('setting.cache'))
-                ->description(__('setting.cache_section_description'))
+            Section::make(__('setting.cache.label'))
+                ->description(__('setting.cache.section_description'))
                 ->schema([
                     Radio::make('cache.default')
-                        ->label(__('setting.cache_driver'))
+                        ->label(__('setting.cache.driver'))
                         ->options(CacheDriver::options())
                         ->descriptions(CacheDriver::descriptions())
                         ->live()
@@ -126,18 +126,15 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
                         ->enum(CacheDriver::class),
                 ]),
 
-            Section::make(__('setting.cache_memcached'))
-                ->description(__('setting.cache_memcached_description'))
+            Section::make(__('setting.cache.memcached_driver'))
                 ->visible(fn (Get $get): bool => $get('cache.default') === CacheDriver::Memcached->value)
                 ->schema(Settings\Forms\Cache\MemcachedForm::schema()),
 
-            Section::make(__('setting.cache_redis'))
-                ->description(__('setting.cache_redis_section_description'))
+            Section::make(__('setting.cache.redis_driver'))
                 ->visible(fn (Get $get): bool => $get('cache.default') === CacheDriver::Redis->value)
                 ->schema(Settings\Forms\Cache\RedisForm::schema()),
 
-            Section::make(__('setting.cache_dynamodb'))
-                ->description(__('setting.cache_dynamodb_section_description'))
+            Section::make(__('setting.cache.dynamodb_driver'))
                 ->visible(fn (Get $get): bool => $get('cache.default') === CacheDriver::DynamoDB->value)
                 ->schema(Settings\Forms\Cache\DynamoDBForm::schema()),
         ])
@@ -159,14 +156,14 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
             }
 
             Notification::make('setting_updated')
-                ->title(__('setting.cache_updated'))
+                ->title(__('filament-actions::edit.single.notifications.saved.title'))
                 ->success()
                 ->send();
         } catch (\Exception $e) {
             Log::error($e);
 
             Notification::make('setting_not_updated')
-                ->title(__('setting.cache_not_updated'))
+                ->title(__('setting.cache.not_updated'))
                 ->danger()
                 ->send();
         }

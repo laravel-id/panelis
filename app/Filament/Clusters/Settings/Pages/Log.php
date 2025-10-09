@@ -47,19 +47,19 @@ class Log extends Page implements HasForms
     {
         return [
             Action::make('send_log')
-                ->label(__('setting.log_button_test'))
+                ->label(__('setting.log.btn.test'))
                 ->modalWidth(MaxWidth::Medium)
                 ->form([
                     Textarea::make('message')
-                        ->label(__('setting.log_message'))
+                        ->label(__('setting.log.message'))
                         ->required(),
                 ])
                 ->action(function (array $data): void {
                     try {
                         Logger::debug($data['message'] ?? 'Testing log');
 
-                        Notification::make('log_test_sent')
-                            ->title(__('setting.log_test_sent'))
+                        Notification::make('log.test_sent')
+                            ->title(__('setting.log.test_sent'))
                             ->success()
                             ->send();
 
@@ -71,12 +71,12 @@ class Log extends Page implements HasForms
 
     public function getTitle(): string|Htmlable
     {
-        return __('setting.log');
+        return __('setting.log.label');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('navigation.setting_log');
+        return __('setting.log.navigation');
     }
 
     public static function canAccess(): bool
@@ -128,11 +128,11 @@ class Log extends Page implements HasForms
         return $form
             ->disabled(user_cannot(LogPermission::Edit))
             ->schema([
-                Section::make(__('setting.log'))
-                    ->description(__('setting.log_section_description'))
+                Section::make(__('setting.log.label'))
+                    ->description(__('setting.log.section_description'))
                     ->schema([
                         CheckboxList::make('logging.channels.stack.channels')
-                            ->label(__('setting.log_channel'))
+                            ->label(__('setting.log.channel'))
                             ->descriptions(LogChannel::descriptions())
                             ->live()
                             ->required()
@@ -142,20 +142,20 @@ class Log extends Page implements HasForms
                             }),
                     ]),
 
-                Section::make(__('setting.log_nightwatch'))
+                Section::make(__('setting.log.nightwatch'))
                     ->visible(function (Get $get): bool {
                         return in_array(LogChannel::Nightwatch->value, $get('logging.channels.stack.channels'))
                             && $this->nightwatchInstalled();
                     })->schema(Settings\Forms\Log\NightwatchForm::make()),
 
-                Section::make(__('setting.log_papertrail'))
+                Section::make(__('setting.log.papertrail'))
                     ->visible(function (Get $get): bool {
                         return in_array(LogChannel::Papertrail->value, $get('logging.channels.stack.channels'));
                     })
                     ->collapsible()
                     ->schema(Settings\Forms\Log\PapertailForm::make()),
 
-                Section::make(__('setting.log_slack'))
+                Section::make(__('setting.log.slack'))
                     ->visible(function (Get $get): bool {
                         return in_array(LogChannel::Slack->value, $get('logging.channels.stack.channels'));
                     })
@@ -198,15 +198,15 @@ class Log extends Page implements HasForms
 
             event(new SettingUpdated);
 
-            Notification::make('log_updated')
-                ->title(__('setting.log_updated'))
+            Notification::make('log.updated')
+                ->title(__('filament-actions::edit.single.notifications.saved.title'))
                 ->success()
                 ->send();
         } catch (Exception $e) {
             Logger::error($e);
 
-            Notification::make('log_not_updated')
-                ->title(__('setting.log_not_updated'))
+            Notification::make('log.not_updated')
+                ->title(__('setting.log.not_updated'))
                 ->danger()
                 ->send();
         }

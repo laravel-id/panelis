@@ -28,7 +28,7 @@ class TestMail extends Mailable
     {
         return new Envelope(
             from: new Address($this->address, $this->name),
-            subject: __('setting.mail_test_subject'),
+            subject: __('setting.mail.test_subject'),
         );
     }
 
