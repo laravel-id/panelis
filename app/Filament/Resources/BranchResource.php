@@ -31,7 +31,7 @@ class BranchResource extends Resource
 
     public static function getNavigationLabel(): string
     {
-        return __('branch.label');
+        return __('branch.navigation');
     }
 
     public static function canAccess(): bool
