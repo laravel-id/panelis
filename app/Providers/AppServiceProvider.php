@@ -7,6 +7,8 @@ use App\Services\Database\DatabaseFactory;
 use App\Services\OAuth\OAuth;
 use App\Services\OAuth\OAuthFactory;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Number;
 use Illuminate\Support\ServiceProvider;
@@ -35,6 +37,17 @@ class AppServiceProvider extends ServiceProvider
         if ($this->app->environment('production')) {
             URL::forceScheme('https');
         }
+
+        Lang::handleMissingKeysUsing(function (string $key, array $replacements, string $locale): string {
+            if (config('app.translation_debug')) {
+                Log::warning(sprintf('Missing translation key: %s', $key), [
+                    'key' => $key,
+                    'locale' => $locale,
+                ]);
+            }
+
+            return $key;
+        });
 
         Number::macro('money', function (
             int|float $amount,
