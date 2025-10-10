@@ -4,6 +4,7 @@ namespace App\Filament\Resources\TranslationResource\Pages;
 
 use App\Actions\Translation\Backup;
 use App\Actions\Translation\Import;
+use App\Actions\Translation\ImportFromFiles;
 use App\Actions\Translation\Restore;
 use App\Filament\Resources\TranslationResource;
 use App\Filament\Resources\TranslationResource\Enums\TranslationPermission;
@@ -38,6 +39,19 @@ class ListTranslations extends ListRecords
                 ->visible(user_can(TranslationPermission::Add)),
 
             ActionGroup::make([
+                Action::make('import_files')
+                    ->label(__('translation.btn.import_files'))
+                    ->icon('heroicon-o-clipboard-document')
+                    ->form(TranslationResource\Forms\ImportFromFileForm::schema())
+                    ->action(function (array $data): void {
+                        ImportFromFiles::run($data['files'] ?? null);
+
+                        Notification::make('file_imported')
+                            ->title(__('filament-actions::create.single.notifications.created.title'))
+                            ->success()
+                            ->send();
+                    }),
+
                 Action::make('import')
                     ->visible(user_can(TranslationPermission::Import))
                     ->label(__('ui.btn.import'))
@@ -46,7 +60,7 @@ class ListTranslations extends ListRecords
                     ->modalSubmitActionLabel(__('ui.btn.import'))
                     ->modalDescription(__('translation.import_description'))
                     ->modalIcon('heroicon-o-arrow-up-on-square')
-                    ->form(TranslationResource\Forms\ImportForm::make())
+                    ->form(TranslationResource\Forms\ImportForm::schema())
                     ->action(function (array $data): void {
                         $lines = json_decode($data['trans']->getContent(), associative: true);
                         try {
@@ -92,7 +106,7 @@ class ListTranslations extends ListRecords
                     ->modalDescription(__('translation.export_description'))
                     ->modalIcon('heroicon-o-arrow-down-on-square')
                     ->modalSubmitActionLabel(__('ui.btn.export'))
-                    ->form(TranslationResource\Forms\ExportForm::make())
+                    ->form(TranslationResource\Forms\ExportForm::schema())
                     ->action(function (array $data): ?StreamedResponse {
                         try {
                             $locale = $data['locale'];

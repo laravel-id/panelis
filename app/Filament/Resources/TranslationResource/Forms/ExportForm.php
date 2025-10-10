@@ -9,7 +9,7 @@ use Filament\Forms\Components\Toggle;
 
 class ExportForm
 {
-    public static function make(): array
+    public static function schema(): array
     {
         return [
             Radio::make('locale')
