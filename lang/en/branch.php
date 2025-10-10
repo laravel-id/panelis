@@ -3,7 +3,7 @@
 return [
     'name' => 'Name',
     'phone' => 'Phone',
-    'email' => 'Email',
+    'email' => 'E-mail',
     'address' => 'Address',
     'metadata' => 'Metadata',
     'label' => 'Branch',
