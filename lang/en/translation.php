@@ -7,9 +7,14 @@ return [
     'key' => 'Key',
     'key_change_warning' => 'Changing key data may cause some translations to be lost',
     'text' => 'Text',
+    'missing_text' => 'Missing text for locale :locale',
+    'files' => 'Files',
+
     'btn' => [
         'add_line' => 'Add line',
+        'import_files' => 'Import from files',
     ],
+
     'lang' => 'Language',
     'line' => 'Line',
     'helper_locales_generated_setting' => 'Locales list generated automatically based on General Setting',

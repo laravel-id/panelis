@@ -9,8 +9,11 @@ use App\Models\Translation;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Tables\Actions\DeleteAction;
 use Filament\Tables\Actions\EditAction;
+use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\TextInputColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
@@ -67,6 +70,10 @@ class TranslationResource extends Resource
             ->defaultGroup('group')
             ->defaultSort('key')
             ->columns([
+                IconColumn::make('is_system')
+                    ->label(__('translation.is_system'))
+                    ->boolean(),
+
                 TextColumn::make('key')
                     ->label(__('translation.key'))
                     ->copyable()
@@ -74,8 +81,9 @@ class TranslationResource extends Resource
                     ->grow(false)
                     ->searchable(['key', 'text', 'group']),
 
-                TextColumn::make(sprintf('text.%s', config('app.locale')))
-                    ->label(__('translation.text')),
+                TextInputColumn::make(sprintf('text.%s', app()->getLocale()))
+                    ->label(__('translation.text'))
+                    ->placeholder(__('translation.missing_text', ['locale' => app()->getLocale()])),
 
                 TextColumn::makeSinceDate('updated_at', __('ui.updated_at')),
             ])
@@ -96,6 +104,9 @@ class TranslationResource extends Resource
             ->actions([
                 EditAction::make()
                     ->visible(user_can(TranslationPermission::Edit)),
+
+                DeleteAction::make()
+                    ->visible(user_can(TranslationPermission::Delete)),
             ])
             ->bulkActions([
 
