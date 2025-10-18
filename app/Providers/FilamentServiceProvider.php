@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Filament\Infolists\Components\TextEntry;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Support\ServiceProvider;
 
@@ -24,6 +25,13 @@ class FilamentServiceProvider extends ServiceProvider
             return TextColumn::make($name)
                 ->label($label)
                 ->sortable()
+                ->since(get_timezone())
+                ->dateTimeTooltip(get_datetime_format(), get_timezone());
+        });
+
+        TextEntry::macro('makeSinceDate', function (string $name, ?string $label = null): TextEntry {
+            return TextEntry::make($name)
+                ->label($label)
                 ->since(get_timezone())
                 ->dateTimeTooltip(get_datetime_format(), get_timezone());
         });
