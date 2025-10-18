@@ -7,7 +7,6 @@
     "require": {
         "php": "^8.2",
         "bezhansalleh/filament-language-switch": "^4.0",
-        "calebporzio/sushi": "^2.5",
         "filament/filament": "^4.1",
         "laravel/framework": "^11.0",
         "laravel/telescope": "^5.0",
