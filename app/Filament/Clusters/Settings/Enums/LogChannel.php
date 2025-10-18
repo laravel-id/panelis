@@ -2,9 +2,10 @@
 
 namespace App\Filament\Clusters\Settings\Enums;
 
-use App\Models\Enums\HasOption;
+use Filament\Support\Contracts\HasDescription;
+use Filament\Support\Contracts\HasLabel;
 
-enum LogChannel: string implements HasOption
+enum LogChannel: string implements HasDescription, HasLabel
 {
     case Single = 'single';
 
@@ -22,31 +23,12 @@ enum LogChannel: string implements HasOption
 
     case Papertrail = 'papertrail';
 
-    public static function options(): array
-    {
-        return collect(LogChannel::cases())
-            ->mapWithKeys(function (self $case): array {
-                return [$case->value => $case->label()];
-            })
-            ->sortKeys()
-            ->toArray();
-    }
-
-    public static function descriptions(): array
-    {
-        return collect(LogChannel::cases())
-            ->mapWithKeys(function (LogChannel $case): array {
-                return [$case->value => $case->description()];
-            })
-            ->toArray();
-    }
-
-    public function label(): string
+    public function getLabel(): string
     {
         return __(sprintf('setting.log.%s', $this->value));
     }
 
-    public function description(): string
+    public function getDescription(): string
     {
         return __(sprintf('setting.log.%s_description', $this->value));
     }

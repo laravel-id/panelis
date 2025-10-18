@@ -39,7 +39,7 @@ class CloudBackupForm
 
             Radio::make('database.cloud_storage')
                 ->label(__('database.cloud_storage'))
-                ->options(CloudProvider::options())
+                ->options(CloudProvider::class)
                 ->afterStateUpdated(function (?string $state): void {
                     if (! empty($state)) {
                         Setting::set('database.cloud_storage', $state);

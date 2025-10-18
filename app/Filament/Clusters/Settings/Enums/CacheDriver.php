@@ -2,9 +2,10 @@
 
 namespace App\Filament\Clusters\Settings\Enums;
 
-use App\Models\Enums\HasOption;
+use Filament\Support\Contracts\HasDescription;
+use Filament\Support\Contracts\HasLabel;
 
-enum CacheDriver: string implements HasOption
+enum CacheDriver: string implements HasDescription, HasLabel
 {
     case File = 'file';
 
@@ -18,28 +19,12 @@ enum CacheDriver: string implements HasOption
 
     case DynamoDB = 'dynamodb';
 
-    public static function options(): array
-    {
-        return collect(CacheDriver::cases())
-            ->mapWithKeys(function (CacheDriver $case): array {
-                return [$case->value => $case->label()];
-            })
-            ->toArray();
-    }
-
-    public static function descriptions(): array
-    {
-        return collect(CacheDriver::cases())
-            ->mapWithKeys(fn (CacheDriver $case): array => [$case->value => $case->description()])
-            ->toArray();
-    }
-
-    public function label(): string
+    public function getLabel(): string
     {
         return __(sprintf('setting.cache.%s_driver', $this->value));
     }
 
-    public function description(): string
+    public function getDescription(): string
     {
         return __(sprintf('setting.cache.%s_description', $this->value));
     }

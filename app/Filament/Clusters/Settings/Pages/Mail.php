@@ -74,8 +74,7 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
                 ->schema([
                     Radio::make('mail.default')
                         ->label(__('setting.mail.driver'))
-                        ->options(MailType::options())
-                        ->descriptions(MailType::descriptions())
+                        ->options(MailType::class)
                         ->enum(MailType::class)
                         ->live()
                         ->required(),

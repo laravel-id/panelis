@@ -133,10 +133,10 @@ class Log extends Page implements HasForms
                     ->schema([
                         CheckboxList::make('logging.channels.stack.channels')
                             ->label(__('setting.log.channel'))
-                            ->descriptions(LogChannel::descriptions())
                             ->live()
                             ->required()
-                            ->options(LogChannel::options())
+                            ->options(LogChannel::class)
+                            ->enum(LogChannel::class)
                             ->disableOptionWhen(function (string $value): bool {
                                 return $value === LogChannel::Nightwatch->value && ! $this->nightwatchInstalled();
                             }),

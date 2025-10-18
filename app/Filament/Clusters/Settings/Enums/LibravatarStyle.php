@@ -2,9 +2,9 @@
 
 namespace App\Filament\Clusters\Settings\Enums;
 
-use App\Models\Enums\HasOption;
+use Filament\Support\Contracts\HasLabel;
 
-enum LibravatarStyle: string implements HasOption
+enum LibravatarStyle: string implements HasLabel
 {
     case Identicon = 'identicon';
 
@@ -20,17 +20,7 @@ enum LibravatarStyle: string implements HasOption
 
     case Wavatar = 'wavatar';
 
-    public static function options(): array
-    {
-        return collect(self::cases())
-            ->mapWithKeys(function (self $case): array {
-                return [$case->value => $case->label()];
-            })
-            ->sort()
-            ->toArray();
-    }
-
-    public function label(): string
+    public function getLabel(): string
     {
         return match ($this->value) {
             'robohash' => 'Roboter',

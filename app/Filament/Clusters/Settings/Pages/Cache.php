@@ -119,8 +119,7 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
                 ->schema([
                     Radio::make('cache.default')
                         ->label(__('setting.cache.driver'))
-                        ->options(CacheDriver::options())
-                        ->descriptions(CacheDriver::descriptions())
+                        ->options(CacheDriver::class)
                         ->live()
                         ->required()
                         ->enum(CacheDriver::class),

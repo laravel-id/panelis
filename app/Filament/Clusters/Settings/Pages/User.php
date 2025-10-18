@@ -80,7 +80,8 @@ class User extends Page implements HasForms, Settings\HasUpdateableForm
 
                         Radio::make('user.avatar_provider')
                             ->label(__('setting.user.avatar_provider'))
-                            ->options(AvatarProvider::options())
+                            ->options(AvatarProvider::class)
+                            ->enum(AvatarProvider::class)
                             ->live()
                             ->required(),
 
@@ -90,7 +91,7 @@ class User extends Page implements HasForms, Settings\HasUpdateableForm
                             ->live()
                             ->enum(LibravatarStyle::class)
                             ->required(fn (Get $get): bool => $get('user.avatar_provider') === AvatarProvider::Libravatar->value)
-                            ->options(LibravatarStyle::options()),
+                            ->options(LibravatarStyle::class),
 
                         Placeholder::make('avatar')
                             ->hiddenLabel()
