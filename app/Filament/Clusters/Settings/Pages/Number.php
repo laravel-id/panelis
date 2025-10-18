@@ -7,6 +7,7 @@ use App\Filament\Clusters\Settings;
 use App\Filament\Clusters\Settings\Enums\NumberFormat;
 use App\Filament\Clusters\Settings\Enums\NumberPermission;
 use App\Models\Setting;
+use Exception;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Section;
@@ -53,12 +54,11 @@ class Number extends Page
 
     public function mount(): void
     {
-
         $this->form->fill([
             'app' => [
                 'currency_symbol' => config('app.currency_symbol'),
-                'number.format' => config('app.number.format', '0 . ,'),
-                'number.symbol_suffix' => config('app.number.symbol_suffix', false),
+                'number_format' => config('app.number_format', NumberFormat::Plain->value),
+                'number_symbol_suffix' => config('app.number_symbol_suffix', false),
             ],
         ]);
     }
@@ -76,36 +76,29 @@ class Number extends Page
                         ->minValue(1)
                         ->maxValue(10),
 
-                    Toggle::make('app.number.symbol_suffix')
+                    Toggle::make('app.number_symbol_suffix')
                         ->label(__('setting.number.currency_symbol_as_suffix'))
                         ->helperText(__('setting.number.helper_currency_symbol_as_suffix'))
                         ->live()
                         ->disabled(fn (Get $get): bool => empty($get('app.currency_symbol')))
                         ->nullable(),
 
-                    Radio::make('app.number.format')
+                    Radio::make('app.number_format')
                         ->label(__('setting.number.format'))
                         ->required()
                         ->live()
-                        ->options(NumberFormat::class)
-                        ->enum(NumberFormat::class),
+                        ->options(NumberFormat::class),
 
                     Placeholder::make('sample_display')
                         ->label(__('setting.number.sample_display'))
                         ->content(function (Get $get): ?string {
-                            $format = $get('app.number.format');
-
-                            // at some point, Laravel/Filament trim space at suffix
-                            // we need to restore it with some condition
-                            if (count(explode(' ', $format)) === 2) {
-                                $format = sprintf('%s ', $format);
-                            }
+                            $format = NumberFormat::tryFrom($get('app.number_format')) ?? NumberFormat::Plain;
 
                             return \Illuminate\Support\Number::money(
-                                10_000.12,
-                                $format,
+                                10_234_567.12,
+                                $format->value,
                                 $get('app.currency_symbol'),
-                                $get('app.number.symbol_suffix'),
+                                $get('app.number_symbol_suffix'),
                             );
                         }),
                 ]),
@@ -132,7 +125,7 @@ class Number extends Page
                 ->title(__('filament-actions::edit.single.notifications.saved.title'))
                 ->success()
                 ->send();
-        } catch (\Exception $e) {
+        } catch (Exception) {
             Notification::make('number.setting_not_updated')
                 ->title(__('setting.number.not_updated'))
                 ->warning()

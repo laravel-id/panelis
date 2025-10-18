@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Filament\Clusters\Settings\Enums\NumberFormat;
 use App\Services\Database\Database;
 use App\Services\Database\DatabaseFactory;
 use App\Services\OAuth\OAuth;
@@ -55,37 +56,17 @@ class AppServiceProvider extends ServiceProvider
             ?string $symbol = null,
             ?bool $isSymbolSuffix = null,
         ): string {
-            $format = $format ?? config('app.number_format', '');
+            $format = NumberFormat::tryFrom($format ?? config('app.number_format', NumberFormat::Plain->value));
             $isSymbolSuffix = $isSymbolSuffix ?? config('app.number_symbol_suffix', false);
+            $symbol ??= config('app.currency_symbol');
 
-            if (empty($format)) {
-                if ($isSymbolSuffix) {
-                    return sprintf('%.2f %s', $amount, $symbol);
-                }
-
-                return sprintf('%s%.2f', $symbol, $amount);
-            }
-
-            $format = explode(' ', $format, 3);
-            $format = array_map(function ($value) {
-                if (is_numeric($value)) {
-                    return intval($value);
-                }
-
-                return $value;
-            }, $format);
-
-            $currency = [
-                $symbol = $symbol ?? config('app.currency_symbol'),
-                $number = number_format($amount, ...$format),
-            ];
+            $number = number_format($amount, ...$format->display());
 
             if ($isSymbolSuffix) {
-                $placeholder = '%s %s';
-                $currency = [$number, $symbol];
+                return sprintf('%s %s', $number, $symbol);
             }
 
-            return vsprintf($placeholder ?? '%s%s', $currency);
+            return sprintf('%s%s', $symbol, $number);
         });
     }
 }

@@ -7,20 +7,56 @@ use Illuminate\Support\Number;
 
 enum NumberFormat: string implements HasLabel
 {
-    case Plain = '';
+    case Plain = 'plain';
 
-    case PlainCommaDecimal = '2 , ';
+    case PlainCommaDecimal = 'plain_comma_decimal';
 
-    case DotWithoutDecimal = '0 . ,';
+    case DotWithoutDecimal = 'dot_without_decimal';
 
-    case CommaWithoutDecimal = '0 , .';
+    case CommaWithoutDecimal = 'comma_without_decimal';
 
-    case DotWithDecimal = '2 . ,';
+    case DotWithDecimal = 'dot_with_decimal';
 
-    case CommaWithDecimal = '2 , .';
+    case CommaWithDecimal = 'comma_with_decimal';
+
+    public function display(): array
+    {
+        return match ($this) {
+            self::PlainCommaDecimal => [
+                'decimals' => 2,
+                'decimal_separator' => ',',
+                'thousands_separator' => '',
+            ],
+            self::DotWithoutDecimal => [
+                'decimals' => 0,
+                'decimal_separator' => '',
+                'thousands_separator' => ',',
+            ],
+            self::CommaWithoutDecimal => [
+                'decimals' => 0,
+                'decimal_separator' => '',
+                'thousands_separator' => '.',
+            ],
+            self::DotWithDecimal => [
+                'decimals' => 2,
+                'decimal_separator' => '.',
+                'thousands_separator' => ',',
+            ],
+            self::CommaWithDecimal => [
+                'decimals' => 2,
+                'decimal_separator' => ',',
+                'thousands_separator' => '.',
+            ],
+            default => [
+                'decimals' => 0,
+                'decimal_separator' => '',
+                'thousands_separator' => '',
+            ],
+        };
+    }
 
     public function getLabel(): string
     {
-        return Number::money(10_000.12, format: $this->value, symbol: '');
+        return Number::money(10_000.12, $this->value, '', '');
     }
 }
