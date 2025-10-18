@@ -4,8 +4,8 @@ namespace App\Filament\Pages;
 
 use App\Events\Branch\BranchUpdated;
 use App\Filament\Resources\BranchResource\Forms\BranchForm;
-use Filament\Forms\Form;
 use Filament\Pages\Tenancy\EditTenantProfile;
+use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
 
 class EditBranch extends EditTenantProfile
@@ -15,9 +15,9 @@ class EditBranch extends EditTenantProfile
         return __('branch.edit');
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema(BranchForm::schema());
+        return $schema->schema(BranchForm::schema());
     }
 
     public function handleRecordUpdate(Model $record, array $data): Model

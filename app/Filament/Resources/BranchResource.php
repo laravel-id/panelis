@@ -6,12 +6,14 @@ use App\Filament\Resources\BranchResource\Enums\BranchPermission;
 use App\Filament\Resources\BranchResource\Forms\BranchForm;
 use App\Filament\Resources\BranchResource\Pages;
 use App\Models\Branch;
+use BackedEnum;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
 use Filament\Facades\Filament;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Support\Enums\FontWeight;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\EditAction;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
@@ -20,7 +22,9 @@ class BranchResource extends Resource
 {
     protected static ?string $model = Branch::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-building-office';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedBuildingOffice;
+
+    protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::BuildingOffice;
 
     protected static bool $isScopedToTenant = false;
 
@@ -44,10 +48,9 @@ class BranchResource extends Resource
         return self::canAccess();
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema(BranchForm::schema());
+        return $schema->schema(BranchForm::schema());
     }
 
     public static function table(Table $table): Table
@@ -81,7 +84,7 @@ class BranchResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make()
                     ->visible(user_can(BranchPermission::Edit)),
 
@@ -90,7 +93,7 @@ class BranchResource extends Resource
                     ->disabled(fn (Branch $record): bool => $record->is(Filament::getTenant()))
                     ->visible(user_can(BranchPermission::Delete)),
             ])
-            ->bulkActions([
+            ->toolbarActions([
 
             ]);
     }

@@ -7,6 +7,7 @@ use App\Filament\Resources\UserResource;
 use App\Filament\Resources\UserResource\Enums\UserPermission;
 use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Hash;
 
 class CreateUser extends CreateRecord
 {
@@ -19,7 +20,7 @@ class CreateUser extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['password'] = '';
+        $data['password'] = filled($data['password']) ? Hash::make($data['password']) : '';
 
         return $data;
     }

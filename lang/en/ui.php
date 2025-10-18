@@ -10,7 +10,9 @@ return [
         'backup' => 'Backup',
         'restore' => 'Restore',
         'generate' => 'Generate',
+        'update' => 'Update',
     ],
+
     'created_at' => 'Created at',
     'slug' => 'Slug',
     'updated_at' => 'Updated at',

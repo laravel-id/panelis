@@ -4,19 +4,22 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\RoleResource\Enums\RolePermission;
 use App\Filament\Resources\RoleResource\Forms\RoleForm;
-use App\Filament\Resources\RoleResource\Pages;
+use App\Filament\Resources\RoleResource\Pages\CreateRole;
+use App\Filament\Resources\RoleResource\Pages\EditRole;
+use App\Filament\Resources\RoleResource\Pages\ListRoles;
+use App\Filament\Resources\RoleResource\Pages\ViewRole;
 use App\Models\Permission;
 use App\Models\Role;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Component;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Form;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+use Filament\Support\Components\Component;
 use Filament\Support\Enums\FontWeight;
-use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
@@ -56,7 +59,7 @@ class RoleResource extends Resource
         return self::canAccess();
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
         $permissionForms = Permission::query()
             ->get()
@@ -114,29 +117,36 @@ class RoleResource extends Resource
             ->values()
             ->toArray();
 
-        return $form
+        return $schema
             ->columns(3)
-            ->schema([
-                Section::make(__('user.role.label'))
+            ->components([
+                Section::make(__('user.role'))
                     ->description(__('user.role.section_description'))
-                    ->columnSpan(fn (?Model $record): int => empty($record) ? 3 : 2)
-                    ->schema(RoleForm::schema()),
-
-                Section::make()
-                    ->hiddenOn(Pages\CreateRole::class)
-                    ->columnSpan(1)
+                    ->columnSpanFull()
                     ->schema([
-                        Placeholder::make('created_at')
-                            ->label(__('ui.created_at'))
-                            ->content(fn (Role $record): string => $record->created_at->timezone(get_timezone())->diffForHumans()),
+                        Section::make(__('user.role.label'))
+                            ->description(__('user.role.section_description'))
+                            ->columnSpan(fn (?Model $record): int => empty($record) ? 3 : 2)
+                            ->schema(RoleForm::schema()),
 
-                        Placeholder::make('updated_at')
-                            ->label(__('ui.updated_at'))
-                            ->content(fn (Role $record): string => $record->updated_at->timezone(get_timezone())->diffForHumans()),
+                        Section::make()
+                            ->hiddenOn(CreateRole::class)
+                            ->columnSpan(1)
+                            ->schema([
+                                TextEntry::make('created_at')
+                                    ->label(__('ui.created_at'))
+                                    ->dateTimeTooltip(get_datetime_format(), get_timezone())
+                                    ->since(),
+
+                                TextEntry::make('updated_at')
+                                    ->label(__('ui.updated_at'))
+                                    ->dateTimeTooltip(get_datetime_format(), get_timezone())
+                                    ->since(),
+                            ]),
+
+                        Section::make('Permission')
+                            ->schema($permissionForms),
                     ]),
-
-                Section::make('Permission')
-                    ->schema($permissionForms),
             ]);
     }
 
@@ -166,7 +176,7 @@ class RoleResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make()->visible(user_can(RolePermission::Edit)),
 
                 ActionGroup::make([
@@ -177,7 +187,7 @@ class RoleResource extends Resource
                         ->visible(user_can(RolePermission::Delete)),
                 ]),
             ])
-            ->bulkActions([
+            ->toolbarActions([
 
             ]);
     }
@@ -191,10 +201,10 @@ class RoleResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListRoles::route('/'),
-            'create' => Pages\CreateRole::route('/create'),
-            'view' => Pages\ViewRole::route('/{record}'),
-            'edit' => Pages\EditRole::route('/{record}/edit'),
+            'index' => ListRoles::route('/'),
+            'create' => CreateRole::route('/create'),
+            'view' => ViewRole::route('/{record}'),
+            'edit' => EditRole::route('/{record}/edit'),
         ];
     }
 }

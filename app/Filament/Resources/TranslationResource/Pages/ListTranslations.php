@@ -8,15 +8,16 @@ use App\Actions\Translation\ImportFromFiles;
 use App\Actions\Translation\Restore;
 use App\Filament\Resources\TranslationResource;
 use App\Filament\Resources\TranslationResource\Enums\TranslationPermission;
+use App\Filament\Resources\TranslationResource\Forms\ExportForm;
+use App\Filament\Resources\TranslationResource\Forms\ImportForm;
 use App\Models\Translation;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Actions\CreateAction;
-use Filament\Notifications\Actions\Action as NotificationAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
-use Filament\Support\Enums\MaxWidth;
+use Filament\Support\Enums\Width;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -42,7 +43,7 @@ class ListTranslations extends ListRecords
                 Action::make('import_files')
                     ->label(__('translation.btn.import_files'))
                     ->icon('heroicon-o-clipboard-document')
-                    ->form(TranslationResource\Forms\ImportFromFileForm::schema())
+                    ->schema(TranslationResource\Forms\ImportFromFileForm::schema())
                     ->action(function (array $data): void {
                         ImportFromFiles::run($data['files'] ?? null);
 
@@ -56,11 +57,11 @@ class ListTranslations extends ListRecords
                     ->visible(user_can(TranslationPermission::Import))
                     ->label(__('ui.btn.import'))
                     ->icon('heroicon-s-arrow-down-tray')
-                    ->modalWidth(MaxWidth::Medium)
+                    ->modalWidth(Width::Medium)
                     ->modalSubmitActionLabel(__('ui.btn.import'))
                     ->modalDescription(__('translation.import_description'))
                     ->modalIcon('heroicon-o-arrow-up-on-square')
-                    ->form(TranslationResource\Forms\ImportForm::schema())
+                    ->schema(ImportForm::schema())
                     ->action(function (array $data): void {
                         $lines = json_decode($data['trans']->getContent(), associative: true);
                         try {
@@ -79,7 +80,7 @@ class ListTranslations extends ListRecords
                                 ->body(__('translation.import_file_invalid'))
                                 ->persistent()
                                 ->actions([
-                                    NotificationAction::make('view')
+                                    Action::make('view')
                                         ->label(__('translation.view_template'))
                                         ->action(function (): ?StreamedResponse {
                                             return response()->streamDownload(function () {
@@ -102,11 +103,11 @@ class ListTranslations extends ListRecords
                     ->visible(user_can(TranslationPermission::Export))
                     ->label(__('ui.btn.export'))
                     ->icon('heroicon-s-arrow-up-tray')
-                    ->modalWidth(MaxWidth::Medium)
+                    ->modalWidth(Width::Medium)
                     ->modalDescription(__('translation.export_description'))
                     ->modalIcon('heroicon-o-arrow-down-on-square')
                     ->modalSubmitActionLabel(__('ui.btn.export'))
-                    ->form(TranslationResource\Forms\ExportForm::schema())
+                    ->schema(ExportForm::schema())
                     ->action(function (array $data): ?StreamedResponse {
                         try {
                             $locale = $data['locale'];

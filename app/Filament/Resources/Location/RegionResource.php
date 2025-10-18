@@ -2,17 +2,20 @@
 
 namespace App\Filament\Resources\Location;
 
-use App\Filament\Resources\Location;
 use App\Filament\Resources\Location\RegionResource\Enums\RegionPermission;
+use App\Filament\Resources\Location\RegionResource\Forms\RegionForm;
+use App\Filament\Resources\Location\RegionResource\Pages\ManageRegions;
 use App\Models\Location\Region;
-use Filament\Forms\Form;
+use Filament\Actions\BulkAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
-use Filament\Tables;
-use Filament\Tables\Actions\BulkAction;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
@@ -49,10 +52,10 @@ class RegionResource extends Resource
         return config('module.location', false) && self::canAccess();
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema(Location\RegionResource\Forms\RegionForm::make());
+        return $schema
+            ->components(RegionForm::schema());
     }
 
     public static function table(Table $table): Table
@@ -60,21 +63,21 @@ class RegionResource extends Resource
         return $table
             ->defaultSort('name')
             ->columns([
-                Tables\Columns\ToggleColumn::make('is_active')
+                ToggleColumn::make('is_active')
                     ->label(__('location.region.is_active'))
                     ->visible(user_can(RegionPermission::Edit)),
 
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->label(__('location.region.name'))
                     ->sortable()
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('country.name')
+                TextColumn::make('country.name')
                     ->label(__('location.country.label'))
                     ->sortable()
                     ->searchable(),
 
-                Tables\Columns\TextColumn::makeSinceDate('updated_at', __('ui.updated_at')),
+                TextColumn::makeSinceDate('updated_at', __('ui.updated_at')),
             ])
             ->filters([
                 TernaryFilter::make('is_active')
@@ -88,18 +91,18 @@ class RegionResource extends Resource
                     ->preload()
                     ->searchable(),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make()
                     ->visible(user_can(RegionPermission::Edit)),
 
                 DeleteAction::make()
                     ->visible(user_can(RegionPermission::Delete)),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkAction::make('toggle')
                     ->label(__('location.btn.toggle_status'))
                     ->color('primary')
-                    ->icon('heroicon-m-check-circle')
+                    ->icon(Heroicon::CheckCircle)
                     ->visible(user_can(RegionPermission::Edit))
                     ->action(function (Collection $records): void {
                         foreach ($records as $record) {
@@ -118,7 +121,7 @@ class RegionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Location\RegionResource\Pages\ManageRegions::route('/'),
+            'index' => ManageRegions::route('/'),
         ];
     }
 }

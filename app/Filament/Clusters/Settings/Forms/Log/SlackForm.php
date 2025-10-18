@@ -8,7 +8,7 @@ use Filament\Forms\Components\TextInput;
 
 class SlackForm
 {
-    public static function make(): array
+    public static function schema(): array
     {
         return [
             Select::make('logging.channels.slack.level')

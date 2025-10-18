@@ -5,7 +5,7 @@ namespace App\Filament\Resources\Location\CountryResource\Pages;
 use App\Filament\Resources\Location\CountryResource;
 use App\Filament\Resources\Location\CountryResource\Enums\CountryPermission;
 use App\Filament\Resources\Location\Widgets\LocationStatsOverview;
-use Filament\Actions;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ManageRecords;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -16,7 +16,7 @@ class ManageCountries extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()
+            CreateAction::make()
                 ->visible(user_can(CountryPermission::Add)),
         ];
     }

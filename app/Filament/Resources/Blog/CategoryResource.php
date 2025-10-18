@@ -4,18 +4,21 @@ namespace App\Filament\Resources\Blog;
 
 use App\Filament\Resources\Blog\CategoryResource\Enums\CategoryPermission;
 use App\Filament\Resources\Blog\CategoryResource\Forms\CategoryForm;
-use App\Filament\Resources\Blog\CategoryResource\Pages;
+use App\Filament\Resources\Blog\CategoryResource\Pages\CreateCategory;
+use App\Filament\Resources\Blog\CategoryResource\Pages\EditCategory;
+use App\Filament\Resources\Blog\CategoryResource\Pages\ListCategories;
+use App\Filament\Resources\Blog\CategoryResource\Pages\ViewCategory;
 use App\Models\Blog\Category;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Form;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\ForceDeleteBulkAction;
+use Filament\Actions\RestoreBulkAction;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\ForceDeleteBulkAction;
-use Filament\Tables\Actions\RestoreBulkAction;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\TernaryFilter;
@@ -55,34 +58,34 @@ class CategoryResource extends Resource
         return user_can(CategoryPermission::Browse);
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->columns(3)
-            ->schema([
+            ->components([
                 Section::make()
                     ->columnSpan(function (?Model $record): int {
                         return empty($record) ? 3 : 2;
                     })
                     ->columns()
-                    ->schema(CategoryForm::make()),
+                    ->schema(CategoryForm::schema()),
 
                 Section::make()
                     ->columnSpan(1)
-                    ->hiddenOn(Pages\CreateCategory::class)
+                    ->hiddenOn(CreateCategory::class)
                     ->schema([
-                        Placeholder::make('created_at')
+                        TextEntry::make('created_at')
                             ->label('ui.created_at')
-                            ->content(fn (Category $category): string => $category->created_at),
+                            ->state(fn (Category $category): string => $category->created_at),
 
-                        Placeholder::make('updated_at')
+                        TextEntry::make('updated_at')
                             ->label('ui.updated_at')
-                            ->content(fn (Category $category): string => $category->updated_at),
+                            ->state(fn (Category $category): string => $category->updated_at),
 
-                        Placeholder::make('deleted_at')
+                        TextEntry::make('deleted_at')
                             ->label(__('ui.deleted_at'))
                             ->hidden(fn (?Model $record): bool => empty($record->deleted_at))
-                            ->content(fn (?Model $record): string => $record->deleted_at ?? ''),
+                            ->state(fn (?Model $record): string => $record->deleted_at ?? ''),
                     ]),
             ]);
     }
@@ -91,7 +94,7 @@ class CategoryResource extends Resource
     {
         return $table
             ->recordUrl(function (Category $category): string {
-                return Pages\ViewCategory::getUrl(['record' => $category]);
+                return ViewCategory::getUrl(['record' => $category]);
             })
             ->columns([
                 ToggleColumn::make('is_visible')
@@ -119,14 +122,14 @@ class CategoryResource extends Resource
 
                 TrashedFilter::make(),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make()
                     ->visible(user_can(CategoryPermission::Edit)),
 
                 DeleteAction::make()
                     ->visible(user_can(CategoryPermission::Delete)),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()
                         ->visible(user_can(CategoryPermission::Delete)),
@@ -150,10 +153,10 @@ class CategoryResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListCategories::route('/'),
-            'create' => Pages\CreateCategory::route('/create'),
-            'edit' => Pages\EditCategory::route('/{record}/edit'),
-            'view' => Pages\ViewCategory::route('/{record}'),
+            'index' => ListCategories::route('/'),
+            'create' => CreateCategory::route('/create'),
+            'edit' => EditCategory::route('/{record}/edit'),
+            'view' => ViewCategory::route('/{record}'),
         ];
     }
 }

@@ -3,8 +3,8 @@
 namespace App\Actions\User;
 
 use App\Models\User;
+use Filament\Auth\Notifications\ResetPassword;
 use Filament\Facades\Filament;
-use Filament\Notifications\Auth\ResetPassword;
 use Lorisleiva\Actions\Concerns\AsAction;
 
 class SendResetPasswordLink

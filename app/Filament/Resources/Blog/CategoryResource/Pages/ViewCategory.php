@@ -9,11 +9,11 @@ use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteAction;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Components\TextEntry\TextEntrySize;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+use Filament\Support\Enums\TextSize;
 use Symfony\Component\HttpFoundation\Response;
 
 class ViewCategory extends ViewRecord
@@ -42,9 +42,9 @@ class ViewCategory extends ViewRecord
         abort_unless(user_can(CategoryPermission::Read), Response::HTTP_FORBIDDEN);
     }
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $schema): Schema
     {
-        return $infolist
+        return $schema
             ->columns(3)
             ->schema([
                 Section::make()
@@ -53,11 +53,11 @@ class ViewCategory extends ViewRecord
                     ->schema([
                         TextEntry::make('name')
                             ->label(__('blog.category.title'))
-                            ->size(TextEntrySize::Large),
+                            ->size(TextSize::Large),
 
                         TextEntry::make('slug')
-                            ->label(__('blog.category.slug'))
-                            ->size(TextEntrySize::Large),
+                            ->label(__('ui.slug'))
+                            ->size(TextSize::Large),
 
                         TextEntry::make('description')
                             ->label(__('blog.category.description'))

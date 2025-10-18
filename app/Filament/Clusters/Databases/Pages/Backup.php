@@ -5,9 +5,11 @@ namespace App\Filament\Clusters\Databases\Pages;
 use App\Filament\Clusters\Databases;
 use App\Filament\Clusters\Databases\Enums\DatabasePermission;
 use App\Models\Database;
+use Exception;
+use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Filament\Tables\Actions\Action;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Concerns\InteractsWithTable;
 use Filament\Tables\Contracts\HasTable;
@@ -22,9 +24,9 @@ class Backup extends Page implements HasTable
 {
     use InteractsWithTable;
 
-    protected static ?string $navigationIcon = 'heroicon-o-circle-stack';
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedCircleStack;
 
-    protected static string $view = 'filament.clusters.databases.pages.backup';
+    protected string $view = 'filament.clusters.databases.pages.backup';
 
     protected static ?string $cluster = Databases::class;
 
@@ -63,7 +65,7 @@ class Backup extends Page implements HasTable
 
                 TextColumn::makeSinceDate('created_at', __('ui.created_at')),
             ])
-            ->actions([
+            ->recordActions([
                 Action::make('download')
                     ->visible(user_can(DatabasePermission::Download))
                     ->label(__('ui.btn.download'))
@@ -107,7 +109,7 @@ class Backup extends Page implements HasTable
                                 ->send();
 
                             return;
-                        } catch (\Exception $e) {
+                        } catch (Exception $e) {
                             Log::error($e);
                         }
 

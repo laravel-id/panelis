@@ -23,7 +23,7 @@ class ManagePermissions extends ManageRecords
         return [
             CreateAction::make()
                 ->visible(user_can(Permission::Create))
-                ->mutateFormDataUsing(function (array $data): array {
+                ->mutateDataUsing(function (array $data): array {
                     $key = Str::snake($data['name']);
 
                     $data['label'] = "user.permission.name_{$key}";

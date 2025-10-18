@@ -13,6 +13,7 @@ class ImportFromFileForm
             Select::make('files')
                 ->label(__('translation.files'))
                 ->options(ImportFromFiles::getAllFiles())
+                ->required()
                 ->searchable()
                 ->multiple(),
         ];

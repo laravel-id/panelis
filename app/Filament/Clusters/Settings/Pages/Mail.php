@@ -6,22 +6,25 @@ use App\Events\SettingUpdated;
 use App\Filament\Clusters\Settings;
 use App\Filament\Clusters\Settings\Enums\MailPermission;
 use App\Filament\Clusters\Settings\Enums\MailType;
+use App\Filament\Clusters\Settings\HasUpdateableForm;
 use App\Mail\TestMail;
 use App\Models\Branch;
 use App\Models\Setting;
+use BackedEnum;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Filament\Support\Enums\MaxWidth;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
@@ -29,13 +32,16 @@ use Illuminate\Support\Facades\Mail as Mailer;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
-class Mail extends Page implements HasForms, Settings\HasUpdateableForm
+class Mail extends Page implements HasForms, HasUpdateableForm
 {
     use InteractsWithForms;
+    use Settings\Traits\AddUpdateButton;
 
-    protected static ?string $navigationIcon = 'heroicon-o-at-symbol';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedAtSymbol;
 
-    protected static string $view = 'filament.clusters.settings.pages.setting';
+    protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::AtSymbol;
+
+    protected string $view = 'filament.clusters.settings.pages.setting';
 
     protected static ?string $cluster = Settings::class;
 
@@ -44,8 +50,6 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
     public array $mail;
 
     public array $services;
-
-    public bool $isButtonDisabled;
 
     private function senderSection(): Section
     {
@@ -86,7 +90,7 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
         return
 
             Section::make(__('setting.mail.sendmail_driver'))
-                ->visible(fn (Get $get): bool => $get('mail.default') === MailType::Sendmail->value)
+                ->visible(fn (Get $get): bool => $get('mail.default') === MailType::Sendmail)
                 ->schema([
                     TextInput::make('mail.mailers.sendmail.path')
                         ->label(__('setting.mail.sendmail.path'))
@@ -106,7 +110,7 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
         };
 
         return Section::make(__('setting.mail.smtp_driver'))
-            ->visible(fn (Get $get): bool => $get('mail.default') === MailType::SMTP->value)
+            ->visible(fn (Get $get): bool => $get('mail.default') === MailType::SMTP)
             ->schema([
                 TextInput::make('mail.mailers.smtp.host')
                     ->label(__('setting.mail.smtp_host'))
@@ -150,7 +154,7 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
         return
 
             Section::make(__('setting.mail.mailgun_driver'))
-                ->visible(fn (Get $get): bool => $get('mail.default') === MailType::Mailgun->value)
+                ->visible(fn (Get $get): bool => $get('mail.default') === MailType::Mailgun)
                 ->schema([
                     TextInput::make('services.mailgun.domain')
                         ->label(__('setting.mail.mailgun_domain'))
@@ -175,7 +179,7 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
         return
 
             Section::make(__('setting.mail.postmark_driver'))
-                ->visible(fn (Get $get): bool => $get('mail.default') === MailType::Postmark->value)
+                ->visible(fn (Get $get): bool => $get('mail.default') === MailType::Postmark)
                 ->schema([
                     TextInput::make('services.postmark.token')
                         ->label(__('setting.mail.postmark_token'))
@@ -190,7 +194,7 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
         return
 
             Section::make(__('setting.mail.ses_driver'))
-                ->visible(fn (Get $get): bool => $get('mail.default') === MailType::SES->value)
+                ->visible(fn (Get $get): bool => $get('mail.default') === MailType::SES)
                 ->schema([
                     TextInput::make('services.ses.key')
                         ->label(__('setting.mail.ses_key'))
@@ -229,8 +233,9 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
             Action::make('test_mail')
                 ->visible(user_can(MailPermission::SendTest))
                 ->label(__('setting.mail.btn.test'))
-                ->modalWidth(MaxWidth::Medium)
-                ->form([
+                ->modalWidth(Width::Medium)
+                ->modalSubmitActionLabel(__('setting.mail_test_button_send'))
+                ->schema([
                     Radio::make('send_from')
                         ->label(__('setting.mail.send_from'))
                         ->default('mail')
@@ -327,9 +332,9 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
         ]);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             $this->senderSection(),
             $this->driverSection(),
             $this->sendmailSection(),

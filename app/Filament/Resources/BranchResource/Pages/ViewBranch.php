@@ -5,15 +5,16 @@ namespace App\Filament\Resources\BranchResource\Pages;
 use App\Filament\Resources\BranchResource;
 use App\Filament\Resources\BranchResource\Enums\BranchPermission;
 use Filament\Actions;
-use Filament\Infolists\Components\Fieldset;
-use Filament\Infolists\Components\Grid;
 use Filament\Infolists\Components\ImageEntry;
 use Filament\Infolists\Components\KeyValueEntry;
-use Filament\Infolists\Components\Section;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Infolists\Infolist;
 use Filament\Resources\Pages\ViewRecord;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Support\Enums\FontWeight;
+use Filament\Support\Enums\TextSize;
 
 class ViewBranch extends ViewRecord
 {
@@ -27,9 +28,9 @@ class ViewBranch extends ViewRecord
         ];
     }
 
-    public function infolist(Infolist $infolist): Infolist
+    public function infolist(Schema $schema): Schema
     {
-        return $infolist
+        return $schema
             ->columns(3)
             ->schema([
                 Section::make(__('branch.label'))
@@ -38,7 +39,7 @@ class ViewBranch extends ViewRecord
                         TextEntry::make('name')
                             ->label(__('branch.name'))
                             ->weight(FontWeight::Bold)
-                            ->size(TextEntry\TextEntrySize::Large),
+                            ->size(TextSize::Large),
 
                         TextEntry::make('slug')
                             ->label(__('ui.slug')),

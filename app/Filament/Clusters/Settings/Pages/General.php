@@ -7,17 +7,21 @@ use App\Actions\Setting\ImportAll;
 use App\Events\SettingUpdated;
 use App\Filament\Clusters\Settings;
 use App\Filament\Clusters\Settings\Enums\SettingPermission;
+use App\Filament\Clusters\Settings\Forms\General\DebugForm;
+use App\Filament\Clusters\Settings\Forms\General\GeneralForm;
 use App\Models\Setting;
-use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
+use BackedEnum;
+use BezhanSalleh\LanguageSwitch\LanguageSwitch;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Facades\Log as Logger;
 use Illuminate\Validation\ValidationException;
@@ -27,18 +31,19 @@ use Symfony\Component\HttpFoundation\StreamedResponse;
 class General extends Page
 {
     use InteractsWithForms;
+    use Settings\Traits\AddUpdateButton;
 
-    protected static ?string $navigationIcon = 'heroicon-o-cog';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog;
 
-    protected static string $view = 'filament.clusters.settings.pages.setting';
+    protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::Cog;
+
+    protected string $view = 'filament.clusters.settings.pages.setting';
 
     protected static ?string $cluster = Settings::class;
 
     public array $app;
 
     public array $telescope;
-
-    public bool $isButtonDisabled = false;
 
     protected function getHeaderActions(): array
     {
@@ -56,7 +61,7 @@ class General extends Page
                     ->label(__('ui.btn.import'))
                     ->visible(user_can(SettingPermission::Import))
                     ->requiresConfirmation()
-                    ->form([
+                    ->schema([
                         FileUpload::make('settings')
                             ->label(__('setting.general.exported_file'))
                             ->previewable(false)
@@ -127,7 +132,7 @@ class General extends Page
         ]);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
         $locales = collect(config('app.locales'))
             ->mapWithKeys(function ($locale): array {
@@ -141,14 +146,14 @@ class General extends Page
             $locales[config('app.locale')] = LanguageSwitch::make()->getLabel(config('app.locale'));
         }
 
-        return $form->schema([
+        return $schema->components([
             Section::make(__('setting.general.label'))
                 ->description(__('setting.general.section_description'))
-                ->schema(Settings\Forms\General\GeneralForm::make()),
+                ->schema(GeneralForm::schema()),
 
             Section::make(__('setting.general.debug_mode'))
                 ->collapsed()
-                ->schema(Settings\Forms\General\DebugForm::make()),
+                ->schema(DebugForm::schema()),
         ])->disabled(user_cannot(SettingPermission::Edit));
     }
 

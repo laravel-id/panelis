@@ -7,13 +7,13 @@ use App\Filament\Clusters\Databases\Enums\CloudProvider;
 use App\Filament\Clusters\Databases\Pages\AutoBackup;
 use App\Models\Setting;
 use App\Services\OAuth\OAuth;
-use Filament\Forms\Components\Actions;
-use Filament\Forms\Components\Actions\Action;
+use Filament\Actions\Action;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Get;
-use Filament\Forms\Set;
+use Filament\Schemas\Components\Actions;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Crypt;
 
@@ -21,7 +21,7 @@ class CloudBackupForm
 {
     private static OAuth $oauth;
 
-    public static function make(): array
+    public static function schema(): array
     {
         self::$oauth = app(OAuth::class)
             ->driver(config('database.cloud_storage', CloudProvider::Dropbox->value));
@@ -40,15 +40,14 @@ class CloudBackupForm
             Radio::make('database.cloud_storage')
                 ->label(__('database.cloud_storage'))
                 ->options(CloudProvider::class)
-                ->afterStateUpdated(function (?string $state): void {
-                    if (! empty($state)) {
-                        Setting::set('database.cloud_storage', $state);
-                        event(new SettingUpdated);
+                ->afterStateUpdated(function (CloudProvider $state): void {
+                    $provider = $state->value;
+                    Setting::set('database.cloud_storage', $provider);
+                    event(new SettingUpdated);
 
-                        Config::set('oauth.provider', $state);
-                        self::$oauth = app(OAuth::class)
-                            ->driver($state);
-                    }
+                    Config::set('oauth.provider', $provider);
+                    static::$oauth = app(OAuth::class)
+                        ->driver($provider);
                 })
                 ->live()
                 ->visible(fn (Get $get): bool => $get('database.cloud_backup_enabled'))
@@ -58,7 +57,7 @@ class CloudBackupForm
             TextInput::make('dropbox.client_id')
                 ->label(__('database.dropbox.api_key'))
                 ->hint(\str(__('database.dropbox.token_hint'))->inlineMarkdown()->toHtmlString())
-                ->visible(fn (Get $get): bool => $get('database.cloud_backup_enabled') && $get('database.cloud_storage') === CloudProvider::Dropbox->value)
+                ->visible(fn (Get $get): bool => $get('database.cloud_backup_enabled') && $get('database.cloud_storage') === CloudProvider::Dropbox)
                 ->afterStateUpdated(function (?string $state): void {
                     if (! empty($state)) {
                         Setting::set('dropbox.client_id', $state);
@@ -72,7 +71,7 @@ class CloudBackupForm
 
             TextInput::make('dropbox.client_secret')
                 ->label(__('database.dropbox.api_secret'))
-                ->visible(fn (Get $get): bool => $get('database.cloud_backup_enabled') && $get('database.cloud_storage') === CloudProvider::Dropbox->value)
+                ->visible(fn (Get $get): bool => $get('database.cloud_backup_enabled') && $get('database.cloud_storage') === CloudProvider::Dropbox)
                 ->afterStateUpdated(function (?string $state): void {
                     if (! empty($state)) {
                         Setting::set('dropbox.client_secret', $state);
@@ -93,7 +92,7 @@ class CloudBackupForm
         $user = null;
         $token = config('filesystems.disks.dropbox.token');
         if (! empty($token)) {
-            $user = self::$oauth->getUser();
+            $user = static::$oauth->getUser();
         }
 
         return Actions::make([
@@ -132,6 +131,6 @@ class CloudBackupForm
                     $set('dropbox.client_id', null);
                     $set('dropbox.client_secret', null);
                 }),
-        ])->visible(fn (Get $get): bool => $get('database.cloud_backup_enabled') && $get('database.cloud_storage') === CloudProvider::Dropbox->value);
+        ])->visible(fn (Get $get): bool => $get('database.cloud_backup_enabled') && $get('database.cloud_storage') === CloudProvider::Dropbox);
     }
 }

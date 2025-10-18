@@ -3,6 +3,7 @@
 namespace App\Filament\Clusters\Settings\Enums;
 
 use App\Models\User;
+use BackedEnum;
 use Filament\Support\Contracts\HasLabel;
 use Illuminate\Contracts\Auth\Authenticatable;
 
@@ -41,11 +42,11 @@ enum AvatarProvider: string implements HasLabel
         };
     }
 
-    public function getImageUrl(User|Authenticatable $user, ?string $style = null): ?string
+    public function getImageUrl(User|Authenticatable $user, ?BackedEnum $style = null): ?string
     {
         return match ($this) {
             self::Gravatar => $this->getGravatarImageUrl($user),
-            self::Libravatar => $this->getLibravatarImageUrl($user, $style),
+            self::Libravatar => $this->getLibravatarImageUrl($user, $style->value ?? null),
             default => $this->getUIAvatarsImageUrl($user),
         };
     }

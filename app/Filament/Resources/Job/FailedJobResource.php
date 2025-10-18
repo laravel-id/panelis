@@ -3,14 +3,16 @@
 namespace App\Filament\Resources\Job;
 
 use App\Filament\Resources\Job\FailedJobResource\Enums\FailedJobPermission;
+use App\Filament\Resources\Job\FailedJobResource\Pages\ListFailedJobs;
 use App\Models\FailedJob;
-use Filament\Forms\Form;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\BulkAction;
+use Filament\Actions\DeleteAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Actions\BulkAction;
-use Filament\Tables\Actions\DeleteAction;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
@@ -50,10 +52,10 @@ class FailedJobResource extends Resource
         return config('queue.default') === 'database';
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 //
             ]);
     }
@@ -80,11 +82,11 @@ class FailedJobResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
+            ->recordActions([
                 Action::make('retry')
                     ->label(__('job.btn.retry'))
                     ->requiresConfirmation()
-                    ->icon('heroicon-o-arrow-path')
+                    ->icon(Heroicon::OutlinedArrowPath)
                     ->visible(user_can(FailedJobPermission::Retry))
                     ->action(function (FailedJob $record): void {
                         Artisan::call('queue:retry', ['id' => $record->id]);
@@ -101,12 +103,12 @@ class FailedJobResource extends Resource
                         ->requiresConfirmation(),
                 ]),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkAction::make('retry_selected')
                     ->label(__('job.btn.retry_selected'))
                     ->visible(user_can(FailedJobPermission::Retry))
                     ->requiresConfirmation()
-                    ->icon('heroicon-o-arrow-path')
+                    ->icon(Heroicon::OutlinedArrowPath)
                     ->action(function (Collection $records): void {
                         Artisan::call('queue:retry', ['id' => $records->pluck('id')->toArray()]);
 
@@ -128,7 +130,7 @@ class FailedJobResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => FailedJobResource\Pages\ListFailedJobs::route('/'),
+            'index' => ListFailedJobs::route('/'),
         ];
     }
 }

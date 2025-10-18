@@ -5,12 +5,12 @@ namespace App\Filament\Resources\Blog\CategoryResource\Forms;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Set;
+use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Support\Str;
 
 class CategoryForm
 {
-    public static function make(): array
+    public static function schema(): array
     {
         return [
             TextInput::make('name')

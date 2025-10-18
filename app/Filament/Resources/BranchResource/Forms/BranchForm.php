@@ -6,10 +6,10 @@ use App\Filament\Pages\RegisterBranch;
 use App\Filament\Resources\BranchResource\Pages\EditBranch;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\KeyValue;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Set;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Support\Str;
 
 class BranchForm
@@ -64,7 +64,7 @@ class BranchForm
                 KeyValue::make('metadata')
                     ->label(__('branch.metadata'))
                     ->visibleOn(EditBranch::class),
-            ]),
+            ])->columnSpanFull(),
         ];
     }
 }

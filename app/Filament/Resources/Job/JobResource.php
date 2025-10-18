@@ -3,9 +3,10 @@
 namespace App\Filament\Resources\Job;
 
 use App\Filament\Resources\Job\JobResource\Enums\JobPermission;
+use App\Filament\Resources\Job\JobResource\Pages\ListJobs;
 use App\Models\Job;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 
@@ -40,10 +41,10 @@ class JobResource extends Resource
         return config('queue.default') === 'database';
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 //
             ]);
     }
@@ -71,9 +72,9 @@ class JobResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
+            ->recordActions([
             ])
-            ->bulkActions([
+            ->toolbarActions([
 
             ]);
     }
@@ -88,7 +89,7 @@ class JobResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => JobResource\Pages\ListJobs::route('/'),
+            'index' => ListJobs::route('/'),
         ];
     }
 }

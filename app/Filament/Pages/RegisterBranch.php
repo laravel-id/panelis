@@ -5,8 +5,8 @@ namespace App\Filament\Pages;
 use App\Events\Branch\BranchRegistered;
 use App\Filament\Resources\BranchResource\Forms\BranchForm;
 use Filament\Facades\Filament;
-use Filament\Forms\Form;
 use Filament\Pages\Tenancy\RegisterTenant;
+use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 
@@ -17,9 +17,9 @@ class RegisterBranch extends RegisterTenant
         return __('branch.register');
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema(BranchForm::schema());
+        return $schema->schema(BranchForm::schema());
     }
 
     protected function handleRegistration(array $data): Model

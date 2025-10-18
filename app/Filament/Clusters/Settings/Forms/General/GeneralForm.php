@@ -3,17 +3,17 @@
 namespace App\Filament\Clusters\Settings\Forms\General;
 
 use App\Models\Setting;
-use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
+use BezhanSalleh\LanguageSwitch\LanguageSwitch;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Get;
+use Filament\Schemas\Components\Utilities\Get;
 
 class GeneralForm
 {
-    public static function make(): array
+    public static function schema(): array
     {
         return [
             TextInput::make('app.url')

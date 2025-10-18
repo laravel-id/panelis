@@ -2,17 +2,17 @@
 
 namespace App\Filament\Pages\Auth;
 
-use Filament\Forms\Components\Component;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
+use Filament\Schemas\Components\Component;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 
-class EditProfile extends \Filament\Pages\Auth\EditProfile
+class EditProfile extends \Filament\Auth\Pages\EditProfile
 {
     protected function getEmailFormComponent(): Component
     {
@@ -29,9 +29,9 @@ class EditProfile extends \Filament\Pages\Auth\EditProfile
         return __('user.profile');
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             Grid::make(1)
                 ->schema([
                     FileUpload::make('avatar')

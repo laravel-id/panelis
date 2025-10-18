@@ -1,12 +1,11 @@
 <x-filament-panels::page>
-    <x-filament-panels::form wire:submit="update">
-        {{ $this->form }}
-        <div>
-        <x-filament::button type="submit" size="sm" :disabled="$isButtonDisabled ?? false">
-            @lang('ui.btn.save')
-        </x-filament::button>
+    {{ $this->form }}
+
+    <div>
+        <div class="mt-6">
+            {{ $this->getUpdateAction() }}
         </div>
-    </x-filament-panels::form>
+    </div>
 
     <x-filament-actions::modals />
 </x-filament-panels::page>

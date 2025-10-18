@@ -10,16 +10,17 @@ use App\Models\Role;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Get;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class UserForm
 {
@@ -87,26 +88,29 @@ class UserForm
                 ->hiddenOn(CreateUser::class)
                 ->columnSpan(1)
                 ->schema([
-                    Placeholder::make('created_at')
+                    TextEntry::make('created_at')
                         ->label(__('ui.created_at'))
                         ->visibleOn([
                             ViewUser::class,
                             EditUser::class,
                         ])
-                        ->content(fn (User $user): string => $user->created_at->timezone(get_timezone())),
+                        ->dateTimeTooltip(get_datetime_format(), get_timezone())
+                        ->since(),
 
-                    Placeholder::make('updated_at')
+                    TextEntry::make('updated_at')
                         ->label(__('ui.updated_at'))
                         ->visibleOn([
                             ViewUser::class,
                             EditUser::class,
                         ])
-                        ->content(fn (User $user): string => $user->updated_at->timezone(get_timezone())),
+                        ->dateTimeTooltip(get_datetime_format(), get_timezone())
+                        ->since(),
                 ]),
 
             Section::make(__('branch.label'))
                 ->description(__('user.branch_section_description'))
                 ->visible(fn (): bool => ! empty(Filament::getTenant()))
+                ->columnSpanFull()
                 ->schema([
                     CheckboxList::make('branches')
                         ->label(__('branch.label'))
@@ -120,10 +124,18 @@ class UserForm
                 ]),
 
             Section::make(__('user.role.label'))
+                ->columnSpanFull()
                 ->schema([
                     CheckboxList::make('role_id')
                         ->label(__('user.role.name'))
                         ->relationship('roles', 'name')
+                        ->disabled(function (?User $record): bool {
+                            if (empty($record)) {
+                                return false;
+                            }
+
+                            return $record->getKey() === Auth::id() && Auth::user()->is_root;
+                        })
                         ->getOptionLabelFromRecordUsing(function (Role $role): string {
                             $label = $role->name;
                             if ($role->is_admin) {
@@ -132,13 +144,16 @@ class UserForm
 
                             return $label;
                         })
-                        ->required(fn (User $user): bool => ! $user->is_root),
+                        ->required(function (?User $record): bool {
+                            return empty($record) || ! ($record?->is_root ?? false);
+                        }),
                 ]),
 
             Section::make(__('user.profile'))
                 ->description(__('user.profile_section_description'))
                 ->collapsed()
                 ->relationship('profile')
+                ->columnSpanFull()
                 ->schema([
                     TextInput::make('phone')
                         ->label(__('user.phone'))

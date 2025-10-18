@@ -5,29 +5,39 @@ namespace App\Filament\Clusters\Settings\Pages;
 use App\Filament\Clusters\Settings;
 use App\Filament\Clusters\Settings\Enums\CacheDriver;
 use App\Filament\Clusters\Settings\Enums\CachePermission;
+use App\Filament\Clusters\Settings\Forms\Cache\DynamoDBForm;
+use App\Filament\Clusters\Settings\Forms\Cache\MemcachedForm;
+use App\Filament\Clusters\Settings\Forms\Cache\RedisForm;
+use App\Filament\Clusters\Settings\HasUpdateableForm;
 use App\Models\Setting;
+use BackedEnum;
+use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
-class Cache extends Page implements HasForms, Settings\HasUpdateableForm
+class Cache extends Page implements HasForms, HasUpdateableForm
 {
     use InteractsWithForms;
+    use Settings\Traits\AddUpdateButton;
 
-    protected static ?string $navigationIcon = 'heroicon-o-server-stack';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedServerStack;
 
-    protected static string $view = 'filament.clusters.settings.pages.setting';
+    protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::ServerStack;
+
+    protected string $view = 'filament.clusters.settings.pages.setting';
 
     protected static ?string $cluster = Settings::class;
 
@@ -36,8 +46,6 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
     public array $cache;
 
     public array $database;
-
-    public bool $isButtonDisabled = false;
 
     public static function canAccess(): bool
     {
@@ -58,7 +66,7 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
                             ->title(__('setting.cache.test_success'))
                             ->success()
                             ->send();
-                    } catch (\Exception $e) {
+                    } catch (Exception $e) {
                         Log::error($e);
 
                         Notification::make('cache.test_failed')
@@ -82,7 +90,7 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
                             ->title(__('setting.cache.flushed'))
                             ->success()
                             ->send();
-                    } catch (\Exception $e) {
+                    } catch (Exception $e) {
                         Log::error($e);
                     }
                 }),
@@ -111,9 +119,9 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
         ]);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->schema([
             Section::make(__('setting.cache.label'))
                 ->description(__('setting.cache.section_description'))
                 ->schema([
@@ -126,16 +134,16 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
                 ]),
 
             Section::make(__('setting.cache.memcached_driver'))
-                ->visible(fn (Get $get): bool => $get('cache.default') === CacheDriver::Memcached->value)
-                ->schema(Settings\Forms\Cache\MemcachedForm::schema()),
+                ->visible(fn (Get $get): bool => $get('cache.default') === CacheDriver::Memcached)
+                ->schema(MemcachedForm::schema()),
 
             Section::make(__('setting.cache.redis_driver'))
-                ->visible(fn (Get $get): bool => $get('cache.default') === CacheDriver::Redis->value)
-                ->schema(Settings\Forms\Cache\RedisForm::schema()),
+                ->visible(fn (Get $get): bool => $get('cache.default') === CacheDriver::Redis)
+                ->schema(RedisForm::schema()),
 
             Section::make(__('setting.cache.dynamodb_driver'))
-                ->visible(fn (Get $get): bool => $get('cache.default') === CacheDriver::DynamoDB->value)
-                ->schema(Settings\Forms\Cache\DynamoDBForm::schema()),
+                ->visible(fn (Get $get): bool => $get('cache.default') === CacheDriver::DynamoDB)
+                ->schema(DynamoDBForm::schema()),
         ])
             ->disabled(user_cannot(CachePermission::Edit));
     }
@@ -158,7 +166,7 @@ class Cache extends Page implements HasForms, Settings\HasUpdateableForm
                 ->title(__('filament-actions::edit.single.notifications.saved.title'))
                 ->success()
                 ->send();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error($e);
 
             Notification::make('setting_not_updated')

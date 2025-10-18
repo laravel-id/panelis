@@ -8,7 +8,7 @@ use Filament\Forms\Components\TextInput;
 
 class PapertailForm
 {
-    public static function make(): array
+    public static function schema(): array
     {
         return [
             Select::make('logging.channels.papertrail.level')

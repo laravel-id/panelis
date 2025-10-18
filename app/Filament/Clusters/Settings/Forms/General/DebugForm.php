@@ -6,7 +6,7 @@ use Filament\Forms\Components\Toggle;
 
 class DebugForm
 {
-    public static function make(): array
+    public static function schema(): array
     {
         return [
             Toggle::make('app.debug')

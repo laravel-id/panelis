@@ -4,13 +4,16 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\TranslationResource\Enums\TranslationPermission;
 use App\Filament\Resources\TranslationResource\Forms\TranslationForm;
-use App\Filament\Resources\TranslationResource\Pages;
+use App\Filament\Resources\TranslationResource\Pages\CreateTranslation;
+use App\Filament\Resources\TranslationResource\Pages\EditTranslation;
+use App\Filament\Resources\TranslationResource\Pages\ListTranslations;
 use App\Models\Translation;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Form;
+use Exception;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\EditAction;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\IconColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\TextInputColumn;
@@ -52,17 +55,18 @@ class TranslationResource extends Resource
         return self::canAccess();
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 Section::make()
+                    ->columnSpanFull()
                     ->schema(TranslationForm::schema()),
             ]);
     }
 
     /**
-     * @throws \Exception
+     * @throws Exception
      */
     public static function table(Table $table): Table
     {
@@ -101,14 +105,14 @@ class TranslationResource extends Resource
                 TernaryFilter::make('is_system')
                     ->label(__('translation.is_system')),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make()
                     ->visible(user_can(TranslationPermission::Edit)),
 
                 DeleteAction::make()
                     ->visible(user_can(TranslationPermission::Delete)),
             ])
-            ->bulkActions([
+            ->toolbarActions([
 
             ]);
     }
@@ -123,9 +127,9 @@ class TranslationResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListTranslations::route('/'),
-            'create' => Pages\CreateTranslation::route('/create'),
-            'edit' => Pages\EditTranslation::route('/{record}/edit'),
+            'index' => ListTranslations::route('/'),
+            'create' => CreateTranslation::route('/create'),
+            'edit' => EditTranslation::route('/{record}/edit'),
         ];
     }
 }

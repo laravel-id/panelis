@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use BackedEnum;
 use Illuminate\Contracts\Encryption\DecryptException;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
@@ -49,6 +50,10 @@ class Setting extends Model
 
                     if (Str::isJson($value)) {
                         return json_decode($value, true);
+                    }
+
+                    if ($value instanceof BackedEnum) {
+                        return $value->value;
                     }
 
                     return $value;

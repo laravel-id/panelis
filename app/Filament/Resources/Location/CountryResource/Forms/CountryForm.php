@@ -6,7 +6,7 @@ use Filament\Forms\Components\TextInput;
 
 class CountryForm
 {
-    public static function make(): array
+    public static function schema(): array
     {
         return [
             TextInput::make('alpha2')

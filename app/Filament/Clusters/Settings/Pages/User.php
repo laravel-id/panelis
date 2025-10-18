@@ -6,19 +6,23 @@ use App\Filament\Clusters\Settings;
 use App\Filament\Clusters\Settings\Enums\AvatarProvider;
 use App\Filament\Clusters\Settings\Enums\LibravatarStyle;
 use App\Filament\Clusters\Settings\Enums\UserPermission;
+use App\Filament\Clusters\Settings\HasUpdateableForm;
 use App\Models\Role;
 use App\Models\Setting;
+use BackedEnum;
 use Exception;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
@@ -27,19 +31,20 @@ use Illuminate\Support\HtmlString;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
-class User extends Page implements HasForms, Settings\HasUpdateableForm
+class User extends Page implements HasForms, HasUpdateableForm
 {
     use InteractsWithForms;
+    use Settings\Traits\AddUpdateButton;
 
-    protected static ?string $navigationIcon = 'heroicon-o-user-circle';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserCircle;
 
-    protected static string $view = 'filament.clusters.settings.pages.setting';
+    protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::UserCircle;
+
+    protected string $view = 'filament.clusters.settings.pages.setting';
 
     protected static ?string $cluster = Settings::class;
 
     public ?array $user;
-
-    public bool $isButtonDisabled = false;
 
     public function getTitle(): string|Htmlable
     {
@@ -55,6 +60,7 @@ class User extends Page implements HasForms, Settings\HasUpdateableForm
     {
         $this->form->fill([
             'user' => config('user'),
+            'isButtonDisabled' => user_cannot(UserPermission::Edit),
         ]);
     }
 
@@ -63,11 +69,11 @@ class User extends Page implements HasForms, Settings\HasUpdateableForm
         return user_can(UserPermission::Browse);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->disabled(user_cannot(UserPermission::Edit))
-            ->schema([
+            ->components([
                 Section::make(__('setting.user.label'))
                     ->description(__('setting.user.section_description'))
                     ->schema([
@@ -87,17 +93,18 @@ class User extends Page implements HasForms, Settings\HasUpdateableForm
 
                         Radio::make('user.avatar_libravatar_style')
                             ->label(__('setting.user.avatar_libravatar_style'))
-                            ->visible(fn (Get $get): bool => $get('user.avatar_provider') === AvatarProvider::Libravatar->value)
+                            ->visible(fn (Get $get): bool => $get('user.avatar_provider') === AvatarProvider::Libravatar)
                             ->live()
                             ->enum(LibravatarStyle::class)
-                            ->required(fn (Get $get): bool => $get('user.avatar_provider') === AvatarProvider::Libravatar->value)
+                            ->required(fn (Get $get): bool => $get('user.avatar_provider') === AvatarProvider::Libravatar)
                             ->options(LibravatarStyle::class),
 
-                        Placeholder::make('avatar')
+                        TextEntry::make('avatar')
                             ->hiddenLabel()
                             ->label('setting.user.sample_avatar')
-                            ->content(function (Get $get): HtmlString {
-                                $provider = AvatarProvider::tryFrom($get('user.avatar_provider')) ?? AvatarProvider::UIAvatars;
+                            ->maxWidth(Width::ExtraSmall)
+                            ->state(function (Get $get): HtmlString {
+                                $provider = $get('user.avatar_provider') ?? AvatarProvider::UIAvatars;
                                 $style = $get('user.avatar_libravatar_style');
 
                                 if ($provider === AvatarProvider::UIAvatars) {

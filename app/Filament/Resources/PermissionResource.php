@@ -2,15 +2,15 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\PermissionResource\Pages;
+use App\Filament\Resources\PermissionResource\Pages\ManagePermissions;
 use App\Models\Permission;
-use Filament\Forms\Components\Placeholder;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\EditAction;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
@@ -48,16 +48,16 @@ class PermissionResource extends Resource
         return self::canAccess();
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->columns(1)
-            ->schema([
+            ->components([
                 TextInput::make('name')
                     ->label(__('user.permission.name'))
                     ->disabledOn('edit')
                     ->required()
-                    ->unique(ignorable: $form->getRecord())
+                    ->unique(ignorable: $schema->getRecord())
                     ->minLength(3)
                     ->maxLength(30),
 
@@ -68,10 +68,10 @@ class PermissionResource extends Resource
                     ->datalist(['web', 'api'])
                     ->required(),
 
-                Placeholder::make('label')
+                TextEntry::make('label')
                     ->label(__('user.permission.name'))
                     ->visibleOn('edit')
-                    ->content(fn (Permission $permission): string => $permission->label),
+                    ->state(fn (Permission $permission): string => $permission->label),
             ]);
     }
 
@@ -90,7 +90,7 @@ class PermissionResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make()
                     ->visible(user_can(PermissionResource\Enums\Permission::Edit)),
 
@@ -99,7 +99,7 @@ class PermissionResource extends Resource
                         ->visible(user_can(PermissionResource\Enums\Permission::Delete)),
                 ]),
             ])
-            ->bulkActions([
+            ->toolbarActions([
 
             ]);
     }
@@ -107,7 +107,7 @@ class PermissionResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ManagePermissions::route('/'),
+            'index' => ManagePermissions::route('/'),
         ];
     }
 }

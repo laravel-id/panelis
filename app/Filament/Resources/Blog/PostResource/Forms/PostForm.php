@@ -8,15 +8,15 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\MarkdownEditor;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Set;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Support\Str;
 
 class PostForm
 {
-    public static function make(): array
+    public static function schema(): array
     {
         return [
             Section::make(__('blog.post.label'))
@@ -68,7 +68,7 @@ class PostForm
                         ->searchable()
                         ->preload()
                         ->multiple()
-                        ->createOptionForm(user_can(CategoryPermission::Add) ? CategoryForm::make() : null),
+                        ->createOptionForm(user_can(CategoryPermission::Add) ? CategoryForm::schema() : null),
 
                     DateTimePicker::make('published_at')
                         ->label(__('ui.published_at'))

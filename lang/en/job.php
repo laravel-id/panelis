@@ -4,7 +4,7 @@ return [
     'label' => 'Queue',
     'failed' => [
         'label' => 'Failed Job',
-        'failed_at' => 'Failed At',
+        'failed_at' => 'Failed at',
         'queue' => 'Queue',
         'exception' => 'Exception',
         'navigation' => 'Failed Job',

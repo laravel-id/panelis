@@ -3,11 +3,13 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\ModuleResource\Enums\ModulePermission;
-use App\Filament\Resources\ModuleResource\Pages;
+use App\Filament\Resources\ModuleResource\Pages\ListModules;
 use App\Models\Module;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
-use Filament\Tables;
+use Filament\Schemas\Schema;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Cache;
 
@@ -44,10 +46,10 @@ class ModuleResource extends Resource
         return self::canAccess();
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
+        return $schema
+            ->components([
                 //
             ]);
     }
@@ -56,27 +58,27 @@ class ModuleResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ToggleColumn::make('is_enabled')
+                ToggleColumn::make('is_enabled')
                     ->label(__('module.is_active'))
                     ->disabled(user_cannot(ModulePermission::Edit))
                     ->afterStateUpdated(function () {
                         Cache::forget('modules');
                     }),
 
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->label(__('module.name'))
                     ->searchable(),
 
-                Tables\Columns\TextColumn::make('description')
+                TextColumn::make('description')
                     ->label(__('module.description'))
                     ->searchable(),
             ])
             ->filters([
-                Tables\Filters\TernaryFilter::make('is_enabled')
+                TernaryFilter::make('is_enabled')
                     ->label(__('module.is_active')),
             ])
-            ->actions([])
-            ->bulkActions([]);
+            ->recordActions([])
+            ->toolbarActions([]);
     }
 
     public static function getRelations(): array
@@ -89,7 +91,7 @@ class ModuleResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListModules::route('/'),
+            'index' => ListModules::route('/'),
         ];
     }
 }

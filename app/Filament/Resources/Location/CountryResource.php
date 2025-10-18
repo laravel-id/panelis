@@ -4,14 +4,16 @@ namespace App\Filament\Resources\Location;
 
 use App\Filament\Resources\Location\CountryResource\Enums\CountryPermission;
 use App\Filament\Resources\Location\CountryResource\Forms\CountryForm;
+use App\Filament\Resources\Location\CountryResource\Pages\ManageCountries;
 use App\Models\Location\Country;
-use Filament\Forms\Form;
+use Filament\Actions\BulkAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\BulkAction;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\TernaryFilter;
@@ -49,11 +51,11 @@ class CountryResource extends Resource
         return config('module.location', false) && self::canAccess();
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->columns(3)
-            ->schema(CountryForm::make());
+            ->components(CountryForm::schema());
     }
 
     public static function table(Table $table): Table
@@ -86,19 +88,19 @@ class CountryResource extends Resource
                 TernaryFilter::make('is_active')
                     ->label(__('location.country.is_visible')),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make()
                     ->visible(user_can(CountryPermission::Edit)),
 
                 DeleteAction::make()
                     ->visible(user_can(CountryPermission::Delete)),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkAction::make('toggle')
                     ->label(__('location.btn.toggle_status'))
                     ->visible(user_can(CountryPermission::Delete))
                     ->color('primary')
-                    ->icon('heroicon-m-check-circle')
+                    ->icon(Heroicon::CheckCircle)
                     ->action(function (Collection $records): void {
                         foreach ($records as $record) {
                             $record->is_active = ! $record->is_active;
@@ -116,7 +118,7 @@ class CountryResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => CountryResource\Pages\ManageCountries::route('/'),
+            'index' => ManageCountries::route('/'),
         ];
     }
 }
