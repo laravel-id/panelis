@@ -60,6 +60,8 @@ class Datetime extends Page
         $this->form->fill([
             'app.datetime.timezone' => config('app.datetime.timezone', config('app.timezone')),
             'app.datetime.format' => config('app.datetime.format', 'Y-m-d H:i'),
+
+            'isButtonDisabled' => user_cannot(DatetimePermission::Edit),
         ]);
     }
 

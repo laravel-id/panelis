@@ -63,6 +63,8 @@ class Theme extends Page implements HasForms
                     return [$color => config(sprintf('color.%s', $color))];
                 })
                 ->toArray(),
+
+            'isButtonDisabled' => user_cannot(ThemePermission::Edit),
         ]);
     }
 

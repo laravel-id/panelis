@@ -60,6 +60,7 @@ class User extends Page implements HasForms, HasUpdateableForm
     {
         $this->form->fill([
             'user' => config('user'),
+            'isButtonDisabled' => user_cannot(UserPermission::Edit),
         ]);
     }
 

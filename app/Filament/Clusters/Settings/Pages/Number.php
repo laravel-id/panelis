@@ -65,6 +65,8 @@ class Number extends Page
                 'number_format' => config('app.number_format', NumberFormat::Plain->value),
                 'number_symbol_suffix' => config('app.number_symbol_suffix', false),
             ],
+
+            'isButtonDisabled' => user_cannot(NumberPermission::Edit),
         ]);
     }
 
