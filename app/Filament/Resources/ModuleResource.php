@@ -23,17 +23,17 @@ class ModuleResource extends Resource
 
     public static function getLabel(): ?string
     {
-        return __('module.module');
+        return __('module.label');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('navigation.module');
+        return __('module.navigation');
     }
 
     public static function getNavigationGroup(): ?string
     {
-        return __('navigation.system');
+        return __('ui.system');
     }
 
     public static function canAccess(): bool

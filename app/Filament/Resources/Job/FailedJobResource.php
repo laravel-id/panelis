@@ -29,12 +29,17 @@ class FailedJobResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('navigation.job');
+        return __('job.label');
     }
 
     public static function getLabel(): ?string
     {
-        return __('job.failed_job');
+        return __('job.failed.label');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('job.failed.navigation');
     }
 
     public static function canAccess(): bool
@@ -63,7 +68,7 @@ class FailedJobResource extends Resource
                     ->label(__('job.queue')),
 
                 TextColumn::make('failed_at')
-                    ->label(__('job.failed_at'))
+                    ->label(__('job.failed.failed_at'))
                     ->date(get_datetime_format(), get_timezone()),
 
                 TextColumn::make('exception')
@@ -79,7 +84,7 @@ class FailedJobResource extends Resource
             ])
             ->recordActions([
                 Action::make('retry')
-                    ->label(__('job.btn_retry'))
+                    ->label(__('job.btn.retry'))
                     ->requiresConfirmation()
                     ->icon(Heroicon::OutlinedArrowPath)
                     ->visible(user_can(FailedJobPermission::Retry))
@@ -100,7 +105,7 @@ class FailedJobResource extends Resource
             ])
             ->toolbarActions([
                 BulkAction::make('retry_selected')
-                    ->label(__('job.btn_retry_selected'))
+                    ->label(__('job.btn.retry_selected'))
                     ->visible(user_can(FailedJobPermission::Retry))
                     ->requiresConfirmation()
                     ->icon(Heroicon::OutlinedArrowPath)

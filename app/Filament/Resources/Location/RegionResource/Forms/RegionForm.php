@@ -9,19 +9,19 @@ use Filament\Forms\Components\TextInput;
 
 class RegionForm
 {
-    public static function make(): array
+    public static function schema(): array
     {
         return [
             Select::make('country_id')
-                ->label(__('location.country'))
+                ->label(__('location.country.label'))
                 ->relationship('country', 'name')
-                ->createOptionForm(user_can(CountryPermission::Add) ? CountryForm::make() : null)
+                ->createOptionForm(user_can(CountryPermission::Add) ? CountryForm::schema() : null)
                 ->searchable()
                 ->preload()
                 ->required(),
 
             TextInput::make('name')
-                ->label(__('location.region_name'))
+                ->label(__('location.region.name'))
                 ->required()
                 ->minLength(3)
                 ->maxLength(150),

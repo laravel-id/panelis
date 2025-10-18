@@ -44,12 +44,12 @@ class Number extends Page
 
     public function getTitle(): string|Htmlable
     {
-        return __('setting.number');
+        return __('setting.number.label');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('navigation.setting_number');
+        return __('setting.number.navigation');
     }
 
     public static function canAccess(): bool
@@ -59,11 +59,10 @@ class Number extends Page
 
     public function mount(): void
     {
-
         $this->form->fill([
             'app' => [
                 'currency_symbol' => config('app.currency_symbol'),
-                'number_format' => config('app.number_format', '0 . ,'),
+                'number_format' => config('app.number_format', NumberFormat::Plain->value),
                 'number_symbol_suffix' => config('app.number_symbol_suffix', false),
             ],
         ]);
@@ -72,44 +71,37 @@ class Number extends Page
     public function form(Schema $schema): Schema
     {
         return $schema->components([
-            Section::make(__('setting.number'))
+            Section::make(__('setting.number.label'))
                 ->disabled(! user_can(NumberPermission::Edit))
-                ->description(__('setting.number_section_description'))
+                ->description(__('setting.number.section_description'))
                 ->schema([
                     TextInput::make('app.currency_symbol')
-                        ->label(__('setting.number_currency_symbol'))
+                        ->label(__('setting.number.currency_symbol'))
                         ->live()
                         ->minValue(1)
                         ->maxValue(10),
 
                     Toggle::make('app.number_symbol_suffix')
-                        ->label(__('setting.number_currency_symbol_as_suffix'))
-                        ->helperText(__('setting.number_helper_currency_symbol_as_suffix'))
+                        ->label(__('setting.number.currency_symbol_as_suffix'))
+                        ->helperText(__('setting.number.helper_currency_symbol_as_suffix'))
                         ->live()
                         ->disabled(fn (Get $get): bool => empty($get('app.currency_symbol')))
                         ->nullable(),
 
                     Radio::make('app.number_format')
-                        ->label(__('setting.number_format'))
+                        ->label(__('setting.number.format'))
                         ->required()
                         ->live()
-                        ->options(NumberFormat::options())
-                        ->enum(NumberFormat::class),
+                        ->options(NumberFormat::class),
 
                     TextEntry::make('sample_display')
-                        ->label(__('setting.number_sample_display'))
+                        ->label(__('setting.number.sample_display'))
                         ->state(function (Get $get): ?string {
-                            $format = $get('app.number_format');
-
-                            // at some point, Laravel/Filament trim space at suffix
-                            // we need to restore it with some condition
-                            if (count(explode(' ', $format)) === 2) {
-                                $format = sprintf('%s ', $format);
-                            }
+                            $format = $get('app.number_format') ?? NumberFormat::Plain;
 
                             return \Illuminate\Support\Number::money(
-                                10_000.12,
-                                $format,
+                                10_234_567.12,
+                                $format->value,
                                 $get('app.currency_symbol'),
                                 $get('app.number_symbol_suffix'),
                             );
@@ -134,13 +126,13 @@ class Number extends Page
 
             event(new SettingUpdated);
 
-            Notification::make('number_setting_updated')
-                ->title(__('setting.number_updated'))
+            Notification::make('number.setting_updated')
+                ->title(__('filament-actions::edit.single.notifications.saved.title'))
                 ->success()
                 ->send();
-        } catch (Exception $e) {
-            Notification::make('number_setting_not_updated')
-                ->title(__('setting.number_not_updated'))
+        } catch (Exception) {
+            Notification::make('number.setting_not_updated')
+                ->title(__('setting.number.not_updated'))
                 ->warning()
                 ->send();
         }

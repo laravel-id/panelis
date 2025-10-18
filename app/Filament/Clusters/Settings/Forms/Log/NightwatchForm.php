@@ -10,7 +10,7 @@ use Filament\Schemas\Components\Utilities\Get;
 
 class NightwatchForm
 {
-    public static function make(): array
+    public static function schema(): array
     {
         return [
             Checkbox::make('nightwatch.enabled')

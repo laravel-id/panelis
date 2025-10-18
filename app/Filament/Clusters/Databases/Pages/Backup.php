@@ -34,12 +34,12 @@ class Backup extends Page implements HasTable
 
     public static function getNavigationLabel(): string
     {
-        return __('navigation.database_file');
+        return __('database.file.label');
     }
 
     public function getTitle(): string|Htmlable
     {
-        return __('database.backup');
+        return __('database.file.label');
     }
 
     public static function canAccess(): bool
@@ -57,21 +57,18 @@ class Backup extends Page implements HasTable
             ->paginated(false)
             ->columns([
                 TextColumn::make('name')
-                    ->label(__('database.file_name')),
+                    ->label(__('database.file.name')),
 
                 TextColumn::make('size')
                     ->label(__('database.size'))
                     ->formatStateUsing(fn (Database $db): ?string => Number::fileSize($db->size)),
 
-                TextColumn::make('created_at')
-                    ->label(__('database.created_at'))
-                    ->since(get_timezone())
-                    ->dateTimeTooltip(get_datetime_format(), get_timezone()),
+                TextColumn::makeSinceDate('created_at', __('ui.created_at')),
             ])
             ->recordActions([
                 Action::make('download')
                     ->visible(user_can(DatabasePermission::Download))
-                    ->label(__('database.button_download'))
+                    ->label(__('ui.btn.download'))
                     ->button()
                     ->color('primary')
                     ->action(function (Database $db): ?StreamedResponse {
@@ -97,9 +94,9 @@ class Backup extends Page implements HasTable
 
                 Action::make('delete')
                     ->visible(user_can(DatabasePermission::Delete))
-                    ->label(__('database.button_delete'))
+                    ->label(__('ui.btn.delete'))
                     ->button()
-                    ->color('warning')
+                    ->color('danger')
                     ->requiresConfirmation()
                     ->action(function (Database $db): void {
                         try {

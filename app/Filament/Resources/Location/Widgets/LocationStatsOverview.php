@@ -14,17 +14,17 @@ class LocationStatsOverview extends BaseWidget
     protected function getStats(): array
     {
         return [
-            BaseWidget\Stat::make(__('location.country'), Country::query()->count())
+            BaseWidget\Stat::make(__('location.country.label'), Country::query()->count())
                 ->description(__('location.inactive', [
                     'count' => Country::query()->whereIsActive(false)->count(),
                 ])),
 
-            BaseWidget\Stat::make(__('location.region'), Region::query()->count())
+            BaseWidget\Stat::make(__('location.region.label'), Region::query()->count())
                 ->description(__('location.inactive', [
                     'count' => Region::query()->whereIsActive(false)->count(),
                 ])),
 
-            BaseWidget\Stat::make(__('location.district'), District::query()->count())
+            BaseWidget\Stat::make(__('location.district.label'), District::query()->count())
                 ->description(__('location.inactive', [
                     'count' => District::query()->whereIsActive(false)->count(),
                 ])),

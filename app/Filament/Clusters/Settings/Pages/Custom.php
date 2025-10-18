@@ -37,18 +37,18 @@ class Custom extends Page implements HasForms
 
     protected static ?string $cluster = Settings::class;
 
-    protected static ?int $navigationSort = 7;
+    protected static ?int $navigationSort = 8;
 
     public array $custom;
 
     public function getTitle(): string|Htmlable
     {
-        return __('setting.custom');
+        return __('setting.custom.label');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('navigation.setting_custom');
+        return __('setting.custom.navigation');
     }
 
     public static function canAccess(): bool
@@ -58,12 +58,13 @@ class Custom extends Page implements HasForms
 
     public function mount(): void
     {
-
         $this->form->fill([
             'custom' => Setting::query()
                 ->where('is_custom', true)
                 ->get()
                 ->toArray(),
+
+            'isButtonDisabled' => user_cannot(CustomSettingPermission::Edit),
         ]);
     }
 
@@ -71,12 +72,12 @@ class Custom extends Page implements HasForms
     {
         return $schema
             ->disabled(user_cannot(CustomSettingPermission::Browse))
-            ->components([
-                Section::make(__('setting.custom'))
-                    ->description(__('setting.custom_section_description'))
+            ->schema([
+                Section::make(__('setting.custom.label'))
+                    ->description(__('setting.custom.section_description'))
                     ->schema([
                         Repeater::make('custom')
-                            ->label(__('setting.custom_key_value'))
+                            ->hiddenLabel()
                             ->reorderable(false)
                             ->itemLabel(fn (array $state): ?string => $state['key'] ?? null)
                             ->collapsed()
@@ -90,8 +91,8 @@ class Custom extends Page implements HasForms
                                     ->label(__('setting.value')),
 
                                 Textarea::make('comment')
-                                    ->label(__('setting.comment'))
-                                    ->placeholder(__('setting.placeholder_comment')),
+                                    ->label(__('setting.custom.comment'))
+                                    ->placeholder(__('setting.custom.placeholder_comment')),
                             ])
                             ->deleteAction(function (Action $action): void {
                                 $action->requiresConfirmation()
@@ -147,14 +148,14 @@ class Custom extends Page implements HasForms
 
             Notification::make('custom_setting_updated')
                 ->success()
-                ->title(__('setting.custom_setting_updated'))
+                ->title(__('filament-actions::edit.single.notifications.saved.title'))
                 ->send();
         } catch (Exception $e) {
             Log::error($e);
 
             Notification::make('custom_setting_not_updated')
                 ->danger()
-                ->title(__('setting.custom_setting_not_updated'))
+                ->title(__('setting.custom.updated'))
                 ->send();
         }
     }

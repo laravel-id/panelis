@@ -20,9 +20,9 @@ class SeedPermission
             foreach ($enum::cases() as $case) {
                 $key = Str::snake($case->value);
                 Permission::query()
-                    ->updateOrCreate(['name' => $key], [
+                    ->updateOrCreate(['name' => $case->value], [
                         'guard_name' => 'web',
-                        'label' => "user.permission_name_{$key}",
+                        'label' => "user.permission.name_{$key}",
                     ]);
             }
         }

@@ -10,6 +10,7 @@ use App\Models\Role;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
@@ -19,6 +20,7 @@ use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Auth;
 
 class UserForm
 {
@@ -29,20 +31,29 @@ class UserForm
                 ->columnSpan(fn (?Model $record): int => empty($record) ? 3 : 2)
                 ->translateLabel()
                 ->schema([
+                    FileUpload::make('avatar')
+                        ->hiddenLabel()
+                        ->disk('public')
+                        ->directory('avatars')
+                        ->avatar()
+                        ->alignCenter()
+                        ->moveFiles()
+                        ->image(),
+
                     Grid::make()
                         ->schema([
+                            TextInput::make('name')
+                                ->label(__('user.name'))
+                                ->required()
+                                ->minLength(3)
+                                ->maxLength(150),
+
                             TextInput::make('email')
                                 ->label(__('user.email'))
                                 ->required()
                                 ->unique(ignoreRecord: true)
                                 ->email()
                                 ->dehydrateStateUsing(fn (string $state): string => strtolower($state)),
-
-                            TextInput::make('name')
-                                ->label('user.name')
-                                ->required()
-                                ->minLength(3)
-                                ->maxLength(150),
 
                         ]),
 
@@ -96,12 +107,13 @@ class UserForm
                         ->since(),
                 ]),
 
-            Section::make(__('user.branch'))
+            Section::make(__('branch.label'))
                 ->description(__('user.branch_section_description'))
                 ->visible(fn (): bool => ! empty(Filament::getTenant()))
+                ->columnSpanFull()
                 ->schema([
                     CheckboxList::make('branches')
-                        ->label(__('user.branch'))
+                        ->label(__('branch.label'))
                         ->relationship('branches')
                         ->bulkToggleable()
                         ->options(
@@ -111,27 +123,37 @@ class UserForm
                         ->required(),
                 ]),
 
-            Section::make(__('user.role'))
-                ->description(__('user.role_section_description'))
+            Section::make(__('user.role.label'))
+                ->columnSpanFull()
                 ->schema([
                     CheckboxList::make('role_id')
-                        ->label(__('user.role_name'))
+                        ->label(__('user.role.name'))
                         ->relationship('roles', 'name')
+                        ->disabled(function (?User $record): bool {
+                            if (empty($record)) {
+                                return false;
+                            }
+
+                            return $record->getKey() === Auth::id() && Auth::user()->is_root;
+                        })
                         ->getOptionLabelFromRecordUsing(function (Role $role): string {
                             $label = $role->name;
                             if ($role->is_admin) {
-                                $label .= sprintf(' (%s)', __('user.role_admin_access'));
+                                $label .= sprintf(' (%s)', __('user.role.admin_access'));
                             }
 
                             return $label;
                         })
-                        ->required(fn (User $user): bool => ! $user->is_root),
+                        ->required(function (?User $record): bool {
+                            return empty($record) || ! ($record?->is_root ?? false);
+                        }),
                 ]),
 
             Section::make(__('user.profile'))
                 ->description(__('user.profile_section_description'))
                 ->collapsed()
                 ->relationship('profile')
+                ->columnSpanFull()
                 ->schema([
                     TextInput::make('phone')
                         ->label(__('user.phone'))

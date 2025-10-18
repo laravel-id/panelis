@@ -10,43 +10,41 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Utilities\Get;
-use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\HtmlString;
 
 class GeneralForm
 {
-    public static function make(): array
+    public static function schema(): array
     {
         return [
             TextInput::make('app.url')
-                ->label(__('setting.url'))
+                ->label(__('setting.general.url'))
                 ->url()
                 ->required(),
 
             TextInput::make('app.name')
-                ->label(__('setting.brand'))
+                ->label(__('setting.general.brand'))
                 ->required()
                 ->minValue(2)
                 ->maxValue(50),
 
             Textarea::make('app.description')
-                ->label(__('setting.description'))
+                ->label(__('setting.general.description'))
                 ->rows(5)
                 ->nullable(),
 
             TagsInput::make('app.locales')
-                ->label(__('setting.available_locales'))
+                ->label(__('setting.general.available_locales'))
                 ->hintColor('primary')
-                ->hint(function (): Htmlable {
-                    return new HtmlString(__('setting.locale_list_hint', [
-                        'link' => 'https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes',
-                    ]));
-                })
+                ->hint(
+                    str(__('setting.general.locale_list_hint'))
+                        ->inlineMarkdown()
+                        ->toHtmlString()
+                )
                 ->live()
                 ->required(),
 
             Radio::make('app.locale')
-                ->label(__('setting.default_locale'))
+                ->label(__('setting.general.default_locale'))
                 ->default(Setting::get('app.locale'))
                 ->required()
                 ->options(function (Get $get): array {
@@ -61,14 +59,14 @@ class GeneralForm
                 }),
 
             TextInput::make('app.email')
-                ->label(__('setting.email'))
+                ->label(__('setting.general.email'))
                 ->nullable()
                 ->email()
                 ->live(onBlur: true)
                 ->maxValue(100),
 
             Toggle::make('app.email_as_sender')
-                ->label(__('setting.email_as_sender'))
+                ->label(__('setting.general.email_as_sender'))
                 ->default(0)
                 ->disabled(function (Get $get): bool {
                     $email = $get('app.email');

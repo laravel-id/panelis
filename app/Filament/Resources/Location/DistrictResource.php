@@ -32,17 +32,17 @@ class DistrictResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('navigation.location');
+        return __('location.label');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('navigation.district');
+        return __('location.district.navigation');
     }
 
     public static function getLabel(): ?string
     {
-        return __('location.district');
+        return __('location.district.label');
     }
 
     public static function canAccess(): bool
@@ -58,7 +58,7 @@ class DistrictResource extends Resource
     public static function form(Schema $schema): Schema
     {
         return $schema
-            ->components(DistrictForm::make());
+            ->components(DistrictForm::schema());
     }
 
     public static function table(Table $table): Table
@@ -67,43 +67,38 @@ class DistrictResource extends Resource
             ->defaultSort('name')
             ->columns([
                 ToggleColumn::make('is_active')
-                    ->label(__('location.district_is_active'))
+                    ->label(__('location.district.is_active'))
                     ->visible(user_can(DistrictPermission::Edit)),
 
                 TextColumn::make('name')
-                    ->label(__('location.district_name'))
+                    ->label(__('location.district.name'))
                     ->sortable()
                     ->searchable(),
 
                 TextColumn::make('region.name')
-                    ->label(__('location.region'))
+                    ->label(__('location.region.label'))
                     ->sortable()
                     ->searchable(),
 
                 TextColumn::make('region.country.name')
-                    ->label(__('location.country'))
+                    ->label(__('location.country.label'))
                     ->sortable(),
 
-                TextColumn::make('updated_at')
-                    ->label(__('ui.updated_at'))
-                    ->sortable()
-                    ->since(get_timezone())
-                    ->dateTimeTooltip(get_datetime_format(), get_timezone())
-                    ->since(),
+                TextColumn::makeSinceDate('updated_at', __('ui.updated_at')),
             ])
             ->filters([
                 TernaryFilter::make('is_active')
-                    ->label(__('location.district_is_active')),
+                    ->label(__('location.district.is_active')),
 
                 SelectFilter::make('country_id')
-                    ->label(__('location.country'))
+                    ->label(__('location.country.label'))
                     ->relationship('region.country', 'name')
                     ->searchable()
                     ->multiple()
                     ->preload(),
 
                 SelectFilter::make('region_id')
-                    ->label(__('location.region'))
+                    ->label(__('location.region.label'))
                     ->relationship('region', 'name')
                     ->searchable()
                     ->multiple()
@@ -118,7 +113,7 @@ class DistrictResource extends Resource
             ])
             ->toolbarActions([
                 BulkAction::make('toggle')
-                    ->label(__('location.toggle_status'))
+                    ->label(__('location.btn.toggle_status'))
                     ->color('primary')
                     ->icon(Heroicon::CheckCircle)
                     ->visible(user_can(DistrictPermission::Edit))

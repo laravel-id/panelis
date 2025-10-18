@@ -4,7 +4,6 @@ namespace App\Filament\Resources\TranslationResource\Pages;
 
 use App\Filament\Resources\TranslationResource;
 use App\Filament\Resources\TranslationResource\Enums\TranslationPermission;
-use App\Models\Translation;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
@@ -22,7 +21,7 @@ class EditTranslation extends EditRecord
                 ->visible(user_can(TranslationPermission::Add)),
 
             DeleteAction::make()
-                ->visible(fn (?Translation $line): bool => ! $line->is_system && user_can(TranslationPermission::Delete)),
+                ->visible(user_can(TranslationPermission::Delete)),
         ];
     }
 

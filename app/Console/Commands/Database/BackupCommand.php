@@ -34,7 +34,7 @@ class BackupCommand extends Command
     public function handle(DatabaseFactory $database): int
     {
         if (! $database->isAvailable()) {
-            $this->error(__('Database backup is not available.'));
+            $this->error(__('database.auto_backup.not_available'));
 
             return Command::FAILURE;
         }
@@ -69,7 +69,7 @@ class BackupCommand extends Command
                 ->success()
                 ->sendToDatabase($users);
 
-            $this->info(__('Database has been backed up to :path.', ['path' => $path]));
+            $this->info(__('database.auto_backup.backed_up', ['path' => $path]));
 
             return Command::SUCCESS;
         } catch (Exception $e) {

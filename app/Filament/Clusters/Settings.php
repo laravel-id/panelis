@@ -11,12 +11,12 @@ class Settings extends Cluster
 
     public static function getNavigationGroup(): ?string
     {
-        return __('navigation.system');
+        return __('ui.system');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('navigation.setting');
+        return __('setting.label');
     }
 
     public static function canAccess(): bool

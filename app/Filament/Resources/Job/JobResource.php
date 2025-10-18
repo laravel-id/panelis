@@ -18,12 +18,17 @@ class JobResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('navigation.job');
+        return __('job.label');
     }
 
     public static function getLabel(): ?string
     {
-        return __('job.job');
+        return __('job.label');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('job.navigation');
     }
 
     public static function canAccess(): bool
@@ -62,9 +67,7 @@ class JobResource extends Resource
                     ->label(__('job.available_at'))
                     ->date(get_datetime_format(), get_timezone()),
 
-                TextColumn::make('created_at')
-                    ->label(__('job.created_at'))
-                    ->since(get_timezone()),
+                TextColumn::makeSinceDate('created_at', __('ui.created_at')),
             ])
             ->filters([
                 //

@@ -18,6 +18,7 @@ use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\FontWeight;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -36,17 +37,17 @@ class UserResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('navigation.user');
+        return __('user.navigation');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('navigation.user');
+        return __('user.navigation');
     }
 
     public static function getLabel(): ?string
     {
-        return __('user.user');
+        return __('user.label');
     }
 
     public static function canAccess(): bool
@@ -73,11 +74,11 @@ class UserResource extends Resource
         return $table
             ->columns([
                 TextColumn::make('branches.name')
-                    ->label(__('user.branch'))
+                    ->label(__('branch.label'))
                     ->visible(fn (): bool => ! empty(Filament::getTenant())),
 
                 TextColumn::make('roles.name')
-                    ->label(__('user.role'))
+                    ->label(__('user.role.name'))
                     ->default('*'),
 
                 ImageColumn::make('avatar')
@@ -93,7 +94,8 @@ class UserResource extends Resource
                 TextColumn::make('name')
                     ->label(__('user.name'))
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->weight(FontWeight::Bold),
 
                 TextColumn::make('email')
                     ->label(__('user.email'))
@@ -101,21 +103,17 @@ class UserResource extends Resource
                     ->searchable()
                     ->sortable(),
 
-                TextColumn::make('updated_at')
-                    ->label(__('ui.updated_at'))
-                    ->since(get_timezone())
-                    ->dateTimeTooltip(get_datetime_format(), get_timezone())
-                    ->sortable(),
+                TextColumn::makeSinceDate('updated_at', __('ui.updated_at')),
             ])
             ->filters([
                 SelectFilter::make('branch')
-                    ->label(__('user.branch'))
+                    ->label(__('branch.label'))
                     ->preload()
                     ->multiple()
                     ->relationship('branches', 'name'),
 
                 SelectFilter::make('role')
-                    ->label(__('user.role'))
+                    ->label(__('user.role.label'))
                     ->relationship('roles', 'name')
                     ->searchable()
                     ->preload()
@@ -126,7 +124,7 @@ class UserResource extends Resource
 
                 ActionGroup::make([
                     Action::make('send_reset_password_link')
-                        ->label(__('user.btn_send_reset_password_link'))
+                        ->label(__('user.btn.send_reset_password_link'))
                         ->icon(Heroicon::OutlinedLockOpen)
                         ->visible(user_can(UserPermission::ResetPassword))
                         ->disabled(fn (User $user): bool => Auth::id() === $user->id)

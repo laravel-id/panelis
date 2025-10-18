@@ -2,11 +2,12 @@
 
 namespace App\Filament\Clusters\Settings\Enums;
 
-use App\Models\Enums\HasOption;
 use App\Models\User;
+use BackedEnum;
+use Filament\Support\Contracts\HasLabel;
 use Illuminate\Contracts\Auth\Authenticatable;
 
-enum AvatarProvider: string implements HasOption
+enum AvatarProvider: string implements HasLabel
 {
     case UIAvatars = 'ui-avatars';
 
@@ -27,22 +28,12 @@ enum AvatarProvider: string implements HasOption
         return sprintf('https://www.libravatar.org/avatar/%s?s=80&forcedefault=y&default=%s', $hash, $style);
     }
 
-    private function getUIAvatarsImageUrl(): ?string
+    private function getUIAvatarsImageUrl(User $user): ?string
     {
-        return null;
+        return 'https://ui-avatars.com/api/?name='.urlencode($user->name);
     }
 
-    public static function options(): array
-    {
-        return collect(AvatarProvider::cases())
-            ->mapWithKeys(function (AvatarProvider $case): array {
-                return [$case->value => $case->label()];
-            })
-            ->sort()
-            ->toArray();
-    }
-
-    public function label(): string
+    public function getLabel(): string
     {
         return match ($this->value) {
             'gravatar' => 'Gravatar (gravatar.com)',
@@ -51,12 +42,12 @@ enum AvatarProvider: string implements HasOption
         };
     }
 
-    public function getImageUrl(User|Authenticatable $user, ?string $style = null): ?string
+    public function getImageUrl(User|Authenticatable $user, ?BackedEnum $style = null): ?string
     {
-        return match ($this->value) {
-            'gravatar' => $this->getGravatarImageUrl($user),
-            'libravatar' => $this->getLibravatarImageUrl($user, $style),
-            default => $this->getUIAvatarsImageUrl(),
+        return match ($this) {
+            self::Gravatar => $this->getGravatarImageUrl($user),
+            self::Libravatar => $this->getLibravatarImageUrl($user, $style->value ?? null),
+            default => $this->getUIAvatarsImageUrl($user),
         };
     }
 }

@@ -45,18 +45,25 @@ class AutoBackup extends Page implements HasForms
 
     public array $dropbox;
 
-    public bool $isButtonDisabled = true;
-
     private DatabaseFactory $databaseService;
+
+    protected function getUpdateAction(): Action
+    {
+        return Action::make('update_setting')
+            ->label(__('ui.btn.update'))
+            ->color('primary')
+            ->disabled(user_cannot(DatabasePermission::Edit))
+            ->action('update');
+    }
 
     public static function getNavigationLabel(): string
     {
-        return __('navigation.auto_backup');
+        return __('database.auto_backup.label');
     }
 
     public function getTitle(): string|Htmlable
     {
-        return __('database.auto_backup');
+        return __('database.auto_backup.label');
     }
 
     public static function canAccess(): bool
@@ -75,7 +82,7 @@ class AutoBackup extends Page implements HasForms
         return [
             Action::make('backup')
                 ->visible(user_can(DatabasePermission::Backup))
-                ->label(__('database.button_backup_now'))
+                ->label(__('database.btn.backup_now'))
                 ->schema([
                     //                    AlertBox::make('cloud_backup_disabled')
                     //                        ->label(__('database.cloud_backup_disabled'))
@@ -165,8 +172,8 @@ class AutoBackup extends Page implements HasForms
                 //                    ->helperText(__('database.auto_backup_disabled_reason'))
                 //                    ->hidden(fn (): bool => $this->databaseService->isAvailable() ?? false),
 
-                Section::make(__('database.auto_backup'))
-                    ->description(__('database.auto_backup_info'))
+                Section::make(__('database.auto_backup.label'))
+                    ->description(__('database.auto_backup.section_description'))
                     ->schema(AutoBackupForm::schema($this->databaseService)),
 
                 Section::make(__('database.cloud_backup'))
@@ -176,7 +183,7 @@ class AutoBackup extends Page implements HasForms
                         return user_can(DatabasePermission::Backup) && $get('database.auto_backup_enabled');
                     })
                     ->disabled(fn (Get $get): bool => ! $get('database.auto_backup_enabled') || config('app.demo'))
-                    ->schema(CloudBackupForm::make()),
+                    ->schema(CloudBackupForm::schema()),
             ])
             ->disabled(user_cannot(DatabasePermission::Edit));
     }

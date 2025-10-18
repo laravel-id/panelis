@@ -10,25 +10,25 @@ class DynamoDBForm
     {
         return [
             TextInput::make('cache.stores.dynamodb.key')
-                ->label(__('setting.cache_dynamodb_key'))
+                ->label(__('setting.cache.dynamodb_key'))
                 ->required(),
 
             TextInput::make('cache.stores.dynamodb.secret')
-                ->label(__('setting.cache_dynamodb_secret'))
+                ->label(__('setting.cache.dynamodb_secret'))
                 ->password()
                 ->revealable()
                 ->required(),
 
             TextInput::make('cache.stores.dynamodb.region')
-                ->label(__('setting.cache_dynamodb_region'))
+                ->label(__('setting.cache.dynamodb_region'))
                 ->required(),
 
             TextInput::make('cache.stores.dynamodb.table')
-                ->label(__('setting.cache_dynamodb_table'))
+                ->label(__('setting.cache.dynamodb_table'))
                 ->required(),
 
             TextInput::make('cache.stores.dynamodb.endpoint')
-                ->label(__('setting.cache_dynamodb_endpoint'))
+                ->label(__('setting.cache.dynamodb_endpoint'))
                 ->required(),
         ];
     }

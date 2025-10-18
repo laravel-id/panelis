@@ -11,12 +11,12 @@ class Databases extends Cluster
 
     public static function getNavigationGroup(): ?string
     {
-        return __('navigation.system');
+        return __('ui.system');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('navigation.database');
+        return __('database.navigation');
     }
 
     public static function canAccess(): bool

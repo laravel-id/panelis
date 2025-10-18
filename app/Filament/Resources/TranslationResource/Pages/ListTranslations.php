@@ -4,6 +4,7 @@ namespace App\Filament\Resources\TranslationResource\Pages;
 
 use App\Actions\Translation\Backup;
 use App\Actions\Translation\Import;
+use App\Actions\Translation\ImportFromFiles;
 use App\Actions\Translation\Restore;
 use App\Filament\Resources\TranslationResource;
 use App\Filament\Resources\TranslationResource\Enums\TranslationPermission;
@@ -17,7 +18,6 @@ use Filament\Actions\CreateAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Support\Enums\Width;
-use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -40,15 +40,28 @@ class ListTranslations extends ListRecords
                 ->visible(user_can(TranslationPermission::Add)),
 
             ActionGroup::make([
+                Action::make('import_files')
+                    ->label(__('translation.btn.import_files'))
+                    ->icon('heroicon-o-clipboard-document')
+                    ->schema(TranslationResource\Forms\ImportFromFileForm::schema())
+                    ->action(function (array $data): void {
+                        ImportFromFiles::run($data['files'] ?? null);
+
+                        Notification::make('file_imported')
+                            ->title(__('filament-actions::create.single.notifications.created.title'))
+                            ->success()
+                            ->send();
+                    }),
+
                 Action::make('import')
                     ->visible(user_can(TranslationPermission::Import))
-                    ->label(__('translation.import'))
-                    ->icon(Heroicon::OutlinedArrowDownTray)
+                    ->label(__('ui.btn.import'))
+                    ->icon('heroicon-s-arrow-down-tray')
                     ->modalWidth(Width::Medium)
-                    ->modalSubmitActionLabel(__('translation.import_submit'))
+                    ->modalSubmitActionLabel(__('ui.btn.import'))
                     ->modalDescription(__('translation.import_description'))
-                    ->modalIcon(Heroicon::OutlinedArrowUpOnSquare)
-                    ->schema(ImportForm::make())
+                    ->modalIcon('heroicon-o-arrow-up-on-square')
+                    ->schema(ImportForm::schema())
                     ->action(function (array $data): void {
                         $lines = json_decode($data['trans']->getContent(), associative: true);
                         try {
@@ -88,13 +101,13 @@ class ListTranslations extends ListRecords
 
                 Action::make('export')
                     ->visible(user_can(TranslationPermission::Export))
-                    ->label(__('translation.export'))
-                    ->icon(Heroicon::OutlinedArrowUpTray)
+                    ->label(__('ui.btn.export'))
+                    ->icon('heroicon-s-arrow-up-tray')
                     ->modalWidth(Width::Medium)
                     ->modalDescription(__('translation.export_description'))
-                    ->modalIcon(Heroicon::OutlinedArrowDownOnSquare)
-                    ->modalSubmitActionLabel(__('translation.export_submit'))
-                    ->schema(ExportForm::make())
+                    ->modalIcon('heroicon-o-arrow-down-on-square')
+                    ->modalSubmitActionLabel(__('ui.btn.export'))
+                    ->schema(ExportForm::schema())
                     ->action(function (array $data): ?StreamedResponse {
                         try {
                             $locale = $data['locale'];
@@ -127,10 +140,9 @@ class ListTranslations extends ListRecords
 
                 Action::make('backup')
                     ->visible(user_can(TranslationPermission::Backup))
-                    ->label(__('translation.backup'))
-                    ->icon(Heroicon::OutlinedArrowDownOnSquareStack)
+                    ->label(__('ui.btn.backup'))
+                    ->icon('heroicon-o-arrow-down-on-square-stack')
                     ->requiresConfirmation()
-                    ->modalDescription(__('translation.backup_confirmation'))
                     ->action(function (): void {
                         try {
                             Backup::run();
@@ -151,8 +163,8 @@ class ListTranslations extends ListRecords
 
                 Action::make('restore')
                     ->visible(user_can(TranslationPermission::Restore))
-                    ->label(__('translation.restore'))
-                    ->icon(Heroicon::OutlinedArrowUpOnSquareStack)
+                    ->label(__('ui.btn.restore'))
+                    ->icon('heroicon-o-arrow-up-on-square-stack')
                     ->requiresConfirmation()
                     ->action(function (): void {
                         try {

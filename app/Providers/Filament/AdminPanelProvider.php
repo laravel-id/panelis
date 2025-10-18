@@ -48,23 +48,23 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->databaseNotifications()
             ->navigationGroups([
-                NavigationGroup::make(__('navigation.blog'))
+                NavigationGroup::make(__('blog.label'))
                     ->collapsed()
                     ->icon(Heroicon::OutlinedDocumentText),
 
-                NavigationGroup::make(__('navigation.location'))
+                NavigationGroup::make(__('location.label'))
                     ->icon(Heroicon::OutlinedMapPin)
                     ->collapsed(),
 
-                NavigationGroup::make(__('navigation.user'))
+                NavigationGroup::make(__('user.label'))
                     ->collapsed()
-                    ->icon(Heroicon::UserGroup),
+                    ->icon(Heroicon::OutlinedUserGroup),
 
-                NavigationGroup::make(__('navigation.job'))
+                NavigationGroup::make(__('job.label'))
                     ->collapsed()
                     ->icon(Heroicon::OutlinedCalendar),
 
-                NavigationGroup::make(__('navigation.system'))
+                NavigationGroup::make(__('ui.system'))
                     ->collapsed()
                     ->icon(Heroicon::OutlinedCog8Tooth),
             ])

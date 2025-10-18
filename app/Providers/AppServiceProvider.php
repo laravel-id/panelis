@@ -2,11 +2,14 @@
 
 namespace App\Providers;
 
+use App\Filament\Clusters\Settings\Enums\NumberFormat;
 use App\Services\Database\Database;
 use App\Services\Database\DatabaseFactory;
 use App\Services\OAuth\OAuth;
 use App\Services\OAuth\OAuthFactory;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Lang;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Number;
 use Illuminate\Support\ServiceProvider;
@@ -36,43 +39,34 @@ class AppServiceProvider extends ServiceProvider
             URL::forceScheme('https');
         }
 
+        Lang::handleMissingKeysUsing(function (string $key, array $replacements, string $locale): string {
+            if (config('app.translation_debug')) {
+                Log::warning(sprintf('Missing translation key: %s', $key), [
+                    'key' => $key,
+                    'locale' => $locale,
+                ]);
+            }
+
+            return $key;
+        });
+
         Number::macro('money', function (
             int|float $amount,
             ?string $format = null,
             ?string $symbol = null,
             ?bool $isSymbolSuffix = null,
         ): string {
-            $format = $format ?? config('app.number_format', '');
+            $format = NumberFormat::tryFrom($format ?? config('app.number_format', NumberFormat::Plain->value));
             $isSymbolSuffix = $isSymbolSuffix ?? config('app.number_symbol_suffix', false);
+            $symbol ??= config('app.currency_symbol');
 
-            if (empty($format)) {
-                if ($isSymbolSuffix) {
-                    return sprintf('%.2f %s', $amount, $symbol);
-                }
-
-                return sprintf('%s%.2f', $symbol, $amount);
-            }
-
-            $format = explode(' ', $format, 3);
-            $format = array_map(function ($value) {
-                if (is_numeric($value)) {
-                    return intval($value);
-                }
-
-                return $value;
-            }, $format);
-
-            $currency = [
-                $symbol = $symbol ?? config('app.currency_symbol'),
-                $number = number_format($amount, ...$format),
-            ];
+            $number = number_format($amount, ...$format->display());
 
             if ($isSymbolSuffix) {
-                $placeholder = '%s %s';
-                $currency = [$number, $symbol];
+                return sprintf('%s %s', $number, $symbol);
             }
 
-            return vsprintf($placeholder ?? '%s%s', $currency);
+            return sprintf('%s%s', $symbol, $number);
         });
     }
 }

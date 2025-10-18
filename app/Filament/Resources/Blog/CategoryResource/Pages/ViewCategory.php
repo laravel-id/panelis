@@ -44,7 +44,7 @@ class ViewCategory extends ViewRecord
 
     public function infolist(Schema $schema): Schema
     {
-        return $infolist
+        return $schema
             ->columns(3)
             ->schema([
                 Section::make()
@@ -52,15 +52,15 @@ class ViewCategory extends ViewRecord
                     ->columns(2)
                     ->schema([
                         TextEntry::make('name')
-                            ->label(__('blog.category_title'))
+                            ->label(__('blog.category.title'))
                             ->size(TextSize::Large),
 
                         TextEntry::make('slug')
-                            ->label(__('blog.category_slug'))
+                            ->label(__('ui.slug'))
                             ->size(TextSize::Large),
 
                         TextEntry::make('description')
-                            ->label(__('blog.category_description'))
+                            ->label(__('blog.category.description'))
                             ->columnSpanFull()
                             ->markdown(),
                     ]),

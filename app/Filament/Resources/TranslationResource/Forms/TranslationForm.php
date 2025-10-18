@@ -58,12 +58,11 @@ class TranslationForm
                 })
                 ->autocomplete(false)
                 ->disabled(fn (?Translation $line): bool => $line?->is_system ?? false)
-                ->alphaDash()
                 ->required(),
 
             KeyValue::make('text')
                 ->label(__('translation.text'))
-                ->addActionLabel(__('translation.add_line'))
+                ->addActionLabel(__('translation.btn.add_line'))
                 ->keyLabel(__('translation.lang'))
                 ->valueLabel(__('translation.line'))
                 ->default(function (): array {

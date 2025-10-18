@@ -8,20 +8,20 @@ use Filament\Forms\Components\TextInput;
 
 class SlackForm
 {
-    public static function make(): array
+    public static function schema(): array
     {
         return [
             Select::make('logging.channels.slack.level')
-                ->label(__('setting.log_level'))
-                ->options(LogLevel::options())
+                ->label(__('setting.log.level'))
+                ->options(LogLevel::class)
                 ->searchable()
                 ->required()
                 ->enum(LogLevel::class),
 
             TextInput::make('logging.channels.slack.url')
-                ->label(__('setting.slack_webhook_url'))
+                ->label(__('setting.log.slack_webhook_url'))
                 ->hint(
-                    str(__('setting.slack_webhook_hint'))
+                    str(__('setting.log.slack_webhook_hint'))
                         ->inlineMarkdown()
                         ->toHtmlString()
                 )
@@ -29,7 +29,7 @@ class SlackForm
                 ->required(),
 
             TextInput::make('logging.channels.slack.username')
-                ->label(__('setting.slack_username'))
+                ->label(__('setting.log.slack_username'))
                 ->string()
                 ->required(),
         ];

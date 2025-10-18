@@ -17,11 +17,13 @@ use Filament\Forms\Components\CheckboxList;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
 use Filament\Schemas\Components\Section;
-use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Filament\Support\Components\Component;
+use Filament\Support\Enums\FontWeight;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
 class RoleResource extends Resource
@@ -34,17 +36,17 @@ class RoleResource extends Resource
 
     public static function getNavigationGroup(): ?string
     {
-        return __('navigation.user');
+        return __('user.navigation');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('navigation.role');
+        return __('user.role.navigation');
     }
 
     public static function getLabel(): ?string
     {
-        return __('user.role');
+        return __('user.role.label');
     }
 
     public static function canAccess(): bool
@@ -59,48 +61,91 @@ class RoleResource extends Resource
 
     public static function form(Schema $schema): Schema
     {
+        $permissionForms = Permission::query()
+            ->get()
+            ->groupBy(function (Permission $permission): string {
+                $labels = explode('_', $permission->getRawOriginal('label'));
+
+                return end($labels);
+            })
+            ->sortKeys()
+            ->map(function (Collection $permissions, string $groupLabel) {
+                return Section::make(__('user.permission.'.$groupLabel))
+                    ->collapsible()
+                    ->schema([
+                        CheckboxList::make("permissions_{$groupLabel}")
+                            ->columns(3)
+                            ->hiddenLabel()
+                            ->options($permissions->pluck('label', 'id')->toArray())
+                            ->bulkToggleable()
+                            ->searchable()
+                            ->afterStateHydrated(function (CheckboxList $component, ?Role $record) use ($permissions): void {
+                                if (empty($record)) {
+                                    return;
+                                }
+
+                                $selectedIds = $record->permissions()
+                                    ->whereIn('id', $permissions->pluck('id'))
+                                    ->pluck('permissions.id')
+                                    ->toArray();
+
+                                $component->state($selectedIds);
+                            })
+                            ->saveRelationshipsUsing(function (Component $component, array $state, ?Role $record) use ($permissions): void {
+                                if (empty($record)) {
+                                    return;
+                                }
+
+                                $currentPermissions = $record->permissions()
+                                    ->whereIn('id', $permissions->pluck('id'))
+                                    ->pluck('id')
+                                    ->toArray();
+
+                                $toDetach = array_diff($currentPermissions, $state ?? []);
+                                $toAttach = array_diff($state ?? [], $currentPermissions);
+
+                                if (! empty($toDetach)) {
+                                    $record->permissions()->detach($toDetach);
+                                }
+                                if (! empty($toAttach)) {
+                                    $record->permissions()->attach($toAttach);
+                                }
+                            })
+                            ->dehydrated(false),
+                    ]);
+            })
+            ->values()
+            ->toArray();
+
         return $schema
             ->columns(3)
             ->components([
                 Section::make(__('user.role'))
-                    ->description(__('user.role_section_description'))
-                    ->columnSpan(fn (?Model $record): int => empty($record) ? 3 : 2)
-                    ->schema(RoleForm::schema()),
-
-                Section::make()
-                    ->hiddenOn(CreateRole::class)
-                    ->columnSpan(1)
-                    ->schema([
-                        TextEntry::make('created_at')
-                            ->label(__('ui.created_at'))
-                            ->dateTimeTooltip(get_datetime_format(), get_timezone())
-                            ->since(),
-
-                        TextEntry::make('local_updated_at')
-                            ->label(__('ui.updated_at'))
-                            ->dateTimeTooltip(get_datetime_format(), get_timezone())
-                            ->since(),
-                    ]),
-
-                Section::make(__('user.permission'))
-                    ->description(__('user.permission_section_description'))
-                    ->visible(fn (Get $get): bool => (bool) $get('is_admin'))
+                    ->description(__('user.role.section_description'))
                     ->columnSpanFull()
                     ->schema([
-                        CheckboxList::make('permission_id')
-                            ->label(__('user.permission'))
-                            ->columns(3)
-                            ->gridDirection('row')
-                            ->searchable()
-                            ->bulkToggleable()
-                            ->relationship('permissions', 'name')
-                            ->getOptionLabelFromRecordUsing(function (Model|Permission $record): ?string {
-                                return $record->label;
-                            })
-                            ->descriptions(
-                                Permission::pluck('name', 'id'),
-                            )
-                            ->required(),
+                        Section::make(__('user.role.label'))
+                            ->description(__('user.role.section_description'))
+                            ->columnSpan(fn (?Model $record): int => empty($record) ? 3 : 2)
+                            ->schema(RoleForm::schema()),
+
+                        Section::make()
+                            ->hiddenOn(CreateRole::class)
+                            ->columnSpan(1)
+                            ->schema([
+                                TextEntry::make('created_at')
+                                    ->label(__('ui.created_at'))
+                                    ->dateTimeTooltip(get_datetime_format(), get_timezone())
+                                    ->since(),
+
+                                TextEntry::make('updated_at')
+                                    ->label(__('ui.updated_at'))
+                                    ->dateTimeTooltip(get_datetime_format(), get_timezone())
+                                    ->since(),
+                            ]),
+
+                        Section::make('Permission')
+                            ->schema($permissionForms),
                     ]),
             ]);
     }
@@ -111,25 +156,22 @@ class RoleResource extends Resource
             ->paginated(false)
             ->columns([
                 ToggleColumn::make('is_admin')
-                    ->label(__('user.role_is_admin'))
+                    ->label(__('user.role.is_admin'))
                     ->disabled(! user_can(RolePermission::Edit)),
 
                 TextColumn::make('name')
-                    ->label(__('user.role_name'))
+                    ->label(__('user.role.name'))
                     ->searchable()
-                    ->sortable(),
+                    ->sortable()
+                    ->weight(FontWeight::Bold),
 
                 TextColumn::make('users_count')
-                    ->label(__('user.role_user_count'))
+                    ->label(__('user.role.user_count'))
                     ->counts('users')
                     ->color('primary')
                     ->sortable(),
 
-                TextColumn::make('updated_at')
-                    ->label(__('ui.updated_at'))
-                    ->since(get_timezone())
-                    ->dateTimeTooltip(get_datetime_format(), get_timezone())
-                    ->sortable(),
+                TextColumn::makeSinceDate('updated_at', __('ui.updated_at')),
             ])
             ->filters([
                 //

@@ -38,12 +38,12 @@ class Theme extends Page implements HasForms
 
     public static function getNavigationLabel(): string
     {
-        return __('navigation.setting_theme');
+        return __('setting.theme.navigation');
     }
 
     public function getTitle(): string|Htmlable
     {
-        return __('setting.theme');
+        return __('setting.theme.label');
     }
 
     public static function canAccess(): bool
@@ -71,14 +71,14 @@ class Theme extends Page implements HasForms
         $colorsInput = [];
         foreach ($this->colors as $color) {
             $colorsInput[] = ColorPicker::make(sprintf('color.%s', $color))
-                ->label(__(sprintf('setting.color_%s', $color)))
+                ->label(__(sprintf('setting.theme.color_%s', $color)))
                 ->nullable()
                 ->hexColor();
         }
 
-        return $schema->components([
-            Section::make(__('setting.theme'))
-                ->description(__('setting.theme_section_description'))
+        return $schema->schema([
+            Section::make(__('setting.theme.label'))
+                ->description(__('setting.theme.section_description'))
                 ->schema($colorsInput),
         ]);
     }
@@ -97,7 +97,7 @@ class Theme extends Page implements HasForms
             event(new SettingUpdated);
 
             Notification::make('theme_updated')
-                ->title('setting.theme_updated')
+                ->title(__('filament-actions::edit.single.notifications.saved.title'))
                 ->success()
                 ->send();
 

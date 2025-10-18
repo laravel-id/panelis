@@ -35,17 +35,17 @@ class CategoryResource extends Resource
 
     public static function getLabel(): ?string
     {
-        return __('blog.category');
+        return __('blog.category.label');
     }
 
     public static function getNavigationGroup(): ?string
     {
-        return __('navigation.blog');
+        return __('blog.label');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('navigation.blog_category');
+        return __('blog.category.navigation');
     }
 
     public static function shouldRegisterNavigation(): bool
@@ -68,7 +68,7 @@ class CategoryResource extends Resource
                         return empty($record) ? 3 : 2;
                     })
                     ->columns()
-                    ->schema(CategoryForm::make()),
+                    ->schema(CategoryForm::schema()),
 
                 Section::make()
                     ->columnSpan(1)
@@ -98,16 +98,16 @@ class CategoryResource extends Resource
             })
             ->columns([
                 ToggleColumn::make('is_visible')
-                    ->label(__('blog.category_is_visible'))
+                    ->label(__('blog.category.is_visible'))
                     ->visible(user_can(CategoryPermission::Edit)),
 
                 TextColumn::make('slug')
-                    ->label(__('blog.category_slug'))
+                    ->label(__('blog.category.slug'))
                     ->searchable()
                     ->sortable(),
 
                 TextColumn::make('name')
-                    ->label(__('blog.category_title'))
+                    ->label(__('blog.category.title'))
                     ->description(fn (Category $category): ?string => Str::words($category->description, 8))
                     ->searchable()
                     ->sortable(),
@@ -118,7 +118,7 @@ class CategoryResource extends Resource
             ])
             ->filters([
                 TernaryFilter::make('is_visible')
-                    ->label('blog.category_is_visible'),
+                    ->label('blog.category.is_visible'),
 
                 TrashedFilter::make(),
             ])

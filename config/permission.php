@@ -142,7 +142,7 @@ return [
          * When permissions or roles are updated the cache is flushed automatically.
          */
 
-        'expiration_time' => \DateInterval::createFromDateString('1 seconds'),
+        'expiration_time' => \DateInterval::createFromDateString('24 hours'),
 
         /*
          * The cache key used to store all permissions.
@@ -160,8 +160,8 @@ return [
     ],
 
     'enums' => [
-        \App\Filament\Resources\Blog\PostResource\Enums\PostPermission::class,
-        \App\Filament\Resources\Blog\CategoryResource\Enums\CategoryPermission::class,
+        \App\Filament\Resources\BranchResource\Enums\BranchPermission::class,
+
         \App\Filament\Resources\Location\CountryResource\Enums\CountryPermission::class,
         \App\Filament\Resources\Location\RegionResource\Enums\RegionPermission::class,
         \App\Filament\Resources\Location\DistrictResource\Enums\DistrictPermission::class,

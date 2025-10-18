@@ -21,6 +21,7 @@ use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
@@ -45,16 +46,14 @@ class User extends Page implements HasForms, HasUpdateableForm
 
     public ?array $user;
 
-    public bool $isButtonDisabled = false;
-
     public function getTitle(): string|Htmlable
     {
-        return __('setting.user');
+        return __('setting.user.label');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('navigation.setting_user');
+        return __('setting.user.navigation');
     }
 
     public function mount(): void
@@ -74,35 +73,37 @@ class User extends Page implements HasForms, HasUpdateableForm
         return $schema
             ->disabled(user_cannot(UserPermission::Edit))
             ->components([
-                Section::make(__('setting.user'))
-                    ->description(__('setting.user_section_description'))
+                Section::make(__('setting.user.label'))
+                    ->description(__('setting.user.section_description'))
                     ->schema([
                         Select::make('user.default_role')
-                            ->label(__('setting.user_default_role'))
+                            ->label(__('setting.user.default_role'))
                             ->native(false)
                             ->searchable()
                             ->options(Role::options())
                             ->required(),
 
                         Radio::make('user.avatar_provider')
-                            ->label(__('setting.user_avatar_provider'))
-                            ->options(AvatarProvider::options())
+                            ->label(__('setting.user.avatar_provider'))
+                            ->options(AvatarProvider::class)
+                            ->enum(AvatarProvider::class)
                             ->live()
                             ->required(),
 
                         Radio::make('user.avatar_libravatar_style')
-                            ->label(__('setting.user_avatar_libravatar_style'))
-                            ->visible(fn (Get $get): bool => $get('user.avatar_provider') === AvatarProvider::Libravatar->value)
+                            ->label(__('setting.user.avatar_libravatar_style'))
+                            ->visible(fn (Get $get): bool => $get('user.avatar_provider') === AvatarProvider::Libravatar)
                             ->live()
                             ->enum(LibravatarStyle::class)
-                            ->required(fn (Get $get): bool => $get('user.avatar_provider') === AvatarProvider::Libravatar->value)
-                            ->options(LibravatarStyle::options()),
+                            ->required(fn (Get $get): bool => $get('user.avatar_provider') === AvatarProvider::Libravatar)
+                            ->options(LibravatarStyle::class),
 
                         TextEntry::make('avatar')
                             ->hiddenLabel()
-                            ->label('setting.user_sample_avatar')
+                            ->label('setting.user.sample_avatar')
+                            ->maxWidth(Width::ExtraSmall)
                             ->state(function (Get $get): HtmlString {
-                                $provider = AvatarProvider::tryFrom($get('user.avatar_provider'));
+                                $provider = $get('user.avatar_provider') ?? AvatarProvider::UIAvatars;
                                 $style = $get('user.avatar_libravatar_style');
 
                                 if ($provider === AvatarProvider::UIAvatars) {
@@ -130,14 +131,14 @@ class User extends Page implements HasForms, HasUpdateableForm
             }
 
             Notification::make('user_updated')
-                ->title(__('setting.user_updated'))
+                ->title(__('filament-actions::edit.single.notifications.saved.title'))
                 ->success()
                 ->send();
         } catch (Exception $e) {
             Log::error($e);
 
             Notification::make('user_not_updated')
-                ->title(__('setting.user_not_updated'))
+                ->title(__('setting.user.not_updated'))
                 ->danger()
                 ->send();
         }

@@ -2,9 +2,9 @@
 
 namespace App\Filament\Clusters\Settings\Enums;
 
-use App\Models\Enums\HasOption;
+use Filament\Support\Contracts\HasLabel;
 
-enum LogLevel: string implements HasOption
+enum LogLevel: string implements HasLabel
 {
     case Debug = 'debug';
 
@@ -22,17 +22,8 @@ enum LogLevel: string implements HasOption
 
     case Emergency = 'emergency';
 
-    public static function options(): array
+    public function getLabel(): string
     {
-        return collect(LogLevel::cases())
-            ->mapWithKeys(function (LogLevel $case): array {
-                return [$case->value => $case->label()];
-            })
-            ->toArray();
-    }
-
-    public function label(): string
-    {
-        return __(sprintf('setting.log_level_%s', $this->value));
+        return __(sprintf('setting.log.level_%s', $this->value));
     }
 }

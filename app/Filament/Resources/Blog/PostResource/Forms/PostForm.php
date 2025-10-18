@@ -16,14 +16,14 @@ use Illuminate\Support\Str;
 
 class PostForm
 {
-    public static function make(): array
+    public static function schema(): array
     {
         return [
-            Section::make(__('blog.post'))
+            Section::make(__('blog.post.label'))
                 ->columnSpan(2)
                 ->schema([
                     TextInput::make('title')
-                        ->label(__('blog.post_title'))
+                        ->label(__('blog.post.title'))
                         ->required()
                         ->minLength(3)
                         ->maxLength(250)
@@ -33,7 +33,7 @@ class PostForm
                         }),
 
                     TextInput::make('slug')
-                        ->label(__('blog.post_slug'))
+                        ->label(__('blog.post.slug'))
                         ->required()
                         ->unique(ignoreRecord: true)
                         ->minLength(3)
@@ -49,7 +49,7 @@ class PostForm
                 ->columnSpan(1)
                 ->schema([
                     FileUpload::make('image')
-                        ->label(__('blog.post_featured_image'))
+                        ->label(__('blog.post.featured_image'))
                         ->moveFiles()
                         ->maxSize(5000)
                         ->image()
@@ -63,12 +63,12 @@ class PostForm
                         ->directory(sprintf('blog/%s', now()->format('Y/m'))),
 
                     Select::make('category_id')
-                        ->label(__('blog.category'))
+                        ->label(__('blog.category.label'))
                         ->relationship('categories', 'name')
                         ->searchable()
                         ->preload()
                         ->multiple()
-                        ->createOptionForm(user_can(CategoryPermission::Add) ? CategoryForm::make() : null),
+                        ->createOptionForm(user_can(CategoryPermission::Add) ? CategoryForm::schema() : null),
 
                     DateTimePicker::make('published_at')
                         ->label(__('ui.published_at'))
@@ -77,14 +77,13 @@ class PostForm
                         ->nullable(),
                 ]),
 
-            Section::make(__('blog.post_additional_data'))
-                ->description(__('blog.post_metadata_section_description'))
+            Section::make(__('blog.post.additional_data'))
                 ->collapsed()
                 ->columnSpan(2)
                 ->reactive()
                 ->schema([
                     KeyValue::make('metadata')
-                        ->addActionLabel(__('blog.btn_add_metadata'))
+                        ->addActionLabel(__('blog.btn.add_metadata'))
                         ->default([
                             'title' => '',
                             'description' => '',

@@ -32,17 +32,17 @@ class PostResource extends Resource
 
     public static function getLabel(): ?string
     {
-        return __('blog.post');
+        return __('blog.post.label');
     }
 
     public static function getNavigationGroup(): ?string
     {
-        return __('navigation.blog');
+        return __('blog.label');
     }
 
     public static function getNavigationLabel(): string
     {
-        return __('navigation.blog_post');
+        return __('blog.post.navigation');
     }
 
     public static function canAccess(): bool
@@ -59,7 +59,7 @@ class PostResource extends Resource
     {
         return $schema
             ->columns(3)
-            ->components(PostForm::make());
+            ->components(PostForm::schema());
     }
 
     public static function table(Table $table): Table
@@ -68,16 +68,16 @@ class PostResource extends Resource
             ->columns([
                 ToggleColumn::make('is_visible')
                     ->visible(user_can(PostPermission::Edit))
-                    ->label(__('blog.post_is_published')),
+                    ->label(__('blog.post.is_published')),
 
                 TextColumn::make('title')
-                    ->label(__('blog.post_title')),
+                    ->label(__('blog.post.title')),
 
                 TextColumn::make('categories.name')
-                    ->label(__('blog.post_categories')),
+                    ->label(__('blog.post.categories')),
 
                 TextColumn::make('user.name')
-                    ->label(__('blog.post_author')),
+                    ->label(__('blog.post.author')),
 
                 TextColumn::make('published_at')
                     ->label(__('ui.published_at'))
@@ -85,10 +85,10 @@ class PostResource extends Resource
             ])
             ->filters([
                 TernaryFilter::make('is_visible')
-                    ->label(__('blog.post_is_visible')),
+                    ->label(__('blog.post.is_visible')),
 
                 SelectFilter::make('user_id')
-                    ->label(__('blog.post_authors'))
+                    ->label(__('blog.post.authors'))
                     ->relationship('user', 'name')
                     ->searchable()
                     ->multiple()

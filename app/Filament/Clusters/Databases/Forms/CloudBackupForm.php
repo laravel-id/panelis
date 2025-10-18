@@ -21,7 +21,7 @@ class CloudBackupForm
 {
     private static OAuth $oauth;
 
-    public static function make(): array
+    public static function schema(): array
     {
         self::$oauth = app(OAuth::class)
             ->driver(config('database.cloud_storage', CloudProvider::Dropbox->value));
@@ -39,16 +39,15 @@ class CloudBackupForm
 
             Radio::make('database.cloud_storage')
                 ->label(__('database.cloud_storage'))
-                ->options(CloudProvider::options())
-                ->afterStateUpdated(function (?string $state): void {
-                    if (! empty($state)) {
-                        Setting::set('database.cloud_storage', $state);
-                        event(new SettingUpdated);
+                ->options(CloudProvider::class)
+                ->afterStateUpdated(function (CloudProvider $state): void {
+                    $provider = $state->value;
+                    Setting::set('database.cloud_storage', $provider);
+                    event(new SettingUpdated);
 
-                        Config::set('oauth.provider', $state);
-                        self::$oauth = app(OAuth::class)
-                            ->driver($state);
-                    }
+                    Config::set('oauth.provider', $provider);
+                    static::$oauth = app(OAuth::class)
+                        ->driver($provider);
                 })
                 ->live()
                 ->visible(fn (Get $get): bool => $get('database.cloud_backup_enabled'))
@@ -56,9 +55,9 @@ class CloudBackupForm
                 ->required(fn (Get $get): bool => $get('database.cloud_backup_enabled')),
 
             TextInput::make('dropbox.client_id')
-                ->label(__('database.dropbox_api_key'))
-                ->hint(\str(__('database.dropbox_token_hint'))->inlineMarkdown()->toHtmlString())
-                ->visible(fn (Get $get): bool => $get('database.cloud_backup_enabled') && $get('database.cloud_storage') === CloudProvider::Dropbox->value)
+                ->label(__('database.dropbox.api_key'))
+                ->hint(\str(__('database.dropbox.token_hint'))->inlineMarkdown()->toHtmlString())
+                ->visible(fn (Get $get): bool => $get('database.cloud_backup_enabled') && $get('database.cloud_storage') === CloudProvider::Dropbox)
                 ->afterStateUpdated(function (?string $state): void {
                     if (! empty($state)) {
                         Setting::set('dropbox.client_id', $state);
@@ -71,8 +70,8 @@ class CloudBackupForm
                 ->required(),
 
             TextInput::make('dropbox.client_secret')
-                ->label(__('database.dropbox_api_secret'))
-                ->visible(fn (Get $get): bool => $get('database.cloud_backup_enabled') && $get('database.cloud_storage') === CloudProvider::Dropbox->value)
+                ->label(__('database.dropbox.api_secret'))
+                ->visible(fn (Get $get): bool => $get('database.cloud_backup_enabled') && $get('database.cloud_storage') === CloudProvider::Dropbox)
                 ->afterStateUpdated(function (?string $state): void {
                     if (! empty($state)) {
                         Setting::set('dropbox.client_secret', $state);
@@ -93,12 +92,12 @@ class CloudBackupForm
         $user = null;
         $token = config('filesystems.disks.dropbox.token');
         if (! empty($token)) {
-            $user = self::$oauth->getUser();
+            $user = static::$oauth->getUser();
         }
 
         return Actions::make([
             Action::make('authorize_dropbox')
-                ->label(__('database.btn_authorize_dropbox'))
+                ->label(__('database.dropbox.btn.authorize'))
                 ->disabled(config('app.demo'))
                 ->visible(empty($user))
                 ->disabled(fn (Get $get): bool => empty($get('dropbox.client_id')) || empty($get('dropbox.client_secret')))
@@ -114,7 +113,7 @@ class CloudBackupForm
                 }),
 
             Action::make('revoke_dropbox')
-                ->label(__('database.revoke_dropbox', ['name' => $user?->getName()]))
+                ->label(__('database.dropbox.btn.revoke', ['name' => $user?->getName()]))
                 ->disabled(config('app.demo'))
                 ->visible(! empty($user))
                 ->requiresConfirmation()
@@ -132,6 +131,6 @@ class CloudBackupForm
                     $set('dropbox.client_id', null);
                     $set('dropbox.client_secret', null);
                 }),
-        ])->visible(fn (Get $get): bool => $get('database.cloud_backup_enabled') && $get('database.cloud_storage') === CloudProvider::Dropbox->value);
+        ])->visible(fn (Get $get): bool => $get('database.cloud_backup_enabled') && $get('database.cloud_storage') === CloudProvider::Dropbox);
     }
 }

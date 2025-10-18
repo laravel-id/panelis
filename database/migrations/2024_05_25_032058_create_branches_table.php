@@ -15,11 +15,13 @@ return new class extends Migration
         Schema::create('branches', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(User::class)->constrained();
+            $table->string('logo')->nullable();
             $table->string('slug', 100)->unique();
             $table->string('name', 50)->unique();
             $table->string('address')->nullable();
             $table->string('phone')->nullable();
             $table->string('email')->nullable();
+            $table->text('metadata')->default('[]');
             $table->timestamps();
             $table->softDeletes();
         });
