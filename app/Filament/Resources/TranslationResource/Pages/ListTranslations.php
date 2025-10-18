@@ -18,6 +18,7 @@ use Filament\Actions\CreateAction;
 use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ListRecords;
 use Filament\Support\Enums\Width;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Support\Facades\Log;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -42,7 +43,7 @@ class ListTranslations extends ListRecords
             ActionGroup::make([
                 Action::make('import_files')
                     ->label(__('translation.btn.import_files'))
-                    ->icon('heroicon-o-clipboard-document')
+                    ->icon(Heroicon::OutlinedClipboardDocument)
                     ->schema(TranslationResource\Forms\ImportFromFileForm::schema())
                     ->action(function (array $data): void {
                         ImportFromFiles::run($data['files'] ?? null);
@@ -56,11 +57,11 @@ class ListTranslations extends ListRecords
                 Action::make('import')
                     ->visible(user_can(TranslationPermission::Import))
                     ->label(__('ui.btn.import'))
-                    ->icon('heroicon-s-arrow-down-tray')
+                    ->icon(Heroicon::OutlinedArrowDownTray)
                     ->modalWidth(Width::Medium)
                     ->modalSubmitActionLabel(__('ui.btn.import'))
                     ->modalDescription(__('translation.import_description'))
-                    ->modalIcon('heroicon-o-arrow-up-on-square')
+                    ->modalIcon(Heroicon::OutlinedArrowUpOnSquare)
                     ->schema(ImportForm::schema())
                     ->action(function (array $data): void {
                         $lines = json_decode($data['trans']->getContent(), associative: true);
@@ -102,10 +103,10 @@ class ListTranslations extends ListRecords
                 Action::make('export')
                     ->visible(user_can(TranslationPermission::Export))
                     ->label(__('ui.btn.export'))
-                    ->icon('heroicon-s-arrow-up-tray')
+                    ->icon(Heroicon::OutlinedArrowUpTray)
                     ->modalWidth(Width::Medium)
                     ->modalDescription(__('translation.export_description'))
-                    ->modalIcon('heroicon-o-arrow-down-on-square')
+                    ->modalIcon(Heroicon::OutlinedArrowDownOnSquare)
                     ->modalSubmitActionLabel(__('ui.btn.export'))
                     ->schema(ExportForm::schema())
                     ->action(function (array $data): ?StreamedResponse {
@@ -141,7 +142,7 @@ class ListTranslations extends ListRecords
                 Action::make('backup')
                     ->visible(user_can(TranslationPermission::Backup))
                     ->label(__('ui.btn.backup'))
-                    ->icon('heroicon-o-arrow-down-on-square-stack')
+                    ->icon(Heroicon::OutlinedArrowDownOnSquareStack)
                     ->requiresConfirmation()
                     ->action(function (): void {
                         try {
@@ -164,7 +165,7 @@ class ListTranslations extends ListRecords
                 Action::make('restore')
                     ->visible(user_can(TranslationPermission::Restore))
                     ->label(__('ui.btn.restore'))
-                    ->icon('heroicon-o-arrow-up-on-square-stack')
+                    ->icon(Heroicon::OutlinedArrowDownOnSquareStack)
                     ->requiresConfirmation()
                     ->action(function (): void {
                         try {

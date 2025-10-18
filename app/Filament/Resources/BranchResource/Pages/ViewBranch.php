@@ -15,6 +15,7 @@ use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Enums\TextSize;
+use Filament\Support\Icons\Heroicon;
 
 class ViewBranch extends ViewRecord
 {
@@ -48,11 +49,11 @@ class ViewBranch extends ViewRecord
                             ->schema([
                                 TextEntry::make('phone')
                                     ->label(__('branch.phone'))
-                                    ->icon('heroicon-s-phone'),
+                                    ->icon(Heroicon::Phone),
 
                                 TextEntry::make('email')
                                     ->label(__('branch.email'))
-                                    ->icon('heroicon-s-at-symbol'),
+                                    ->icon(Heroicon::AtSymbol),
                             ]),
 
                         TextEntry::make('address')
