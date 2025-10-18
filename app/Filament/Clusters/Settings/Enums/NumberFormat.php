@@ -2,10 +2,10 @@
 
 namespace App\Filament\Clusters\Settings\Enums;
 
-use App\Models\Enums\HasOption;
+use Filament\Support\Contracts\HasLabel;
 use Illuminate\Support\Number;
 
-enum NumberFormat: string implements HasOption
+enum NumberFormat: string implements HasLabel
 {
     case Plain = '';
 
@@ -19,16 +19,7 @@ enum NumberFormat: string implements HasOption
 
     case CommaWithDecimal = '2 , .';
 
-    public static function options(): array
-    {
-        return collect(NumberFormat::cases())
-            ->mapWithKeys(function (NumberFormat $format) {
-                return [$format->value => $format->label()];
-            })
-            ->toArray();
-    }
-
-    public function label(): string
+    public function getLabel(): string
     {
         return Number::money(10_000.12, format: $this->value, symbol: '');
     }

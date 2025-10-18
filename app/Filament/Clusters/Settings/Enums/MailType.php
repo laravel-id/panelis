@@ -2,9 +2,10 @@
 
 namespace App\Filament\Clusters\Settings\Enums;
 
-use App\Models\Enums\HasOption;
+use Filament\Support\Contracts\HasDescription;
+use Filament\Support\Contracts\HasLabel;
 
-enum MailType: string implements HasOption
+enum MailType: string implements HasDescription, HasLabel
 {
     case Log = 'log';
 
@@ -18,26 +19,13 @@ enum MailType: string implements HasOption
 
     case SES = 'ses';
 
-    public static function options(): array
-    {
-        return collect(MailType::cases())
-            ->mapWithKeys(function (MailType $case): array {
-                return [$case->value => $case->label()];
-            })
-            ->toArray();
-    }
-
-    public static function descriptions(): array
-    {
-        return collect(MailType::cases())
-            ->mapWithKeys(function (MailType $case): array {
-                return [$case->value => __(sprintf('setting.mail.%s_description', $case->value))];
-            })
-            ->toArray();
-    }
-
-    public function label(): string
+    public function getLabel(): string
     {
         return __(sprintf('setting.mail.%s_driver', $this->value));
+    }
+
+    public function getDescription(): ?string
+    {
+        return __(sprintf('setting.mail.%s_description', $this->value));
     }
 }

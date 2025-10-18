@@ -2,24 +2,15 @@
 
 namespace App\Filament\Clusters\Databases\Enums;
 
-use App\Models\Enums\HasOption;
+use Filament\Support\Contracts\HasLabel;
 
-enum CloudProvider: string implements HasOption
+enum CloudProvider: string implements HasLabel
 {
     case Dropbox = 'dropbox';
 
     //    case GoogleDrive = 'google_drive';
 
-    public static function options(): array
-    {
-        return collect(self::cases())
-            ->mapWithKeys(function (self $case): array {
-                return [$case->value => $case->label()];
-            })
-            ->all();
-    }
-
-    public function label(): string
+    public function getLabel(): string
     {
         return __(sprintf('database.cloud_storage_%s', $this->value));
     }

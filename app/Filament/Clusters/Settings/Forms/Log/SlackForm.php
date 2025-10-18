@@ -13,7 +13,7 @@ class SlackForm
         return [
             Select::make('logging.channels.slack.level')
                 ->label(__('setting.log.level'))
-                ->options(LogLevel::options())
+                ->options(LogLevel::class)
                 ->searchable()
                 ->required()
                 ->enum(LogLevel::class),

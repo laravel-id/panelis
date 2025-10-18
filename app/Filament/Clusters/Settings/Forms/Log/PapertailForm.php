@@ -13,7 +13,7 @@ class PapertailForm
         return [
             Select::make('logging.channels.papertrail.level')
                 ->label(__('setting.log.level'))
-                ->options(LogLevel::options())
+                ->options(LogLevel::class)
                 ->searchable()
                 ->required()
                 ->enum(LogLevel::class),
