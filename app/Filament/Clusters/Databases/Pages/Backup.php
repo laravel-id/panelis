@@ -4,7 +4,7 @@ namespace App\Filament\Clusters\Databases\Pages;
 
 use App\Filament\Clusters\Databases;
 use App\Filament\Clusters\Databases\Enums\DatabasePermission;
-use App\Models\Database;
+use Carbon\Carbon;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
@@ -49,11 +49,25 @@ class Backup extends Page implements HasTable
 
     public function table(Table $table): Table
     {
-        $query = Database::query()
-            ->orderByDesc('id');
-
         return $table
-            ->query($query)
+            ->records(function (): array {
+                return collect(Storage::disk('local')->allFiles('database'))
+                    ->map(function ($file): array {
+                        [$name, $ext] = explode('.', basename($file), 2);
+
+                        $createdAt = Carbon::createFromTimestamp(intval($name));
+
+                        return [
+                            'id' => $name,
+                            'path' => $file,
+                            'name' => sprintf('%s.%s', $name, $ext),
+                            'extension' => $ext,
+                            'size' => Storage::size($file),
+                            'created_at' => $createdAt,
+                        ];
+                    })
+                    ->toArray();
+            })
             ->paginated(false)
             ->columns([
                 TextColumn::make('name')
@@ -61,7 +75,7 @@ class Backup extends Page implements HasTable
 
                 TextColumn::make('size')
                     ->label(__('database.size'))
-                    ->formatStateUsing(fn (Database $db): ?string => Number::fileSize($db->size)),
+                    ->formatStateUsing(fn (array $record): string => Number::fileSize($record['size'])),
 
                 TextColumn::makeSinceDate('created_at', __('ui.created_at')),
             ])
@@ -71,17 +85,21 @@ class Backup extends Page implements HasTable
                     ->label(__('ui.btn.download'))
                     ->button()
                     ->color('primary')
-                    ->action(function (Database $db): ?StreamedResponse {
+                    ->action(function (?array $record = null): ?StreamedResponse {
+                        if (empty($record)) {
+                            return null;
+                        }
+
                         $storage = Storage::disk('local');
 
-                        if ($storage->exists($db->path)) {
-                            return response()->streamDownload(function () use ($storage, $db) {
-                                $stream = $storage->readStream($db->path);
+                        if ($storage->exists($record['path'])) {
+                            return response()->streamDownload(function () use ($storage, $record) {
+                                $stream = $storage->readStream($record['path']);
                                 while (! feof($stream)) {
                                     echo fread($stream, 8192);
                                 }
                                 fclose($stream);
-                            }, $db->name);
+                            }, $record['name']);
                         }
 
                         Notification::make('file_not_exists')
@@ -98,10 +116,14 @@ class Backup extends Page implements HasTable
                     ->button()
                     ->color('danger')
                     ->requiresConfirmation()
-                    ->action(function (Database $db): void {
+                    ->action(function (?array $record = null): void {
+                        if ($record === null) {
+                            return;
+                        }
+
                         try {
                             $storage = Storage::disk('local');
-                            $storage->delete($db->path);
+                            $storage->delete($record['path']);
 
                             Notification::make('database_file_deleted')
                                 ->title(__('database.file_deleted'))
