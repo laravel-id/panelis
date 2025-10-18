@@ -17,7 +17,7 @@ beforeEach(function (): void {
 });
 
 it('does exist', function (): void {
-    $response = $this->get(url(Filament::getCurrentPanel()->getPath(), RegisterBranch::getSlug()));
+    $response = $this->get(url(Filament::getPanel('admin')->getPath(), RegisterBranch::getSlug()));
 
     $response->assertStatus(200);
 });
