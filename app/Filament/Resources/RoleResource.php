@@ -4,18 +4,21 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\RoleResource\Enums\RolePermission;
 use App\Filament\Resources\RoleResource\Forms\RoleForm;
-use App\Filament\Resources\RoleResource\Pages;
+use App\Filament\Resources\RoleResource\Pages\CreateRole;
+use App\Filament\Resources\RoleResource\Pages\EditRole;
+use App\Filament\Resources\RoleResource\Pages\ListRoles;
+use App\Filament\Resources\RoleResource\Pages\ViewRole;
 use App\Models\Permission;
 use App\Models\Role;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Section;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\EditAction;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
@@ -54,32 +57,35 @@ class RoleResource extends Resource
         return self::canAccess();
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->columns(3)
-            ->schema([
+            ->components([
                 Section::make(__('user.role'))
                     ->description(__('user.role_section_description'))
                     ->columnSpan(fn (?Model $record): int => empty($record) ? 3 : 2)
                     ->schema(RoleForm::schema()),
 
                 Section::make()
-                    ->hiddenOn(Pages\CreateRole::class)
+                    ->hiddenOn(CreateRole::class)
                     ->columnSpan(1)
                     ->schema([
-                        Placeholder::make('created_at')
+                        TextEntry::make('created_at')
                             ->label(__('ui.created_at'))
-                            ->content(fn (Role $role): string => $role->local_created_at),
+                            ->dateTimeTooltip(get_datetime_format(), get_timezone())
+                            ->since(),
 
-                        Placeholder::make('local_updated_at')
+                        TextEntry::make('local_updated_at')
                             ->label(__('ui.updated_at'))
-                            ->content(fn (Role $role): string => $role->local_updated_at),
+                            ->dateTimeTooltip(get_datetime_format(), get_timezone())
+                            ->since(),
                     ]),
 
                 Section::make(__('user.permission'))
                     ->description(__('user.permission_section_description'))
                     ->visible(fn (Get $get): bool => (bool) $get('is_admin'))
+                    ->columnSpanFull()
                     ->schema([
                         CheckboxList::make('permission_id')
                             ->label(__('user.permission'))
@@ -128,7 +134,7 @@ class RoleResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make()->visible(user_can(RolePermission::Edit)),
 
                 ActionGroup::make([
@@ -139,7 +145,7 @@ class RoleResource extends Resource
                         ->visible(user_can(RolePermission::Delete)),
                 ]),
             ])
-            ->bulkActions([
+            ->toolbarActions([
 
             ]);
     }
@@ -153,10 +159,10 @@ class RoleResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListRoles::route('/'),
-            'create' => Pages\CreateRole::route('/create'),
-            'view' => Pages\ViewRole::route('/{record}'),
-            'edit' => Pages\EditRole::route('/{record}/edit'),
+            'index' => ListRoles::route('/'),
+            'create' => CreateRole::route('/create'),
+            'view' => ViewRole::route('/{record}'),
+            'edit' => EditRole::route('/{record}/edit'),
         ];
     }
 }

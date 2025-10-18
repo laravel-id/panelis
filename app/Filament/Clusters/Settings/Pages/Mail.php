@@ -6,22 +6,25 @@ use App\Events\SettingUpdated;
 use App\Filament\Clusters\Settings;
 use App\Filament\Clusters\Settings\Enums\MailPermission;
 use App\Filament\Clusters\Settings\Enums\MailType;
+use App\Filament\Clusters\Settings\HasUpdateableForm;
 use App\Mail\TestMail;
 use App\Models\Branch;
 use App\Models\Setting;
+use BackedEnum;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Filament\Support\Enums\MaxWidth;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
@@ -29,13 +32,16 @@ use Illuminate\Support\Facades\Mail as Mailer;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
-class Mail extends Page implements HasForms, Settings\HasUpdateableForm
+class Mail extends Page implements HasForms, HasUpdateableForm
 {
     use InteractsWithForms;
+    use Settings\Traits\AddUpdateButton;
 
-    protected static ?string $navigationIcon = 'heroicon-o-at-symbol';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedAtSymbol;
 
-    protected static string $view = 'filament.clusters.settings.pages.setting';
+    protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::AtSymbol;
+
+    protected string $view = 'filament.clusters.settings.pages.setting';
 
     protected static ?string $cluster = Settings::class;
 
@@ -230,9 +236,9 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
             Action::make('test_mail')
                 ->visible(user_can(MailPermission::SendTest))
                 ->label(__('setting.mail_button_test'))
-                ->modalWidth(MaxWidth::Medium)
+                ->modalWidth(Width::Medium)
                 ->modalSubmitActionLabel(__('setting.mail_test_button_send'))
-                ->form([
+                ->schema([
                     Radio::make('send_from')
                         ->label(__('setting.mail_send_from'))
                         ->default('mail')
@@ -329,9 +335,9 @@ class Mail extends Page implements HasForms, Settings\HasUpdateableForm
         ]);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             $this->senderSection(),
             $this->driverSection(),
             $this->sendmailSection(),

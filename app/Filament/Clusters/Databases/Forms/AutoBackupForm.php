@@ -5,31 +5,31 @@ namespace App\Filament\Clusters\Databases\Forms;
 use App\Filament\Clusters\Databases\Enums\DatabasePeriod;
 use App\Filament\Clusters\Databases\Enums\DatabaseType;
 use App\Services\Database\DatabaseFactory;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Get;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Number;
 
 class AutoBackupForm
 {
-    public static function make(?DatabaseFactory $databaseService): array
+    public static function schema(?DatabaseFactory $databaseService): array
     {
         $database = data_get(config('database.connections'), config('database.default'));
 
         return [
-            Placeholder::make('database.default')
+            TextEntry::make('database.default')
                 ->label(__('database.type'))
-                ->content(DatabaseType::getType(config('database.default'))),
+                ->state(DatabaseType::getType(config('database.default'))),
 
-            Placeholder::make('database.version')
+            TextEntry::make('database.version')
                 ->label(__('database.version'))
-                ->content($databaseService?->getVersion()),
+                ->state($databaseService?->getVersion()),
 
-            Placeholder::make('database.url')
+            TextEntry::make('database.url')
                 ->label(__('database.path'))
                 ->visible(fn (): bool => config('database.default') === DatabaseType::SQLite->value)
                 ->helperText(function (): ?string {
@@ -39,17 +39,17 @@ class AutoBackupForm
 
                     return null;
                 })
-                ->content(config('app.demo') ? '***' : $database['database'] ?? null),
+                ->state(config('app.demo') ? '***' : $database['database'] ?? null),
 
             Toggle::make('database.auto_backup_enabled')
                 ->label(__('database.backup_enabled'))
                 ->live()
                 ->disabled(fn (): bool => ! $databaseService?->isAvailable()),
 
-            Placeholder::make('database.size')
+            TextEntry::make('database.size')
                 ->label(__('database.size'))
                 ->visible(fn (): bool => config('database.default') === DatabaseType::SQLite->value)
-                ->content(function () use ($database): ?string {
+                ->state(function () use ($database): ?string {
                     if (config('database.default') === DatabaseType::SQLite->value) {
                         return Number::fileSize(File::size($database['database']));
                     }

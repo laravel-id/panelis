@@ -4,7 +4,7 @@ namespace App\Filament\Resources\Location\DistrictResource\Pages;
 
 use App\Filament\Resources\Location\DistrictResource;
 use App\Filament\Resources\Location\DistrictResource\Enums\DistrictPermission;
-use Filament\Actions;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ManageRecords;
 use Illuminate\Http\Response;
 
@@ -15,7 +15,7 @@ class ManageDistricts extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()
+            CreateAction::make()
                 ->visible(user_can(DistrictPermission::Add)),
         ];
     }

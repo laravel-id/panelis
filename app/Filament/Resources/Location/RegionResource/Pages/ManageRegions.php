@@ -4,7 +4,7 @@ namespace App\Filament\Resources\Location\RegionResource\Pages;
 
 use App\Filament\Resources\Location\RegionResource;
 use App\Filament\Resources\Location\RegionResource\Enums\RegionPermission;
-use Filament\Actions;
+use Filament\Actions\CreateAction;
 use Filament\Resources\Pages\ManageRecords;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -15,7 +15,7 @@ class ManageRegions extends ManageRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()
+            CreateAction::make()
                 ->visible(user_can(RegionPermission::Add)),
         ];
     }

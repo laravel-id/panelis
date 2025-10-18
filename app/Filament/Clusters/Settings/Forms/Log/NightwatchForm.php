@@ -3,10 +3,10 @@
 namespace App\Filament\Clusters\Settings\Forms\Log;
 
 use Filament\Forms\Components\Checkbox;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Get;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Utilities\Get;
 
 class NightwatchForm
 {
@@ -24,9 +24,9 @@ class NightwatchForm
                 ->required()
                 ->disabled(fn (Get $get): bool => ! $get('nightwatch.enabled')),
 
-            Placeholder::make('nightwatch.server')
+            TextEntry::make('nightwatch.server')
                 ->label(__('setting.nightwatch_server'))
-                ->content(function (): string {
+                ->state(function (): string {
                     return config('nightwatch.server');
                 }),
 

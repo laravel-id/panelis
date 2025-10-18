@@ -6,15 +6,18 @@ use App\Events\SettingUpdated;
 use App\Filament\Clusters\Settings;
 use App\Filament\Clusters\Settings\Enums\DatetimePermission;
 use App\Models\Setting;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Section;
+use BackedEnum;
+use DateTimeZone;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
@@ -23,10 +26,13 @@ use Symfony\Component\HttpFoundation\Response;
 class Datetime extends Page
 {
     use InteractsWithForms;
+    use Settings\Traits\AddUpdateButton;
 
-    protected static ?string $navigationIcon = 'heroicon-o-calendar';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendarDays;
 
-    protected static string $view = 'filament.clusters.settings.pages.setting';
+    protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::CalendarDays;
+
+    protected string $view = 'filament.clusters.settings.pages.setting';
 
     protected static ?int $navigationSort = 4;
 
@@ -57,11 +63,11 @@ class Datetime extends Page
         ]);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        $timezones = collect(\DateTimeZone::listIdentifiers());
+        $timezones = collect(DateTimeZone::listIdentifiers());
 
-        return $form->schema([
+        return $schema->components([
             Section::make(__('setting.datetime'))
                 ->disabled(user_cannot(DatetimePermission::Edit))
                 ->description(__('setting.datetime_section_description'))
@@ -87,9 +93,9 @@ class Datetime extends Page
                         ->live()
                         ->required(),
 
-                    Placeholder::make('datetime_sample')
+                    TextEntry::make('datetime_sample')
                         ->label(__('setting.datetime_sample'))
-                        ->content(function (Get $get): string {
+                        ->state(function (Get $get): string {
                             return now($get('app.datetime_timezone'))
                                 ->translatedFormat($get('app.datetime_format'));
                         }),

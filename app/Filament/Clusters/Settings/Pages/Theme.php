@@ -6,13 +6,16 @@ use App\Events\SettingUpdated;
 use App\Filament\Clusters\Settings;
 use App\Filament\Clusters\Settings\Enums\ThemePermission;
 use App\Models\Setting;
+use BackedEnum;
+use Exception;
 use Filament\Forms\Components\ColorPicker;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
@@ -21,10 +24,13 @@ use Symfony\Component\HttpFoundation\Response;
 class Theme extends Page implements HasForms
 {
     use InteractsWithForms;
+    use Settings\Traits\AddUpdateButton;
 
-    protected static ?string $navigationIcon = 'heroicon-o-paint-brush';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPaintBrush;
 
-    protected static string $view = 'filament.clusters.settings.pages.setting';
+    protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::PaintBrush;
+
+    protected string $view = 'filament.clusters.settings.pages.setting';
 
     protected static ?string $cluster = Settings::class;
 
@@ -60,7 +66,7 @@ class Theme extends Page implements HasForms
         ]);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
         $colorsInput = [];
         foreach ($this->colors as $color) {
@@ -70,7 +76,7 @@ class Theme extends Page implements HasForms
                 ->hexColor();
         }
 
-        return $form->schema([
+        return $schema->components([
             Section::make(__('setting.theme'))
                 ->description(__('setting.theme_section_description'))
                 ->schema($colorsInput),
@@ -96,7 +102,7 @@ class Theme extends Page implements HasForms
                 ->send();
 
             $this->js('window.location.reload()');
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Log::error($e);
 
             Notification::make('theme_not_updated')

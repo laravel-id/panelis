@@ -3,11 +3,11 @@
 namespace App\Filament\Pages;
 
 use App\Events\Branch\BranchUpdated;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
 use Filament\Pages\Tenancy\EditTenantProfile;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
 
 class EditBranch extends EditTenantProfile
@@ -17,9 +17,9 @@ class EditBranch extends EditTenantProfile
         return __('branch.edit');
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             Section::make([
                 TextInput::make('name')
                     ->label(__('branch.name'))

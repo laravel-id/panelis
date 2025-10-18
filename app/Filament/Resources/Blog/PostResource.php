@@ -8,13 +8,13 @@ use App\Filament\Resources\Blog\PostResource\Pages\CreatePost;
 use App\Filament\Resources\Blog\PostResource\Pages\EditPost;
 use App\Filament\Resources\Blog\PostResource\Pages\ListPosts;
 use App\Models\Blog\Post;
-use Filament\Forms\Form;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteAction;
+use Filament\Actions\DeleteBulkAction;
+use Filament\Actions\EditAction;
+use Filament\Actions\RestoreBulkAction;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\BulkActionGroup;
-use Filament\Tables\Actions\DeleteAction;
-use Filament\Tables\Actions\DeleteBulkAction;
-use Filament\Tables\Actions\EditAction;
-use Filament\Tables\Actions\RestoreBulkAction;
+use Filament\Schemas\Schema;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -55,11 +55,11 @@ class PostResource extends Resource
         return config('module.blog', false) && self::canAccess();
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->columns(3)
-            ->schema(PostForm::make());
+            ->components(PostForm::make());
     }
 
     public static function table(Table $table): Table
@@ -95,11 +95,11 @@ class PostResource extends Resource
                     ->preload(),
                 TrashedFilter::make(),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make()->visible(user_can(PostPermission::Edit)),
                 DeleteAction::make()->visible(user_can(PostPermission::Delete)),
             ])
-            ->bulkActions([
+            ->toolbarActions([
                 BulkActionGroup::make([
                     DeleteBulkAction::make()->visible(user_can(PostPermission::Delete)),
                     RestoreBulkAction::make()->visible(user_can(PostPermission::Edit)),

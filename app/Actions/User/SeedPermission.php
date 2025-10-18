@@ -5,13 +5,14 @@ namespace App\Actions\User;
 use App\Models\Permission;
 use Illuminate\Support\Str;
 use Lorisleiva\Actions\Concerns\AsAction;
+use Throwable;
 
 class SeedPermission
 {
     use AsAction;
 
     /**
-     * @throws \Throwable
+     * @throws Throwable
      */
     public function handle(): void
     {

@@ -5,6 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use Filament\Facades\Filament;
 use Filament\Navigation\NavigationItem;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -13,7 +14,7 @@ class RegisterNavigations
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param  Closure(Request):Response  $next
      */
     public function handle(Request $request, Closure $next): Response
     {
@@ -23,8 +24,8 @@ class RegisterNavigations
                     ->sort(200)
                     ->group(__('setting.navigation'))
                     ->url('https://github.com/laravel-id/panelis')
-                    ->activeIcon('heroicon-s-code-bracket')
-                    ->icon('heroicon-o-code-bracket'),
+                    ->activeIcon(Heroicon::CodeBracket)
+                    ->icon(Heroicon::OutlinedCodeBracket),
 
             ]);
         });

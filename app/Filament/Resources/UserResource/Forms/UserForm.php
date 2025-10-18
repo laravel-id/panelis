@@ -10,14 +10,14 @@ use App\Models\Role;
 use App\Models\User;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Fieldset;
-use Filament\Forms\Components\Grid;
-use Filament\Forms\Components\Placeholder;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
-use Filament\Forms\Get;
+use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Fieldset;
+use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Illuminate\Database\Eloquent\Model;
 
 class UserForm
@@ -77,21 +77,23 @@ class UserForm
                 ->hiddenOn(CreateUser::class)
                 ->columnSpan(1)
                 ->schema([
-                    Placeholder::make('created_at')
+                    TextEntry::make('created_at')
                         ->label(__('ui.created_at'))
                         ->visibleOn([
                             ViewUser::class,
                             EditUser::class,
                         ])
-                        ->content(fn (User $user): string => $user->local_created_at),
+                        ->dateTimeTooltip(get_datetime_format(), get_timezone())
+                        ->since(),
 
-                    Placeholder::make('updated_at')
+                    TextEntry::make('updated_at')
                         ->label(__('ui.updated_at'))
                         ->visibleOn([
                             ViewUser::class,
                             EditUser::class,
                         ])
-                        ->content(fn (User $user): string => $user->local_updated_at),
+                        ->dateTimeTooltip(get_datetime_format(), get_timezone())
+                        ->since(),
                 ]),
 
             Section::make(__('user.branch'))

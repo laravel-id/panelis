@@ -12,28 +12,28 @@ use App\Models\Setting;
 use App\Services\Database\DatabaseFactory;
 use Exception;
 use Filament\Actions\Action;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
-use KoalaFacade\FilamentAlertBox\Forms\Components\AlertBox;
 use Symfony\Component\HttpFoundation\Response;
 
 class AutoBackup extends Page implements HasForms
 {
     use InteractsWithForms;
 
-    protected static ?string $navigationIcon = 'heroicon-o-clock';
+    protected static string|\BackedEnum|null $navigationIcon = Heroicon::OutlinedClock;
 
-    protected static string $view = 'filament.clusters.databases.pages.auto-backup';
+    protected string $view = 'filament.clusters.databases.pages.auto-backup';
 
     protected static ?string $cluster = Databases::class;
 
@@ -76,12 +76,12 @@ class AutoBackup extends Page implements HasForms
             Action::make('backup')
                 ->visible(user_can(DatabasePermission::Backup))
                 ->label(__('database.button_backup_now'))
-                ->form([
-                    AlertBox::make('cloud_backup_disabled')
-                        ->label(__('database.cloud_backup_disabled'))
-                        ->helperText(__('database.cloud_backup_is_disabled'))
-                        ->visible(! config('database.cloud_backup_enabled', false))
-                        ->warning(),
+                ->schema([
+                    //                    AlertBox::make('cloud_backup_disabled')
+                    //                        ->label(__('database.cloud_backup_disabled'))
+                    //                        ->helperText(__('database.cloud_backup_is_disabled'))
+                    //                        ->visible(! config('database.cloud_backup_enabled', false))
+                    //                        ->warning(),
 
                     Section::make()
                         ->visible(config('database.cloud_backup_enabled', false))
@@ -155,19 +155,19 @@ class AutoBackup extends Page implements HasForms
         ]);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                AlertBox::make('package_installed')
-                    ->warning()
-                    ->label(__('database.auto_backup_is_disabled'))
-                    ->helperText(__('database.auto_backup_disabled_reason'))
-                    ->hidden(fn (): bool => $this->databaseService->isAvailable() ?? false),
+        return $schema
+            ->components([
+                //                AlertBox::make('package_installed')
+                //                    ->warning()
+                //                    ->label(__('database.auto_backup_is_disabled'))
+                //                    ->helperText(__('database.auto_backup_disabled_reason'))
+                //                    ->hidden(fn (): bool => $this->databaseService->isAvailable() ?? false),
 
                 Section::make(__('database.auto_backup'))
                     ->description(__('database.auto_backup_info'))
-                    ->schema(AutoBackupForm::make($this->databaseService)),
+                    ->schema(AutoBackupForm::schema($this->databaseService)),
 
                 Section::make(__('database.cloud_backup'))
                     ->description(__('database.cloud_backup_section_description'))
@@ -209,6 +209,5 @@ class AutoBackup extends Page implements HasForms
                 ->danger()
                 ->send();
         }
-
     }
 }

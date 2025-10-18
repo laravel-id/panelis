@@ -7,16 +7,19 @@ use App\Filament\Clusters\Settings;
 use App\Filament\Clusters\Settings\Enums\NumberFormat;
 use App\Filament\Clusters\Settings\Enums\NumberPermission;
 use App\Models\Setting;
-use Filament\Forms\Components\Placeholder;
+use BackedEnum;
+use Exception;
 use Filament\Forms\Components\Radio;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
+use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Validation\ValidationException;
@@ -25,10 +28,13 @@ use Symfony\Component\HttpFoundation\Response;
 class Number extends Page
 {
     use InteractsWithForms;
+    use Settings\Traits\AddUpdateButton;
 
-    protected static ?string $navigationIcon = 'heroicon-o-calculator';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalculator;
 
-    protected static string $view = 'filament.clusters.settings.pages.setting';
+    protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::Calculator;
+
+    protected string $view = 'filament.clusters.settings.pages.setting';
 
     protected static ?string $cluster = Settings::class;
 
@@ -63,9 +69,9 @@ class Number extends Page
         ]);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             Section::make(__('setting.number'))
                 ->disabled(! user_can(NumberPermission::Edit))
                 ->description(__('setting.number_section_description'))
@@ -90,9 +96,9 @@ class Number extends Page
                         ->options(NumberFormat::options())
                         ->enum(NumberFormat::class),
 
-                    Placeholder::make('sample_display')
+                    TextEntry::make('sample_display')
                         ->label(__('setting.number_sample_display'))
-                        ->content(function (Get $get): ?string {
+                        ->state(function (Get $get): ?string {
                             $format = $get('app.number_format');
 
                             // at some point, Laravel/Filament trim space at suffix
@@ -132,7 +138,7 @@ class Number extends Page
                 ->title(__('setting.number_updated'))
                 ->success()
                 ->send();
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             Notification::make('number_setting_not_updated')
                 ->title(__('setting.number_not_updated'))
                 ->warning()

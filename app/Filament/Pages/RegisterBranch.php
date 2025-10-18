@@ -5,9 +5,9 @@ namespace App\Filament\Pages;
 use App\Events\Branch\BranchRegistered;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
-use Filament\Forms\Form;
-use Filament\Forms\Set;
 use Filament\Pages\Tenancy\RegisterTenant;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
@@ -19,9 +19,9 @@ class RegisterBranch extends RegisterTenant
         return __('branch.register');
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form->schema([
+        return $schema->components([
             TextInput::make('name')
                 ->label(__('branch.name'))
                 ->maxLength(50)

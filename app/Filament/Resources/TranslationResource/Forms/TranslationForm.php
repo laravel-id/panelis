@@ -3,7 +3,7 @@
 namespace App\Filament\Resources\TranslationResource\Forms;
 
 use App\Models\Translation;
-use BezhanSalleh\FilamentLanguageSwitch\LanguageSwitch;
+use BezhanSalleh\LanguageSwitch\LanguageSwitch;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\TextInput;
 
@@ -23,7 +23,7 @@ class TranslationForm
             ->toArray();
     }
 
-    public static function make(): array
+    public static function schema(): array
     {
         return [
             TextInput::make('group')

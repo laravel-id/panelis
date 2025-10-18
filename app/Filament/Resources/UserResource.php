@@ -5,16 +5,20 @@ namespace App\Filament\Resources;
 use App\Actions\User\SendResetPasswordLink;
 use App\Filament\Resources\UserResource\Enums\UserPermission;
 use App\Filament\Resources\UserResource\Forms\UserForm;
-use App\Filament\Resources\UserResource\Pages;
+use App\Filament\Resources\UserResource\Pages\CreateUser;
+use App\Filament\Resources\UserResource\Pages\EditUser;
+use App\Filament\Resources\UserResource\Pages\ListUsers;
+use App\Filament\Resources\UserResource\Pages\ViewUser;
 use App\Models\User;
 use Exception;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\EditAction;
 use Filament\Facades\Filament;
-use Filament\Forms\Form;
 use Filament\Notifications\Notification;
 use Filament\Resources\Resource;
-use Filament\Tables\Actions\Action;
-use Filament\Tables\Actions\ActionGroup;
-use Filament\Tables\Actions\EditAction;
+use Filament\Schemas\Schema;
+use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
@@ -55,13 +59,13 @@ class UserResource extends Resource
         return self::canAccess();
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        $operation = $form->getOperation();
+        $operation = $schema->getOperation();
 
-        return $form
+        return $schema
             ->columns(3)
-            ->schema(UserForm::schema($operation));
+            ->components(UserForm::schema($operation));
     }
 
     public static function table(Table $table): Table
@@ -117,13 +121,13 @@ class UserResource extends Resource
                     ->preload()
                     ->multiple(),
             ])
-            ->actions([
+            ->recordActions([
                 EditAction::make()->visible(user_can(UserPermission::Edit)),
 
                 ActionGroup::make([
                     Action::make('send_reset_password_link')
                         ->label(__('user.btn_send_reset_password_link'))
-                        ->icon(__('heroicon-o-lock-open'))
+                        ->icon(Heroicon::OutlinedLockOpen)
                         ->visible(user_can(UserPermission::ResetPassword))
                         ->disabled(fn (User $user): bool => Auth::id() === $user->id)
                         ->requiresConfirmation()
@@ -146,7 +150,7 @@ class UserResource extends Resource
                         }),
                 ]),
             ])
-            ->bulkActions([
+            ->toolbarActions([
 
             ]);
     }
@@ -160,10 +164,10 @@ class UserResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListUsers::route('/'),
-            'create' => Pages\CreateUser::route('/create'),
-            'view' => Pages\ViewUser::route('/{record}'),
-            'edit' => Pages\EditUser::route('/{record}/edit'),
+            'index' => ListUsers::route('/'),
+            'create' => CreateUser::route('/create'),
+            'view' => ViewUser::route('/{record}'),
+            'edit' => EditUser::route('/{record}/edit'),
         ];
     }
 }

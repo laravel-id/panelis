@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources\RoleResource\Forms;
 
-use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Grid;
 
 class RoleForm
 {

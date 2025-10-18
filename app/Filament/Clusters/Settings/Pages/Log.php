@@ -6,19 +6,24 @@ use App\Events\SettingUpdated;
 use App\Filament\Clusters\Settings;
 use App\Filament\Clusters\Settings\Enums\LogChannel;
 use App\Filament\Clusters\Settings\Enums\LogPermission;
+use App\Filament\Clusters\Settings\Forms\Log\NightwatchForm;
+use App\Filament\Clusters\Settings\Forms\Log\PapertailForm;
+use App\Filament\Clusters\Settings\Forms\Log\SlackForm;
 use App\Models\Setting;
+use BackedEnum;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
-use Filament\Forms\Components\Section;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Forms\Form;
-use Filament\Forms\Get;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
-use Filament\Support\Enums\MaxWidth;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Schema;
+use Filament\Support\Enums\Width;
+use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log as Logger;
@@ -28,10 +33,13 @@ use Symfony\Component\HttpFoundation\Response;
 class Log extends Page implements HasForms
 {
     use InteractsWithForms;
+    use Settings\Traits\AddUpdateButton;
 
-    protected static ?string $navigationIcon = 'heroicon-o-document-text';
+    protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
 
-    protected static string $view = 'filament.clusters.settings.pages.setting';
+    protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::DocumentText;
+
+    protected string $view = 'filament.clusters.settings.pages.setting';
 
     protected static ?string $cluster = Settings::class;
 
@@ -48,8 +56,8 @@ class Log extends Page implements HasForms
         return [
             Action::make('send_log')
                 ->label(__('setting.log_button_test'))
-                ->modalWidth(MaxWidth::Medium)
-                ->form([
+                ->modalWidth(Width::Medium)
+                ->schema([
                     Textarea::make('message')
                         ->label(__('setting.log_message'))
                         ->required(),
@@ -123,11 +131,11 @@ class Log extends Page implements HasForms
         ]);
     }
 
-    public function form(Form $form): Form
+    public function form(Schema $schema): Schema
     {
-        return $form
+        return $schema
             ->disabled(user_cannot(LogPermission::Edit))
-            ->schema([
+            ->components([
                 Section::make(__('setting.log'))
                     ->description(__('setting.log_section_description'))
                     ->schema([
@@ -146,21 +154,21 @@ class Log extends Page implements HasForms
                     ->visible(function (Get $get): bool {
                         return in_array(LogChannel::Nightwatch->value, $get('logging.channels.stack.channels'))
                             && $this->nightwatchInstalled();
-                    })->schema(Settings\Forms\Log\NightwatchForm::make()),
+                    })->schema(NightwatchForm::make()),
 
                 Section::make(__('setting.log_papertrail'))
                     ->visible(function (Get $get): bool {
                         return in_array(LogChannel::Papertrail->value, $get('logging.channels.stack.channels'));
                     })
                     ->collapsible()
-                    ->schema(Settings\Forms\Log\PapertailForm::make()),
+                    ->schema(PapertailForm::make()),
 
                 Section::make(__('setting.log_slack'))
                     ->visible(function (Get $get): bool {
                         return in_array(LogChannel::Slack->value, $get('logging.channels.stack.channels'));
                     })
                     ->collapsible()
-                    ->schema(Settings\Forms\Log\SlackForm::make()),
+                    ->schema(SlackForm::make()),
             ]);
     }
 
