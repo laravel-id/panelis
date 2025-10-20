@@ -3,7 +3,6 @@
 namespace App\Console\Commands\Database;
 
 use App\Jobs\Database\UploadToCloud;
-use App\Models\Database as DB;
 use App\Models\User;
 use App\Services\Database\DatabaseFactory;
 use Exception;
@@ -14,29 +13,16 @@ use Illuminate\Support\Facades\Storage;
 
 class BackupCommand extends Command
 {
-    /**
-     * The name and signature of the console command.
-     *
-     * @var string
-     */
     protected $signature = 'app:backup-database';
 
-    /**
-     * The console command description.
-     *
-     * @var string
-     */
     protected $description = 'Backup database based on scheduled time';
 
-    /**
-     * Execute the console command.
-     */
     public function handle(DatabaseFactory $database): int
     {
         if (! $database->isAvailable()) {
             $this->error(__('database.auto_backup.not_available'));
 
-            return Command::FAILURE;
+            return self::FAILURE;
         }
 
         $users = User::query()
@@ -45,24 +31,16 @@ class BackupCommand extends Command
 
         try {
             $path = $database->backup();
-            if (file_exists($path)) {
-                // upload backed up file to the cloud
-                if (config('database.cloud_backup_enabled')) {
-                    UploadToCloud::dispatch($path);
-                }
 
-                // remove old backup, only on local storage
-                if (DB::count() > (int) config('database.backup_max')) {
-                    $db = DB::query()
-                        ->orderBy('created_at')
-                        ->first();
-
-                    $storage = Storage::disk('local');
-                    if ($storage->exists($db->path)) {
-                        $storage->delete($db->path);
-                    }
-                }
+            if (! file_exists($path)) {
+                throw new Exception('Backup file not found at '.$path);
             }
+
+            if (config('database.cloud_backup_enabled')) {
+                UploadToCloud::dispatch($path);
+            }
+
+            $this->cleanupOldBackups();
 
             Notification::make()
                 ->title(__('database.file_created'))
@@ -71,16 +49,37 @@ class BackupCommand extends Command
 
             $this->info(__('database.auto_backup.backed_up', ['path' => $path]));
 
-            return Command::SUCCESS;
+            return self::SUCCESS;
         } catch (Exception $e) {
             Log::error($e);
+
+            Notification::make()
+                ->title(__('database.file_not_created'))
+                ->warning()
+                ->sendToDatabase($users);
+
+            return self::FAILURE;
+        }
+    }
+
+    protected function cleanupOldBackups(): void
+    {
+        $storage = Storage::disk('local');
+        $files = collect($storage->allFiles('database'))
+            ->filter(fn ($f) => str_ends_with($f, '.sql') || str_ends_with($f, '.zip'))
+            ->sortBy(fn ($f) => $storage->lastModified($f))
+            ->values();
+
+        $max = (int) config('database.backup_max', 5);
+
+        if ($files->count() <= $max) {
+            return;
         }
 
-        Notification::make()
-            ->title(__('database.file_not_created'))
-            ->warning()
-            ->sendToDatabase($users);
+        $toDelete = $files->take($files->count() - $max);
 
-        return Command::FAILURE;
+        $toDelete->each(function ($file) use ($storage) {
+            $storage->delete($file);
+        });
     }
 }

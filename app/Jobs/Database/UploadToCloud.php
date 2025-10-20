@@ -66,4 +66,9 @@ class UploadToCloud implements ShouldQueue
 
         Storage::disk(config('database.cloud_storage'))->put($name, file_get_contents($this->path));
     }
+
+    public function getPath(): string
+    {
+        return $this->path;
+    }
 }
