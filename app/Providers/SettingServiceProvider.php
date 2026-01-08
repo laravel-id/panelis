@@ -3,7 +3,6 @@
 namespace App\Providers;
 
 use App\Models\Setting;
-use BezhanSalleh\LanguageSwitch\LanguageSwitch;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
@@ -41,10 +40,5 @@ class SettingServiceProvider extends ServiceProvider
                 });
             }
         }
-
-        LanguageSwitch::configureUsing(function (LanguageSwitch $lang) {
-            $lang->locales(config('app.locales', [config('app.locale', 'en')]))
-                ->circular();
-        });
     }
 }

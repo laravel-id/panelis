@@ -94,7 +94,7 @@ class UserForm
                             ViewUser::class,
                             EditUser::class,
                         ])
-                        ->dateTimeTooltip(get_datetime_format(), get_timezone())
+                        ->dateTimeTooltip(get_datetime_format())
                         ->since(),
 
                     TextEntry::make('updated_at')
@@ -103,7 +103,7 @@ class UserForm
                             ViewUser::class,
                             EditUser::class,
                         ])
-                        ->dateTimeTooltip(get_datetime_format(), get_timezone())
+                        ->dateTimeTooltip(get_datetime_format())
                         ->since(),
                 ]),
 

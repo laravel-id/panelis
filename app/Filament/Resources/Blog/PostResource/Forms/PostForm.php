@@ -73,7 +73,6 @@ class PostForm
                     DateTimePicker::make('published_at')
                         ->label(__('ui.published_at'))
                         ->native(false)
-                        ->timezone(get_timezone())
                         ->nullable(),
                 ]),
 

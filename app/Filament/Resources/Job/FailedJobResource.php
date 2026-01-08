@@ -69,7 +69,7 @@ class FailedJobResource extends Resource
 
                 TextColumn::make('failed_at')
                     ->label(__('job.failed.failed_at'))
-                    ->date(get_datetime_format(), get_timezone()),
+                    ->date(get_datetime_format()),
 
                 TextColumn::make('exception')
                     ->label(__('job.exception'))
