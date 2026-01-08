@@ -20,6 +20,8 @@ class FlushCache
      */
     public function handle(SettingUpdated $event): void
     {
-        Cache::flush(config('setting.cache_key'));
+        if (config('setting.cache')) {
+            Cache::flush(config('setting.cache_key'));
+        }
     }
 }
