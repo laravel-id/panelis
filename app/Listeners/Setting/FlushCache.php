@@ -2,6 +2,7 @@
 
 namespace App\Listeners\Setting;
 
+use App\Events\SettingUpdated;
 use Illuminate\Support\Facades\Cache;
 
 class FlushCache
@@ -17,8 +18,10 @@ class FlushCache
     /**
      * Handle the event.
      */
-    public function handle(object $event): void
+    public function handle(SettingUpdated $event): void
     {
-        Cache::flush(config('setting.cache_key'));
+        if (config('setting.cache')) {
+            Cache::flush(config('setting.cache_key'));
+        }
     }
 }

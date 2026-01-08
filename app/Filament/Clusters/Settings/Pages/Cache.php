@@ -2,6 +2,7 @@
 
 namespace App\Filament\Clusters\Settings\Pages;
 
+use App\Events\SettingUpdated;
 use App\Filament\Clusters\Settings;
 use App\Filament\Clusters\Settings\Enums\CacheDriver;
 use App\Filament\Clusters\Settings\Enums\CachePermission;
@@ -161,6 +162,8 @@ class Cache extends Page implements HasForms, HasUpdateableForm
             foreach (Arr::dot($this->form->getState()) as $key => $value) {
                 Setting::set($key, $value);
             }
+
+            event(new SettingUpdated);
 
             Notification::make('setting_updated')
                 ->title(__('filament-actions::edit.single.notifications.saved.title'))

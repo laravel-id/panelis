@@ -114,11 +114,11 @@ class Datetime extends Page
 
         $this->validate();
 
-        event(new SettingUpdated);
-
         foreach (Arr::dot($this->form->getState()) as $key => $value) {
             Setting::updateOrCreate(compact('key'), ['value' => $value ?? '']);
         }
+
+        event(new SettingUpdated);
 
         Notification::make('datetime.updated')
             ->title(__('filament-actions::edit.single.notifications.saved.title'))
