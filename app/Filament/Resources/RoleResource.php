@@ -135,12 +135,12 @@ class RoleResource extends Resource
                             ->schema([
                                 TextEntry::make('created_at')
                                     ->label(__('ui.created_at'))
-                                    ->dateTimeTooltip(get_datetime_format(), get_timezone())
+                                    ->dateTimeTooltip(get_datetime_format())
                                     ->since(),
 
                                 TextEntry::make('updated_at')
                                     ->label(__('ui.updated_at'))
-                                    ->dateTimeTooltip(get_datetime_format(), get_timezone())
+                                    ->dateTimeTooltip(get_datetime_format())
                                     ->since(),
                             ]),
 

@@ -84,12 +84,12 @@ class ViewBranch extends ViewRecord
                         TextEntry::make('created_at')
                             ->label(__('ui.created_at'))
                             ->since()
-                            ->dateTimeTooltip(get_datetime_format(), get_timezone()),
+                            ->dateTimeTooltip(get_datetime_format()),
 
                         TextEntry::make('updated_at')
                             ->label(__('ui.updated_at'))
                             ->since()
-                            ->dateTimeTooltip(get_datetime_format(), get_timezone()),
+                            ->dateTimeTooltip(get_datetime_format()),
                     ]),
             ]);
     }
