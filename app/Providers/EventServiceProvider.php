@@ -4,8 +4,6 @@ namespace App\Providers;
 
 use App\Events\Branch\BranchRegistered;
 use App\Events\Branch\BranchUpdated;
-use App\Events\SettingUpdated;
-use App\Listeners\Setting\FlushCache as FlushCacheSetting;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Support\ServiceProvider;
@@ -27,10 +25,6 @@ class EventServiceProvider extends ServiceProvider
         ],
         BranchUpdated::class => [
 
-        ],
-
-        SettingUpdated::class => [
-            FlushCacheSetting::class,
         ],
     ];
 
