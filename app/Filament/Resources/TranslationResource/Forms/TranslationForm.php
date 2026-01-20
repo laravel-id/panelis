@@ -4,7 +4,11 @@ namespace App\Filament\Resources\TranslationResource\Forms;
 
 use App\Models\Translation;
 use BezhanSalleh\LanguageSwitch\LanguageSwitch;
-use Filament\Forms\Components\KeyValue;
+use Filament\Forms\Components\Field;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Repeater\TableColumn;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 
 class TranslationForm
@@ -60,20 +64,65 @@ class TranslationForm
                 ->disabled(fn (?Translation $line): bool => $line?->is_system ?? false)
                 ->required(),
 
-            KeyValue::make('text')
-                ->label(__('translation.text'))
-                ->addActionLabel(__('translation.btn.add_line'))
-                ->keyLabel(__('translation.lang'))
-                ->valueLabel(__('translation.line'))
-                ->default(function (): array {
-                    if (! empty(config('app.locales'))) {
-                        return array_fill_keys(config('app.locales'), '');
+            Repeater::make('text')
+                ->columnSpanFull()
+                ->hiddenLabel()
+                ->default(array_map(
+                    fn (string $locale) => ['lang' => $locale],
+                    LanguageSwitch::make()->getLocales(),
+                ))
+                ->afterStateHydrated(function (Field $component, mixed $state, string $operation): void {
+                    if ($operation === 'create') {
+                        return;
                     }
 
-                    return [config('app.locale') => ''];
+                    $locales = LanguageSwitch::make()->getLocales();
+
+                    $defaults = collect($locales)
+                        ->map(fn (string $locale) => [
+                            'lang' => $locale,
+                            'line' => null,
+                        ])
+                        ->keyBy('lang');
+
+                    if (is_array($state) && ! empty($state)) {
+                        $fromDb = collect($state)
+                            ->map(fn ($line, $lang) => [
+                                'lang' => $lang,
+                                'line' => $line,
+                            ])
+                            ->keyBy('lang');
+
+                        $defaults = $defaults->merge($fromDb);
+                    }
+
+                    $component->state(
+                        $defaults->values()->toArray()
+                    );
                 })
-                ->helperText(__('translation.helper_locales_generated_setting'))
-                ->required(),
+
+                ->table([
+                    TableColumn::make(__('translation.lang'))->markAsRequired(),
+                    TableColumn::make(__('translation.text'))->markAsRequired(),
+                ])
+                ->compact()
+                ->maxItems(count(LanguageSwitch::make()->getLocales()))
+                ->schema([
+                    Select::make('lang')
+                        ->hiddenLabel()
+                        ->options(function (): array {
+                            return collect(LanguageSwitch::make()->getLocales())
+                                ->mapWithKeys(fn (string $locale): array => [$locale => LanguageSwitch::make()->getLabel($locale)])
+                                ->toArray();
+                        })
+                        ->disableOptionsWhenSelectedInSiblingRepeaterItems()
+                        ->required(),
+
+                    Textarea::make('line')
+                        ->hiddenLabel()
+                        ->required()
+                        ->rows(2),
+                ]),
         ];
     }
 }
