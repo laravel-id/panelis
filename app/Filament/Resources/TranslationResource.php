@@ -61,6 +61,7 @@ class TranslationResource extends Resource
             ->components([
                 Section::make()
                     ->columnSpanFull()
+                    ->columns(2)
                     ->schema(TranslationForm::schema()),
             ]);
     }

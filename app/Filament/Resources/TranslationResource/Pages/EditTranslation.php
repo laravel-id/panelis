@@ -29,4 +29,13 @@ class EditTranslation extends EditRecord
     {
         abort_unless(user_can(TranslationPermission::Add), Response::HTTP_FORBIDDEN);
     }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $data['text'] = collect($data['text'])
+            ->mapWithKeys(fn (array $text): array => [$text['lang'] => $text['line']])
+            ->toArray();
+
+        return $data;
+    }
 }

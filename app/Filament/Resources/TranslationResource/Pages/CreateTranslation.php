@@ -15,4 +15,13 @@ class CreateTranslation extends CreateRecord
     {
         abort_unless(user_can(TranslationPermission::Add), Response::HTTP_FORBIDDEN);
     }
+
+    protected function mutateFormDataBeforeCreate(array $data): array
+    {
+        $data['text'] = collect($data['text'])
+            ->mapWithKeys(fn (array $text): array => [$text['lang'] => $text['line']])
+            ->toArray();
+
+        return $data;
+    }
 }
