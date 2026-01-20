@@ -6,7 +6,6 @@ use BezhanSalleh\LanguageSwitch\LanguageSwitch;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Support\Facades\FilamentTimezone;
 use Filament\Tables\Columns\TextColumn;
-use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
 
 class FilamentServiceProvider extends ServiceProvider
@@ -24,7 +23,9 @@ class FilamentServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        FilamentTimezone::set(Config::get('app.datetime_timezone'));
+        $this->app->setLocale(app('app.locale'));
+
+        FilamentTimezone::set(config('app.datetime_timezone'));
 
         LanguageSwitch::configureUsing(function (LanguageSwitch $lang) {
             $lang->locales(config('app.locales', [config('app.locale', 'en')]))
@@ -36,14 +37,14 @@ class FilamentServiceProvider extends ServiceProvider
                 ->label($label)
                 ->sortable()
                 ->since()
-                ->dateTimeTooltip(Config::get('app.datetime_format'));
+                ->dateTimeTooltip(config('app.datetime_format'));
         });
 
         TextEntry::macro('makeSinceDate', function (string $name, ?string $label = null): TextEntry {
             return TextEntry::make($name)
                 ->label($label)
                 ->since()
-                ->dateTimeTooltip(Config::get('app.datetime_format'));
+                ->dateTimeTooltip(config('app.datetime_format'));
         });
     }
 }
