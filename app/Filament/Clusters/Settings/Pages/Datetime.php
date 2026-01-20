@@ -58,8 +58,8 @@ class Datetime extends Page
     public function mount()
     {
         $this->form->fill([
-            'app.datetime.timezone' => config('app.datetime.timezone', config('app.timezone')),
-            'app.datetime.format' => config('app.datetime.format', 'Y-m-d H:i'),
+            'app.datetime_timezone' => config('app.datetime_timezone', config('app.timezone')),
+            'app.datetime_format' => config('app.datetime_format', 'Y-m-d H:i'),
 
             'isButtonDisabled' => user_cannot(DatetimePermission::Edit),
         ]);
@@ -76,7 +76,7 @@ class Datetime extends Page
                 ->schema([
                     // do not override existing config from Laravel: "app.timezone"
                     // default timezone should be in UTC, but display timezone is interchangeable
-                    Select::make('app.datetime.timezone')
+                    Select::make('app.datetime_timezone')
                         ->options(array_combine($timezones->toArray(), $timezones->toArray()))
                         ->required()
                         ->searchable()
@@ -84,7 +84,7 @@ class Datetime extends Page
                         ->live()
                         ->label(__('setting.datetime.timezone')),
 
-                    TextInput::make('app.datetime.format')
+                    TextInput::make('app.datetime_format')
                         ->label(__('setting.datetime.format'))
                         ->hint(function (): Htmlable {
                             return str(__('setting.datetime.format_sample'))
@@ -98,8 +98,8 @@ class Datetime extends Page
                     TextEntry::make('datetime.sample')
                         ->label(__('setting.datetime.sample'))
                         ->state(function (Get $get): string {
-                            return now($get('app.datetime.timezone'))
-                                ->translatedFormat($get('app.datetime.format'));
+                            return now($get('app.datetime_timezone'))
+                                ->translatedFormat($get('app.datetime_format'));
                         }),
                 ]),
         ]);
