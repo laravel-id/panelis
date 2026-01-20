@@ -16,7 +16,16 @@ class SettingServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton('app.locale', function (): string {
+            if (Schema::hasTable('settings')) {
+                return Setting::query()
+                    ->where('key', 'app.locale')
+                    ->where('user_id', Auth::id())
+                    ->first()?->value ?? 'id';
+            }
+
+            return config('app.locale');
+        });
     }
 
     /**
@@ -40,5 +49,7 @@ class SettingServiceProvider extends ServiceProvider
                 });
             }
         }
+
+        $this->app->setLocale(app('app.locale'));
     }
 }

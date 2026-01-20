@@ -24,6 +24,8 @@ class FilamentServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        $this->app->setLocale(app('app.locale'));
+
         FilamentTimezone::set(Config::get('app.datetime.timezone'));
 
         LanguageSwitch::configureUsing(function (LanguageSwitch $lang) {
