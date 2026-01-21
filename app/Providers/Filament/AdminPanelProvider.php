@@ -28,6 +28,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
@@ -40,6 +41,21 @@ class AdminPanelProvider extends PanelProvider
             ->tenantProfile(EditBranch::class)
             ->default()
             ->id('admin')
+
+            ->brandLogo(function (): ?string {
+                if (filled(config('app.logo')) && config('app.use_logo_in_panel')) {
+                    return Storage::url(config('app.logo'));
+                }
+
+                return null;
+            })
+            ->favicon(function (): ?string {
+                if (filled(config('app.favicon'))) {
+                    return Storage::url(config('app.favicon'));
+                }
+
+                return null;
+            })
 
             // uncomment to set different path
             ->path('admin')

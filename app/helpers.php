@@ -3,6 +3,7 @@
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 
 if (! function_exists('get_timezone')) {
     function get_timezone(): string
@@ -95,5 +96,27 @@ if (! function_exists('human_number')) {
         [$decimal, $thousand, $separator] = explode(' ', config('app.number_format'));
 
         return number_format($number, $decimal, $thousand, $separator);
+    }
+}
+
+if (! function_exists('get_logo')) {
+    function get_logo(): ?string
+    {
+        if (filled(config('app.logo'))) {
+            return Storage::url(config('app.logo'));
+        }
+
+        return null;
+    }
+}
+
+if (! function_exists('get_favicon')) {
+    function get_favicon(): ?string
+    {
+        if (filled(config('app.favicon'))) {
+            return Storage::url('app.favicon');
+        }
+
+        return null;
     }
 }
