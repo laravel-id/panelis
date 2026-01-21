@@ -43,6 +43,7 @@ class AppServiceProvider extends ServiceProvider
             if (config('app.translation_debug')) {
                 Log::warning(sprintf('Missing translation key: %s', $key), [
                     'key' => $key,
+                    'text' => __($key, $replacements),
                     'locale' => $locale,
                 ]);
             }
