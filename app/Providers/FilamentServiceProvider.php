@@ -32,11 +32,12 @@ class FilamentServiceProvider extends ServiceProvider
                 ->circular();
         });
 
-        TextColumn::macro('makeSinceDate', function (string $name, ?string $label = null): TextColumn {
+        TextColumn::macro('makeSinceDate', function (string $name, ?string $label = null, bool $hidden = false): TextColumn {
             return TextColumn::make($name)
                 ->label($label)
                 ->sortable()
                 ->since()
+                ->toggleable(isToggledHiddenByDefault: $hidden)
                 ->dateTimeTooltip(config('app.datetime_format'));
         });
 
