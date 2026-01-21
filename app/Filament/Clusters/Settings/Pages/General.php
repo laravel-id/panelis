@@ -9,6 +9,7 @@ use App\Filament\Clusters\Settings;
 use App\Filament\Clusters\Settings\Enums\SettingPermission;
 use App\Filament\Clusters\Settings\Forms\General\DebugForm;
 use App\Filament\Clusters\Settings\Forms\General\GeneralForm;
+use App\Filament\Clusters\Settings\Forms\General\ImageForm;
 use App\Models\Setting;
 use BackedEnum;
 use BezhanSalleh\LanguageSwitch\LanguageSwitch;
@@ -122,6 +123,9 @@ class General extends Page
                 'locale' => Setting::get('app.locale', config('app.locale')),
                 'email' => config('app.email'),
                 'email_as_sender' => config('app.email_as_sender'),
+                'logo' => config('app.logo'),
+                'use_logo_in_panel' => config('app.use_logo_in_panel'),
+                'favicon' => config('app.favicon'),
             ],
 
             'telescope' => [
@@ -147,6 +151,12 @@ class General extends Page
         }
 
         return $schema->components([
+            Section::make(__('setting.general.image'))
+                ->columns(2)
+                ->description(__('setting.general.section_image'))
+                ->collapsible()
+                ->schema(ImageForm::schema()),
+
             Section::make(__('setting.general.label'))
                 ->description(__('setting.general.section_description'))
                 ->schema(GeneralForm::schema()),
