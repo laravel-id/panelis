@@ -7,6 +7,7 @@ use App\Services\Database\Database;
 use App\Services\Database\DatabaseFactory;
 use App\Services\OAuth\OAuth;
 use App\Services\OAuth\OAuthFactory;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Log;
@@ -35,7 +36,13 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        if ($this->app->environment('production')) {
+        if (! $this->app->isProduction()) {
+            Model::preventLazyLoading();
+            Model::preventAccessingMissingAttributes();
+            Model::preventSilentlyDiscardingAttributes();
+        }
+
+        if ($this->app->isProduction()) {
             URL::forceScheme('https');
         }
 
