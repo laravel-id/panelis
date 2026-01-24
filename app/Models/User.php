@@ -72,7 +72,6 @@ class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenant
     {
         return [
             'email_verified_at' => 'datetime',
-            'password' => 'hashed',
             'metadata' => 'array',
         ];
     }

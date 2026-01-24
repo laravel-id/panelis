@@ -20,14 +20,15 @@ class CreateUser extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['password'] = filled($data['password']) ? Hash::make($data['password']) : '';
+        $data['password'] = ! empty($data['password']) ? Hash::make($data['password']) : '';
+        unset($data['send_reset_password_link'], $data['password_confirmation']);
 
         return $data;
     }
 
     public function afterCreate(): void
     {
-        if (data_get($this->data, 'send_reset_password_link', true)) {
+        if (empty($this->data['password'])) {
             SendResetPasswordLink::run($this->getRecord());
         }
     }
