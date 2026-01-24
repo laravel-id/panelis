@@ -232,9 +232,9 @@ class Mail extends Page implements HasForms, HasUpdateableForm
         return [
             Action::make('test_mail')
                 ->visible(user_can(MailPermission::SendTest))
-                ->label(__('setting.mail.btn.test'))
+                ->label(__('setting.mail.btn.test_send'))
                 ->modalWidth(Width::Medium)
-                ->modalSubmitActionLabel(__('setting.mail_test_button_send'))
+                ->modalSubmitActionLabel(__('setting.mail.btn.test_send'))
                 ->schema([
                     Radio::make('send_from')
                         ->label(__('setting.mail.send_from'))
