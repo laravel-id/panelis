@@ -3,7 +3,9 @@
 namespace App\Filament\Resources\TranslationResource\Pages;
 
 use App\Filament\Resources\TranslationResource;
+use App\Filament\Resources\TranslationResource\Actions\ReplicateTranslationAction;
 use App\Filament\Resources\TranslationResource\Enums\TranslationPermission;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Actions\DeleteAction;
 use Filament\Resources\Pages\EditRecord;
@@ -16,12 +18,16 @@ class EditTranslation extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            ReplicateTranslationAction::make(),
+
             CreateAction::make()
                 ->url(CreateTranslation::getUrl())
                 ->visible(user_can(TranslationPermission::Add)),
 
-            DeleteAction::make()
-                ->visible(user_can(TranslationPermission::Delete)),
+            ActionGroup::make([
+                DeleteAction::make()
+                    ->visible(user_can(TranslationPermission::Delete)),
+            ]),
         ];
     }
 
