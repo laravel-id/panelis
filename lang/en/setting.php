@@ -163,7 +163,7 @@ return [
         'label' => 'Mail',
         'navigation' => 'Mail',
         'btn' => [
-            'test' => 'Test mail',
+            'test_send' => 'Test send mail',
         ],
         'log_driver' => 'Log',
         'log_description' => 'This driver writes the e-mail messages to the application\'s log files instead of actually sending them.',
