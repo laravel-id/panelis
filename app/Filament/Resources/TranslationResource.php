@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Resources\TranslationResource\Actions\ReplicateTranslationAction;
 use App\Filament\Resources\TranslationResource\Enums\TranslationPermission;
 use App\Filament\Resources\TranslationResource\Forms\TranslationForm;
 use App\Filament\Resources\TranslationResource\Pages\CreateTranslation;
@@ -9,6 +10,7 @@ use App\Filament\Resources\TranslationResource\Pages\EditTranslation;
 use App\Filament\Resources\TranslationResource\Pages\ListTranslations;
 use App\Models\Translation;
 use Exception;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\EditAction;
 use Filament\Resources\Resource;
@@ -107,15 +109,17 @@ class TranslationResource extends Resource
                     ->label(__('translation.is_system')),
             ])
             ->recordActions([
-                EditAction::make()
-                    ->visible(user_can(TranslationPermission::Edit)),
+                ReplicateTranslationAction::make(),
 
-                DeleteAction::make()
-                    ->visible(user_can(TranslationPermission::Delete)),
+                ActionGroup::make([
+                    EditAction::make()
+                        ->visible(user_can(TranslationPermission::Edit)),
+
+                    DeleteAction::make()
+                        ->visible(user_can(TranslationPermission::Delete)),
+                ]),
             ])
-            ->toolbarActions([
-
-            ]);
+            ->toolbarActions([]);
     }
 
     public static function getRelations(): array

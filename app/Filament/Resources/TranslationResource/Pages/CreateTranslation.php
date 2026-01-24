@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\TranslationResource\Pages;
 
+use App\Actions\Translation\MutateText;
 use App\Filament\Resources\TranslationResource;
 use App\Filament\Resources\TranslationResource\Enums\TranslationPermission;
 use Filament\Resources\Pages\CreateRecord;
@@ -18,9 +19,7 @@ class CreateTranslation extends CreateRecord
 
     protected function mutateFormDataBeforeCreate(array $data): array
     {
-        $data['text'] = collect($data['text'])
-            ->mapWithKeys(fn (array $text): array => [$text['lang'] => $text['line']])
-            ->toArray();
+        $data['text'] = MutateText::run($data['text']);
 
         return $data;
     }

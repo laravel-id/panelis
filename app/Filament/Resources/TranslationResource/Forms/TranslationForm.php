@@ -10,6 +10,9 @@ use Filament\Forms\Components\Repeater\TableColumn;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Utilities\Get;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Unique;
 
 class TranslationForm
 {
@@ -62,6 +65,12 @@ class TranslationForm
                 })
                 ->autocomplete(false)
                 ->disabled(fn (?Translation $line): bool => $line?->is_system ?? false)
+                ->rules([
+                    fn (Get $get, string $operation): Unique => Rule::unique((new Translation)->getTable(), 'key')
+                        ->where(fn ($query) => $query->where('group', $get('group')))
+                        ->when($operation == 'edit', fn (Unique $rule): Unique => $rule->ignore($get('id'))),
+                ])
+                ->validationAttribute(__('translation.key'))
                 ->required(),
 
             Repeater::make('text')
@@ -72,7 +81,7 @@ class TranslationForm
                     LanguageSwitch::make()->getLocales(),
                 ))
                 ->afterStateHydrated(function (Field $component, mixed $state, string $operation): void {
-                    if ($operation === 'create') {
+                    if (in_array($operation, ['create'])) {
                         return;
                     }
 
