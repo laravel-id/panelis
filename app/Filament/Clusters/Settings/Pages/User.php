@@ -16,19 +16,17 @@ use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
-use Filament\Infolists\Components\TextEntry;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Image;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
-use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\HtmlString;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -89,6 +87,7 @@ class User extends Page implements HasForms, HasUpdateableForm
                             ->label(__('setting.user.avatar_provider'))
                             ->options(AvatarProvider::class)
                             ->enum(AvatarProvider::class)
+                            ->default(AvatarProvider::UIAvatars)
                             ->live()
                             ->required(),
 
@@ -100,20 +99,15 @@ class User extends Page implements HasForms, HasUpdateableForm
                             ->required(fn (Get $get): bool => $get('user.avatar_provider') === AvatarProvider::Libravatar)
                             ->options(LibravatarStyle::class),
 
-                        TextEntry::make('avatar')
-                            ->hiddenLabel()
-                            ->label('setting.user.sample_avatar')
-                            ->maxWidth(Width::ExtraSmall)
-                            ->state(function (Get $get): HtmlString {
+                        Image::make(
+                            url: function (Get $get): ?string {
                                 $provider = $get('user.avatar_provider') ?? AvatarProvider::UIAvatars;
                                 $style = $get('user.avatar_libravatar_style');
 
-                                if ($provider === AvatarProvider::UIAvatars) {
-                                    $image = 'https://ui-avatars.com/api/?name='.urlencode(Auth::user()->name);
-                                }
-
-                                return new HtmlString(sprintf('<img src="%s"/>', $image ?? $provider->getImageUrl(Auth::user(), $style)));
-                            }),
+                                return $provider->getImageUrl(Auth::user(), $style);
+                            },
+                            alt: 'Avatar',
+                        ),
                     ]),
             ]);
     }

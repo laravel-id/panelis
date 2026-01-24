@@ -15,6 +15,8 @@ enum AvatarProvider: string implements HasLabel
 
     case Libravatar = 'libravatar';
 
+    case Unavatar = 'Unavatar';
+
     private function getGravatarImageUrl(User $user): ?string
     {
         return sprintf('https://gravatar.com/avatar/%s', hash('sha256', $user->email));
@@ -33,11 +35,17 @@ enum AvatarProvider: string implements HasLabel
         return 'https://ui-avatars.com/api/?name='.urlencode($user->name);
     }
 
+    private function getUnavatarImageUrl(User $user): ?string
+    {
+        return 'https://unavatar.io/'.$user->email;
+    }
+
     public function getLabel(): string
     {
-        return match ($this->value) {
-            'gravatar' => 'Gravatar (gravatar.com)',
-            'libravatar' => 'Libravatar (libravatar.org)',
+        return match ($this) {
+            self::Gravatar => 'Gravatar (gravatar.com)',
+            self::Libravatar => 'Libravatar (libravatar.org)',
+            self::Unavatar => 'Unavatar.io',
             default => 'UI Avatars (ui-avatars.com)',
         };
     }
@@ -47,6 +55,7 @@ enum AvatarProvider: string implements HasLabel
         return match ($this) {
             self::Gravatar => $this->getGravatarImageUrl($user),
             self::Libravatar => $this->getLibravatarImageUrl($user, $style->value ?? null),
+            self::Unavatar => $this->getUnavatarImageurl($user),
             default => $this->getUIAvatarsImageUrl($user),
         };
     }
