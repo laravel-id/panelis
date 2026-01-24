@@ -3,8 +3,6 @@
 namespace App\Filament\Resources\UserResource\Forms;
 
 use App\Filament\Resources\UserResource\Pages\CreateUser;
-use App\Filament\Resources\UserResource\Pages\EditUser;
-use App\Filament\Resources\UserResource\Pages\ViewUser;
 use App\Models\Branch;
 use App\Models\Role;
 use App\Models\User;
@@ -88,23 +86,9 @@ class UserForm
                 ->hiddenOn(CreateUser::class)
                 ->columnSpan(1)
                 ->schema([
-                    TextEntry::make('created_at')
-                        ->label(__('ui.created_at'))
-                        ->visibleOn([
-                            ViewUser::class,
-                            EditUser::class,
-                        ])
-                        ->dateTimeTooltip(get_datetime_format())
-                        ->since(),
+                    TextEntry::makeSinceDate('created_at', __('ui.created_at')),
 
-                    TextEntry::make('updated_at')
-                        ->label(__('ui.updated_at'))
-                        ->visibleOn([
-                            ViewUser::class,
-                            EditUser::class,
-                        ])
-                        ->dateTimeTooltip(get_datetime_format())
-                        ->since(),
+                    TextEntry::makeSinceDate('updated_at', __('ui.updated_at')),
                 ]),
 
             Section::make(__('branch.label'))
