@@ -95,58 +95,6 @@
     "name": "ViewDistrict",
     "guard": "web"
   },
-  "ViewTodo": {
-    "name": "ViewTodo",
-    "guard": "web"
-  },
-  "ViewAllTodos": {
-    "name": "ViewAllTodos",
-    "guard": "web"
-  },
-  "CreateTodo": {
-    "name": "CreateTodo",
-    "guard": "web"
-  },
-  "UpdateTodo": {
-    "name": "UpdateTodo",
-    "guard": "web"
-  },
-  "DeleteTodo": {
-    "name": "DeleteTodo",
-    "guard": "web"
-  },
-  "ViewBlogCategory": {
-    "name": "ViewBlogCategory",
-    "guard": "web"
-  },
-  "CreateBlogCategory": {
-    "name": "CreateBlogCategory",
-    "guard": "web"
-  },
-  "UpdateBlogCategory": {
-    "name": "UpdateBlogCategory",
-    "guard": "web"
-  },
-  "DeleteBlogCategory": {
-    "name": "DeleteBlogCategory",
-    "guard": "web"
-  },
-  "ViewBlogPost": {
-    "name": "ViewBlogPost",
-    "guard": "web"
-  },
-  "CreateBlogPost": {
-    "name": "CreateBlogPost",
-    "guard": "web"
-  },
-  "UpdateBlogPost": {
-    "name": "UpdateBlogPost",
-    "guard": "web"
-  },
-  "DeleteBlogPost": {
-    "name": "DeleteBlogPost",
-    "guard": "web"
-  },
   "ManageModule": {
     "name": "ManageModule",
     "guard": "web"
@@ -297,10 +245,6 @@
   },
   "ViewCustomSetting": {
     "name": "ViewCustomSetting",
-    "guard": "web"
-  },
-  "EditBlogCategory": {
-    "name": "EditBlogCategory",
     "guard": "web"
   },
   "ViewCountryLocation": {

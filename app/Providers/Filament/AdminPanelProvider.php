@@ -64,10 +64,6 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->databaseNotifications()
             ->navigationGroups([
-                NavigationGroup::make(__('blog.label'))
-                    ->collapsed()
-                    ->icon(Heroicon::OutlinedDocumentText),
-
                 NavigationGroup::make(__('location.label'))
                     ->icon(Heroicon::OutlinedMapPin)
                     ->collapsed(),
