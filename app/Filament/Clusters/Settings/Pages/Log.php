@@ -15,6 +15,7 @@ use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
@@ -26,6 +27,7 @@ use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log as Logger;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
@@ -58,7 +60,12 @@ class Log extends Page implements HasForms
                 ->schema([
                     Textarea::make('message')
                         ->label(__('setting.log.message'))
+                        ->rows(4)
                         ->required(),
+
+                    Toggle::make('notification')
+                        ->label(__('setting.log.send_as_notification'))
+                        ->default(config('logging.enable_notification')),
                 ])
                 ->action(function (array $data): void {
                     try {
@@ -69,6 +76,13 @@ class Log extends Page implements HasForms
                             ->success()
                             ->send();
 
+                        if ($data['notification'] ?? false) {
+                            Notification::make('log.notification')
+                                ->title(__('setting.log.label'))
+                                ->body($data['message'])
+                                ->danger()
+                                ->sendToDatabase(Auth::user());
+                        }
                     } catch (Exception) {
                     }
                 }),
@@ -94,6 +108,12 @@ class Log extends Page implements HasForms
     {
         $logging = config('logging.channels.stack');
 
+        $channel = 'logging.channels.stack.channels';
+        $default = Setting::get($channel);
+        if (empty($default)) {
+            Setting::set($channel, [LogChannel::Single->value]);
+        }
+
         $this->form->fill([
             'logging' => [
                 'channels' => [
@@ -113,6 +133,8 @@ class Log extends Page implements HasForms
                         'port' => config('logging.channels.papertrail.port', 514),
                     ],
                 ],
+
+                'enable_notification' => config('logging.enable_notification'),
             ],
 
             LogChannel::Nightwatch->value => [
@@ -137,6 +159,11 @@ class Log extends Page implements HasForms
                 Section::make(__('setting.log.label'))
                     ->description(__('setting.log.section_description'))
                     ->schema([
+                        Toggle::make('logging.enable_notification')
+                            ->label(__('setting.log.enable_notification'))
+                            ->helperText(__('setting.log.notification_helper'))
+                            ->required(),
+
                         CheckboxList::make('logging.channels.stack.channels')
                             ->label(__('setting.log.channel'))
                             ->live()
@@ -180,13 +207,25 @@ class Log extends Page implements HasForms
         $this->validate();
 
         try {
-            $logs = [];
-            foreach (Arr::dot($this->form->getState()['logging']) as $value) {
-                $logs[] = $value;
+            $state = Arr::dot($this->form->getState()['logging']);
+
+            $channels = array_map(function (LogChannel $channel) {
+                return $channel->value;
+            }, Arr::dot($this->form->getState()['logging']['channels']['stack']));
+            Setting::set('logging.channels.stack.channels', array_values($channels));
+
+            if ($enableNotification = data_get($state, 'enable_notification')) {
+                Setting::set('logging.enable_notification', $enableNotification);
+                unset($state['enable_notification']);
             }
 
-            // store array channels
-            Setting::set('logging.channels.stack.channels', $logs);
+            foreach ($state as $key => $value) {
+                if (str_starts_with($key, 'channels.stack.channels')) {
+                    continue;
+                }
+
+                Setting::set('logging.'.$key, $value);
+            }
 
             // update specific setting for Nightwatch
             $nightwatch = Arr::dot($this->form->getState()['nightwatch'] ?? []);

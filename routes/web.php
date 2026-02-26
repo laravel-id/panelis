@@ -9,3 +9,7 @@ Route::get('/', function () {
 
     return view('welcome');
 });
+
+Route::get('/log', function () {
+    throw new Exception('Testing error');
+});

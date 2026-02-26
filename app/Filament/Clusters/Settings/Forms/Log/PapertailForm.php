@@ -16,6 +16,13 @@ class PapertailForm
                 ->options(LogLevel::class)
                 ->searchable()
                 ->required()
+                ->dehydrateStateUsing(function (?LogLevel $state): ?string {
+                    if ($state instanceof LogLevel) {
+                        return $state->value;
+                    }
+
+                    return $state;
+                })
                 ->enum(LogLevel::class),
 
             TextInput::make('logging.channels.papertrail.url')
