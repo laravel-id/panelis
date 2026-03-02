@@ -42,6 +42,9 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
 
+            ->path(config('app.panelis_path'))
+            ->domain(config('app.panelis_domain'))
+
             ->brandLogo(function (): ?string {
                 if (filled(config('app.logo')) && config('app.use_logo_in_panel')) {
                     return Storage::url(config('app.logo'));
@@ -57,8 +60,6 @@ class AdminPanelProvider extends PanelProvider
                 return null;
             })
 
-            // uncomment to set different path
-            ->path('admin')
             ->plugins([
                 // TodoPlugin::make(),
             ])
