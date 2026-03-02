@@ -1,5 +1,6 @@
 <?php
 
+use App\Exceptions\Reporter\FilamentReporter;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -21,5 +22,7 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        //
+        $exceptions->report(function (Throwable $e): void {
+            app(FilamentReporter::class)->handle($e);
+        });
     })->create();
