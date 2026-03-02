@@ -148,7 +148,7 @@ return [
         'mailgun_secret' => 'Secret',
         'mailgun_endpoint' => 'Endpoint',
         'postmark_driver' => 'Postmark',
-        'postmark_token' => 'Token',
+        'postmark_key' => 'Key',
         'ses_driver' => 'SES',
         'ses_key' => 'Key',
         'ses_secret' => 'Secret',
