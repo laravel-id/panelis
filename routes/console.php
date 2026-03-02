@@ -45,4 +45,4 @@ Schedule::command('app:backup-database')
 
 Artisan::command('app:ping', function (): void {
     Http::get(config('app.ping_url'));
-})->when(fn (): bool => !empty(config('app.ping_url')))->everyMinute();
+})->when(fn (): bool => ! empty(config('app.ping_url')))->everyMinute();
