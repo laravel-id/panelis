@@ -18,10 +18,10 @@ return Application::configure(basePath: dirname(__DIR__))
                 ->group(base_path('routes/callback.php'));
         },
     )
-    ->withMiddleware(function (Middleware $middleware) {
+    ->withMiddleware(function (Middleware $middleware): void {
         //
     })
-    ->withExceptions(function (Exceptions $exceptions) {
+    ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->report(function (Throwable $e): void {
             app(FilamentReporter::class)->handle($e);
         });
