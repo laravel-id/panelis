@@ -22,7 +22,7 @@ beforeEach(function (): void {
 });
 
 it('does exist', function (): void {
-    $response = $this->get(url('admin', $this->branch->slug, 'profile'));
+    $response = $this->get(url(Filament::getPanel('admin')->getPath(), $this->branch->slug, 'profile'));
 
     $response->assertOk();
 });
