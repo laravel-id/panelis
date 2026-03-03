@@ -220,6 +220,7 @@ return [
         'redis_description' => 'Advanced in-memory data structure store',
         'dynamodb_description' => 'AWS\'s scalable NoSQL database service',
     ],
+
     'user' => [
         'label' => 'User',
         'navigation' => 'User',
@@ -228,5 +229,13 @@ return [
         'avatar_libravatar_style' => 'Libravatar style',
         'not_updated' => 'User setting not updated',
         'section_description' => 'Manage user-related defaults, including the default role for new users and the avatar provider.',
+    ],
+
+    'about' => [
+        'label' => 'About',
+        'navigation' => 'About',
+        'php_version' => 'PHP version',
+        'laravel_version' => 'Laravel version',
+        'filament_version' => 'Filament version',
     ],
 ];
