@@ -8,6 +8,7 @@
         "php": "^8.3",
         "bezhansalleh/filament-language-switch": "^4.0",
         "filament/filament": "^4.1",
+        "filament/upgrade": "^5.0",
         "laravel/framework": "^12.0",
         "laravel/telescope": "^5.0",
         "laravel/tinker": "^2.10.1",
@@ -18,7 +19,6 @@
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
-        "filament/upgrade": "^4.0",
         "fruitcake/laravel-telescope-toolbar": "^1.3",
         "laravel/pail": "^1.2.2",
         "laravel/pint": "^1.24",
