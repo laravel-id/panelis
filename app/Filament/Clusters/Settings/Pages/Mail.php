@@ -139,7 +139,7 @@ class Mail extends Page implements HasForms, HasUpdateableForm
 
                 Radio::make('mail.mailers.smtp.encryption')
                     ->label(__('setting.mail.smtp_encryption'))
-//                         ->required()
+                    //                         ->required()
                     ->options([
                         '' => __('setting.mail.encryption_none'),
                         'ssl' => 'SSL',
@@ -181,8 +181,8 @@ class Mail extends Page implements HasForms, HasUpdateableForm
             Section::make(__('setting.mail.postmark_driver'))
                 ->visible(fn (Get $get): bool => $get('mail.default') === MailType::Postmark)
                 ->schema([
-                    TextInput::make('services.postmark.token')
-                        ->label(__('setting.mail.postmark_token'))
+                    TextInput::make('services.postmark.key')
+                        ->label(__('setting.mail.postmark_key'))
                         ->password()
                         ->revealable()
                         ->required(),
