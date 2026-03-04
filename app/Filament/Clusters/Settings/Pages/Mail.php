@@ -20,6 +20,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Callout;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
@@ -51,6 +52,8 @@ class Mail extends Page implements HasForms, HasUpdateableForm
 
     public array $services;
 
+    public string $version = '';
+
     private function senderSection(): Section
     {
         return Section::make(__('setting.mail.sender'))
@@ -71,31 +74,27 @@ class Mail extends Page implements HasForms, HasUpdateableForm
 
     private function driverSection(): Section
     {
-        return
-
-            Section::make(__('setting.mail.label'))
-                ->description(__('setting.mail.section_description'))
-                ->schema([
-                    Radio::make('mail.default')
-                        ->label(__('setting.mail.driver'))
-                        ->options(MailType::class)
-                        ->enum(MailType::class)
-                        ->live()
-                        ->required(),
-                ]);
+        return Section::make(__('setting.mail.label'))
+            ->description(__('setting.mail.section_description'))
+            ->schema([
+                Radio::make('mail.default')
+                    ->label(__('setting.mail.driver'))
+                    ->options(MailType::class)
+                    ->enum(MailType::class)
+                    ->live()
+                    ->required(),
+            ]);
     }
 
     private function sendmailSection(): Section
     {
-        return
-
-            Section::make(__('setting.mail.sendmail_driver'))
-                ->visible(fn (Get $get): bool => $get('mail.default') === MailType::Sendmail)
-                ->schema([
-                    TextInput::make('mail.mailers.sendmail.path')
-                        ->label(__('setting.mail.sendmail.path'))
-                        ->required(),
-                ]);
+        return Section::make(__('setting.mail.sendmail.driver'))
+            ->visible(fn (Get $get): bool => $get('mail.default') === MailType::Sendmail)
+            ->schema([
+                TextInput::make('mail.mailers.sendmail.path')
+                    ->label(__('setting.mail.sendmail.path'))
+                    ->required(),
+            ]);
     }
 
     private function smtpSection(): Section
@@ -109,39 +108,38 @@ class Mail extends Page implements HasForms, HasUpdateableForm
             return null;
         };
 
-        return Section::make(__('setting.mail.smtp_driver'))
+        return Section::make(__('setting.mail.smtp.driver'))
             ->visible(fn (Get $get): bool => $get('mail.default') === MailType::SMTP)
             ->schema([
                 TextInput::make('mail.mailers.smtp.host')
-                    ->label(__('setting.mail.smtp_host'))
+                    ->label(__('setting.mail.smtp.host'))
                     ->password($isDemo)
                     ->helperText($demoText)
                     ->required(),
 
                 TextInput::make('mail.mailers.smtp.port')
-                    ->label(__('setting.mail.smtp_port'))
+                    ->label(__('setting.mail.smtp.port'))
                     ->integer()
                     ->required(),
 
                 TextInput::make('mail.mailers.smtp.username')
-                    ->label(__('setting.mail.smtp_username'))
+                    ->label(__('setting.mail.smtp.username'))
                     ->password($isDemo)
                     ->helperText($demoText)
                     ->autocomplete(false)
                     ->nullable(),
 
                 TextInput::make('mail.mailers.smtp.password')
-                    ->label(__('setting.mail.smtp_password'))
+                    ->label(__('setting.mail.smtp.password'))
                     ->autocomplete(false)
                     ->password()
                     ->revealable()
                     ->nullable(),
 
                 Radio::make('mail.mailers.smtp.encryption')
-                    ->label(__('setting.mail.smtp_encryption'))
-                    //                         ->required()
+                    ->label(__('setting.mail.smtp.encryption'))
                     ->options([
-                        '' => __('setting.mail.encryption_none'),
+                        '' => __('setting.mail.smtp.encryption_none'),
                         'ssl' => 'SSL',
                         'tls' => 'TLS',
                         'starttls' => 'STARTTLS',
@@ -151,65 +149,116 @@ class Mail extends Page implements HasForms, HasUpdateableForm
 
     private function mailgunSection(): Section
     {
-        return
+        return Section::make(__('setting.mail.mailgun.driver'))
+            ->visible(fn (Get $get): bool => $get('mail.default') === MailType::Mailgun)
+            ->disabled(! MailType::Mailgun->installed())
+            ->schema([
+                Callout::make(__('setting.mail.mailgun.no_package_title'))
+                    ->description(__('setting.mail.mailgun.no_package_description'))
+                    ->visible(! MailType::Mailgun->installed())
+                    ->warning()
+                    ->actions([
+                        Action::make('view_doc')
+                            ->label(__('setting.mail.btn.view_doc'))
+                            ->url(sprintf('https://laravel.com/docs/%s.x/mail#mailgun-driver', $this->version)),
+                    ]),
 
-            Section::make(__('setting.mail.mailgun_driver'))
-                ->visible(fn (Get $get): bool => $get('mail.default') === MailType::Mailgun)
-                ->schema([
-                    TextInput::make('services.mailgun.domain')
-                        ->label(__('setting.mail.mailgun_domain'))
-                        ->string()
-                        ->required(),
+                TextInput::make('services.mailgun.domain')
+                    ->label(__('setting.mail.mailgun.domain'))
+                    ->string()
+                    ->required(),
 
-                    TextInput::make('services.mailgun.secret')
-                        ->label(__('setting.mail.mailgun_secret'))
-                        ->password()
-                        ->revealable()
-                        ->required(),
+                TextInput::make('services.mailgun.secret')
+                    ->label(__('setting.mail.mailgun.secret'))
+                    ->password()
+                    ->revealable()
+                    ->required(),
 
-                    TextInput::make('services.mailgun.endpoint')
-                        ->label(__('setting.mail.mailgun_endpoint'))
-                        ->string()
-                        ->required(),
-                ]);
+                TextInput::make('services.mailgun.endpoint')
+                    ->label(__('setting.mail.mailgun.endpoint'))
+                    ->string()
+                    ->required(),
+            ]);
     }
 
     private function postmarkSection(): Section
     {
-        return
+        return Section::make(__('setting.mail.postmark.driver'))
+            ->visible(fn (Get $get): bool => $get('mail.default') === MailType::Postmark)
+            ->disabled(! MailType::Postmark->installed())
+            ->schema([
+                Callout::make(__('setting.mail.postmark.no_package_title'))
+                    ->description(__('setting.mail.postmark.no_package_description'))
+                    ->visible(! MailType::Postmark->installed())
+                    ->warning()
+                    ->actions([
+                        Action::make('view_doc')
+                            ->label(__('setting.mail.btn.view_doc'))
+                            ->url(sprintf('https://laravel.com/docs/%s.x/mail#postmark-driver', $this->version)),
+                    ]),
 
-            Section::make(__('setting.mail.postmark_driver'))
-                ->visible(fn (Get $get): bool => $get('mail.default') === MailType::Postmark)
-                ->schema([
-                    TextInput::make('services.postmark.key')
-                        ->label(__('setting.mail.postmark_key'))
-                        ->password()
-                        ->revealable()
-                        ->required(),
-                ]);
+                TextInput::make('services.postmark.key')
+                    ->label(__('setting.mail.postmark.key'))
+                    ->password()
+                    ->revealable()
+                    ->required(),
+            ]);
+    }
+
+    private function resendSection(): Section
+    {
+        return Section::make(__('setting.mail.resend.driver'))
+            ->visible(fn (Get $get): bool => $get('mail.default') === MailType::Resend)
+            ->disabled(! MailType::Resend->installed())
+            ->schema([
+                Callout::make(__('setting.mail.resend.no_package_title'))
+                    ->description(__('setting.mail.resend.no_package_description'))
+                    ->visible(! MailType::Resend->installed())
+                    ->warning()
+                    ->actions([
+                        Action::make('view_doc')
+                            ->label(__('setting.mail.btn.view_doc'))
+                            ->url(sprintf('https://laravel.com/docs/%s.x/mail#resend-driver', $this->version)),
+                    ]),
+
+                TextInput::make('services.resend.key')
+                    ->label(__('setting.mail.resend.key'))
+                    ->password()
+                    ->revealable()
+                    ->required(),
+            ]);
     }
 
     private function sesSection(): Section
     {
-        return
+        return Section::make(__('setting.mail.ses.driver'))
+            ->visible(fn (Get $get): bool => $get('mail.default') === MailType::SES)
+            ->disabled(! MailType::SES->installed())
+            ->schema([
+                Callout::make(__('setting.mail.ses.no_package_title'))
+                    ->description(__('setting.mail.ses.no_package_description'))
+                    ->visible(! MailType::SES->installed())
+                    ->warning()
+                    ->actions([
+                        Action::make('veiw_doc')
+                            ->label(__('setting.mail.btn.view_doc'))
+                            ->url(sprintf('https://laravel.com/docs/%s.x/mail#ses-driver', $this->version)),
+                    ]),
 
-            Section::make(__('setting.mail.ses_driver'))
-                ->visible(fn (Get $get): bool => $get('mail.default') === MailType::SES)
-                ->schema([
-                    TextInput::make('services.ses.key')
-                        ->label(__('setting.mail.ses_key'))
-                        ->required(),
+                TextInput::make('services.ses.key')
+                    ->label(__('setting.mail.ses.key'))
+                    ->required(),
 
-                    TextInput::make('services.ses.secret')
-                        ->label(__('setting.mail.ses_secret'))
-                        ->password()
-                        ->revealable()
-                        ->required(),
+                TextInput::make('services.ses.secret')
+                    ->label(__('setting.mail.ses.secret'))
+                    ->password()
+                    ->revealable()
+                    ->required(),
 
-                    TextInput::make('services.ses.region')
-                        ->label(__('setting.mail.ses_region'))
-                        ->required(),
-                ]);
+                TextInput::make('services.ses.region')
+                    ->label(__('setting.mail.ses.region'))
+                    ->required(),
+            ]);
     }
 
     public function getTitle(): string|Htmlable
@@ -330,6 +379,8 @@ class Mail extends Page implements HasForms, HasUpdateableForm
 
             'isButtonDisabled' => user_cannot(MailPermission::Edit),
         ]);
+
+        $this->version = array_first(explode('.', app()->version())) ?? '12';
     }
 
     public function form(Schema $schema): Schema
@@ -341,6 +392,7 @@ class Mail extends Page implements HasForms, HasUpdateableForm
             $this->smtpSection(),
             $this->mailgunSection(),
             $this->postmarkSection(),
+            $this->resendSection(),
             $this->sesSection(),
         ])->disabled(! user_can(MailPermission::Edit));
     }
