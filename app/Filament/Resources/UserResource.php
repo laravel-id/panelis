@@ -21,6 +21,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Enums\FontWeight;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\Summarizers\Count;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -78,10 +79,11 @@ class UserResource extends Resource
                     ->visible(fn (): bool => ! empty(Filament::getTenant())),
 
                 TextColumn::make('roles.name')
-                    ->label(__('user.role.name'))
+                    ->label(__('user.role.label'))
                     ->default('*'),
 
                 ImageColumn::make('avatar')
+                    ->label(__('user.avatar'))
                     ->defaultImageUrl(function (User $record): string {
                         $customAvatar = $record->getFilamentAvatarUrl();
                         if (empty($customAvatar)) {
@@ -95,7 +97,10 @@ class UserResource extends Resource
                     ->label(__('user.name'))
                     ->searchable()
                     ->sortable()
-                    ->weight(FontWeight::Bold),
+                    ->weight(FontWeight::Bold)
+                    ->summarize([
+                        Count::make(),
+                    ]),
 
                 TextColumn::make('email')
                     ->label(__('user.email'))
@@ -104,6 +109,8 @@ class UserResource extends Resource
                     ->sortable(),
 
                 TextColumn::makeSinceDate('updated_at', __('ui.updated_at')),
+
+                TextColumn::makeSinceDate('created_at', __('ui.created_at'), true),
             ])
             ->filters([
                 SelectFilter::make('branch')
@@ -148,15 +155,12 @@ class UserResource extends Resource
                         }),
                 ]),
             ])
-            ->toolbarActions([
-
-            ]);
+            ->toolbarActions([]);
     }
 
     public static function getRelations(): array
     {
-        return [
-        ];
+        return [];
     }
 
     public static function getPages(): array
