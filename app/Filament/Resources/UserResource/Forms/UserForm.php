@@ -6,6 +6,7 @@ use App\Filament\Resources\UserResource\Pages\CreateUser;
 use App\Models\Branch;
 use App\Models\Role;
 use App\Models\User;
+use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\FileUpload;
@@ -13,12 +14,15 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Infolists\Components\TextEntry;
+use Filament\Schemas\Components\Actions;
 use Filament\Schemas\Components\Fieldset;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Str;
 
 class UserForm
 {
@@ -72,6 +76,7 @@ class UserForm
                                 ->password()
                                 ->confirmed()
                                 ->autocomplete(false)
+                                ->copyable()
                                 ->revealable(),
 
                             TextInput::make('password_confirmation')
@@ -79,6 +84,17 @@ class UserForm
                                 ->password()
                                 ->autocomplete(false)
                                 ->revealable(),
+
+                            Actions::make([
+                                Action::make('generate_password')
+                                    ->label(__('user.btn.generate_password'))
+                                    ->action(function (Set $set): void {
+                                        $password = Str::password(8);
+
+                                        $set('password', $password);
+                                        $set('password_confirmation', $password);
+                                    }),
+                            ]),
                         ]),
                 ]),
 

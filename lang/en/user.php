@@ -32,6 +32,7 @@ return [
     'label' => 'User',
     'btn' => [
         'send_reset_password_link' => 'Send reset password link',
+        'generate_password' => 'Generate password',
     ],
     'reset_password_link_sent' => 'Reset password link is sent',
     'reset_password_link_not_sent' => 'Reset password link failed to sent',
