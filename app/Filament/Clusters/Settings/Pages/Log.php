@@ -9,6 +9,8 @@ use App\Filament\Clusters\Settings\Enums\LogPermission;
 use App\Filament\Clusters\Settings\Forms\Log\NightwatchForm;
 use App\Filament\Clusters\Settings\Forms\Log\PapertailForm;
 use App\Filament\Clusters\Settings\Forms\Log\SlackForm;
+use App\Filament\Clusters\Settings\HasUpdateableForm;
+use App\Filament\Clusters\Settings\UpdateSettingPage;
 use App\Models\Setting;
 use BackedEnum;
 use Exception;
@@ -17,11 +19,10 @@ use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
-use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
@@ -32,20 +33,18 @@ use Illuminate\Support\Facades\Log as Logger;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
-class Log extends Page implements HasForms
+class Log extends UpdateSettingPage implements HasSchemas, HasUpdateableForm
 {
     use InteractsWithForms;
     use Settings\Traits\AddUpdateButton;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedDocumentText;
 
-    protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::DocumentText;
-
     protected string $view = 'filament.clusters.settings.pages.setting';
 
     protected static ?string $cluster = Settings::class;
 
-    protected static ?int $navigationSort = 6;
+    protected static ?int $navigationSort = 60;
 
     public array $logging;
 
@@ -244,14 +243,15 @@ class Log extends Page implements HasForms
             event(new SettingUpdated);
 
             Notification::make('log.updated')
-                ->title(__('filament-actions::edit.single.notifications.saved.title'))
+                ->title(__('setting.notifications.updated.title'))
                 ->success()
                 ->send();
         } catch (Exception $e) {
             Logger::error($e);
 
             Notification::make('log.not_updated')
-                ->title(__('setting.log.not_updated'))
+                ->title(__('setting.notifications.update_failed.title'))
+                ->body($e->getMessage())
                 ->danger()
                 ->send();
         }

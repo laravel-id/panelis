@@ -2,39 +2,33 @@
 
 namespace App\Filament\Clusters\Settings\Pages;
 
-use App\Events\SettingUpdated;
 use App\Filament\Clusters\Settings;
 use App\Filament\Clusters\Settings\Enums\DatetimePermission;
-use App\Models\Setting;
+use App\Filament\Clusters\Settings\HasUpdateableForm;
+use App\Filament\Clusters\Settings\UpdateSettingPage;
 use BackedEnum;
 use DateTimeZone;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Notifications\Notification;
-use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Arr;
-use Illuminate\Validation\ValidationException;
-use Symfony\Component\HttpFoundation\Response;
 
-class Datetime extends Page
+class Datetime extends UpdateSettingPage implements HasSchemas, HasUpdateableForm
 {
     use InteractsWithForms;
     use Settings\Traits\AddUpdateButton;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalendarDays;
 
-    protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::CalendarDays;
-
     protected string $view = 'filament.clusters.settings.pages.setting';
 
-    protected static ?int $navigationSort = 4;
+    protected static ?int $navigationSort = 40;
 
     protected static ?string $cluster = Settings::class;
 
@@ -53,6 +47,11 @@ class Datetime extends Page
     public static function canAccess(): bool
     {
         return user_can(DatetimePermission::Browse);
+    }
+
+    public function updatePermission(): BackedEnum
+    {
+        return DatetimePermission::Edit;
     }
 
     public function mount()
@@ -103,26 +102,5 @@ class Datetime extends Page
                         }),
                 ]),
         ]);
-    }
-
-    /**
-     * @throws ValidationException
-     */
-    public function update(): void
-    {
-        abort_unless(user_can(DatetimePermission::Edit), Response::HTTP_FORBIDDEN);
-
-        $this->validate();
-
-        foreach (Arr::dot($this->form->getState()) as $key => $value) {
-            Setting::updateOrCreate(compact('key'), ['value' => $value ?? '']);
-        }
-
-        event(new SettingUpdated);
-
-        Notification::make('datetime.updated')
-            ->title(__('filament-actions::edit.single.notifications.saved.title'))
-            ->success()
-            ->send();
     }
 }

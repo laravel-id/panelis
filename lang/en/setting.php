@@ -2,6 +2,11 @@
 
 return [
     'label' => 'Settings',
+    'key' => 'Key',
+    'value' => 'Value',
+    'navigation' => 'Settings',
+    'hidden_when_in_demo' => 'This field is hidden in demo mode',
+
     'general' => [
         'url' => 'URL',
         'brand' => 'Brand',
@@ -26,6 +31,7 @@ return [
         'logo' => 'Logo',
         'favicon' => 'Favicon',
     ],
+
     'helper_app_debug' => 'It\'s recommended to disable this feature when in production mode.',
     'nightwatch_enabled' => 'Nightwatch enabled',
     'nightwatch_token' => 'Token',
@@ -34,6 +40,7 @@ return [
     'nightwatch_sampling_requests' => 'Samping requests',
     'nightwatch_sampling_commands' => 'Sampling commands',
     'nightwatch_sampling_exceptions' => 'Samping exceptions',
+
     'number' => [
         'label' => 'Number',
         'navigation' => 'Number',
@@ -43,21 +50,8 @@ return [
         'helper_currency_symbol_as_suffix' => 'When enabled, the symbol will be used behind the number',
         'format' => 'Format',
         'sample_display' => 'Sample display',
-        'not_updated' => 'Number setting is not updated',
     ],
-    'hidden_when_in_demo' => 'This field is hidden in demo mode',
-    'theme' => [
-        'navigation' => 'Theme',
-        'label' => 'Theme',
-        'section_description' => 'Customize the application’s appearance by selecting a theme, color scheme, or display mode.',
-        'color_primary' => 'Primary',
-        'color_gray' => 'Gray',
-        'color_success' => 'Success',
-        'color_danger' => 'Danger',
-        'color_info' => 'Info',
-        'color_warning' => 'Warning',
-    ],
-    'theme_not_updated' => 'Theme not updated',
+
     'custom' => [
         'label' => 'Custom',
         'navigation' => 'Custom',
@@ -65,21 +59,7 @@ return [
         'comment' => 'Comment',
         'placeholder_comment' => 'Add info about this setting',
         'updated' => 'Custom setting updated',
-        'not_updated' => 'Custom setting not updated',
     ],
-    'key' => 'Key',
-    'value' => 'Value',
-    'datetime' => [
-        'label' => 'Date & Time',
-        'navigation' => 'Date & Time',
-        'section_description' => 'Configure the default date format and timezone used across the application.',
-        'timezone' => 'Timezone',
-        'format' => 'Format',
-        'format_sample' => '[Click here for more format](https://www.php.net/manual/en/datetime.format.php)',
-        'sample' => 'Sample display',
-        'not_updated' => 'Date time setting is not updated',
-    ],
-    'navigation' => 'Settings',
 
     'log' => [
         'label' => 'Log',
@@ -122,10 +102,12 @@ return [
         'single_description' => 'This driver logs all messages to a single log file.',
         'slack_description' => 'This driver sends log messages as notifications to a Slack channel, making it useful for real-time monitoring and alerting.',
         'syslog_description' => 'This driver sends log messages to the system\'s syslog facility, which is a standard logging mechanism on Unix-like systems.',
+
         'btn' => [
             'test' => 'Test log',
         ],
     ],
+
     'mail' => [
         'sender' => 'Mail Sender',
         'from_address' => 'From address',
@@ -213,6 +195,7 @@ return [
             'view_doc' => 'View documentation',
         ],
     ],
+
     'cache' => [
         'redis_host' => 'Host',
         'redis_port' => 'Port',
@@ -228,10 +211,6 @@ return [
         'memcached_port' => 'Port',
         'memcached_username' => 'Username',
         'memcached_password' => 'Password',
-        'btn' => [
-            'test' => 'Test cache',
-            'flush' => 'Flush all',
-        ],
         'test_success' => 'Test success',
         'test_failed' => 'Test failed',
         'flushed' => 'Cache flushed',
@@ -240,7 +219,6 @@ return [
         'memcached_driver' => 'Memcached',
         'redis_driver' => 'Redis',
         'dynamodb_driver' => 'DynamoDB',
-        'not_updated' => 'Cache setting not updated',
         'label' => 'Cache',
         'navigation' => 'Cache',
         'file_driver' => 'File',
@@ -252,6 +230,21 @@ return [
         'memcached_description' => 'Distributed in-memory caching',
         'redis_description' => 'Advanced in-memory data structure store',
         'dynamodb_description' => 'AWS\'s scalable NoSQL database service',
+
+        'btn' => [
+            'test' => 'Test cache',
+            'flush' => 'Flush all',
+        ],
+    ],
+
+    'datetime' => [
+        'label' => 'Date & Time',
+        'navigation' => 'Date & Time',
+        'section_description' => 'Configure the default date format and timezone used across the application.',
+        'timezone' => 'Timezone',
+        'format' => 'Format',
+        'format_sample' => '[Click here for more format](https://www.php.net/manual/en/datetime.format.php)',
+        'sample' => 'Sample display',
     ],
 
     'user' => [
@@ -260,8 +253,30 @@ return [
         'default_role' => 'Default role',
         'avatar_provider' => 'Avatar provider',
         'avatar_libravatar_style' => 'Libravatar style',
-        'not_updated' => 'User setting not updated',
         'section_description' => 'Manage user-related defaults, including the default role for new users and the avatar provider.',
+    ],
+
+    'panel' => [
+        'label' => 'Panel',
+        'navigation' => 'Panel',
+        'section_description' => 'Configure how the admin panel is accessed, including its domain, path, and runtime behavior.',
+        'enable_multitenant' => 'Enable multi-tenancy',
+        'url' => 'URL',
+        'path' => 'Path',
+        'multitenant_helper' => 'When enabled, the admin panel runs in a tenant context. Resources can be scoped to the active tenant to isolate data between tenants.',
+        'multitenant_hint' => '[Official documentation](https://filamentphp.com/docs/5.x/users/tenancy)',
+    ],
+
+    'theme' => [
+        'navigation' => 'Theme',
+        'label' => 'Theme',
+        'section_description' => 'Customize the application’s appearance by selecting a theme, color scheme, or display mode.',
+        'color_primary' => 'Primary',
+        'color_gray' => 'Gray',
+        'color_success' => 'Success',
+        'color_danger' => 'Danger',
+        'color_info' => 'Info',
+        'color_warning' => 'Warning',
     ],
 
     'about' => [
@@ -270,5 +285,15 @@ return [
         'php_version' => 'PHP version',
         'laravel_version' => 'Laravel version',
         'filament_version' => 'Filament version',
+    ],
+
+    'notifications' => [
+        'updated' => [
+            'title' => 'Setting updated',
+        ],
+
+        'update_failed' => [
+            'title' => 'Failed to save setting',
+        ],
     ],
 ];

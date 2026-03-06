@@ -45,7 +45,7 @@ class BranchResource extends Resource
 
     public static function shouldRegisterNavigation(): bool
     {
-        return self::canAccess();
+        return self::canAccess() && (bool) config('panelis.multitenant');
     }
 
     public static function form(Schema $schema): Schema
@@ -93,9 +93,7 @@ class BranchResource extends Resource
                     ->disabled(fn (Branch $record): bool => $record->is(Filament::getTenant()))
                     ->visible(user_can(BranchPermission::Delete)),
             ])
-            ->toolbarActions([
-
-            ]);
+            ->toolbarActions([]);
     }
 
     public static function getRelations(): array
