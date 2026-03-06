@@ -2,43 +2,36 @@
 
 namespace App\Filament\Clusters\Settings\Pages;
 
-use App\Events\SettingUpdated;
 use App\Filament\Clusters\Settings;
 use App\Filament\Clusters\Settings\Enums\NumberFormat;
 use App\Filament\Clusters\Settings\Enums\NumberPermission;
-use App\Models\Setting;
+use App\Filament\Clusters\Settings\HasUpdateableForm;
+use App\Filament\Clusters\Settings\UpdateSettingPage;
 use BackedEnum;
-use Exception;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Infolists\Components\TextEntry;
-use Filament\Notifications\Notification;
-use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Arr;
-use Illuminate\Validation\ValidationException;
-use Symfony\Component\HttpFoundation\Response;
 
-class Number extends Page
+class Number extends UpdateSettingPage implements HasSchemas, HasUpdateableForm
 {
     use InteractsWithForms;
     use Settings\Traits\AddUpdateButton;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCalculator;
 
-    protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::Calculator;
-
     protected string $view = 'filament.clusters.settings.pages.setting';
 
     protected static ?string $cluster = Settings::class;
 
-    protected static ?int $navigationSort = 5;
+    protected static ?int $navigationSort = 50;
 
     public array $app;
 
@@ -55,6 +48,11 @@ class Number extends Page
     public static function canAccess(): bool
     {
         return user_can(NumberPermission::Browse);
+    }
+
+    public function updatePermission(): BackedEnum
+    {
+        return NumberPermission::Edit;
     }
 
     public function mount(): void
@@ -110,33 +108,5 @@ class Number extends Page
                         }),
                 ]),
         ]);
-    }
-
-    /**
-     * @throws ValidationException
-     */
-    public function update(): void
-    {
-        abort_unless(user_can(NumberPermission::Edit), Response::HTTP_FORBIDDEN);
-
-        $this->validate();
-
-        try {
-            foreach (Arr::dot($this->form->getState()) as $key => $value) {
-                Setting::updateOrCreate(compact('key'), compact('value'));
-            }
-
-            event(new SettingUpdated);
-
-            Notification::make('number.setting_updated')
-                ->title(__('filament-actions::edit.single.notifications.saved.title'))
-                ->success()
-                ->send();
-        } catch (Exception) {
-            Notification::make('number.setting_not_updated')
-                ->title(__('setting.number.not_updated'))
-                ->warning()
-                ->send();
-        }
     }
 }

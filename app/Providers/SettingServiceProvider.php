@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 
 class SettingServiceProvider extends ServiceProvider
 {
@@ -25,6 +26,24 @@ class SettingServiceProvider extends ServiceProvider
             }
 
             return config('app.locale');
+        });
+
+        $this->app->singleton('panelis', function (): array {
+            $config = config('panelis');
+
+            if (! Schema::hasTable('settings')) {
+                return $config;
+            }
+
+            $settings = Setting::query()
+                ->where('key', 'like', 'panelis.%')
+                ->pluck('value', 'key')
+                ->mapWithKeys(fn ($value, $key) => [
+                    Str::after($key, 'panelis.') => $value,
+                ])
+                ->toArray();
+
+            return array_replace($config, $settings);
         });
     }
 

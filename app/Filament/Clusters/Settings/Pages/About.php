@@ -23,7 +23,7 @@ class About extends Page
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedQuestionMarkCircle;
 
-    protected static ?int $navigationSort = 100;
+    protected static ?int $navigationSort = 90;
 
     public function getTitle(): string|Htmlable
     {

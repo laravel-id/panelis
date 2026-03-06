@@ -35,15 +35,19 @@ class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
-        return $panel
-            ->tenant(Branch::class, slugAttribute: 'slug')
-            ->tenantRegistration(RegisterBranch::class)
-            ->tenantProfile(EditBranch::class)
-            ->default()
-            ->id('admin')
+        if ((bool) app('panelis')['multitenant'] ?? false) {
+            $panel
+                ->tenant(Branch::class, slugAttribute: 'slug')
+                ->tenantRegistration(RegisterBranch::class)
+                ->tenantProfile(EditBranch::class);
+        }
 
-            ->path(config('app.panelis_path'))
-            ->domain(config('app.panelis_domain'))
+        return $panel
+            ->default()
+            ->id(config('panelis.id'))
+
+            ->path(app('panelis')['path'] ?? '')
+            ->domain(app('panelis')['domain'] ?? '')
 
             ->brandLogo(function (): ?string {
                 if (filled(config('app.logo')) && config('app.use_logo_in_panel')) {

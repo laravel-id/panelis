@@ -2,7 +2,6 @@
 
 namespace App\Filament\Clusters\Settings\Pages;
 
-use App\Events\SettingUpdated;
 use App\Filament\Clusters\Settings;
 use App\Filament\Clusters\Settings\Enums\CacheDriver;
 use App\Filament\Clusters\Settings\Enums\CachePermission;
@@ -10,48 +9,37 @@ use App\Filament\Clusters\Settings\Forms\Cache\DynamoDBForm;
 use App\Filament\Clusters\Settings\Forms\Cache\MemcachedForm;
 use App\Filament\Clusters\Settings\Forms\Cache\RedisForm;
 use App\Filament\Clusters\Settings\HasUpdateableForm;
-use App\Models\Setting;
+use App\Filament\Clusters\Settings\UpdateSettingPage;
 use BackedEnum;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
-use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\ValidationException;
-use Symfony\Component\HttpFoundation\Response;
 
-class Cache extends Page implements HasForms, HasUpdateableForm
+class Cache extends UpdateSettingPage implements HasSchemas, HasUpdateableForm
 {
     use InteractsWithForms;
     use Settings\Traits\AddUpdateButton;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedServerStack;
 
-    protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::ServerStack;
-
     protected string $view = 'filament.clusters.settings.pages.setting';
 
     protected static ?string $cluster = Settings::class;
 
-    protected static ?int $navigationSort = 7;
+    protected static ?int $navigationSort = 70;
 
     public array $cache;
 
     public array $database;
-
-    public static function canAccess(): bool
-    {
-        return user_can(CachePermission::Browse);
-    }
 
     protected function getHeaderActions(): array
     {
@@ -108,6 +96,16 @@ class Cache extends Page implements HasForms, HasUpdateableForm
         return __('setting.cache.navigation');
     }
 
+    public static function canAccess(): bool
+    {
+        return user_can(CachePermission::Browse);
+    }
+
+    public function updatePermission(): BackedEnum
+    {
+        return CachePermission::Edit;
+    }
+
     public function mount(): void
     {
         $this->form->fill([
@@ -147,35 +145,5 @@ class Cache extends Page implements HasForms, HasUpdateableForm
                 ->schema(DynamoDBForm::schema()),
         ])
             ->disabled(user_cannot(CachePermission::Edit));
-    }
-
-    /**
-     * @throws ValidationException
-     */
-    public function update(): void
-    {
-        abort_unless(user_can(CachePermission::Edit), Response::HTTP_FORBIDDEN);
-
-        $this->validate();
-
-        try {
-            foreach (Arr::dot($this->form->getState()) as $key => $value) {
-                Setting::set($key, $value);
-            }
-
-            event(new SettingUpdated);
-
-            Notification::make('setting_updated')
-                ->title(__('filament-actions::edit.single.notifications.saved.title'))
-                ->success()
-                ->send();
-        } catch (Exception $e) {
-            Log::error($e);
-
-            Notification::make('setting_not_updated')
-                ->title(__('setting.cache.not_updated'))
-                ->danger()
-                ->send();
-        }
     }
 }
