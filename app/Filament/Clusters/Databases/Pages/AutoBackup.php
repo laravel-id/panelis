@@ -17,6 +17,7 @@ use Filament\Forms\Concerns\InteractsWithForms;
 use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
+use Filament\Schemas\Components\Callout;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
@@ -84,11 +85,10 @@ class AutoBackup extends Page implements HasForms
                 ->visible(user_can(DatabasePermission::Backup))
                 ->label(__('database.btn.backup_now'))
                 ->schema([
-                    //                    AlertBox::make('cloud_backup_disabled')
-                    //                        ->label(__('database.cloud_backup_disabled'))
-                    //                        ->helperText(__('database.cloud_backup_is_disabled'))
-                    //                        ->visible(! config('database.cloud_backup_enabled', false))
-                    //                        ->warning(),
+                    Callout::make(__('database.cloud_backup_disabled'))
+                        ->description(__('database.cloud_backup_is_disabled'))
+                        ->warning()
+                        ->visible(! config('database.cloud_backup_enabled', false)),
 
                     Section::make()
                         ->visible(config('database.cloud_backup_enabled', false))

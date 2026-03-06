@@ -22,7 +22,7 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
-Schedule::command('app:backup-database')
+Schedule::command('panelis:backup-database')
     ->withoutOverlapping()
     ->runInBackground()
     ->when(function (): bool {
@@ -43,6 +43,6 @@ Schedule::command('app:backup-database')
         return false;
     })->sendOutputTo(storage_path('logs/db.log'));
 
-Artisan::command('app:ping', function (): void {
+Artisan::command('panelis:ping', function (): void {
     Http::get(config('app.ping_url'));
 })->when(fn (): bool => ! empty(config('app.ping_url')))->everyMinute();
