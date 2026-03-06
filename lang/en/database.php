@@ -35,11 +35,8 @@ return [
         'not_available' => 'Database backup is not available',
         'backed_up' => 'Database has been backed up to :path',
     ],
-    'btn' => [
-        'backup_now' => 'Backup now',
-    ],
     'cloud_backup_disabled' => 'Cloud backup is disabled',
-    'cloud_backup_is_disabled' => 'Cloud backup is disabled',
+    'cloud_backup_is_disabled' => 'Enable cloud backup to automatically store your database backups in the cloud.',
     'upload_to_cloud' => 'Upload to cloud',
     'file_created' => 'File has been created',
     'file_not_created' => 'File not created',
@@ -53,4 +50,9 @@ return [
     'backup' => 'Backup',
     'period_daily' => 'Daily',
     'cloud_storage_dropbox' => 'Dropbox',
+
+    'btn' => [
+        'backup_now' => 'Backup now',
+        'download' => 'Download',
+    ],
 ];

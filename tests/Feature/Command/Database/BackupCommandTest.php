@@ -2,7 +2,6 @@
 
 use App\Jobs\Database\UploadToCloud;
 use App\Services\Database\DatabaseFactory;
-use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 
 test('it runs backup command and uploads to cloud', function () {
@@ -24,7 +23,7 @@ test('it runs backup command and uploads to cloud', function () {
 
     Storage::disk('local')->put('database/test-backup.sql', 'dummy-content');
 
-    $this->artisan('app:backup-database', [
+    $this->artisan('panelis:backup-database', [
         '--no-interaction' => true,
     ])->assertExitCode(0);
 
@@ -43,7 +42,7 @@ test('it handles unavailable database factory gracefully', function () {
 
     $this->instance(DatabaseFactory::class, $mockDatabase);
 
-    $artisan = $this->artisan('app:backup-database', [
+    $artisan = $this->artisan('panelis:backup-database', [
         '--no-interaction' => true,
     ]);
 

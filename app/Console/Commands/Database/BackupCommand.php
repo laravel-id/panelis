@@ -6,6 +6,7 @@ use App\Jobs\Database\UploadToCloud;
 use App\Models\User;
 use App\Services\Database\DatabaseFactory;
 use Exception;
+use Filament\Actions\Action;
 use Filament\Notifications\Notification;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
@@ -13,7 +14,7 @@ use Illuminate\Support\Facades\Storage;
 
 class BackupCommand extends Command
 {
-    protected $signature = 'app:backup-database';
+    protected $signature = 'panelis:backup-database';
 
     protected $description = 'Backup database based on scheduled time';
 
@@ -45,6 +46,11 @@ class BackupCommand extends Command
             Notification::make()
                 ->title(__('database.file_created'))
                 ->success()
+                ->actions([
+                    Action::make('download')
+                        ->label(__('database.btn.download'))
+                        ->url(route('panelis.database.download', basename($path))),
+                ])
                 ->sendToDatabase($users);
 
             $this->info(__('database.auto_backup.backed_up', ['path' => $path]));
