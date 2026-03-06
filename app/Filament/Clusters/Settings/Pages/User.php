@@ -2,46 +2,38 @@
 
 namespace App\Filament\Clusters\Settings\Pages;
 
-use App\Events\SettingUpdated;
 use App\Filament\Clusters\Settings;
 use App\Filament\Clusters\Settings\Enums\AvatarProvider;
 use App\Filament\Clusters\Settings\Enums\LibravatarStyle;
 use App\Filament\Clusters\Settings\Enums\UserPermission;
 use App\Filament\Clusters\Settings\HasUpdateableForm;
+use App\Filament\Clusters\Settings\UpdateSettingPage;
 use App\Models\Role;
-use App\Models\Setting;
 use BackedEnum;
-use Exception;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Notifications\Notification;
-use Filament\Pages\Page;
 use Filament\Schemas\Components\Image;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\ValidationException;
-use Symfony\Component\HttpFoundation\Response;
 
-class User extends Page implements HasForms, HasUpdateableForm
+class User extends UpdateSettingPage implements HasSchemas, HasUpdateableForm
 {
     use InteractsWithForms;
     use Settings\Traits\AddUpdateButton;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUserCircle;
 
-    protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::UserCircle;
-
     protected string $view = 'filament.clusters.settings.pages.setting';
 
     protected static ?string $cluster = Settings::class;
+
+    protected static ?int $navigationSort = 20;
 
     public ?array $user;
 
@@ -53,6 +45,11 @@ class User extends Page implements HasForms, HasUpdateableForm
     public static function getNavigationLabel(): string
     {
         return __('setting.user.navigation');
+    }
+
+    public function updatePermission(): BackedEnum
+    {
+        return UserPermission::Edit;
     }
 
     public function mount(): void
@@ -110,35 +107,5 @@ class User extends Page implements HasForms, HasUpdateableForm
                         ),
                     ]),
             ]);
-    }
-
-    /**
-     * @throws ValidationException
-     */
-    public function update(): void
-    {
-        abort_unless(user_can(UserPermission::Edit), Response::HTTP_FORBIDDEN);
-
-        $this->validate();
-
-        try {
-            foreach (Arr::dot($this->form->getState()) as $key => $value) {
-                Setting::set($key, $value);
-            }
-
-            event(new SettingUpdated);
-
-            Notification::make('user_updated')
-                ->title(__('filament-actions::edit.single.notifications.saved.title'))
-                ->success()
-                ->send();
-        } catch (Exception $e) {
-            Log::error($e);
-
-            Notification::make('user_not_updated')
-                ->title(__('setting.user.not_updated'))
-                ->danger()
-                ->send();
-        }
     }
 }

@@ -2,6 +2,7 @@
 
 namespace App\Services\Database\Vendors;
 
+use App\Enums\Disk;
 use App\Services\Database\Database;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Process;
@@ -37,7 +38,6 @@ class SQLite implements Database
         }
 
         return null;
-
     }
 
     public function backup(): ?string
@@ -45,7 +45,7 @@ class SQLite implements Database
         $database = config('database.connections.sqlite.database');
         $filename = sprintf('%s.sql', time());
 
-        $storage = Storage::disk('local');
+        $storage = Storage::disk(Disk::Local);
         if (! $storage->directoryExists($dirName = 'database')) {
             Storage::makeDirectory($dirName);
         }

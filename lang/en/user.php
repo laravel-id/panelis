@@ -20,6 +20,7 @@ return [
 
     'btn' => [
         'send_reset_password_link' => 'Send reset password link',
+        'generate_password' => 'Generate password',
     ],
 
     'role' => [

@@ -33,8 +33,8 @@ class RegisterBranch extends RegisterTenant
         return $model;
     }
 
-    public static function getUrl(): string
+    public static function getUrl(): ?string
     {
-        return Filament::getPanel('admin')->getTenantRegistrationUrl();
+        return Filament::getPanel(config('panelis.id'))->getTenantRegistrationUrl();
     }
 }

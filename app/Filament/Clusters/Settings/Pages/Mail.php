@@ -7,6 +7,7 @@ use App\Filament\Clusters\Settings;
 use App\Filament\Clusters\Settings\Enums\MailPermission;
 use App\Filament\Clusters\Settings\Enums\MailType;
 use App\Filament\Clusters\Settings\HasUpdateableForm;
+use App\Filament\Clusters\Settings\UpdateSettingPage;
 use App\Mail\TestMail;
 use App\Models\Branch;
 use App\Models\Setting;
@@ -17,12 +18,11 @@ use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
-use Filament\Pages\Page;
 use Filament\Schemas\Components\Callout;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Enums\Width;
 use Filament\Support\Icons\Heroicon;
@@ -32,21 +32,20 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail as Mailer;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
+use Throwable;
 
-class Mail extends Page implements HasForms, HasUpdateableForm
+class Mail extends UpdateSettingPage implements HasSchemas, HasUpdateableForm
 {
     use InteractsWithForms;
     use Settings\Traits\AddUpdateButton;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedAtSymbol;
 
-    protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::AtSymbol;
-
     protected string $view = 'filament.clusters.settings.pages.setting';
 
     protected static ?string $cluster = Settings::class;
 
-    protected static ?int $navigationSort = 3;
+    protected static ?int $navigationSort = 30;
 
     public array $mail;
 
@@ -99,9 +98,9 @@ class Mail extends Page implements HasForms, HasUpdateableForm
 
     private function smtpSection(): Section
     {
-        $isDemo = config('app.demo');
+        $isDemo = config('panelis.demo');
         $demoText = function (): ?string {
-            if (config('app.demo')) {
+            if (config('panelis.demo')) {
                 return __('setting.hidden_when_in_demo');
             }
 
@@ -406,18 +405,28 @@ class Mail extends Page implements HasForms, HasUpdateableForm
 
         $this->validate();
 
-        foreach (Arr::dot($this->form->getState()) as $key => $value) {
-            if (empty($value)) {
-                $value = '';
+        try {
+            foreach (Arr::dot($this->form->getState()) as $key => $value) {
+                if (empty($value)) {
+                    $value = '';
+                }
+                Setting::updateOrCreate(compact('key'), compact('value'));
             }
-            Setting::updateOrCreate(compact('key'), compact('value'));
+
+            event(new SettingUpdated);
+
+            Notification::make()
+                ->success()
+                ->title(__('setting.notifications.updated.title'))
+                ->send();
+        } catch (Throwable $e) {
+            Log::error($e);
+
+            Notification::make('theme_not_updated')
+                ->title(__('setting.notifications.update_failed.title'))
+                ->body($e->getMessage())
+                ->warning()
+                ->send();
         }
-
-        event(new SettingUpdated);
-
-        Notification::make()
-            ->success()
-            ->title(__('filament-actions::edit.single.notifications.saved.title'))
-            ->send();
     }
 }
