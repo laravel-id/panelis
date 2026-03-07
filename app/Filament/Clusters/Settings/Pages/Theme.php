@@ -2,39 +2,31 @@
 
 namespace App\Filament\Clusters\Settings\Pages;
 
-use App\Events\SettingUpdated;
 use App\Filament\Clusters\Settings;
 use App\Filament\Clusters\Settings\Enums\ThemePermission;
-use App\Models\Setting;
+use App\Filament\Clusters\Settings\HasUpdateableForm;
+use App\Filament\Clusters\Settings\UpdateSettingPage;
 use BackedEnum;
-use Exception;
 use Filament\Forms\Components\ColorPicker;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
-use Filament\Notifications\Notification;
-use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
-use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Log;
-use Symfony\Component\HttpFoundation\Response;
 
-class Theme extends Page implements HasForms
+class Theme extends UpdateSettingPage implements HasSchemas, HasUpdateableForm
 {
     use InteractsWithForms;
     use Settings\Traits\AddUpdateButton;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedPaintBrush;
 
-    protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::PaintBrush;
-
     protected string $view = 'filament.clusters.settings.pages.setting';
 
     protected static ?string $cluster = Settings::class;
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 12;
 
     public static function getNavigationLabel(): string
     {
@@ -49,6 +41,11 @@ class Theme extends Page implements HasForms
     public static function canAccess(): bool
     {
         return user_can(ThemePermission::Browse);
+    }
+
+    public static function updatePermission(): BackedEnum
+    {
+        return ThemePermission::Edit;
     }
 
     public array $colors = ['primary', 'gray', 'success', 'info', 'warning', 'danger'];
@@ -85,32 +82,8 @@ class Theme extends Page implements HasForms
         ]);
     }
 
-    public function update(): void
+    public function afterUpdated(array $forms): void
     {
-        abort_unless(user_can(ThemePermission::Edit), Response::HTTP_FORBIDDEN);
-
-        try {
-            $this->validate();
-
-            foreach (Arr::dot($this->form->getState()) as $key => $value) {
-                Setting::updateOrCreate(compact('key'), compact('value'));
-            }
-
-            event(new SettingUpdated);
-
-            Notification::make('theme_updated')
-                ->title(__('filament-actions::edit.single.notifications.saved.title'))
-                ->success()
-                ->send();
-
-            $this->js('window.location.reload()');
-        } catch (Exception $e) {
-            Log::error($e);
-
-            Notification::make('theme_not_updated')
-                ->title(__('setting.theme_not_updated'))
-                ->warning()
-                ->send();
-        }
+        $this->js('window.location.reload()');
     }
 }

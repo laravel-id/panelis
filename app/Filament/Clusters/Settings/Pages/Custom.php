@@ -5,6 +5,8 @@ namespace App\Filament\Clusters\Settings\Pages;
 use App\Events\SettingUpdated;
 use App\Filament\Clusters\Settings;
 use App\Filament\Clusters\Settings\Enums\CustomSettingPermission;
+use App\Filament\Clusters\Settings\HasUpdateableForm;
+use App\Filament\Clusters\Settings\UpdateSettingPage;
 use App\Models\Setting;
 use BackedEnum;
 use Exception;
@@ -13,10 +15,9 @@ use Filament\Forms\Components\Repeater;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
-use Filament\Pages\Page;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
@@ -24,20 +25,18 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
 
-class Custom extends Page implements HasForms
+class Custom extends UpdateSettingPage implements HasSchemas, HasUpdateableForm
 {
     use InteractsWithForms;
     use Settings\Traits\AddUpdateButton;
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedAdjustmentsHorizontal;
 
-    protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::AdjustmentsHorizontal;
-
     protected string $view = 'filament.clusters.settings.pages.setting';
 
     protected static ?string $cluster = Settings::class;
 
-    protected static ?int $navigationSort = 8;
+    protected static ?int $navigationSort = 80;
 
     public array $custom;
 
@@ -148,14 +147,15 @@ class Custom extends Page implements HasForms
 
             Notification::make('custom_setting_updated')
                 ->success()
-                ->title(__('filament-actions::edit.single.notifications.saved.title'))
+                ->title(__('setting.notifications.updated.title'))
                 ->send();
         } catch (Exception $e) {
             Log::error($e);
 
-            Notification::make('custom_setting_not_updated')
+            Notification::make('setting.notifications.update_failed.title')
                 ->danger()
                 ->title(__('setting.custom.updated'))
+                ->body($e->getMessage())
                 ->send();
         }
     }

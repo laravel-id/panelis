@@ -36,11 +36,11 @@ class General extends Page
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedCog;
 
-    protected static string|BackedEnum|null $activeNavigationIcon = Heroicon::Cog;
-
     protected string $view = 'filament.clusters.settings.pages.setting';
 
     protected static ?string $cluster = Settings::class;
+
+    protected static ?int $navigationSort = 10;
 
     public array $app;
 

@@ -18,6 +18,7 @@ beforeEach(function (): void {
     $this->user->branches()->attach($this->branch);
 
     actingAs($this->user);
+
     Filament::setTenant($this->branch);
 });
 
