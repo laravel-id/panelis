@@ -3,8 +3,8 @@
 namespace App\Providers;
 
 use App\Filament\Clusters\Settings\Enums\NumberFormat;
-use App\Services\Database\Database;
-use App\Services\Database\DatabaseFactory;
+use App\Services\Database\Contracts\Database;
+use App\Services\Database\Database as DatabaseManager;
 use App\Services\OAuth\OAuth;
 use App\Services\OAuth\OAuthFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -22,8 +22,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(Database::class, function (Application $app): DatabaseFactory {
-            return new DatabaseFactory($app);
+        $this->app->bind(Database::class, function (Application $app): DatabaseManager {
+            return $app->make(DatabaseManager::class);
         });
 
         $this->app->singleton(OAuth::class, function (Application $app): OAuthFactory {

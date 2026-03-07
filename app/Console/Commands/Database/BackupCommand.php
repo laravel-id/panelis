@@ -4,7 +4,7 @@ namespace App\Console\Commands\Database;
 
 use App\Jobs\Database\UploadToCloud;
 use App\Models\User;
-use App\Services\Database\DatabaseFactory;
+use App\Services\Database\Database;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
@@ -18,7 +18,7 @@ class BackupCommand extends Command
 
     protected $description = 'Backup database based on scheduled time';
 
-    public function handle(DatabaseFactory $database): int
+    public function handle(Database $database): int
     {
         if (! $database->isAvailable()) {
             $this->error(__('database.auto_backup.not_available'));

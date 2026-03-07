@@ -50,6 +50,8 @@ return [
     'backup' => 'Backup',
     'period_daily' => 'Daily',
     'cloud_storage_dropbox' => 'Dropbox',
+    'not_supported' => 'Database is not supported',
+    'not_supported_reason' => 'Database driver :driver does not support auto-backup.',
 
     'btn' => [
         'backup_now' => 'Backup now',

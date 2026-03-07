@@ -3,8 +3,8 @@
 namespace App\Filament\Clusters\Databases\Forms;
 
 use App\Filament\Clusters\Databases\Enums\DatabasePeriod;
-use App\Filament\Clusters\Databases\Enums\DatabaseType;
-use App\Services\Database\DatabaseFactory;
+use App\Services\Database\Contracts\Database;
+use App\Services\Database\Enums\DatabaseDriver;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\TimePicker;
@@ -16,41 +16,45 @@ use Illuminate\Support\Number;
 
 class AutoBackupForm
 {
-    public static function schema(?DatabaseFactory $databaseService): array
+    public static function schema(?Database $databaseManager): array
     {
+        if (empty($databaseManager)) {
+            return [];
+        }
+
         $database = data_get(config('database.connections'), config('database.default'));
 
         return [
             TextEntry::make('database.default')
                 ->label(__('database.type'))
-                ->state(DatabaseType::getType(config('database.default'))),
+                ->state(DatabaseDriver::tryFrom(config('database.default'))?->getLabel()),
 
             TextEntry::make('database.version')
                 ->label(__('database.version'))
-                ->state($databaseService?->getVersion()),
+                ->state($databaseManager->getVersion()),
 
             TextEntry::make('database.url')
                 ->label(__('database.path'))
-                ->visible(fn (): bool => config('database.default') === DatabaseType::SQLite->value)
+                ->visible(fn (): bool => config('database.default') === DatabaseDriver::SQLite->value)
                 ->helperText(function (): ?string {
-                    if (config('app.demo')) {
+                    if (config('panelis.demo', false)) {
                         return __('database.hidden_in_demo');
                     }
 
                     return null;
                 })
-                ->state(config('app.demo') ? '***' : $database['database'] ?? null),
+                ->state(config('panelis.demo', false) ? '***' : $database['database'] ?? null),
 
             Toggle::make('database.auto_backup_enabled')
                 ->label(__('database.backup_enabled'))
                 ->live()
-                ->disabled(fn (): bool => ! $databaseService?->isAvailable()),
+                ->disabled(fn (): bool => ! $databaseManager?->isAvailable()),
 
             TextEntry::make('database.size')
                 ->label(__('database.size'))
-                ->visible(fn (): bool => config('database.default') === DatabaseType::SQLite->value)
+                ->visible(fn (): bool => config('database.default') === DatabaseDriver::SQLite->value)
                 ->state(function () use ($database): ?string {
-                    if (config('database.default') === DatabaseType::SQLite->value) {
+                    if (config('database.default') === DatabaseDriver::SQLite->value) {
                         return Number::fileSize(File::size($database['database']));
                     }
 

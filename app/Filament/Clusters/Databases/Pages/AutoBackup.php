@@ -9,17 +9,19 @@ use App\Filament\Clusters\Databases\Forms\AutoBackupForm;
 use App\Filament\Clusters\Databases\Forms\CloudBackupForm;
 use App\Jobs\Database\UploadToCloud;
 use App\Models\Setting;
-use App\Services\Database\DatabaseFactory;
+use App\Services\Database\Contracts\Database as DbContract;
+use App\Services\Database\Database;
+use App\Services\Database\Enums\DatabaseDriver;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Toggle;
 use Filament\Forms\Concerns\InteractsWithForms;
-use Filament\Forms\Contracts\HasForms;
 use Filament\Notifications\Notification;
 use Filament\Pages\Page;
 use Filament\Schemas\Components\Callout;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Contracts\HasSchemas;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
@@ -27,8 +29,9 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
+use Throwable;
 
-class AutoBackup extends Page implements HasForms
+class AutoBackup extends Page implements HasSchemas
 {
     use InteractsWithForms;
 
@@ -46,13 +49,14 @@ class AutoBackup extends Page implements HasForms
 
     public array $dropbox;
 
-    private DatabaseFactory $databaseService;
+    private ?DbContract $databaseManager = null;
+
+    public bool $isSupported = true;
 
     protected function getUpdateAction(): Action
     {
         return Action::make('update_setting')
             ->label(__('ui.btn.update'))
-            ->color('primary')
             ->disabled(user_cannot(DatabasePermission::Edit))
             ->action('update');
     }
@@ -72,10 +76,25 @@ class AutoBackup extends Page implements HasForms
         return user_can(DatabasePermission::Browse);
     }
 
-    public function boot(?DatabaseFactory $database): void
+    public function boot(Database $database): void
     {
-        $this->databaseService = $database;
-        $this->databaseService->driver(config('database.default'));
+        $driver = config('database.default');
+
+        if (! DatabaseDriver::isSupported($driver)) {
+            $this->isSupported = false;
+
+            return;
+        }
+
+        try {
+            $this->databaseManager = $database->driver(config('database.default'));
+        } catch (Throwable $e) {
+            Log::warning("Database driver [$driver] could not be initialized.", [
+                'exception' => $e,
+            ]);
+
+            $this->isSupported = false;
+        }
     }
 
     protected function getHeaderActions(): array
@@ -84,6 +103,7 @@ class AutoBackup extends Page implements HasForms
             Action::make('backup')
                 ->visible(user_can(DatabasePermission::Backup))
                 ->label(__('database.btn.backup_now'))
+                ->hidden(! $this->isSupported)
                 ->schema([
                     Callout::make(__('database.cloud_backup_disabled'))
                         ->description(__('database.cloud_backup_is_disabled'))
@@ -102,7 +122,7 @@ class AutoBackup extends Page implements HasForms
                 ->requiresConfirmation()
                 ->action(function (array $data): void {
                     try {
-                        $path = $this->databaseService->backup();
+                        $path = $this->databaseManager->backup();
 
                         // upload to cloud if possible
                         if ($data['upload_to_cloud'] ?? false) {
@@ -130,13 +150,14 @@ class AutoBackup extends Page implements HasForms
 
     public function mount(): void
     {
-        if (! $this->databaseService->isAvailable()) {
+        if (! $this->isSupported) {
             Setting::where('key', 'database.auto_backup_enabled')->delete();
             config()->set('database.auto_backup_enabled', false);
         }
 
         $this->form->fill([
-            'isButtonDisabled' => ! $this->databaseService->isAvailable() || ! user_can(DatabasePermission::Edit),
+            'isButtonDisabled' => ! $this->isSupported || ! user_can(DatabasePermission::Edit),
+
             'database' => [
                 'auto_backup_enabled' => config('database.auto_backup_enabled', false),
                 'backup_period' => config('database.backup_period'),
@@ -164,25 +185,28 @@ class AutoBackup extends Page implements HasForms
 
     public function form(Schema $schema): Schema
     {
+        $driver = DatabaseDriver::tryFrom(config('database.default'));
+
         return $schema
             ->components([
-                //                AlertBox::make('package_installed')
-                //                    ->warning()
-                //                    ->label(__('database.auto_backup_is_disabled'))
-                //                    ->helperText(__('database.auto_backup_disabled_reason'))
-                //                    ->hidden(fn (): bool => $this->databaseService->isAvailable() ?? false),
+                Callout::make(__('database.not_supported'))
+                    ->description(__('database.not_supported_reason', ['driver' => $driver?->getLabel()]))
+                    ->hidden($this->isSupported)
+                    ->warning(),
 
                 Section::make(__('database.auto_backup.label'))
                     ->description(__('database.auto_backup.section_description'))
-                    ->schema(AutoBackupForm::schema($this->databaseService)),
+                    ->hidden(! $this->isSupported)
+                    ->schema(AutoBackupForm::schema($this->databaseManager)),
 
                 Section::make(__('database.cloud_backup'))
                     ->description(__('database.cloud_backup_section_description'))
                     ->collapsible()
+                    ->hidden(! $this->isSupported)
                     ->visible(function (Get $get): bool {
                         return user_can(DatabasePermission::Backup) && $get('database.auto_backup_enabled');
                     })
-                    ->disabled(fn (Get $get): bool => ! $get('database.auto_backup_enabled') || config('app.demo'))
+                    ->disabled(fn (Get $get): bool => ! $get('database.auto_backup_enabled') || config('panelis.demo', false))
                     ->schema(CloudBackupForm::schema()),
             ])
             ->disabled(user_cannot(DatabasePermission::Edit));
