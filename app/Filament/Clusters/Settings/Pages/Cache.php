@@ -120,30 +120,32 @@ class Cache extends UpdateSettingPage implements HasSchemas, HasUpdateableForm
 
     public function form(Schema $schema): Schema
     {
-        return $schema->schema([
-            Section::make(__('setting.cache.label'))
-                ->description(__('setting.cache.section_description'))
-                ->schema([
-                    Radio::make('cache.default')
-                        ->label(__('setting.cache.driver'))
-                        ->options(CacheDriver::class)
-                        ->live()
-                        ->required()
-                        ->enum(CacheDriver::class),
-                ]),
+        return $schema
+            ->disabled(user_cannot(CachePermission::Edit))
+            ->schema([
+                Section::make(__('setting.cache.label'))
+                    ->description(__('setting.cache.section_description'))
+                    ->schema([
+                        Radio::make('cache.default')
+                            ->label(__('setting.cache.driver'))
+                            ->options(CacheDriver::class)
+                            ->live()
+                            ->required()
+                            ->enum(CacheDriver::class),
+                    ]),
 
-            Section::make(__('setting.cache.memcached_driver'))
-                ->visible(fn (Get $get): bool => $get('cache.default') === CacheDriver::Memcached)
-                ->schema(MemcachedForm::schema()),
+                Section::make(__('setting.cache.memcached.label'))
+                    ->visible(fn (Get $get): bool => $get('cache.default') === CacheDriver::Memcached)
+                    ->schema(MemcachedForm::schema()),
 
-            Section::make(__('setting.cache.redis_driver'))
-                ->visible(fn (Get $get): bool => $get('cache.default') === CacheDriver::Redis)
-                ->schema(RedisForm::schema()),
+                Section::make(__('setting.cache.redis.label'))
+                    ->visible(fn (Get $get): bool => $get('cache.default') === CacheDriver::Redis)
+                    ->schema(RedisForm::schema()),
 
-            Section::make(__('setting.cache.dynamodb_driver'))
-                ->visible(fn (Get $get): bool => $get('cache.default') === CacheDriver::DynamoDB)
-                ->schema(DynamoDBForm::schema()),
-        ])
-            ->disabled(user_cannot(CachePermission::Edit));
+                Section::make(__('setting.cache.dynamodb.label'))
+                    ->visible(fn (Get $get): bool => $get('cache.default') === CacheDriver::DynamoDB)
+                    ->disabled(! CacheDriver::DynamoDB->isInstalled())
+                    ->schema(DynamoDBForm::schema()),
+            ]);
     }
 }
