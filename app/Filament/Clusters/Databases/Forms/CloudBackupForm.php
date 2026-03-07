@@ -98,7 +98,7 @@ class CloudBackupForm
         return Actions::make([
             Action::make('authorize_dropbox')
                 ->label(__('database.dropbox.btn.authorize'))
-                ->disabled(config('app.demo'))
+                ->disabled(config('panelis.demo', false))
                 ->visible(empty($user))
                 ->disabled(fn (Get $get): bool => empty($get('dropbox.client_id')) || empty($get('dropbox.client_secret')))
                 ->url(function (Get $get): string {
@@ -114,7 +114,7 @@ class CloudBackupForm
 
             Action::make('revoke_dropbox')
                 ->label(__('database.dropbox.btn.revoke', ['name' => $user?->getName()]))
-                ->disabled(config('app.demo'))
+                ->disabled(config('panelis.demo', false))
                 ->visible(! empty($user))
                 ->requiresConfirmation()
                 ->action(function (Set $set): void {

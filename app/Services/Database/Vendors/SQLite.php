@@ -3,7 +3,10 @@
 namespace App\Services\Database\Vendors;
 
 use App\Enums\Disk;
-use App\Services\Database\Database;
+use App\Services\Database\Contracts\Database;
+use App\Services\Database\Enums\DatabaseDriver;
+use BackedEnum;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Storage;
@@ -11,6 +14,11 @@ use Illuminate\Support\Facades\Storage;
 class SQLite implements Database
 {
     private string $errorMessage = '';
+
+    public function getDriver(): BackedEnum
+    {
+        return DatabaseDriver::SQLite;
+    }
 
     public function isAvailable(): bool
     {
@@ -43,7 +51,7 @@ class SQLite implements Database
     public function backup(): ?string
     {
         $database = config('database.connections.sqlite.database');
-        $filename = sprintf('%s.sql', time());
+        $filename = sprintf('%s.sql', Carbon::now()->timestamp);
 
         $storage = Storage::disk(Disk::Local);
         if (! $storage->directoryExists($dirName = 'database')) {

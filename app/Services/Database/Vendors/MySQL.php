@@ -2,13 +2,20 @@
 
 namespace App\Services\Database\Vendors;
 
-use App\Services\Database\Database;
+use App\Services\Database\Contracts\Database;
+use App\Services\Database\Enums\DatabaseDriver;
+use BackedEnum;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Process;
 
 class MySQL implements Database
 {
     private ?string $errorMessage;
+
+    public function getDriver(): BackedEnum
+    {
+        return DatabaseDriver::MySQL;
+    }
 
     public function getErrorMessage(): string
     {

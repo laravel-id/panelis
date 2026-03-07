@@ -2,6 +2,8 @@
 
 namespace App\Filament\Clusters\Databases\Pages;
 
+use App\Actions\Database\Download;
+use App\Enums\Disk;
 use App\Filament\Clusters\Databases;
 use App\Filament\Clusters\Databases\Enums\DatabasePermission;
 use Carbon\Carbon;
@@ -90,16 +92,10 @@ class Backup extends Page implements HasTable
                             return null;
                         }
 
-                        $storage = Storage::disk('local');
+                        $storage = Storage::disk(Disk::Local);
 
                         if ($storage->exists($record['path'])) {
-                            return response()->streamDownload(function () use ($storage, $record) {
-                                $stream = $storage->readStream($record['path']);
-                                while (! feof($stream)) {
-                                    echo fread($stream, 8192);
-                                }
-                                fclose($stream);
-                            }, $record['name']);
+                            return Download::run($storage, $record['path'], $record['name']);
                         }
 
                         Notification::make('file_not_exists')
@@ -133,12 +129,13 @@ class Backup extends Page implements HasTable
                             return;
                         } catch (Exception $e) {
                             Log::error($e);
-                        }
 
-                        Notification::make('database_file_not_deleted')
-                            ->title(__('database.file_not_deleted'))
-                            ->warning()
-                            ->send();
+                            Notification::make('database_file_not_deleted')
+                                ->title(__('database.file_not_deleted'))
+                                ->body($e->getMessage())
+                                ->warning()
+                                ->send();
+                        }
                     }),
             ]);
     }

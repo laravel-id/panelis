@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
+use Throwable;
 
 class SettingServiceProvider extends ServiceProvider
 {
@@ -52,21 +53,26 @@ class SettingServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        $hasSetting = Cache::remember('has_setting', now()->addDay(), function (): bool {
-            return Schema::hasTable('settings');
-        });
-
-        if ($hasSetting) {
-            Setting::getAll()->each(function (Setting $setting): void {
-                Config::set($setting->key, $setting->value);
+        try {
+            $key = sprintf('%s:has_setting', config('database.default'));
+            $hasSettingTable = Cache::remember($key, now()->addDay(), function (): bool {
+                return Schema::hasTable('settings');
             });
 
-            if (Auth::check()) {
-                Setting::getByUser(Auth::id())->each(function (Setting $setting): void {
-                    // override config from db with user's
+            if ($hasSettingTable) {
+                Setting::getAll()->each(function (Setting $setting): void {
                     Config::set($setting->key, $setting->value);
                 });
+
+                if (Auth::check()) {
+                    Setting::getByUser(Auth::id())->each(function (Setting $setting): void {
+                        // override config from db with user's
+                        Config::set($setting->key, $setting->value);
+                    });
+                }
             }
+        } catch (Throwable $e) {
+            report($e);
         }
 
         $this->app->setLocale(app('app.locale'));
