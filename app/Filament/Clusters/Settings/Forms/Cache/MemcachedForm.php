@@ -10,21 +10,21 @@ class MemcachedForm
     {
         return [
             TextInput::make('cache.stores.memcached.servers.host')
-                ->label(__('setting.cache.memcached_host'))
+                ->label(__('setting.cache.memcached.host'))
                 ->required(),
 
             TextInput::make('cache.stores.memcached.servers.port')
-                ->label(__('setting.cache.memcached_port'))
+                ->label(__('setting.cache.memcached.port'))
                 ->numeric()
                 ->required(),
 
             TextInput::make('cache.stores.memcached.sasl.username')
-                ->label(__('setting.cache.memcached_username'))
+                ->label(__('setting.cache.memcached.username'))
                 ->numeric()
                 ->nullable(),
 
             TextInput::make('cache.stores.memcached.sasl.password')
-                ->label(__('setting.cache.memcached_password'))
+                ->label(__('setting.cache.memcached.password'))
                 ->password()
                 ->revealable()
                 ->nullable(),

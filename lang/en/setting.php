@@ -197,39 +197,59 @@ return [
     ],
 
     'cache' => [
-        'redis_host' => 'Host',
-        'redis_port' => 'Port',
-        'redis_database' => 'Database',
-        'redis_username' => 'Username',
-        'redis_password' => 'Password',
-        'dynamodb_key' => 'Key',
-        'dynamodb_secret' => 'Secret',
-        'dynamodb_region' => 'Region',
-        'dynamodb_table' => 'Table',
-        'dynamodb_endpoint' => 'Endpoint',
-        'memcached_host' => 'Host',
-        'memcached_port' => 'Port',
-        'memcached_username' => 'Username',
-        'memcached_password' => 'Password',
         'test_success' => 'Test success',
         'test_failed' => 'Test failed',
         'flushed' => 'Cache flushed',
         'section_description' => 'Configure the cache storage used by the application. Supported drivers include File, Database, Memcached, APC, Redis, and DynamoDB.',
         'driver' => 'Driver',
-        'memcached_driver' => 'Memcached',
-        'redis_driver' => 'Redis',
-        'dynamodb_driver' => 'DynamoDB',
         'label' => 'Cache',
         'navigation' => 'Cache',
-        'file_driver' => 'File',
-        'database_driver' => 'Database',
-        'apc_driver' => 'APC',
-        'file_description' => 'Caching to the local file system',
-        'database_description' => 'Storing cache in a database table',
-        'apc_description' => 'In-memory caching using the APC extension',
-        'memcached_description' => 'Distributed in-memory caching',
-        'redis_description' => 'Advanced in-memory data structure store',
-        'dynamodb_description' => 'AWS\'s scalable NoSQL database service',
+
+        'file' => [
+            'label' => 'File',
+            'description' => 'Caching to the local file system',
+        ],
+
+        'database' => [
+            'label' => 'Database',
+            'description' => 'Storing cache in a database table',
+        ],
+
+        'memcached' => [
+            'label' => 'Memcached',
+            'description' => 'Distributed in-memory caching',
+            'host' => 'Host',
+            'port' => 'Port',
+            'username' => 'Username',
+            'password' => 'Password',
+        ],
+
+        'redis' => [
+            'label' => 'Redis',
+            'description' => 'Advanced in-memory data structure store',
+            'host' => 'Host',
+            'port' => 'Port',
+            'database' => 'Database',
+            'username' => 'Username',
+            'password' => 'Password',
+        ],
+
+        'dynamodb' => [
+            'label' => 'DynamoDB',
+            'description' => 'AWS\'s scalable NoSQL database service',
+            'key' => 'Key',
+            'secret' => 'Secret',
+            'region' => 'Region',
+            'table' => 'Table',
+            'endpoint' => 'Endpoint',
+            'no_package_title' => 'DynamoDB is not available',
+            'no_package_description' => 'Please install AWS SDK package using command: composer require aws/aws-sdk-php',
+        ],
+
+        'failover' => [
+            'label' => 'Failover',
+            'description' => '',
+        ],
 
         'btn' => [
             'test' => 'Test cache',

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Clusters\Settings\Enums;
 
+use Composer\InstalledVersions;
 use Filament\Support\Contracts\HasDescription;
 use Filament\Support\Contracts\HasLabel;
 
@@ -11,8 +12,6 @@ enum CacheDriver: string implements HasDescription, HasLabel
 
     case Database = 'database';
 
-    case APC = 'apc';
-
     case Memcached = 'memcached';
 
     case Redis = 'redis';
@@ -21,11 +20,19 @@ enum CacheDriver: string implements HasDescription, HasLabel
 
     public function getLabel(): string
     {
-        return __(sprintf('setting.cache.%s_driver', $this->value));
+        return __(sprintf('setting.cache.%s.label', $this->value));
     }
 
     public function getDescription(): string
     {
-        return __(sprintf('setting.cache.%s_description', $this->value));
+        return __(sprintf('setting.cache.%s.description', $this->value));
+    }
+
+    public function isInstalled(): bool
+    {
+        return match ($this) {
+            self::DynamoDB => InstalledVersions::isInstalled('aws/aws-sdk-php'),
+            default => true,
+        };
     }
 }
