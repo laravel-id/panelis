@@ -4,9 +4,11 @@ namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
+use Modules\Branch\Models\Branch;
+use Modules\Setting\Panel\Clusters\Settings\Pages\User;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Branch>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<Branch>
  */
 class BranchFactory extends Factory
 {
@@ -18,8 +20,11 @@ class BranchFactory extends Factory
     public function definition(): array
     {
         return [
+            'user_id' => User::factory()->create(),
             'name' => $name = fake()->unique()->company,
             'slug' => Str::slug($name),
+            'phone' => fake()->phoneNumber,
+            'email' => fake()->email,
         ];
     }
 }

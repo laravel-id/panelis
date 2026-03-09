@@ -2,12 +2,12 @@
 
 namespace App\Providers;
 
-use App\Filament\Clusters\Databases\Enums\CloudProvider;
 use Illuminate\Filesystem\FilesystemAdapter;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\ServiceProvider;
 use League\Flysystem\Filesystem;
+use Modules\Database\Panel\Clusters\Databases\Enums\CloudProvider;
 use Spatie\Dropbox\Client;
 use Spatie\FlysystemDropbox\DropboxAdapter;
 

@@ -2,14 +2,15 @@
 
 namespace Database\Factories;
 
-use App\Models\Role;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
+use Modules\User\Models\Role;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<Role>
+ */
 class RoleFactory extends Factory
 {
-    protected $model = Role::class;
-
     public function definition(): array
     {
         return [

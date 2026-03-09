@@ -3,9 +3,10 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Modules\Setting\Models\Setting;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Setting>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<Setting>
  */
 class SettingFactory extends Factory
 {

@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\OAuth;
 
-use App\Events\SettingUpdated;
 use App\Http\Controllers\Controller;
 use App\Models\Setting;
 use App\Services\OAuth\OAuthFactory;
@@ -11,6 +10,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
+use Modules\Setting\Events\SettingUpdated;
 
 class DropboxController extends Controller
 {

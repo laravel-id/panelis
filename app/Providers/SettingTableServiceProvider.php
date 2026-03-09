@@ -1,0 +1,80 @@
+<?php
+
+namespace App\Providers;
+
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
+use Modules\Setting\Models\Setting;
+use Throwable;
+
+class SettingTableServiceProvider extends ServiceProvider
+{
+    /**
+     * Register services.
+     */
+    public function register(): void
+    {
+        $this->app->singleton('app.locale', function (): string {
+            if (Schema::hasTable('settings')) {
+                return Setting::query()
+                    ->where('key', 'app.locale')
+                    ->where('user_id', Auth::id())
+                    ->first()?->value ?? 'id';
+            }
+
+            return config('app.locale');
+        });
+
+        $this->app->singleton('panelis', function (): array {
+            $config = config('panelis');
+
+            if (! Schema::hasTable('settings')) {
+                return $config;
+            }
+
+            $settings = Setting::query()
+                ->where('key', 'like', 'panelis.%')
+                ->pluck('value', 'key')
+                ->mapWithKeys(fn ($value, $key) => [
+                    Str::after($key, 'panelis.') => $value,
+                ])
+                ->toArray();
+
+            return array_replace($config, $settings);
+        });
+    }
+
+    /**
+     * Bootstrap services.
+     */
+    public function boot(): void
+    {
+        try {
+            $key = sprintf('%s:has_setting', config('database.default'));
+            $hasSettingTable = Cache::remember($key, now()->addDay(), function (): bool {
+                return Schema::hasTable('settings');
+            });
+
+            if ($hasSettingTable) {
+                Setting::getAll()->each(function (Setting $setting): void {
+                    Config::set($setting->key, $setting->value);
+                });
+
+                if (Auth::check()) {
+                    Setting::getByUser(Auth::id())->each(function (Setting $setting): void {
+                        // override config from db with user's
+                        Config::set($setting->key, $setting->value);
+                    });
+                }
+            }
+        } catch (Throwable $e) {
+            report($e);
+        }
+
+        $this->app->setLocale(app('app.locale'));
+    }
+}

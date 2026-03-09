@@ -1,0 +1,5 @@
+{
+    "name": "Translation",
+    "description": "Manage application translations directly from the admin panel",
+    "provider": "Modules\\Translation\\TranslationServiceProvider"
+}

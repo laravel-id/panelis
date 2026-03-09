@@ -1,0 +1,47 @@
+<?php
+
+namespace Modules\Translation\Panel\Resources\TranslationResource\Pages;
+
+use Filament\Actions\ActionGroup;
+use Filament\Actions\CreateAction;
+use Filament\Actions\DeleteAction;
+use Filament\Resources\Pages\EditRecord;
+use Modules\Translation\Panel\Resources\TranslationResource;
+use Modules\Translation\Panel\Resources\TranslationResource\Actions\ReplicateTranslationAction;
+use Modules\Translation\Panel\Resources\TranslationResource\Enums\TranslationPermission;
+use Symfony\Component\HttpFoundation\Response;
+
+class EditTranslation extends EditRecord
+{
+    protected static string $resource = TranslationResource::class;
+
+    protected function getHeaderActions(): array
+    {
+        return [
+            ReplicateTranslationAction::make(),
+
+            CreateAction::make()
+                ->url(CreateTranslation::getUrl())
+                ->visible(user_can(TranslationPermission::Add)),
+
+            ActionGroup::make([
+                DeleteAction::make()
+                    ->visible(user_can(TranslationPermission::Delete)),
+            ]),
+        ];
+    }
+
+    protected function authorizeAccess(): void
+    {
+        abort_unless(user_can(TranslationPermission::Add), Response::HTTP_FORBIDDEN);
+    }
+
+    protected function mutateFormDataBeforeSave(array $data): array
+    {
+        $data['text'] = collect($data['text'])
+            ->mapWithKeys(fn (array $text): array => [$text['lang'] => $text['line']])
+            ->toArray();
+
+        return $data;
+    }
+}

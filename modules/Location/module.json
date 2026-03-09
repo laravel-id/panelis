@@ -1,0 +1,6 @@
+{
+    "name": "Location",
+    "provider": "Modules\\Location\\LocationServiceProvider",
+    "description": "Manage countries, regions, and cities used by the application",
+    "builtin": false
+}

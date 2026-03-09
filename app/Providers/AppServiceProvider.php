@@ -2,7 +2,6 @@
 
 namespace App\Providers;
 
-use App\Filament\Clusters\Settings\Enums\NumberFormat;
 use App\Services\Database\Contracts\Database;
 use App\Services\Database\Database as DatabaseManager;
 use App\Services\OAuth\OAuth;
@@ -14,6 +13,7 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Number;
 use Illuminate\Support\ServiceProvider;
+use Modules\Setting\Panel\Clusters\Settings\Enums\NumberFormat;
 
 class AppServiceProvider extends ServiceProvider
 {

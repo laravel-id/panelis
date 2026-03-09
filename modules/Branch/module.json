@@ -1,0 +1,6 @@
+{
+    "name": "Branch",
+    "description": "Manage branches to organize data and enable multi-tenant access within the application",
+    "version": "1.0",
+    "provider": "Modules\\Branch\\BranchServiceProvider"
+}

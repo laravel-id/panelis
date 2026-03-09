@@ -2,14 +2,15 @@
 
 namespace Database\Factories;
 
-use App\Models\Permission;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Carbon;
+use Modules\User\Models\Permission;
 
+/**
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<Permission>
+ */
 class PermissionFactory extends Factory
 {
-    protected $model = Permission::class;
-
     public function definition(): array
     {
         return [

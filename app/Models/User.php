@@ -3,7 +3,6 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use App\Filament\Clusters\Settings\Enums\AvatarProvider;
 use Carbon\Carbon;
 use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
@@ -21,6 +20,11 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Storage;
+use Modules\Branch\Models\Branch;
+use Modules\Setting\Models\Setting;
+use Modules\Setting\Panel\Clusters\Settings\Enums\AvatarProvider;
+use Modules\User\Models\Profile;
+use Modules\User\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 
 /**

@@ -1,10 +1,12 @@
 <?php
 
-use App\Filament\Pages\EditBranch;
-use App\Models\Branch;
+namespace Tests\Feature\Branch;
+
 use App\Models\User;
 use Filament\Facades\Filament;
 use Illuminate\Support\Str;
+use Modules\Branch\Models\Branch;
+use Modules\Branch\Panel\Resources\BranchResource\Pages\EditBranch;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
