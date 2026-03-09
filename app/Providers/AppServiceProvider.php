@@ -22,8 +22,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        $this->app->bind(Database::class, function (Application $app): DatabaseManager {
-            return $app->make(DatabaseManager::class);
+        $this->app->bind(Database::class, function (Application $app): Database {
+            return $app->make(DatabaseManager::class)->driver(config('database.default'));
         });
 
         $this->app->singleton(OAuth::class, function (Application $app): OAuthFactory {
