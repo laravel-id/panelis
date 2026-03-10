@@ -49,7 +49,7 @@ class ManagePermissions extends ManageRecords
                     ->action(function (): void {
                         BackupPermission::run();
 
-                        Notification::make('permission_stored')
+                        Notification::make()
                             ->title(__('user::user.permission.backed_up'))
                             ->success()
                             ->send();

@@ -129,7 +129,7 @@ class AutoBackup extends Page implements HasSchemas
                             UploadToCloud::dispatch($path);
                         }
 
-                        Notification::make('backup')
+                        Notification::make()
                             ->title(__('database::database.file_created'))
                             ->success()
                             ->send();
@@ -138,7 +138,7 @@ class AutoBackup extends Page implements HasSchemas
                     } catch (Exception $e) {
                         Log::error($e);
 
-                        Notification::make('backup_failed')
+                        Notification::make()
                             ->title(__('database::database.file_not_created'))
                             ->body($e->getMessage())
                             ->warning()
@@ -231,14 +231,14 @@ class AutoBackup extends Page implements HasSchemas
 
             event(new SettingUpdated);
 
-            Notification::make('backup_updated')
+            Notification::make()
                 ->title(__('database::database.backup_updated'))
                 ->success()
                 ->send();
         } catch (Exception $e) {
             Log::error($e);
 
-            Notification::make('backup_not_updated')
+            Notification::make()
                 ->title(__('database::database.backup_not_updated'))
                 ->danger()
                 ->send();

@@ -79,14 +79,14 @@ class General extends Page
                         try {
                             ImportAll::run($data['settings']);
 
-                            Notification::make('setting_imported')
+                            Notification::make()
                                 ->title(__('setting::setting.general.setting_imported'))
                                 ->success()
                                 ->send();
                         } catch (Exception $e) {
                             Logger::error($e);
 
-                            Notification::make('setting_not_imported')
+                            Notification::make()
                                 ->title(__('setting::setting.general.setting_not_imported'))
                                 ->danger()
                                 ->send();
@@ -195,7 +195,7 @@ class General extends Page
 
         event(new SettingUpdated);
 
-        Notification::make('general_updated')
+        Notification::make()
             ->title(__('filament-actions::edit.single.notifications.saved.title'))
             ->success()
             ->send();

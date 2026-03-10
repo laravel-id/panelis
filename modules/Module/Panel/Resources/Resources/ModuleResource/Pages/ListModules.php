@@ -19,7 +19,7 @@ class ListModules extends ListRecords
             Action::make('sync')
                 ->label(__('module::module.btn.sync'))
                 ->action(function (): void {
-                    Notification::make('synced')
+                    Notification::make()
                         ->title(__('module::module.notifications.synced'))
                         ->success()
                         ->send();

@@ -28,7 +28,7 @@ class FilamentReporter extends Exception
             ->whereDoesntHave('roles')
             ->get();
 
-        Notification::make('log')
+        Notification::make()
             ->title(__('setting.log.label'))
             ->body($e->getMessage())
             ->danger()

@@ -51,14 +51,14 @@ class Cache extends UpdateSettingPage implements HasSchemas, HasUpdateableForm
                     try {
                         \Illuminate\Support\Facades\Cache::put('test', 'test', now()->addMinute(5));
 
-                        Notification::make('cache.test_success')
+                        Notification::make()
                             ->title(__('setting::setting.cache.test_success'))
                             ->success()
                             ->send();
                     } catch (Exception $e) {
                         Log::error($e);
 
-                        Notification::make('cache.test_failed')
+                        Notification::make()
                             ->title(__('setting::setting.cache.test_failed'))
                             ->body($e->getMessage())
                             ->danger()
@@ -75,7 +75,7 @@ class Cache extends UpdateSettingPage implements HasSchemas, HasUpdateableForm
                     try {
                         \Illuminate\Support\Facades\Cache::flush();
 
-                        Notification::make('cache.flushed')
+                        Notification::make()
                             ->title(__('setting::setting.cache.flushed'))
                             ->success()
                             ->send();

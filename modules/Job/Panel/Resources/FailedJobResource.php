@@ -91,7 +91,7 @@ class FailedJobResource extends Resource
                     ->action(function (FailedJob $record): void {
                         Artisan::call('queue:retry', ['id' => $record->id]);
 
-                        Notification::make('pushed_to_queue')
+                        Notification::make()
                             ->success()
                             ->title(__('job::job.pushed_to_queue'))
                             ->send();
@@ -112,7 +112,7 @@ class FailedJobResource extends Resource
                     ->action(function (Collection $records): void {
                         Artisan::call('queue:retry', ['id' => $records->pluck('id')->toArray()]);
 
-                        Notification::make('pushed_to_queue')
+                        Notification::make()
                             ->success()
                             ->title(__('job::job.pushed_to_queue'))
                             ->send();

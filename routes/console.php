@@ -26,6 +26,7 @@ Schedule::command('panelis:backup-database')
     ->withoutOverlapping()
     ->runInBackground()
     ->when(function (): bool {
+        return true;
         if (! config('database.auto_backup_enabled')) {
             return false;
         }

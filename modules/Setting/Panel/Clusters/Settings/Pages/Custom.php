@@ -145,14 +145,14 @@ class Custom extends UpdateSettingPage implements HasSchemas, HasUpdateableForm
 
             event(new SettingUpdated);
 
-            Notification::make('custom_setting_updated')
+            Notification::make()
                 ->success()
                 ->title(__('setting::setting.notifications.updated.title'))
                 ->send();
         } catch (Exception $e) {
             Log::error($e);
 
-            Notification::make('setting.notifications.update_failed.title')
+            Notification::make()
                 ->danger()
                 ->title(__('setting::setting.custom.updated'))
                 ->body($e->getMessage())

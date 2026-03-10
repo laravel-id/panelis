@@ -48,7 +48,7 @@ class ListTranslations extends ListRecords
                     ->action(function (array $data): void {
                         ImportFromFiles::run($data['files'] ?? null);
 
-                        Notification::make('file_imported')
+                        Notification::make()
                             ->title(__('filament-actions::create.single.notifications.created.title'))
                             ->success()
                             ->send();
@@ -148,14 +148,14 @@ class ListTranslations extends ListRecords
                         try {
                             Backup::run();
 
-                            Notification::make('backup_success')
+                            Notification::make()
                                 ->title(__('translation::translation.backup_success'))
                                 ->success()
                                 ->send();
                         } catch (Exception $e) {
                             Log::error($e);
 
-                            Notification::make('backup_failed')
+                            Notification::make()
                                 ->title(__('translation::translation.backup_failed'))
                                 ->danger()
                                 ->send();
@@ -171,14 +171,14 @@ class ListTranslations extends ListRecords
                         try {
                             Restore::run();
 
-                            Notification::make('restore_success')
+                            Notification::make()
                                 ->title(__('translation::translation.restore_success'))
                                 ->success()
                                 ->send();
                         } catch (Exception $e) {
                             Log::error($e);
 
-                            Notification::make('restore_failed')
+                            Notification::make()
                                 ->title(__('translation::translation.restore_failed'))
                                 ->danger()
                                 ->send();

@@ -99,7 +99,7 @@ class Backup extends Page implements HasTable
                             return Download::run($storage, $record['path'], $record['name']);
                         }
 
-                        Notification::make('file_not_exists')
+                        Notification::make()
                             ->warning()
                             ->title(__('database::database.file_not_exist'))
                             ->send();
@@ -122,7 +122,7 @@ class Backup extends Page implements HasTable
                             $storage = Storage::disk('local');
                             $storage->delete($record['path']);
 
-                            Notification::make('database_file_deleted')
+                            Notification::make()
                                 ->title(__('database::database.file_deleted'))
                                 ->success()
                                 ->send();
@@ -131,7 +131,7 @@ class Backup extends Page implements HasTable
                         } catch (Exception $e) {
                             Log::error($e);
 
-                            Notification::make('database_file_not_deleted')
+                            Notification::make()
                                 ->title(__('database::database.file_not_deleted'))
                                 ->body($e->getMessage())
                                 ->warning()
