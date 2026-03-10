@@ -1,0 +1,6 @@
+{
+    "name": "Setting",
+    "description": "Manage application settings including general configuration, logging, mail, formatting, and system options",
+    "version": "1.0",
+    "provider": "Modules\\Setting\\SettingServiceProvider"
+}

@@ -1,0 +1,137 @@
+<?php
+
+namespace Modules\Translation\Panel\Resources\TranslationResource\Forms;
+
+use BezhanSalleh\LanguageSwitch\LanguageSwitch;
+use Filament\Forms\Components\Field;
+use Filament\Forms\Components\Repeater;
+use Filament\Forms\Components\Repeater\TableColumn;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Utilities\Get;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\Rules\Unique;
+use Modules\Translation\Models\Translation;
+
+class TranslationForm
+{
+    public static function getLocales(): array
+    {
+        $key = 'app.locales';
+        if (empty(config($key))) {
+            config()->set($key, [config('app.locale', default: 'en')]);
+        }
+
+        return collect(config($key))
+            ->mapWithKeys(function ($locale): array {
+                return [$locale => LanguageSwitch::make()->getLabel($locale)];
+            })
+            ->toArray();
+    }
+
+    public static function schema(): array
+    {
+        return [
+            TextInput::make('group')
+                ->label(__('translation::translation.group'))
+                ->autocomplete(false)
+                ->autofocus()
+                ->datalist(function (): array {
+                    return Translation::orderBy('group')
+                        ->groupBy('group')
+                        ->pluck('group')
+                        ->toArray();
+                })
+                ->helperText(function (?string $operation, ?Translation $line): ?string {
+                    if ($operation === 'edit' && ! $line->is_system) {
+                        return __('translation::translation.group_change_warning');
+                    }
+
+                    return null;
+                })
+                ->disabled(fn (?Translation $line): bool => $line?->is_system ?? false)
+                ->required()
+                ->alphaDash(),
+
+            TextInput::make('key')
+                ->label(__('translation::translation.key'))
+                ->helperText(function (?string $operation, ?Translation $line): ?string {
+                    if ($operation === 'edit' && ! $line->is_system) {
+                        return __('translation::translation.key_change_warning');
+                    }
+
+                    return null;
+                })
+                ->autocomplete(false)
+                ->disabled(fn (?Translation $line): bool => $line?->is_system ?? false)
+                ->rules([
+                    fn (Get $get, string $operation): Unique => Rule::unique((new Translation)->getTable(), 'key')
+                        ->where(fn ($query) => $query->where('group', $get('group')))
+                        ->when($operation == 'edit', fn (Unique $rule): Unique => $rule->ignore($get('id'))),
+                ])
+                ->validationAttribute(__('translation::translation.key'))
+                ->required(),
+
+            Repeater::make('text')
+                ->columnSpanFull()
+                ->hiddenLabel()
+                ->default(array_map(
+                    fn (string $locale) => ['lang' => $locale],
+                    LanguageSwitch::make()->getLocales(),
+                ))
+                ->afterStateHydrated(function (Field $component, mixed $state, string $operation): void {
+                    if (in_array($operation, ['create'])) {
+                        return;
+                    }
+
+                    $locales = LanguageSwitch::make()->getLocales();
+
+                    $defaults = collect($locales)
+                        ->map(fn (string $locale) => [
+                            'lang' => $locale,
+                            'line' => null,
+                        ])
+                        ->keyBy('lang');
+
+                    if (is_array($state) && ! empty($state)) {
+                        $fromDb = collect($state)
+                            ->map(fn ($line, $lang) => [
+                                'lang' => $lang,
+                                'line' => $line,
+                            ])
+                            ->keyBy('lang');
+
+                        $defaults = $defaults->merge($fromDb);
+                    }
+
+                    $component->state(
+                        $defaults->values()->toArray()
+                    );
+                })
+
+                ->table([
+                    TableColumn::make(__('translation::translation.lang'))->markAsRequired(),
+                    TableColumn::make(__('translation::translation.text'))->markAsRequired(),
+                ])
+                ->compact()
+                ->maxItems(count(LanguageSwitch::make()->getLocales()))
+                ->schema([
+                    Select::make('lang')
+                        ->hiddenLabel()
+                        ->options(function (): array {
+                            return collect(LanguageSwitch::make()->getLocales())
+                                ->mapWithKeys(fn (string $locale): array => [$locale => LanguageSwitch::make()->getLabel($locale)])
+                                ->toArray();
+                        })
+                        ->disableOptionsWhenSelectedInSiblingRepeaterItems()
+                        ->required(),
+
+                    Textarea::make('line')
+                        ->hiddenLabel()
+                        ->required()
+                        ->rows(2),
+                ]),
+        ];
+    }
+}

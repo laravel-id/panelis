@@ -1,0 +1,91 @@
+<?php
+
+namespace Modules\Database\Commands;
+
+use Exception;
+use Filament\Actions\Action;
+use Filament\Notifications\Notification;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
+use Modules\Database\Jobs\UploadToCloud;
+use Modules\Database\Services\Database\Contracts\Database;
+use Modules\User\Models\User;
+
+class BackupCommand extends Command
+{
+    protected $signature = 'panelis:backup-database';
+
+    protected $description = 'Backup database based on scheduled time';
+
+    public function handle(Database $database): int
+    {
+        if (! $database->isAvailable()) {
+            $this->error(__('database::database.auto_backup.not_available'));
+
+            return self::FAILURE;
+        }
+
+        $users = User::query()
+            ->doesntHave('roles')
+            ->get();
+
+        try {
+            $path = $database->backup();
+
+            if (! file_exists($path)) {
+                throw new Exception('Backup file not found at '.$path);
+            }
+
+            if (config('database.cloud_backup_enabled')) {
+                UploadToCloud::dispatch($path);
+            }
+
+            $this->cleanupOldBackups();
+
+            Notification::make()
+                ->title(__('database::database.file_created'))
+                ->success()
+                ->actions([
+                    Action::make('download')
+                        ->label(__('database::database.btn.download'))
+                        ->url(route('panelis.database.download', basename($path))),
+                ])
+                ->sendToDatabase($users);
+
+            $this->info(__('database::database.auto_backup.backed_up', ['path' => $path]));
+
+            return self::SUCCESS;
+        } catch (Exception $e) {
+            Log::error($e);
+
+            Notification::make()
+                ->title(__('database::database.file_not_created'))
+                ->warning()
+                ->sendToDatabase($users);
+
+            return self::FAILURE;
+        }
+    }
+
+    protected function cleanupOldBackups(): void
+    {
+        $storage = Storage::disk('local');
+        $files = collect($storage->allFiles('database'))
+            ->filter(fn ($f) => str_ends_with($f, '.sql') || str_ends_with($f, '.zip'))
+            ->sortBy(fn ($f) => $storage->lastModified($f))
+            ->values();
+
+        $max = (int) config('database.backup_max', 5);
+
+        if ($files->count() <= $max) {
+            return;
+        }
+
+        $toDelete = $files->take($files->count() - $max);
+
+        $toDelete->each(function ($file) use ($storage) {
+            $storage->delete($file);
+        });
+    }
+}

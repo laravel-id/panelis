@@ -2,10 +2,10 @@
 
 namespace App\Exceptions\Reporter;
 
-use App\Models\User;
 use Exception;
 use Filament\Notifications\Notification;
 use Illuminate\Support\Facades\Cache;
+use Modules\User\Models\User;
 use Throwable;
 
 class FilamentReporter extends Exception

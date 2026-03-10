@@ -1,0 +1,6 @@
+{
+    "name": "User",
+    "description": "Manage users, roles, and permissions for the application",
+    "version": "1.0",
+    "provider": "Modules\\User\\UserServiceProvider"
+}

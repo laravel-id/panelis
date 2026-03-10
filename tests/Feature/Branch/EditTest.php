@@ -1,10 +1,12 @@
 <?php
 
-use App\Filament\Pages\EditBranch;
-use App\Models\Branch;
-use App\Models\User;
+namespace Tests\Feature\Branch;
+
 use Filament\Facades\Filament;
 use Illuminate\Support\Str;
+use Modules\Branch\Models\Branch;
+use Modules\Branch\Panel\Resources\BranchResource\Pages\EditBranch;
+use Modules\User\Models\User;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;
@@ -29,7 +31,7 @@ it('does exist', function (): void {
 });
 
 it('validates input with existing data', function (): void {
-    livewire(EditBranch::class)
+    livewire(EditBranch::class, ['record' => $this->branch->getKey()])
         ->fillForm([
             'name' => null,
             'slug' => null,
@@ -46,10 +48,12 @@ it('validates unique name and slug input', function (): void {
         ->for($this->user)
         ->create();
 
-    livewire(EditBranch::class)
+    livewire(EditBranch::class, ['record' => $this->branch->getKey()])
         ->fillForm([
             'name' => $branch->name,
             'slug' => $branch->slug,
+            'phone' => $branch->phone,
+            'email' => $branch->email,
         ])
         ->call('save')
         ->assertHasFormErrors([
@@ -59,7 +63,7 @@ it('validates unique name and slug input', function (): void {
 });
 
 it('validates phone number input', function (): void {
-    livewire(EditBranch::class)
+    livewire(EditBranch::class, ['record' => $this->branch->getKey()])
         ->fillForm([
             'name' => $this->branch->name,
             'slug' => $this->branch->slug,
@@ -74,10 +78,12 @@ it('validates phone number input', function (): void {
 it('updates existing branch data', function (): void {
     $name = fake()->unique()->company;
 
-    livewire(EditBranch::class)
+    livewire(EditBranch::class, ['record' => $this->branch->getKey()])
         ->fillForm([
             'name' => $name,
             'slug' => Str::slug($name),
+            'phone' => $this->branch->phone,
+            'email' => $this->branch->email,
         ])
         ->call('save')
         ->assertHasNoFormErrors()

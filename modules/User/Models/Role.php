@@ -1,0 +1,38 @@
+<?php
+
+namespace Modules\User\Models;
+
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Modules\User\Database\Factories\RoleFactory;
+
+/**
+ * @method static pluck(string $value, string $label)
+ * @method int count()
+ *
+ * @property string $description
+ * @property int $users_count
+ * @property bool $is_admin
+ */
+#[UseFactory(RoleFactory::class)]
+class Role extends \Spatie\Permission\Models\Role
+{
+    use HasFactory;
+
+    public static function options(): array
+    {
+        return self::query()
+            ->orderBy('name')
+            ->get()
+            ->mapWithKeys(function (Role $role): array {
+                $label = $role->name;
+
+                if ($role->is_admin) {
+                    $label .= sprintf(' (%s)', __('user::user.role.admin_access'));
+                }
+
+                return [$role->id => $label];
+            })
+            ->toArray();
+    }
+}
