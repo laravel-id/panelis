@@ -26,11 +26,11 @@ use Modules\Branch\Models\Branch;
 use Modules\Branch\Panel\Pages\EditBranch;
 use Modules\Branch\Panel\Pages\RegisterBranch;
 use Modules\Module\Http\Middleware\RegisterModules;
+use Modules\ModuleManager;
 use Modules\User\Panel\Pages\EditProfile;
 use Modules\User\Panel\Pages\EmailVerificationPrompt;
 use Modules\User\Panel\Pages\Login;
 use Modules\User\Panel\Pages\RequestPasswordReset;
-use Panelis\Support\ModuleManager;
 
 class AdminPanelProvider extends PanelProvider
 {

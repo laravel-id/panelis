@@ -8,7 +8,7 @@ use Filament\Resources\Resource;
 use Filament\Support\Facades\FilamentTimezone;
 use Filament\Tables\Columns\TextColumn;
 use Illuminate\Support\ServiceProvider;
-use Panelis\Support\ModuleManager;
+use Modules\ModuleManager;
 
 class FilamentServiceProvider extends ServiceProvider
 {

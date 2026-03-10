@@ -4,7 +4,7 @@ namespace Modules\Module\Database\Seeders;
 
 use Illuminate\Database\Seeder;
 use Modules\Module\Models\Module;
-use Panelis\Support\ModuleManager;
+use Modules\ModuleManager;
 
 class ModuleTableSeeder extends Seeder
 {
