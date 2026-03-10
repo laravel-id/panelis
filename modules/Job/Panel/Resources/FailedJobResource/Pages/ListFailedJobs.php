@@ -25,7 +25,7 @@ class ListFailedJobs extends ListRecords
                 ->action(function (): void {
                     Artisan::call('queue:retry all');
 
-                    Notification::make('pushed_to_queue')
+                    Notification::make()
                         ->success()
                         ->title(__('job::job.pushed_to_queue'))
                         ->send();

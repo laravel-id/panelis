@@ -70,13 +70,13 @@ class Log extends UpdateSettingPage implements HasSchemas, HasUpdateableForm
                     try {
                         Logger::debug($data['message'] ?? 'Testing log');
 
-                        Notification::make('log.test_sent')
+                        Notification::make()
                             ->title(__('setting::setting.log.test_sent'))
                             ->success()
                             ->send();
 
                         if ($data['notification'] ?? false) {
-                            Notification::make('log.notification')
+                            Notification::make()
                                 ->title(__('setting::setting.log.label'))
                                 ->body($data['message'])
                                 ->danger()
@@ -242,14 +242,14 @@ class Log extends UpdateSettingPage implements HasSchemas, HasUpdateableForm
 
             event(new SettingUpdated);
 
-            Notification::make('log.updated')
+            Notification::make()
                 ->title(__('setting::setting.notifications.updated.title'))
                 ->success()
                 ->send();
         } catch (Exception $e) {
             Logger::error($e);
 
-            Notification::make('log.not_updated')
+            Notification::make()
                 ->title(__('setting::setting.notifications.update_failed.title'))
                 ->body($e->getMessage())
                 ->danger()

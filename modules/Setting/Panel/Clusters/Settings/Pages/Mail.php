@@ -342,7 +342,7 @@ class Mail extends UpdateSettingPage implements HasSchemas, HasUpdateableForm
                         Mailer::to($data['to'])
                             ->send(new TestMail(...$from));
 
-                        Notification::make('test_mail.success')
+                        Notification::make()
                             ->success()
                             ->title(__('setting::setting.mail.test_success'))
                             ->body(__('setting::setting.mail.test_instruction'))
@@ -350,7 +350,7 @@ class Mail extends UpdateSettingPage implements HasSchemas, HasUpdateableForm
                     } catch (Exception $e) {
                         Log::error($e);
 
-                        Notification::make('test_mail.failed')
+                        Notification::make()
                             ->danger()
                             ->color('danger')
                             ->title(__('setting::setting.mail.test_failed'))
@@ -422,7 +422,7 @@ class Mail extends UpdateSettingPage implements HasSchemas, HasUpdateableForm
         } catch (Throwable $e) {
             Log::error($e);
 
-            Notification::make('theme_not_updated')
+            Notification::make()
                 ->title(__('setting::setting.notifications.update_failed.title'))
                 ->body($e->getMessage())
                 ->warning()

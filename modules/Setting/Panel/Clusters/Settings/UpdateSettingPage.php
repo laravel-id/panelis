@@ -35,7 +35,7 @@ abstract class UpdateSettingPage extends Page
 
             event(new SettingUpdated);
 
-            Notification::make('setting_updated')
+            Notification::make()
                 ->title(__('setting::setting.notifications.updated.title'))
                 ->success()
                 ->send();
@@ -44,7 +44,7 @@ abstract class UpdateSettingPage extends Page
         } catch (Throwable $e) {
             Log::error($e);
 
-            Notification::make('setting_not_updated')
+            Notification::make()
                 ->title(__('setting::setting.notifications.update_failed.title'))
                 ->body($e->getMessage())
                 ->danger()

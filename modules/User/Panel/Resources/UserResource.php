@@ -140,14 +140,14 @@ class UserResource extends Resource
                             try {
                                 SendResetPasswordLink::run($user);
 
-                                Notification::make('link_sent')
+                                Notification::make()
                                     ->title(__('user::user.reset_password_link_sent'))
                                     ->success()
                                     ->send();
                             } catch (Exception $e) {
                                 Log::error($e);
 
-                                Notification::make('link_not_sent')
+                                Notification::make()
                                     ->title(__('user::user.reset_password_link_not_sent'))
                                     ->danger()
                                     ->send();
