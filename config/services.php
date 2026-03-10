@@ -35,4 +35,9 @@ return [
         ],
     ],
 
+    'dropbox' => [
+        'client_id' => env('DROPBOX_CLIENT_ID'),
+        'client_secret' => env('DROPBOX_CLIENT_SECRET'),
+        'redirect' => env('DROPBOX_REDIRECT_URI'),
+    ],
 ];

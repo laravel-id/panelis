@@ -47,7 +47,7 @@ class AutoBackup extends Page implements HasSchemas
 
     public array $filesystems;
 
-    public array $dropbox;
+    public array $services;
 
     private ?Database $databaseContract = null;
 
@@ -168,6 +168,7 @@ class AutoBackup extends Page implements HasSchemas
                 'cloud_backup_enabled' => config('database.cloud_backup_enabled', false),
                 'cloud_storage' => config('database.cloud_storage'),
             ],
+
             'filesystems' => [
                 'disks' => [
                     'dropbox' => [
@@ -176,9 +177,11 @@ class AutoBackup extends Page implements HasSchemas
                 ],
             ],
 
-            'dropbox' => [
-                'client_id' => config('dropbox.client_id'),
-                'client_secret' => config('dropbox.client_secret'),
+            'services' => [
+                'dropbox' => [
+                    'client_id' => config('services.dropbox.client_id'),
+                    'client_secret' => config('services.dropbox.client_secret'),
+                ],
             ],
         ]);
     }

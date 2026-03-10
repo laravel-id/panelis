@@ -8,12 +8,11 @@
         "php": "^8.3",
         "bezhansalleh/filament-language-switch": "^4.0",
         "filament/filament": "^4.1",
-        "filament/upgrade": "^5.0",
         "laravel/framework": "^12.0",
+        "laravel/socialite": "^5.24",
         "laravel/telescope": "^5.0",
         "laravel/tinker": "^2.10.1",
         "lorisleiva/laravel-actions": "^2.8",
-        "spatie/flysystem-dropbox": "^3.0",
         "spatie/laravel-permission": "^6.16",
         "spatie/laravel-translation-loader": "^2.8"
     },

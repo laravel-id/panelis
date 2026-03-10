@@ -90,6 +90,6 @@ class PostgreSQL implements Database
             return null;
         }
 
-        return $path;
+        return $absolutePath;
     }
 }
