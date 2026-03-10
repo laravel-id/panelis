@@ -2,16 +2,8 @@
 
 namespace App\Providers\Filament;
 
-use App\Filament\Pages\Auth\EditProfile;
-use App\Filament\Pages\Auth\EmailVerificationPrompt;
-use App\Filament\Pages\Auth\Login;
-use App\Filament\Pages\Auth\RequestPasswordReset;
-use App\Filament\Pages\EditBranch;
-use App\Filament\Pages\RegisterBranch;
-use App\Http\Middleware\RegisterModules;
 use App\Http\Middleware\RegisterNavigations;
 use App\Http\Middleware\SetTheme;
-use App\Models\Branch;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -30,22 +22,44 @@ use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Modules\Branch\Models\Branch;
+use Modules\Branch\Panel\Pages\EditBranch;
+use Modules\Branch\Panel\Pages\RegisterBranch;
+use Modules\Module\Http\Middleware\RegisterModules;
+use Modules\User\Panel\Pages\EditProfile;
+use Modules\User\Panel\Pages\EmailVerificationPrompt;
+use Modules\User\Panel\Pages\Login;
+use Modules\User\Panel\Pages\RequestPasswordReset;
+use Panelis\Support\ModuleManager;
 
 class AdminPanelProvider extends PanelProvider
 {
     public function panel(Panel $panel): Panel
     {
+        $panel->default()
+            ->id(config('panelis.id'));
+
         if ((bool) app('panelis')['multitenant'] ?? false) {
-            $panel
-                ->tenant(Branch::class, slugAttribute: 'slug')
+            $panel->tenant(Branch::class, slugAttribute: 'slug')
                 ->tenantRegistration(RegisterBranch::class)
                 ->tenantProfile(EditBranch::class);
         }
 
-        return $panel
-            ->default()
-            ->id(config('panelis.id'))
+        foreach (ModuleManager::getResources() as $resource) {
+            $panel->discoverResources(
+                in: $resource['path'],
+                for: $resource['namespace'],
+            );
+        }
 
+        foreach (ModuleManager::getClusters() as $cluster) {
+            $panel->discoverClusters(
+                in: $cluster['path'],
+                for: $cluster['namespace'],
+            );
+        }
+
+        return $panel
             ->path(app('panelis')['path'] ?? '')
             ->domain(app('panelis')['domain'] ?? '')
 

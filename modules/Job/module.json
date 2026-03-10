@@ -1,0 +1,7 @@
+{
+    "name": "Job",
+    "description": "Monitor and manage queued jobs stored in the database",
+    "version": "1.0",
+    "builtin": false,
+    "provider": "Modules\\Job\\JobServiceProvider"
+}

@@ -1,0 +1,175 @@
+<?php
+
+namespace Modules\User\Panel\Resources;
+
+use Exception;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
+use Filament\Actions\EditAction;
+use Filament\Facades\Filament;
+use Filament\Notifications\Notification;
+use Filament\Resources\Resource;
+use Filament\Schemas\Schema;
+use Filament\Support\Enums\FontWeight;
+use Filament\Support\Icons\Heroicon;
+use Filament\Tables\Columns\ImageColumn;
+use Filament\Tables\Columns\Summarizers\Count;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Table;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Modules\User\Actions\SendResetPasswordLink;
+use Modules\User\Models\User;
+use Modules\User\Panel\Resources\UserResource\Enums\UserPermission;
+use Modules\User\Panel\Resources\UserResource\Forms\UserForm;
+use Modules\User\Panel\Resources\UserResource\Pages\CreateUser;
+use Modules\User\Panel\Resources\UserResource\Pages\EditUser;
+use Modules\User\Panel\Resources\UserResource\Pages\ListUsers;
+use Modules\User\Panel\Resources\UserResource\Pages\ViewUser;
+
+class UserResource extends Resource
+{
+    protected static ?string $model = User::class;
+
+    protected static ?int $navigationSort = 3;
+
+    protected static ?string $tenantOwnershipRelationshipName = 'branches';
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('user::user.navigation');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('user::user.navigation');
+    }
+
+    public static function getLabel(): ?string
+    {
+        return __('user::user.label');
+    }
+
+    public static function canAccess(): bool
+    {
+        return user_can(UserPermission::Browse);
+    }
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        return self::canAccess();
+    }
+
+    public static function form(Schema $schema): Schema
+    {
+        $operation = $schema->getOperation();
+
+        return $schema
+            ->columns(3)
+            ->components(UserForm::schema($operation));
+    }
+
+    public static function table(Table $table): Table
+    {
+        return $table
+            ->columns([
+                TextColumn::make('branches.name')
+                    ->label(__('branch.label'))
+                    ->visible(fn (): bool => ! empty(Filament::getTenant())),
+
+                TextColumn::make('roles.name')
+                    ->label(__('user::user.role.label'))
+                    ->default('*'),
+
+                ImageColumn::make('avatar')
+                    ->label(__('user::user.avatar'))
+                    ->defaultImageUrl(function (User $record): string {
+                        $customAvatar = $record->getFilamentAvatarUrl();
+                        if (empty($customAvatar)) {
+                            return 'https://ui-avatars.com/api/?name='.urlencode($record->name);
+                        }
+
+                        return $customAvatar;
+                    }),
+
+                TextColumn::make('name')
+                    ->label(__('user::user.name'))
+                    ->searchable()
+                    ->sortable()
+                    ->weight(FontWeight::Bold)
+                    ->summarize([
+                        Count::make(),
+                    ]),
+
+                TextColumn::make('email')
+                    ->label(__('user::user.email'))
+                    ->copyable()
+                    ->searchable()
+                    ->sortable(),
+
+                TextColumn::makeSinceDate('updated_at', __('ui.updated_at')),
+
+                TextColumn::makeSinceDate('created_at', __('ui.created_at'), true),
+            ])
+            ->filters([
+                SelectFilter::make('branch')
+                    ->label(__('branch.label'))
+                    ->preload()
+                    ->multiple()
+                    ->relationship('branches', 'name'),
+
+                SelectFilter::make('role')
+                    ->label(__('user::user.role.label'))
+                    ->relationship('roles', 'name')
+                    ->searchable()
+                    ->preload()
+                    ->multiple(),
+            ])
+            ->recordActions([
+                EditAction::make()->visible(user_can(UserPermission::Edit)),
+
+                ActionGroup::make([
+                    Action::make('send_reset_password_link')
+                        ->label(__('user::user.btn.send_reset_password_link'))
+                        ->icon(Heroicon::OutlinedLockOpen)
+                        ->visible(user_can(UserPermission::ResetPassword))
+                        ->disabled(fn (User $user): bool => Auth::id() === $user->id)
+                        ->requiresConfirmation()
+                        ->action(function (User $user): void {
+                            try {
+                                SendResetPasswordLink::run($user);
+
+                                Notification::make('link_sent')
+                                    ->title(__('user::user.reset_password_link_sent'))
+                                    ->success()
+                                    ->send();
+                            } catch (Exception $e) {
+                                Log::error($e);
+
+                                Notification::make('link_not_sent')
+                                    ->title(__('user::user.reset_password_link_not_sent'))
+                                    ->danger()
+                                    ->send();
+                            }
+                        }),
+                ]),
+            ])
+            ->toolbarActions([]);
+    }
+
+    public static function getRelations(): array
+    {
+        return [];
+    }
+
+    public static function getPages(): array
+    {
+        return [
+            'index' => ListUsers::route('/'),
+            'create' => CreateUser::route('/create'),
+            'view' => ViewUser::route('/{record}'),
+            'edit' => EditUser::route('/{record}/edit'),
+        ];
+    }
+}

@@ -1,0 +1,320 @@
+<?php
+
+return [
+    'label' => 'Settings',
+    'key' => 'Key',
+    'value' => 'Value',
+    'navigation' => 'Settings',
+    'hidden_when_in_demo' => 'This field is hidden in demo mode',
+
+    'general' => [
+        'url' => 'URL',
+        'brand' => 'Brand',
+        'description' => 'Description',
+        'available_locales' => 'Available locales',
+        'locale_list_hint' => '[List of ISO-639 codes](https://en.wikipedia.org/wiki/List_of_ISO_639_language_codes)',
+        'default_locale' => 'Default locale',
+        'email' => 'E-mail',
+        'email_as_sender' => 'Use e-mail address as sender address in e-mail',
+        'app_debug_enabled' => 'App debug enabled',
+        'telescope_enabled' => 'Telescope enabled',
+        'exported_file' => 'Exported file',
+        'setting_imported' => 'Setting imported',
+        'setting_not_imported' => 'Setting not imported',
+        'label' => 'General',
+        'navigation' => 'General',
+        'section_description' => 'Manage basic application information such as the app name, description, logo, default language, and contact e-mail.',
+        'debug_mode' => 'Debug Mode',
+        'image' => 'Logo & Favicon',
+        'section_image' => 'Manage the application logo and favicon used for branding and browser display.',
+        'use_logo_in_panel' => 'Use logo in admin panel',
+        'logo' => 'Logo',
+        'favicon' => 'Favicon',
+    ],
+
+    'helper_app_debug' => 'It\'s recommended to disable this feature when in production mode.',
+    'nightwatch_enabled' => 'Nightwatch enabled',
+    'nightwatch_token' => 'Token',
+    'nightwatch_server' => 'Server',
+    'nightwatch_sampling' => 'Sampling',
+    'nightwatch_sampling_requests' => 'Samping requests',
+    'nightwatch_sampling_commands' => 'Sampling commands',
+    'nightwatch_sampling_exceptions' => 'Samping exceptions',
+
+    'number' => [
+        'label' => 'Number',
+        'navigation' => 'Number',
+        'section_description' => 'Configure how numbers are formatted across the application, including decimal and thousand separators.',
+        'currency_symbol' => 'Currency symbol',
+        'currency_symbol_as_suffix' => 'Use symbol as suffix',
+        'helper_currency_symbol_as_suffix' => 'When enabled, the symbol will be used behind the number',
+        'format' => 'Format',
+        'sample_display' => 'Sample display',
+    ],
+
+    'custom' => [
+        'label' => 'Custom',
+        'navigation' => 'Custom',
+        'section_description' => 'Define custom configuration values. These can be used to override default Laravel settings or add new application-specific options.',
+        'comment' => 'Comment',
+        'placeholder_comment' => 'Add info about this setting',
+        'updated' => 'Custom setting updated',
+    ],
+
+    'log' => [
+        'label' => 'Log',
+        'navigation' => 'Log',
+        'section_description' => 'Configure the logging channel used by the application, such as single, daily, or third-party services like Slack or Nightwatch.',
+        'enable_notification' => 'Enable notification',
+        'notification_helper' => 'When enabled, system errors will be sent as notifications to the dashboard.',
+        'send_as_notification' => 'Send and view as notification',
+        'test_sent' => 'Log test has been sent',
+        'message' => 'Message',
+        'channel' => 'Channel',
+        'nightwatch' => 'Nightwatch',
+        'papertrail' => 'Papertrail',
+        'daily' => 'Daily',
+        'single' => 'Single',
+        'path' => 'Path',
+        'slack' => 'Slack',
+        'errorlog' => 'Errorlog',
+        'monolog' => 'Monolog',
+        'syslog' => 'Syslog',
+        'slack_webhook_url' => 'Webhook URL',
+        'slack_webhook_hint' => '[More info abount webhook](https://api.slack.com/messaging/webhooks)',
+        'slack_username' => 'Username',
+        'level_debug' => 'Debug',
+        'level_info' => 'Info',
+        'level_notice' => 'Notice',
+        'level_warning' => 'Warning',
+        'level_error' => 'Error',
+        'level_critical' => 'Critical',
+        'level_alert' => 'Alert',
+        'level_emergency' => 'Emergency',
+        'level' => 'Level',
+        'papertrail_url' => 'URL',
+        'papertrail_port' => 'Port',
+        'daily_description' => 'This driver logs messages to daily log files, creating a new file for each day. This helps organize logs by date.',
+        'errorlog_description' => 'This driver sends log messages to the PHP error log, which can be helpful when running the application in a production environment.',
+        'monolog_description' => 'This driver uses the Monolog logging library, which provides a wide range of log handlers and is highly customizable.',
+        'nightwatch_description' => 'This driver logs messages to daily log files, creating a new file for each day. This helps organize logs by date.',
+        'papertrail_description' => 'This driver sends log messages to the Papertrail cloud-based log management service, making it useful for centralized logging and real-time log monitoring.',
+        'single_description' => 'This driver logs all messages to a single log file.',
+        'slack_description' => 'This driver sends log messages as notifications to a Slack channel, making it useful for real-time monitoring and alerting.',
+        'syslog_description' => 'This driver sends log messages to the system\'s syslog facility, which is a standard logging mechanism on Unix-like systems.',
+
+        'btn' => [
+            'test' => 'Test log',
+        ],
+    ],
+
+    'mail' => [
+        'sender' => 'Mail Sender',
+        'from_address' => 'From address',
+        'from_name' => 'From name',
+        'section_description' => 'Configure how the application sends e-mails. Choose a mail driver such as Sendmail, Postmark, SES, or Log.',
+        'driver' => 'Driver',
+        'send_from' => 'Send from',
+        'app_email' => 'App e-mail',
+        'branch_email' => 'Branch e-mail',
+        'branch_empty_help' => 'If you can\'t see any branches, that means no e-mail address has been set for each branch',
+        'to_address' => 'To address',
+        'test_success' => 'Test success',
+        'test_instruction' => 'Please check your inbox or spam folder to make sure e-mail is received.',
+        'test_failed' => 'Test failed',
+        'label' => 'Mail',
+        'navigation' => 'Mail',
+        'test_content' => 'If you can see this e-mail, that\'s mean mail configuration set up correctly!',
+        'test_subject' => 'Test mail!',
+        'sender_section_description' => 'Name and e-mail will be used as the default identity when sending emails.',
+
+        'log' => [
+            'driver' => 'Log',
+            'description' => 'This driver writes the e-mail messages to the application\'s log files instead of actually sending them.',
+        ],
+
+        'sendmail' => [
+            'driver' => 'Sendmail',
+            'description' => 'The Sendmail e-mail setting allows your application to send emails using the built-in email sending program on your server',
+            'path' => 'Path',
+        ],
+
+        'smtp' => [
+            'driver' => 'SMTP',
+            'host' => 'Host',
+            'port' => 'Port',
+            'username' => 'Username',
+            'password' => 'Password',
+            'encryption' => 'Encryption',
+            'encryption_none' => 'None',
+            'description' => 'This driver uses the SMTP protocol to send e-mail messages through a mail server.',
+        ],
+
+        'mailgun' => [
+            'driver' => 'Mailgun',
+            'domain' => 'Domain',
+            'secret' => 'Secret',
+            'endpoint' => 'Endpoint',
+            'description' => 'This driver integrates with the Mailgun e-mail delivery service, allowing you to send email through their API.',
+            'no_package_title' => 'Mailgun is not available',
+            'no_package_description' => 'Please install Mailgun package using command: composer require symfony/mailgun-mailer symfony/http-client',
+        ],
+
+        'postmark' => [
+            'driver' => 'Postmark',
+            'key' => 'Key',
+            'description' => 'This driver integrates with the Postmark e-mail delivery service, providing a reliable and scalable way to send email.',
+            'no_package_title' => 'Postmark is not available',
+            'no_package_description' => 'Please install Postmark package using command: composer require symfony/postmark-mailer symfony/http-client',
+        ],
+
+        'resend' => [
+            'driver' => 'Resend',
+            'key' => 'Key',
+            'description' => 'This driver integrates with Resend to send developer-friendly transactional and marketing emails reliably.',
+            'no_package_title' => 'Resend is not available',
+            'no_package_description' => 'Please install Resend package using command: composer require resend/resend-laravel',
+        ],
+
+        'ses' => [
+            'driver' => 'SES',
+            'key' => 'Key',
+            'secret' => 'Secret',
+            'region' => 'Region',
+            'description' => 'This driver integrates with Amazon\'s Simple E-mail Service (SES), enabling you to send email through the AWS platform.',
+            'no_package_title' => 'SES is not available',
+            'no_package_description' => 'Please install SES package using command: composer require aws/aws-sdk-php',
+        ],
+
+        'email' => [
+            'helper' => 'Test mail will be send to this address',
+        ],
+
+        'btn' => [
+            'test_send' => 'Test send mail',
+            'view_doc' => 'View documentation',
+        ],
+    ],
+
+    'cache' => [
+        'test_success' => 'Test success',
+        'test_failed' => 'Test failed',
+        'flushed' => 'Cache flushed',
+        'section_description' => 'Configure the cache storage used by the application. Supported drivers include File, Database, Memcached, APC, Redis, and DynamoDB.',
+        'driver' => 'Driver',
+        'label' => 'Cache',
+        'navigation' => 'Cache',
+
+        'file' => [
+            'label' => 'File',
+            'description' => 'Caching to the local file system',
+        ],
+
+        'database' => [
+            'label' => 'Database',
+            'description' => 'Storing cache in a database table',
+        ],
+
+        'memcached' => [
+            'label' => 'Memcached',
+            'description' => 'Distributed in-memory caching',
+            'host' => 'Host',
+            'port' => 'Port',
+            'username' => 'Username',
+            'password' => 'Password',
+        ],
+
+        'redis' => [
+            'label' => 'Redis',
+            'description' => 'Advanced in-memory data structure store',
+            'host' => 'Host',
+            'port' => 'Port',
+            'database' => 'Database',
+            'username' => 'Username',
+            'password' => 'Password',
+        ],
+
+        'dynamodb' => [
+            'label' => 'DynamoDB',
+            'description' => 'AWS\'s scalable NoSQL database service',
+            'key' => 'Key',
+            'secret' => 'Secret',
+            'region' => 'Region',
+            'table' => 'Table',
+            'endpoint' => 'Endpoint',
+            'no_package_title' => 'DynamoDB is not available',
+            'no_package_description' => 'Please install AWS SDK package using command: composer require aws/aws-sdk-php',
+        ],
+
+        'failover' => [
+            'label' => 'Failover',
+            'description' => '',
+        ],
+
+        'btn' => [
+            'test' => 'Test cache',
+            'flush' => 'Flush all',
+        ],
+    ],
+
+    'datetime' => [
+        'label' => 'Date & Time',
+        'navigation' => 'Date & Time',
+        'section_description' => 'Configure the default date format and timezone used across the application.',
+        'timezone' => 'Timezone',
+        'format' => 'Format',
+        'format_sample' => '[Click here for more format](https://www.php.net/manual/en/datetime.format.php)',
+        'sample' => 'Sample display',
+    ],
+
+    'user' => [
+        'label' => 'User',
+        'navigation' => 'User',
+        'default_role' => 'Default role',
+        'avatar_provider' => 'Avatar provider',
+        'avatar_libravatar_style' => 'Libravatar style',
+        'section_description' => 'Manage user-related defaults, including the default role for new users and the avatar provider.',
+    ],
+
+    'panel' => [
+        'label' => 'Panel',
+        'navigation' => 'Panel',
+        'section_description' => 'Configure how the admin panel is accessed, including its domain, path, and runtime behavior.',
+        'enable_multitenant' => 'Enable multi-tenancy',
+        'url' => 'URL',
+        'path' => 'Path',
+        'multitenant_helper' => 'When enabled, the admin panel runs in a tenant context. Resources can be scoped to the active tenant to isolate data between tenants.',
+        'multitenant_hint' => '[Official documentation](https://filamentphp.com/docs/5.x/users/tenancy)',
+    ],
+
+    'theme' => [
+        'navigation' => 'Theme',
+        'label' => 'Theme',
+        'section_description' => 'Customize the application’s appearance by selecting a theme, color scheme, or display mode.',
+        'color_primary' => 'Primary',
+        'color_gray' => 'Gray',
+        'color_success' => 'Success',
+        'color_danger' => 'Danger',
+        'color_info' => 'Info',
+        'color_warning' => 'Warning',
+    ],
+
+    'about' => [
+        'label' => 'About',
+        'navigation' => 'About',
+        'php_version' => 'PHP version',
+        'laravel_version' => 'Laravel version',
+        'filament_version' => 'Filament version',
+        'database_version' => 'Database version',
+    ],
+
+    'notifications' => [
+        'updated' => [
+            'title' => 'Setting updated',
+        ],
+
+        'update_failed' => [
+            'title' => 'Failed to save setting',
+        ],
+    ],
+];

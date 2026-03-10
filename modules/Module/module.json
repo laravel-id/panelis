@@ -1,0 +1,6 @@
+{
+    "name": "Module Manager",
+    "description": "Panelis module manager",
+    "version": "1.0",
+    "provider": "Modules\\Module\\ModuleServiceProvider"
+}

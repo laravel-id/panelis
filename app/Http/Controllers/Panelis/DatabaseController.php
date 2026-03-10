@@ -2,10 +2,10 @@
 
 namespace App\Http\Controllers\Panelis;
 
-use App\Actions\Database\Download;
 use App\Enums\Disk;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Storage;
+use Modules\Database\Actions\Download;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class DatabaseController extends Controller

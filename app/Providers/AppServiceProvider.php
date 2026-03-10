@@ -2,34 +2,20 @@
 
 namespace App\Providers;
 
-use App\Filament\Clusters\Settings\Enums\NumberFormat;
-use App\Services\Database\Contracts\Database;
-use App\Services\Database\Database as DatabaseManager;
-use App\Services\OAuth\OAuth;
-use App\Services\OAuth\OAuthFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
 use Illuminate\Support\Number;
 use Illuminate\Support\ServiceProvider;
+use Modules\Setting\Panel\Clusters\Settings\Enums\NumberFormat;
 
 class AppServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
      */
-    public function register(): void
-    {
-        $this->app->bind(Database::class, function (Application $app): DatabaseManager {
-            return $app->make(DatabaseManager::class);
-        });
-
-        $this->app->singleton(OAuth::class, function (Application $app): OAuthFactory {
-            return new OAuthFactory($app);
-        });
-    }
+    public function register(): void {}
 
     /**
      * Bootstrap any application services.
