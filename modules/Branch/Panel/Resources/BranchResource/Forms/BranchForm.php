@@ -2,7 +2,6 @@
 
 namespace Modules\Branch\Panel\Resources\BranchResource\Forms;
 
-use App\Filament\Pages\RegisterBranch;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\KeyValue;
 use Filament\Forms\Components\Textarea;
@@ -10,6 +9,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Components\Utilities\Set;
 use Illuminate\Support\Str;
+use Modules\Branch\Panel\Pages\RegisterBranch;
 use Modules\Branch\Panel\Resources\BranchResource\Pages\EditBranch;
 
 class BranchForm

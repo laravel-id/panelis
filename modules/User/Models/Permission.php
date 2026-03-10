@@ -3,8 +3,10 @@
 namespace Modules\User\Models;
 
 use Carbon\Carbon;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Modules\User\Database\Factories\PermissionFactory;
 
 /**
  * @property int $id
@@ -15,6 +17,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property Carbon $created_at
  * @property Carbon $updated_at
  */
+#[UseFactory(PermissionFactory::class)]
 class Permission extends \Spatie\Permission\Models\Permission
 {
     use HasFactory;

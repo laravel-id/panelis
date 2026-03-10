@@ -2,7 +2,9 @@
 
 namespace Modules\User\Models;
 
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Modules\User\Database\Factories\RoleFactory;
 
 /**
  * @method static pluck(string $value, string $label)
@@ -12,6 +14,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
  * @property int $users_count
  * @property bool $is_admin
  */
+#[UseFactory(RoleFactory::class)]
 class Role extends \Spatie\Permission\Models\Role
 {
     use HasFactory;

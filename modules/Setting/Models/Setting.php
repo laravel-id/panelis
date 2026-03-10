@@ -4,6 +4,7 @@ namespace Modules\Setting\Models;
 
 use BackedEnum;
 use Illuminate\Contracts\Encryption\DecryptException;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Crypt;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
+use Modules\Setting\Database\Factories\SettingFactory;
 
 /**
  * @method static updateOrCreate(array $keys, array $data)
@@ -21,6 +23,7 @@ use Illuminate\Support\Str;
  * @property mixed $value
  * @property bool $is_custom
  */
+#[UseFactory(SettingFactory::class)]
 class Setting extends Model
 {
     use HasFactory;

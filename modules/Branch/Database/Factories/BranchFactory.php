@@ -1,11 +1,11 @@
 <?php
 
-namespace Database\Factories;
+namespace Modules\Branch\Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use Modules\Branch\Models\Branch;
-use Modules\Setting\Panel\Clusters\Settings\Pages\User;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<Branch>

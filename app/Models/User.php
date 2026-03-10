@@ -8,6 +8,7 @@ use Filament\Models\Contracts\FilamentUser;
 use Filament\Models\Contracts\HasAvatar;
 use Filament\Models\Contracts\HasTenants;
 use Filament\Panel;
+use Illuminate\Database\Eloquent\Attributes\UseFactory;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -23,6 +24,7 @@ use Illuminate\Support\Facades\Storage;
 use Modules\Branch\Models\Branch;
 use Modules\Setting\Models\Setting;
 use Modules\Setting\Panel\Clusters\Settings\Enums\AvatarProvider;
+use Modules\User\Database\Factories\UserFactory;
 use Modules\User\Models\Profile;
 use Modules\User\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
@@ -36,6 +38,7 @@ use Spatie\Permission\Traits\HasRoles;
  * @property bool $is_root
  * @property int $id
  */
+#[UseFactory(UserFactory::class)]
 class User extends Authenticatable implements FilamentUser, HasAvatar, HasTenants
 {
     use HasFactory, Notifiable;

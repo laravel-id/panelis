@@ -2,6 +2,7 @@
 
 namespace Modules\User\Panel\Resources;
 
+use App\Models\User;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Actions\ActionGroup;
@@ -19,7 +20,6 @@ use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
-use Modules\Setting\Panel\Clusters\Settings\Pages\User;
 use Modules\User\Actions\SendResetPasswordLink;
 use Modules\User\Panel\Resources\UserResource\Enums\UserPermission;
 use Modules\User\Panel\Resources\UserResource\Forms\UserForm;

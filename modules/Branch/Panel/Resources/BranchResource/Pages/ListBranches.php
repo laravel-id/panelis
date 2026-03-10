@@ -2,9 +2,9 @@
 
 namespace Modules\Branch\Panel\Resources\BranchResource\Pages;
 
-use App\Filament\Pages\RegisterBranch;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
+use Modules\Branch\Panel\Pages\RegisterBranch;
 use Modules\Branch\Panel\Resources\BranchResource;
 
 class ListBranches extends ListRecords
