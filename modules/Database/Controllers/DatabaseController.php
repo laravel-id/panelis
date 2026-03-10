@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Panelis;
+namespace Modules\Database\Controllers;
 
 use App\Enums\Disk;
 use App\Http\Controllers\Controller;

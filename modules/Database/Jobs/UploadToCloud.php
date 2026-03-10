@@ -2,19 +2,14 @@
 
 namespace Modules\Database\Jobs;
 
+use App\Enums\Disk;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
-use Illuminate\Support\Facades\Config;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Modules\Database\Panel\Clusters\Databases\Enums\CloudProvider;
-use Modules\Database\Services\OAuth\OAuth;
-use Modules\Setting\Events\SettingUpdated;
-use Modules\Setting\Models\Setting;
 
 class UploadToCloud implements ShouldQueue
 {
@@ -33,30 +28,10 @@ class UploadToCloud implements ShouldQueue
      */
     public function handle(): void
     {
-        $oauth = app(OAuth::class)
-            ->driver(config('database.cloud_storage', CloudProvider::Dropbox->value));
-
-        // get token by refresh token
-        $refreshToken = config('dropbox.refresh_token');
-        if (empty($refreshToken)) {
-            Log::warning('Refresh token is not available.');
-
+        $driver = config('database.cloud_storage');
+        if (empty($driver)) {
             return;
         }
-
-        $auth = $oauth->setAppKey(config('dropbox.client_id'))
-            ->setAppSecret(config('dropbox.client_secret'))
-            ->authorize($refreshToken);
-        if (! empty($auth->getError())) {
-            Log::warning($auth->getError());
-
-            return;
-        }
-
-        Setting::set('filesystems.disks.dropbox.token', $auth->getToken());
-        event(new SettingUpdated);
-
-        Config::set('filesystems.disks.dropbox.token', $auth->getToken());
 
         [$time, $ext] = explode('.', basename($this->path), 2);
         $name = Carbon::createFromTimestamp($time)
@@ -64,7 +39,9 @@ class UploadToCloud implements ShouldQueue
             ->format('Y-m-d_H-i');
         $name = sprintf('%s-%s.%s', app()->environment(), $name, $ext);
 
-        Storage::disk(config('database.cloud_storage'))->put($name, file_get_contents($this->path));
+        $db = Storage::disk(Disk::Local)->get($this->path);
+
+        Storage::disk(config('database.cloud_storage'))->put($name, $db);
     }
 
     public function getPath(): string

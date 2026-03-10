@@ -2,6 +2,7 @@
 
 namespace Modules\Database\Panel\Clusters\Databases\Enums;
 
+use Composer\InstalledVersions;
 use Filament\Support\Contracts\HasLabel;
 
 enum CloudProvider: string implements HasLabel
@@ -12,6 +13,21 @@ enum CloudProvider: string implements HasLabel
 
     public function getLabel(): string
     {
-        return __(sprintf('database.cloud_storage_%s', $this->value));
+        return __(sprintf('database::database.cloud_storage_%s', $this->value));
+    }
+
+    public function getScopes(): array
+    {
+        return match ($this) {
+            self::Dropbox => ['files.content.write'],
+        };
+    }
+
+    public function isInstalled(): bool
+    {
+        return match ($this) {
+            self::Dropbox => InstalledVersions::isInstalled('spatie/flysystem-dropbox') && InstalledVersions::isInstalled('socialiteproviders/dropbox'),
+            default => false,
+        };
     }
 }
