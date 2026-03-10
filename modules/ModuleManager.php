@@ -1,6 +1,6 @@
 <?php
 
-namespace Panelis\Support;
+namespace Modules;
 
 class ModuleManager
 {
