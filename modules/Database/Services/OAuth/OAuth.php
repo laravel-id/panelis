@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\OAuth;
+namespace Modules\Database\Services\OAuth;
 
 use Carbon\Carbon;
 

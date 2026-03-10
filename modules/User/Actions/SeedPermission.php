@@ -1,7 +1,5 @@
 <?php
 
-namespace App\Actions\User;
-
 namespace Modules\User\Actions;
 
 use Illuminate\Support\Str;

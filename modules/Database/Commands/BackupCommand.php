@@ -2,8 +2,6 @@
 
 namespace Modules\Database\Commands;
 
-use App\Models\User;
-use App\Services\Database\Database;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Notifications\Notification;
@@ -11,6 +9,8 @@ use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Modules\Database\Jobs\UploadToCloud;
+use Modules\Database\Services\Database\Contracts\Database;
+use Modules\User\Models\User;
 
 class BackupCommand extends Command
 {

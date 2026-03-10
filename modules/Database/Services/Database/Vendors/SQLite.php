@@ -1,15 +1,15 @@
 <?php
 
-namespace App\Services\Database\Vendors;
+namespace Modules\Database\Services\Database\Vendors;
 
 use App\Enums\Disk;
-use App\Services\Database\Contracts\Database;
-use App\Services\Database\Enums\DatabaseDriver;
 use BackedEnum;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Process;
 use Illuminate\Support\Facades\Storage;
+use Modules\Database\Services\Database\Contracts\Database;
+use Modules\Database\Services\Database\Enums\DatabaseDriver;
 
 class SQLite implements Database
 {

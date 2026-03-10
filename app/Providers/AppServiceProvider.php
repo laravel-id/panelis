@@ -2,12 +2,7 @@
 
 namespace App\Providers;
 
-use App\Services\Database\Contracts\Database;
-use App\Services\Database\Database as DatabaseManager;
-use App\Services\OAuth\OAuth;
-use App\Services\OAuth\OAuthFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Lang;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\URL;
@@ -20,16 +15,7 @@ class AppServiceProvider extends ServiceProvider
     /**
      * Register any application services.
      */
-    public function register(): void
-    {
-        $this->app->bind(Database::class, function (Application $app): Database {
-            return $app->make(DatabaseManager::class)->driver(config('database.default'));
-        });
-
-        $this->app->singleton(OAuth::class, function (Application $app): OAuthFactory {
-            return new OAuthFactory($app);
-        });
-    }
+    public function register(): void {}
 
     /**
      * Bootstrap any application services.

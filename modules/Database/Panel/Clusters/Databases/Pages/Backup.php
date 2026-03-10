@@ -68,6 +68,7 @@ class Backup extends Page implements HasTable
                             'created_at' => $createdAt,
                         ];
                     })
+                    ->sortByDesc('created_at')
                     ->toArray();
             })
             ->paginated(false)

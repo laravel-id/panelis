@@ -2,9 +2,6 @@
 
 namespace Modules\Database\Panel\Clusters\Databases\Pages;
 
-use App\Services\Database\Contracts\Database as DbContract;
-use App\Services\Database\Database;
-use App\Services\Database\Enums\DatabaseDriver;
 use Exception;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Toggle;
@@ -26,6 +23,9 @@ use Modules\Database\Panel\Clusters\Databases;
 use Modules\Database\Panel\Clusters\Databases\Enums\DatabasePermission;
 use Modules\Database\Panel\Clusters\Databases\Forms\AutoBackupForm;
 use Modules\Database\Panel\Clusters\Databases\Forms\CloudBackupForm;
+use Modules\Database\Services\Database\Contracts\Database;
+use Modules\Database\Services\Database\Database as DatabaseManager;
+use Modules\Database\Services\Database\Enums\DatabaseDriver;
 use Modules\Setting\Events\SettingUpdated;
 use Modules\Setting\Models\Setting;
 use Symfony\Component\HttpFoundation\Response;
@@ -49,7 +49,7 @@ class AutoBackup extends Page implements HasSchemas
 
     public array $dropbox;
 
-    private ?DbContract $databaseManager = null;
+    private ?Database $databaseContract = null;
 
     public bool $isSupported = true;
 
@@ -76,7 +76,7 @@ class AutoBackup extends Page implements HasSchemas
         return user_can(DatabasePermission::Browse);
     }
 
-    public function boot(Database $database): void
+    public function boot(DatabaseManager $manager): void
     {
         $driver = config('database.default');
 
@@ -87,7 +87,7 @@ class AutoBackup extends Page implements HasSchemas
         }
 
         try {
-            $this->databaseManager = $database->driver(config('database.default'));
+            $this->databaseContract = $manager->driver($driver);
         } catch (Throwable $e) {
             Log::warning("Database driver [$driver] could not be initialized.", [
                 'exception' => $e,
@@ -122,7 +122,7 @@ class AutoBackup extends Page implements HasSchemas
                 ->requiresConfirmation()
                 ->action(function (array $data): void {
                     try {
-                        $path = $this->databaseManager->backup();
+                        $path = $this->databaseContract->backup();
 
                         // upload to cloud if possible
                         if ($data['upload_to_cloud'] ?? false) {
@@ -197,7 +197,7 @@ class AutoBackup extends Page implements HasSchemas
                 Section::make(__('database::database.auto_backup.label'))
                     ->description(__('database::database.auto_backup.section_description'))
                     ->hidden(! $this->isSupported)
-                    ->schema(AutoBackupForm::schema($this->databaseManager)),
+                    ->schema(AutoBackupForm::schema($this->databaseContract)),
 
                 Section::make(__('database::database.cloud_backup'))
                     ->description(__('database::database.cloud_backup_section_description'))

@@ -2,10 +2,10 @@
 
 namespace Modules\User\Actions;
 
-use App\Models\User;
 use Filament\Auth\Notifications\ResetPassword;
 use Filament\Facades\Filament;
 use Lorisleiva\Actions\Concerns\AsAction;
+use Modules\User\Models\User;
 
 class SendResetPasswordLink
 {

@@ -2,10 +2,10 @@
 
 namespace Modules\Setting\Panel\Clusters\Settings\Enums;
 
-use App\Models\User;
 use BackedEnum;
 use Filament\Support\Contracts\HasLabel;
 use Illuminate\Contracts\Auth\Authenticatable;
+use Modules\User\Models\User;
 
 enum AvatarProvider: string implements HasLabel
 {

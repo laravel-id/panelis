@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Services\OAuth;
+namespace Modules\Database\Services\OAuth;
 
-use App\Services\OAuth\Vendors\Dropbox;
-use App\Services\OAuth\Vendors\GoogleDrive;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\Manager;
+use Modules\Database\Services\OAuth\Vendors\Dropbox;
+use Modules\Database\Services\OAuth\Vendors\GoogleDrive;
 
 /**
  * @mixin OAuth

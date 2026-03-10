@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Database\Enums;
+namespace Modules\Database\Services\Database\Enums;
 
 enum DatabaseDriver: string
 {

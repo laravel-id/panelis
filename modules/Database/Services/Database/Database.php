@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Services\Database;
+namespace Modules\Database\Services\Database;
 
-use App\Services\Database\Contracts\Database as Contract;
-use App\Services\Database\Enums\DatabaseDriver;
-use App\Services\Database\Vendors\MySQL;
-use App\Services\Database\Vendors\PostgreSQL;
-use App\Services\Database\Vendors\SQLite;
 use Illuminate\Contracts\Container\Container;
 use Illuminate\Support\Manager;
+use Modules\Database\Services\Database\Contracts\Database as Contract;
+use Modules\Database\Services\Database\Enums\DatabaseDriver;
+use Modules\Database\Services\Database\Vendors\MySQL;
+use Modules\Database\Services\Database\Vendors\PostgreSQL;
+use Modules\Database\Services\Database\Vendors\SQLite;
 
 /**
  * @mixin Database

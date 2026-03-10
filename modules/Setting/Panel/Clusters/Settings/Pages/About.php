@@ -2,7 +2,6 @@
 
 namespace Modules\Setting\Panel\Clusters\Settings\Pages;
 
-use App\Services\Database\Contracts\Database;
 use BackedEnum;
 use Composer\InstalledVersions;
 use Filament\Infolists\Components\TextEntry;
@@ -13,6 +12,7 @@ use Filament\Schemas\Schema;
 use Filament\Support\Enums\TextSize;
 use Filament\Support\Icons\Heroicon;
 use Illuminate\Contracts\Support\Htmlable;
+use Modules\Database\Services\Database\Contracts\Database;
 use Modules\Setting\Panel\Clusters\Settings;
 
 class About extends Page
@@ -46,22 +46,22 @@ class About extends Page
                 Section::make(__('setting::setting.about.label'))
                     ->schema([
                         TextEntry::make('php_version')
-                            ->label(__('setting.about.php_version'))
+                            ->label(__('setting::setting.about.php_version'))
                             ->size(TextSize::Large)
                             ->state(phpversion()),
 
                         TextEntry::make('laravel_version')
-                            ->label(__('setting.about.laravel_version'))
+                            ->label(__('setting::setting.about.laravel_version'))
                             ->size(TextSize::Large)
                             ->state(ltrim(InstalledVersions::getPrettyVersion('laravel/framework'), 'v')),
 
                         TextEntry::make('filament_version')
-                            ->label(__('setting.about.filament_version'))
+                            ->label(__('setting::setting.about.filament_version'))
                             ->size(TextSize::Large)
                             ->state(ltrim(InstalledVersions::getPrettyVersion('filament/filament'), 'v')),
 
                         TextEntry::make('database_version')
-                            ->label(__('setting.about.database_version'))
+                            ->label(__('setting::setting.about.database_version'))
                             ->size(TextSize::Large)
                             ->state(vsprintf('%s - %s', [
                                 $database->getDriver()?->getLabel(),

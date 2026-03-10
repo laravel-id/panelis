@@ -2,7 +2,6 @@
 
 namespace Modules\Database\Panel\Clusters\Databases\Forms;
 
-use App\Services\OAuth\OAuth;
 use Filament\Actions\Action;
 use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\TextInput;
@@ -14,6 +13,7 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Crypt;
 use Modules\Database\Panel\Clusters\Databases\Enums\CloudProvider;
 use Modules\Database\Panel\Clusters\Databases\Pages\AutoBackup;
+use Modules\Database\Services\OAuth\OAuth;
 use Modules\Setting\Events\SettingUpdated;
 use Modules\Setting\Models\Setting;
 

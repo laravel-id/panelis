@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Services\Database\Contracts;
+namespace Modules\Database\Services\Database\Contracts;
 
 use BackedEnum;
 

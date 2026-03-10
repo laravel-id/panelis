@@ -2,8 +2,6 @@
 
 namespace Modules\Database\Jobs;
 
-use App\Models\Setting;
-use App\Services\OAuth\OAuth;
 use Carbon\Carbon;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -13,8 +11,10 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Modules\Database\Clusters\Databases\Enums\CloudProvider;
+use Modules\Database\Panel\Clusters\Databases\Enums\CloudProvider;
+use Modules\Database\Services\OAuth\OAuth;
 use Modules\Setting\Events\SettingUpdated;
+use Modules\Setting\Models\Setting;
 
 class UploadToCloud implements ShouldQueue
 {

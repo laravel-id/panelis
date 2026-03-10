@@ -2,13 +2,13 @@
 
 namespace Tests\Feature\Branch;
 
-use App\Models\User;
 use Filament\Facades\Filament;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Str;
 use Modules\Branch\Events\BranchRegistered;
 use Modules\Branch\Models\Branch;
 use Modules\Branch\Panel\Pages\RegisterBranch;
+use Modules\User\Models\User;
 
 use function Pest\Laravel\actingAs;
 use function Pest\Livewire\livewire;

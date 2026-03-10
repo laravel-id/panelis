@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace Modules\User\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Carbon\Carbon;
@@ -25,8 +25,6 @@ use Modules\Branch\Models\Branch;
 use Modules\Setting\Models\Setting;
 use Modules\Setting\Panel\Clusters\Settings\Enums\AvatarProvider;
 use Modules\User\Database\Factories\UserFactory;
-use Modules\User\Models\Profile;
-use Modules\User\Models\Role;
 use Spatie\Permission\Traits\HasRoles;
 
 /**

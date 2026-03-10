@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Services\OAuth\Vendors;
+namespace Modules\Database\Services\OAuth\Vendors;
 
-use App\Services\OAuth\OAuth;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Http;
+use Modules\Database\Services\OAuth\OAuth;
 
 class GoogleDrive implements OAuth
 {

@@ -2,12 +2,12 @@
 
 namespace Tests\Feature\Command\Database;
 
-use App\Services\Database\Database;
 use Illuminate\Support\Facades\Bus;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Mockery;
 use Modules\Database\Jobs\UploadToCloud;
+use Modules\Database\Services\Database\Contracts\Database;
 
 test('it runs backup command and uploads to cloud', function () {
     Bus::fake();

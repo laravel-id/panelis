@@ -2,7 +2,6 @@
 
 namespace Modules\User\Panel\Resources\UserResource\Forms;
 
-use App\Models\User;
 use Filament\Actions\Action;
 use Filament\Facades\Filament;
 use Filament\Forms\Components\CheckboxList;
@@ -22,6 +21,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Modules\Branch\Models\Branch;
 use Modules\User\Models\Role;
+use Modules\User\Models\User;
 use Modules\User\Panel\Resources\UserResource\Pages\CreateUser;
 
 class UserForm
