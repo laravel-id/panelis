@@ -23,7 +23,7 @@ class RegisterNavigations
                 NavigationItem::make(__('ui.source_code'))
                     ->sort(200)
                     ->group(__('setting.navigation'))
-                    ->url('https://github.com/laravel-id/panelis')
+                    ->url('https://github.com/panelis-php/cms')
                     ->activeIcon(Heroicon::CodeBracket)
                     ->icon(Heroicon::OutlinedCodeBracket),
 
