@@ -23,7 +23,7 @@ More modules and features are planned for future releases.
 Create a new Panelis project using Composer:
 
 ```bash
-composer create-project panelis-php/cms my-project
+composer create-project panelis-php/skeleton my-project
 ```
 
 Enter the project directory:

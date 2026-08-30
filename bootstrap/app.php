@@ -1,11 +1,11 @@
 <?php
 
-use App\Exceptions\Reporter\FilamentReporter;
-use App\Http\Middleware\Panelis\UserIsRoot;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Panelis\Cms\Exceptions\Reporter\FilamentReporter;
+use Panelis\User\Http\Middleware\UserIsRoot;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(

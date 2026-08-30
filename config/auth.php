@@ -1,6 +1,6 @@
 <?php
 
-use Panelis\User\Models\User;
+use App\Models\User;
 
 return [
 

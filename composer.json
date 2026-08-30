@@ -1,5 +1,5 @@
 {
-    "name": "panelis-php/cms",
+    "name": "panelis-php/skeleton",
     "type": "project",
     "description": "Panelis is a modular CMS built on Laravel and Filament designed to help PHP developers build extensible applications quickly.",
     "keywords": ["laravel", "framework"],
@@ -12,20 +12,12 @@
     ],
     "require": {
         "php": "^8.3",
-        "filament/filament": "^5.1",
-        "laravel/framework": "^13.0",
-        "laravel/telescope": "^5.0",
+        "panelis-php/cms": "^1.0",
         "laravel/tinker": "^3.0.0",
-        "panelis-php/branch": "^1.0.0",
-        "panelis-php/database": "^1.0.0",
-        "panelis-php/module": "^1.1.0",
-        "panelis-php/setting": "^1.4.0",
-        "panelis-php/translation": "^1.0.0",
-        "panelis-php/user": "^1.5.0"
+        "laravel/framework": "^13.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
-        "fruitcake/laravel-telescope-toolbar": "^1.3",
         "laravel/pail": "^1.2.5",
         "laravel/pao": "^1.0.6",
         "laravel/pint": "^1.27",
@@ -43,10 +35,7 @@
             "Database\\Factories\\": "database/factories/",
             "Database\\Seeders\\": "database/seeders/",
             "Panelis\\": "modules/"
-        },
-        "files": [
-            "app/helpers.php"
-        ]
+        }
     },
     "autoload-dev": {
         "psr-4": {
