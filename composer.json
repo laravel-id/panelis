@@ -19,9 +19,9 @@
         "panelis-php/branch": "^1.0.0",
         "panelis-php/database": "^1.0.0",
         "panelis-php/module": "^1.1.0",
-        "panelis-php/setting": "^1.1.0",
+        "panelis-php/setting": "^1.4.0",
         "panelis-php/translation": "^1.0.0",
-        "panelis-php/user": "^1.1"
+        "panelis-php/user": "^1.5.0"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
