@@ -3,7 +3,6 @@
 namespace App\Providers\Filament;
 
 use App\Http\Middleware\RegisterNavigations;
-use App\Http\Middleware\SetTheme;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -25,6 +24,7 @@ use Illuminate\View\Middleware\ShareErrorsFromSession;
 use Panelis\Branch\Models\Branch;
 use Panelis\Branch\Panel\Pages\EditBranch;
 use Panelis\Branch\Panel\Pages\RegisterBranch;
+use Panelis\Setting\Http\Middleware\SetTheme;
 use Panelis\User\Panel\Pages\EditProfile;
 use Panelis\User\Panel\Pages\EmailVerificationPrompt;
 use Panelis\User\Panel\Pages\Login;
