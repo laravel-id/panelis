@@ -2,17 +2,12 @@
     "name": "panelis-php/skeleton",
     "type": "project",
     "description": "Panelis is a modular CMS built on Laravel and Filament designed to help PHP developers build extensible applications quickly.",
-    "keywords": ["laravel", "framework"],
+    "keywords": ["laravel", "php", "panelis"],
     "license": "MIT",
-    "repositories": [
-        {
-            "type": "path",
-            "url": "modules/*"
-        }
-    ],
     "require": {
-        "php": "^8.3",
-        "panelis-php/cms": "^1.0",
+        "php": "^8.4",
+        "panelis-php/cms": "^1.2.0",
+        "panelis-php/activity": "^1.0",
         "laravel/tinker": "^3.0.0",
         "laravel/framework": "^13.0"
     },
@@ -95,7 +90,7 @@
             "php-http/discovery": true
         },
         "platform": {
-            "php": "8.3"
+            "php": "8.4"
         }
     },
     "minimum-stability": "stable",
